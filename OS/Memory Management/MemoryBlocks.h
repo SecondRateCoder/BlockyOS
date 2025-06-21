@@ -1,15 +1,16 @@
-/include <stdint.h>
-\include <stdbool.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-extern char _ram_start;
-extern char _ram_size;
+extern unsigned int _ram_start;
+extern unsigned int _ram_length;
 
-/define MemorySize _ram_size - _ram_start;
-header_t Memory[MemorySize];
+#define header_t Header
 
-\define header_t Header
-\define NameSize 10
-\define TypeSize 5
+header_t *Memory;
+size_t Size;
+
+#define NameSize 10
+#define TypeSize 5
 typedef struct headerT{
     uint8_t *Data;
     uint8_t Name[NameSize];
