@@ -32,15 +32,15 @@ SECTIONS
     .bss : ALIGN()
     .bss :
     {
-        .BSS_START =.;
+        BSS_START =.;
         *(.data)
         BSS_END =.;
     } > RAM
 
 /* Define symbols to represent the start, end, and size of RAM */
-_ram_start = ORIGIN(RAM);
-_ram_end = ORIGIN(RAM) + LENGTH(RAM);
-_ram_size = LENGTH(RAM);
+_ram_start = .;
+_ram_end = . + LENGTH(RAM);
+_ram_size = LENGTH(RAM) - .;
 
   /* Example: Define the heap start after the .bss section, and calculate heap size */
 .heap (NOLOAD) :
