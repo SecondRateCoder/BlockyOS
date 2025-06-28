@@ -38,7 +38,7 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
         * Explicit Execution requires the Psarameters to be inputted as arguments when the function is being called.
         * Implicit Execution does not require the Parameter to be inputted as arguments, the arguments can be loaded into a specific Memory Adress or stored in a variable with both the expected Type and a double dollar sign ($$)  before the name.
         > [!NOTE] 
-        > See [Exception List](Metadata/ExcpetionHashTable.csv).
+        > See [Exception List](Source/OS/Metadata/ExcpetionHashTable.csv).
 
 <br><br><br>
 

@@ -1,4 +1,5 @@
 #include "OS/Functions/Functions.h"
+#include "OS/Mem-Manager/MemTypes.h"
 #include <stdint.h>
 
 
@@ -36,4 +37,10 @@ void Hash_ToEqual(uint8_t *Data, unsigned int HashLevel){
         }
         ++Count;
     }
+}
+
+size_t *GetPointerSpot(Pointer *Pointers){
+    int cc =0;
+    
+    while(cc < )
 }

@@ -19,10 +19,14 @@ extern size_t *Pointer;
 #define Un_ProtectedChecks 100
 #define RetryLimit 5
 
-header_t **Memory;
-
+volatile header_t **Memory;
 
 typedef void ( *Function)(header_t *, void *);
+
+typedef struct Pointer{
+    size_t Pointer;
+    bool Used;
+}Pointer;
 
 typedef enum WorkDirection{
     //Move Forward.
