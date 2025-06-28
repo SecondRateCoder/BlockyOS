@@ -1,10 +1,11 @@
 #include "Source/OS/Mem-Manager/MemTypes.h"
 #include "OS/Functions/Functions.h"
 
+#define MaxThreads 50
 //Pointer
 //Back Pointer that is actually used.
 //REMARK: Alloca should be the only function to increments this
-size_t *Pointer;
+size_t *Pointer[MaxThreads];
 //Allocates the desired space for the Process, return NULL if not enough space can be allocated.
 //Also points to the first item at the 
 header_t *Alloca(size_t Size, uint8_t Name[NameIDSize], uint8_t Type[TypeIDSize], uint8_t ProgramID[ProgramIDSize], bool Protect){
