@@ -1,8 +1,0 @@
-FunctionName,Exception Hexadecimal Hash,Exception Description,Parameters,IsExplicit,IsImplicit,CanCrash,CrashBecause
-Wait(),0x00000000,"Wait a specified length of time, specific to the nearest ms.",unsigned int,X,,,
-LoadDirect(),0x00000001,"Load data to a special Memory Adress for Exception handling.","Any",X,,X,"The inputted data exceeds the data that would ever be stored."
-PointFile(),0x00000002,"Return the intptr address of the File Path.","a string",X,,,
-ReadFile(),0x00000003,"Read the File info at a specific file.","File pointer and an unsigned int[2] array",X,X,X,"The File at address does not exist, the integers at array were invalid."
-WriteFile(),0x00000004,"Write data to a specific file.","File Pointer a uint8_t List and an unsigned int for where to start writing from",X,X,X,"The File at address does not exist, the integers at array were invalid."
-GetFileInfo(),0x00000005,"Returns data abut the file.","A File Pointer or a string",X,,X,"The File at Location does not exist"
-FileExists(),0x00000006,"Returns a boolean for whether a File exists or not.","A string or File pointer",X,,,
