@@ -38,7 +38,7 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
         * Explicit Execution requires the Psarameters to be inputted as arguments when the function is being called.
         * Implicit Execution does not require the Parameter to be inputted as arguments, the arguments can be loaded into a specific Memory Adress or stored in a variable with both the expected Type and a double dollar sign ($$)  before the name.
         > [!NOTE] 
-        > See [Exception List](Source/OS/Metadata/ExcpetionHashTable.csv).
+        > See [Exception List](./Source/Public/FunctionInterruptHashes.csv).
 
 <br><br><br>
 
@@ -51,7 +51,7 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
 * ## Modularity:
     * ### OS Compilation:
         Binaries can be loaded into the OS's Program Files, the chenges actually come into effect on next start-up as the Program will be available to load it on Start-Up.
-        More information is more available at [OS Programming](Metadata/OS%20Programming.md).
+        More information is more available at [OS Programming](./Source/Public/OS-Unique%20syscalls.md).
         In order to maintain integrity **NO** Programs are allowed to edit the Program Files, aside from a specific Program.
 * ## Public Data Buffers:
     Data that may be accesssed frequently is stored at publicly available adrresses that are updated on every [Interrupt](#interrupts).
