@@ -2,37 +2,48 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-
-#define header_t Header
-typedef struct Header{
-    size_t Size;
-    
-}Header;
-
+#define OSBits (sizeof(void*) * 8)
 #define ProgramIDSize 10
-#define pID_t _pID
-typedef uint8_t _pID[ProgramIDSize];
 #define IDSize 7
+#define pID_t _pID
 #define ID_t _ID
-typedef uint8_t _ID[IDSize];
-
-#define hcontext_t HeaderContext
-typedef struct HContext{
-    //The ID for the Program that the Header is used by.
-    pID_t *ProgramID;
-
-    pID_t ThreadID;
-    ID_t HeaderID;
-    
-}HeaderContext;
-
 #define h_pflags_t HeaderParentFlags
 #define h_tflags_t HeaderTypeFlags
+#define hcontext_t HeaderContext
+#define header_t Header
+typedef struct _pID{uint8_t _pID[ProgramIDSize];    size_t *ProgramLocation_InMemory;}_pID;
+typedef uint8_t _ID[IDSize];
+
+//The start of RAM in Device Memory, with pre-defined space for the OS as well as thre length of RAM (with the OS taken into consideraion.).
+extern uintptr_t _ram_start, _ram_length;
+//A Pointer Table representation for RAM.
+volatile uint8_t *RAM = (uint8_t *)&_ram_start;
+//Points to free memory in RAM, grows upwards from RAM start.
+volatile size_t *Pointer;
+//A pointer stating how many memory blocks there are, grows downwards from the RAM end.
+volatile header_t *HeaderMetadata;
+
+typedef struct Header{
+    uint8_t *Data;
+    hcontext_t Context;
+}Header;
+
+typedef struct HContext{
+    //The ID for the Program that the Header is used by && The ID for the thread using Header.
+    pID_t *ProgramID, ThreadID;
+    ID_t HeaderID;
+    HeaderFlagsTuple Flags;
+}HeaderContext;
 
 typedef struct HeaderFlagsTuple{
+    //The Parent(s) that the Header has, since it can only have 3 values.
     h_pflags_t *ParentFlags;
-    bool IsMultipleParents, IsMultipleTypes;
+    //The Type(s) and Arg(s) that the Header has, since it can only have 6 values.
     h_tflags_t *TypeFlags;
+    //Is the Data shared by multiple Threads/Programs, does the Header have multiple Type(s) and/or Arg(s).
+    bool IsShared, IsMultipleTypes, IsProcess;
+    
+    unsigned int Permissions;
 }HeaderFlagsTuple;
 
 typedef enum HeaderFlags{
@@ -40,7 +51,6 @@ typedef enum HeaderFlags{
     ChildProcess,
     Thread,
 }HeaderParentFlags;
-
 typedef enum HeaderFlags{
     ProgramBinaries,
     Encrypted,

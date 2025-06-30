@@ -2,6 +2,8 @@ org 0x7C00            ; If this is a boot sector
 bits 16
 
 start:
+    LDR   R0, =0x8000      // Load stack top address into R0
+    MOV   SP, R0           // Set stack pointer (SP) to R0
     halt
 
 halt:
