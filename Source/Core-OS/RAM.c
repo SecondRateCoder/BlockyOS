@@ -1,25 +1,6 @@
 #include "Source/Core-OS/RAM.h"
-#pragma region Alloca
-void Alloca(){
 
-}
-/*
-Entry point:
-    Alloca(size_t Size),
-Logic:
-    Check if Pointer is pointing towards a used block:
-        True: Point to a free block
-    
-
-Function: Point to a free block
-    Get the size of the block
-*/
-#pragma endregion
-
-
-#pragma region Helper functions
-
-void AddMemBlock(const header_t H){
+void HeaderStore(const header_t H){
     int NumberOfBlocks = HeaderMetadata->Size/(sizeof(size_t)*2), cc =1;
     size_t Temp = *Pointer;
     Pointer += sizeof(H.Data);
@@ -28,10 +9,10 @@ void AddMemBlock(const header_t H){
     while(cc < sizeof(size_t) * 2){
         if(cc > sizeof(size_t)){
             //Store the Header's Location in RAM.
-            HeaderMetadata->Data[(NumberOfBlocks * sizeof(size_t)) + cc] = (uint8_t)((Temp >> (cc*8)) && 0xFF);
+            HeaderMetadata->Data[(NumberOfBlocks * sizeof(size_t)) + cc] = (uint8_t)((Temp >> (cc*8)) & 0xFF);
         }else{
             //Store the Header's size on RAM.
-            HeaderMetadata->Data[(NumberOfBlocks * sizeof(size_t)) + cc] = (uint8_t)((HSize >> (cc*8)) && 0xFF);
+            HeaderMetadata->Data[(NumberOfBlocks * sizeof(size_t)) + cc] = (uint8_t)((HSize >> (cc*8)) & 0xFF);
         }
         ++cc;
     }
@@ -52,26 +33,34 @@ void AddMemBlock(const header_t H){
                 ++cc;
                 RAM[Temp + cc + sizeof(H.Data)] = H.Context.Flags.IsShared;
                 ++cc;
-                int cc_ =cc;
+                int cc_ =cc, Offset =0;
+                pID_t ProgramID = *H.Context.ProgramID, ThreadID = *H.Context.ThreadID;
                 //Store Flag arrays.
                 while(cc_ < (sizeof(H.Context.Flags.ParentFlags) > sizeof(H.Context.Flags.TypeFlags)? sizeof(H.Context.Flags.ParentFlags): sizeof(H.Context.Flags.TypeFlags))){
                     ++cc_;
                     if(cc_ < sizeof(H.Context.Flags.ParentFlags)){
                         int cc__ =0;
                         while(cc__ < sizeof(unsigned int)){
-                            RAM[Temp + cc_ + sizeof(H.Data)] = ((H.Context.Flags.ParentFlags[cc__] >> (cc_* 8)) && 0xFF);
+                            Offset += sizeof(H.Data);
+                            RAM[Temp + cc_ + Offset] = (uint8_t)((H.Context.Flags.ParentFlags[cc__] >> (cc_* 8)) & 0xFF);
+                            Offset +=sizeof(int);
+                            RAM[Temp + cc_ + Offset] = (uint8_t)((H.Context.Flags.Permissions >> (cc_* 8)) & 0xFF);
+                            Offset += sizeof(int);
+                            RAM[Temp + cc_ + Offset] = (uint8_t)((H.Context.Flags.TypeFlags[cc__] >> (cc_* 8)) & 0xFF);
+                            Offset += sizeof(int);
+                            RAM[Temp + cc_ + Offset] = (uint8_t)((*ProgramID.ProgramLocation_InMemory >> (cc_ *8)) & 0xFF);
+                            Offset += sizeof(size_t);
+                            if(cc__ < ProgramIDSize){
+                                RAM[Temp + cc_ + Offset] = (uint8_t)((ProgramID._pID[cc__] >> (cc_ *8)) & 0xFF);
+                            }
+                            Offset += sizeof(int);
+                            RAM[Temp + cc_ + Offset] = (uint8_t)((*ThreadID.ProgramLocation_InMemory >> (cc_ *8)) & 0xFF);
+                            Offset += sizeof(size_t);
+                            if(cc__ < ProgramIDSize){
+                                RAM[Temp + cc_ + Offset] = (uint8_t)((ThreadID._pID[cc__] >> (cc_ *8)) & 0xFF);
+                            }
                             ++cc__;
                         }
-                    }
-                    if(cc_ < sizeof(H.Context.Flags.TypeFlags)){
-                        int cc__ =0;
-                        while(cc__ < sizeof(unsigned int)){
-                            RAM[Temp + cc_ + sizeof(H.Data) + sizeof(int)] = ((H.Context.Flags.TypeFlags[cc__] >> (cc_* 8)) && 0xFF);
-                            ++cc__;
-                        }
-                    }
-                    if(cc_ < sizeof(int)){
-                        RAM[Temp + cc_ + sizeof(H.Data) + (sizeof(int) *2)] = ((H.Context.Flags.Permissions >> (cc_* 8)) && 0xFF);
                     }
                 }
             }
@@ -86,9 +75,40 @@ void AddMemBlock(const header_t H){
         ram[offset + i] = (uint8_t)((value >> (i * 8)) & 0xFF);
     }
 */
-#pragma endregion
 
+int HeadersUnderProcess(pID_t *ProgramID, pID_t *ThreadID){
+    int NumberOfBlocks = HeaderMetadata->Size/(sizeof(size_t)*2), cc =1, Count =0;
+    while(cc < NumberOfBlocks){
+        size_t Temp[2] = {
+            [0] = uint8_t_To_Size_t(cc, HeaderMetadata->Data),
+            [1] = uint8_t_To_Size_t(cc + sizeof(size_t), HeaderMetadata->Data)};
+        header_t *header = (header_t *)&RAM[Temp[0]];
+        if(header->Context.ProgramID == ProgramID && header->Context.ThreadID == ThreadID){Count++;}
+        cc+=(sizeof(size_t) * 2);
+    }
+}
 
-#pragma region De-alloca_Free
+size_t uint8_t_To_Size_t(const int Startfrom, const uint8_t *array) {
+    size_t value = Startfrom;
+    for (size_t i = 0; i < sizeof(size_t); i++) {
+        value |= ((size_t)array[i]) << (i * 8);
+    }
+    return value;
+}
 
-#pragma endregion
+/*
+uint32_t decode_uint32(const uint8_t *array) {
+    uint32_t value = 0;
+    for (int i = 0; i < 4; i++) {
+        value |= ((uint32_t)array[i]) << (i * 8);
+    }
+    return value;
+}
+int decode_int(const uint8_t *array) {
+    int value = 0;
+    for (size_t i = 0; i < sizeof(int); i++) {
+        value |= ((int)array[i]) << (i * 8);
+    }
+    return value;
+}
+*/

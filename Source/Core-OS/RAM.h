@@ -17,11 +17,14 @@ typedef uint8_t _ID[IDSize];
 //The start of RAM in Device Memory, with pre-defined space for the OS as well as thre length of RAM (with the OS taken into consideraion.).
 extern uintptr_t _ram_start, _ram_length;
 //A Pointer Table representation for RAM.
-volatile uint8_t *RAM = (uint8_t *)&_ram_start;
+#define RAM RAM_
+volatile uint8_t *RAM_ = (uint8_t *)&_ram_start;
 //Points to free memory in RAM, grows upwards from RAM start.
 volatile size_t *Pointer;
 //A pointer stating how many memory blocks there are, grows downwards from the RAM end.
 volatile header_t *HeaderMetadata;
+
+typedef void (*HeaderFunction)(header_t *H, void *args);
 
 typedef struct Header{
     uint8_t *Data;
@@ -30,7 +33,7 @@ typedef struct Header{
 
 typedef struct HContext{
     //The ID for the Program that the Header is used by && The ID for the thread using Header.
-    pID_t *ProgramID, ThreadID;
+    pID_t *ProgramID, *ThreadID;
     ID_t HeaderID;
     HeaderFlagsTuple Flags;
 }HeaderContext;
