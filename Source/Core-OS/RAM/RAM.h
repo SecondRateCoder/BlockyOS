@@ -3,7 +3,7 @@
 #include <stddef.h>
 
 #define OSBits (sizeof(void*) * 8)
-#define ProgramIDSize 10
+#define ProcessIDSize 10
 #define IDSize 7
 #define pID_t _pID
 #define ID_t _ID
@@ -11,7 +11,7 @@
 #define h_tflags_t HeaderTypeFlags
 #define hcontext_t HeaderContext
 #define header_t Header
-typedef struct _pID{uint8_t _pID[ProgramIDSize];    size_t *ProgramLocation_InMemory;}_pID;
+typedef struct _pID{uint8_t _pID[ProcessIDSize];    size_t *ProgramLocation_InMemory;}_pID;
 typedef uint8_t _ID[IDSize];
 
 //The start of RAM in Device Memory, with pre-defined space for the OS as well as thre length of RAM (with the OS taken into consideraion.).
@@ -54,6 +54,7 @@ typedef enum HeaderFlags{
     ChildProcess,
     Thread,
 }HeaderParentFlags;
+
 typedef enum HeaderFlags{
     ProgramBinaries,
     Encrypted,
@@ -62,3 +63,15 @@ typedef enum HeaderFlags{
     Un_Protected,
     Data,
 }HeaderTypeFlags;
+
+typedef enum HeaderAttrOffset{
+    HeaderAttrOffset_DataSize = 0,
+    HeaderAttrOffset_NumberOfParentFlags = sizeof(size_t),
+    HeaderAttrOffset_NumberOfTypeFlags = sizeof(size_t) * 2,
+    HeaderAttrOffset_Permissions = sizeof(size_t) * 3,
+    HeaderAttrOffset_IsMultipleTypes = sizeof(size_t) * 3 + sizeof(int),
+    HeaderAttrOffset_IsProcess = sizeof(size_t) * 3 + sizeof(int) + 1,
+    HeaderAttrOffset_IsShared = sizeof(size_t) * 3 + sizeof(int) + 2,
+    //The Flags and Data.
+    HeaderAttrOffset_Pointers = sizeof(size_t) * 3 + sizeof(int) + 3,
+}HeaderAttrOffset;

@@ -1,14 +1,14 @@
 ASM = nasm
 CC = gcc
 BUILD_DIR = Build/OS
-COS_DIR = Source/Core-OS
+OS_DIR = Source/Core-OS
 
 # List your C source files here
-C_SOURCES = $(wildcard $(COS_DIR)/*.c)
-C_OBJECTS = $(patsubst $(COS_DIR)/%.c, $(BUILD_DIR)/%.o, $(C_SOURCES))
+C_SOURCES = $(wildcard $(OS_DIR)/*.c)
+C_OBJECTS = $(patsubst $(OS_DIR)/%.c, $(BUILD_DIR)/%.o, $(C_SOURCES))
 
 # Assembly bootloader
-BOOT_ASM = $(COS_DIR)/Boot/Boot.asm
+BOOT_ASM = Source/Boot/Boot.asm
 BOOT_BIN = $(BUILD_DIR)/Boot.bin
 
 # Floppy image
@@ -19,7 +19,7 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 # Compile C files
-$(BUILD_DIR)/%.o: $(COS_DIR)/%.c | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: $(OS_DIR)/%.c | $(BUILD_DIR)
 	$(CC) -c $< -o $@
 
 # Assemble bootloader
