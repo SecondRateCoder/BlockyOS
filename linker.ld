@@ -29,7 +29,7 @@ SECTIONS{
     } > RAM
 	. =ALIGN(4);
 /* Define symbols to represent the start, end, and size of RAM */
-_ram_start = . + 1M;
+_ram_start = . + 1M + 1K;
 _ram_size = LENGTH(RAM) - _ram_start;
 _heap_start = .;
 
