@@ -1,0 +1,6 @@
+[] Change how data is formatted in RAM:
+    [] Optimise RAM usage by storing Context and Data in HeaderMetadata.
+    [] Use a more efficient data structure for storing Context and Data.
+    [] Define a more space-efficient format for booleans, storing each boolean in a List of bytes, then allowing Applications to access it on a bit-wise level.
+    [] Generate a program that will override the conventional memory access in C, for robust Memory protection.
+    

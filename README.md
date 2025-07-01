@@ -43,6 +43,12 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
 <br><br><br>
 
 # <ins>Concepts:</ins>
+* ## Headers:
+    Headers describe a data block and Context about the data stored there, this simplifies how data blocks are regarded and how they are accessed.
+    Headers are not directly stored in RAM, instead the Data is stored in RAM, with the Header's starting address and it's Context stored in RAM.
+    * ### Header metadata:
+        A block of memory at the end of RAM stores the starting addresses(as size_t pointers) of data blocks in RAM.
+        This allows for quic access to the data blocks, whenever neccessary rather than having to search through RAM.
 * ## Frames:
     * ### Process Frames:
         Each program has it's performance graded in it's CPU Usage: CPU Frames, and GPU Usage: GPU Frames.
@@ -57,3 +63,9 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
     Data that may be accesssed frequently is stored at publicly available adrresses that are updated on every [Interrupt](#interrupts).
 * ## Interrupts:
     100 times per second an Interrupt occurs, allowing Low-Priority Instructions to be run etc.
+<br><br><br>
+
+* # <ins>Changes:</ins>
+    * ## Part rework of [RAM](./Source/Core-OS/RAM/):
+        This reword will include how headers are save in RAM, the Data will is saved directly to RAM, 
+        and the Context being saved in [Header Metadata](./Source/Core-OS/RAM/header_control.c).

@@ -2,14 +2,15 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#pragma pack(push, 1)
 #define OSBits (sizeof(void*) * 8)
 #define ProcessIDSize 10
 #define IDSize 7
 #define pID_t _pID
 #define ID_t _ID
+#define MetadataBlockSize sizeof(size_t)*2 + sizeof(hcontext_t)
 #define ramlength _ram_length - NumberOfBlocks * sizeof(size_t)
 #define NumberOfBlocks HeaderMetadata->Size/(sizeof(size_t) *2)
-#define HeaderStaticSize sizeof(bool)*3 + sizeof(size_t)*5 + sizeof(int) + ProcessIDSize * 2 + IDSize
 #define h_pflags_t HeaderParentFlags
 #define h_tflags_t HeaderTypeFlags
 #define hcontext_t HeaderContext
@@ -23,11 +24,11 @@ extern uintptr_t _ram_start, _ram_length;
 //A Pointer Table representation for RAM.
 #define RAM RAM_
 volatile uint8_t *RAM_ = (uint8_t *)&_ram_start;
-//Points to free memory in RAM, grows upwards from RAM start.
+//Points to free memory in RAM, grows downwards from RAM start.
 volatile size_t *Pointer;
-//A pointer stating how many memory blocks there are, grows downwards from the RAM end.
-//It is in doubles, being: (PointerToLocation, SizeOfData).
-volatile header_t *HeaderMetadata;
+//A pointer stating how many memory blocks there are, grows upwards from the RAM end.
+//It is in doubles, being: Context, PointerToLocation, SizeOfData.
+volatile uint8_t *HeaderMetadata;
 
 typedef void (*HeaderFunction)(header_t *H, void *args);
 
@@ -35,6 +36,12 @@ typedef struct Header{
     uint8_t *Data;
     hcontext_t Context;
 }Header;
+#pragma pop(pop)
+
+typdef struct array{
+    size_t Length;
+    void *Array;
+}array;
 
 typedef struct HContext{
     //The ID for the Program that the Header is used by && The ID for the thread using Header.
@@ -54,19 +61,20 @@ typedef struct HeaderFlagsTuple{
     unsigned int Permissions;
 }HeaderFlagsTuple;
 
+
 typedef enum HeaderFlags{
-    Kernel,
-    ChildProcess,
-    Thread,
+    Kernel =1,
+    ChildProcess =2,
+    Thread =3,
 }HeaderParentFlags;
 
 typedef enum HeaderFlags{
-    ProgramBinaries,
-    Encrypted,
-    ProgramProtected,
-    KernelProtected,
-    Un_Protected,
-    Data,
+    ProgramBinaries =4,
+    Encrypted =5,
+    ProgramProtected =6,
+    KernelProtected =7,
+    Un_Protected =8,
+    Data =9,
 }HeaderTypeFlags;
 
 typedef enum HeaderAttrOffset{
@@ -121,3 +129,6 @@ void encode_size_t(uint8_t *array, size_t value, size_t offset);
 void encode_int(uint8_t *array, int value, size_t offset);
 bool adrress_validate(size_t Index);
 size_t usedmemory();
+size_t clamp(size_t lower, size_t upper, size_t value);
+bool space_validate(size_t address, size_t concurrent_size);
+void encode_int(uint8_t *array, int value, size_t offset);
