@@ -4,10 +4,12 @@
 
 #pragma pack(push, 1)
 #define OSBits (sizeof(void*) * 8)
-#define ProcessIDSize 10
-#define IDSize 7
+#define ProcessIDSize IDSize
+#define IDSize 8
 #define pID_t _pID
 #define ID_t _ID
+#define ParentFlagsSize 3
+#define TypeFlagsSize 5
 #define MetadataBlockSize sizeof(size_t)*2 + sizeof(hcontext_t)
 #define ramlength _ram_length - NumberOfBlocks * sizeof(size_t)
 #define NumberOfBlocks HeaderMetadata->Size/(sizeof(size_t) *2)
@@ -52,9 +54,9 @@ typedef struct HContext{
 
 typedef struct HeaderFlagsTuple{
     //The Parent(s) that the Header has, since it can only have 3 values.
-    h_pflags_t *ParentFlags;
+    h_pflags_t ParentFlags[3];
     //The Type(s) and Arg(s) that the Header has, since it can only have 6 values.
-    h_tflags_t *TypeFlags;
+    h_tflags_t TypeFlags[5];
     //Is the Data shared by multiple Threads/Programs, does the Header have multiple Type(s) and/or Arg(s).
     bool IsShared, IsMultipleTypes, IsProcess;
     

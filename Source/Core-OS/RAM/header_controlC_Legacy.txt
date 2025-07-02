@@ -1,12 +1,13 @@
 #include "Source/Core-OS/RAM/RAM.h"
 
-uint8_t *header_peekunsafe(uint8_t *src, size_t Offset, hpeek_t PeekType){return decode_size_t(src, Offset + PeekType);}
-uint8_t *header_peek(uint8_t *src, size_t Offset, pID_t ProgramID, hpeek_t PeekType){
+size_t header_peekunsafe(uint8_t *src, size_t Offset, hpeek_t PeekType){return decode_size_t(src, Offset + PeekType);}
+size_t header_peek(uint8_t *src, size_t Size, size_t Offset, pID_t ProgramID, hpeek_t PeekType){
     //This should be used to peek into a Header in RAM.
     pID_t ProgramID_ =decode_id(header_peekunsafe(src, Offset, HeaderAttrOffset_ProgramID), 0);
     //If address is invalid and the ProgramID does not match and HeaderID and ID do not match, return 0.
     if(!(address_validate(Offset) && 
-        ProgramID_.ProgramLocation_InMemory == ProgramID.ProgramLocation_InMemory && compare_array(ProgramID_._pID, ProgramID._pID))){return NULL;}
+        ProgramID_.ProgramLocation_InMemory == ProgramID.ProgramLocation_InMemory && 
+            compare_array(ProgramID_._pID, ProgramID._pID))){return NULL;}
         switch(PeekType){
             case HeaderAttrOffset_DataSize:
             case HeaderAttrOffset_NumberOfParentFlags:
@@ -40,48 +41,50 @@ uint8_t *header_peek(uint8_t *src, size_t Offset, pID_t ProgramID, hpeek_t PeekT
 /// @param ProgramID The calling Program's ID.
 /// @param ID The expected ID for the Header.
 /// @return The header decoded from src.
-header_t header_decode(uint8_t *src, size_t Offset, pID_t ProgramID, ID_t ID){
+header_t header_decode(uint8_t *src, size_t Offset, size_t Size, pID_t ProgramID, ID_t ID){
     if(!address_validate(Offset)){return (header_t){.Data = NULL, .Context = NULL};}else{
-        //This should be used to decode a Header from RAM.
-        const int NumberOfParentFlags = decode_int(src, Offset + sizeof(size_t)), NumberOfTypeFlags = decode_int(src, Offset + (sizeof(size_t))), SizeOfData = decode_size_t(src, Offset);
-        Offset += sizeof(size_t) * 3;
-        hcontext_t Context = (hcontext_t){
-            .Flags = (HeaderFlagsTuple){
-                .IsMultipleTypes = src[Offset],
-                .IsProcess = src[Offset + 1],
-                .IsShared = src[Offset + 2],
-                .Permissions = decode_int(src, Offset + 3),
-                .ParentFlags = (h_pflags_t *)decode_int_array(src, Offset + 3 + sizeof(int), NumberOfParentFlags * sizeof(int)),
-                .TypeFlags = (h_tflags_t *)decode_int_array(src, Offset + 3 + sizeof(int) + (NumberOfParentFlags * sizeof(int)), NumberOfTypeFlags * sizeof(int)),
-            },
-            Offset += 3 + sizeof(int) + (NumberOfParentFlags * sizeof(int)),
-            .HeaderID = slice_bytes(src, Offset, IDSize),
-            .ProgramID = &(pID_t){
-                .ProgramLocation_InMemory = decode_size_t(src, Offset + 1),
-                Offset +=sizeof(size_t),
-                ._pID = slice_bytes(src, Offset, ProcessIDSize),},
-            .ThreadID = &(pID_t){
-                Offset += ProcessIDSize,
-                .ProgramLocation_InMemory = decode_size_t(src, Offset),
-                ._pID = slice_bytes(src, Offset, ProcessIDSize),},
-                Offset += ProcessIDSize,
-            .HeaderID = slice_bytes(src, Offset, IDSize),
-        };
-        Offset += IDSize;
-        uint8_t *Data = slice_bytes(src, Offset, SizeOfData);
-        return (header_t){
-            .Data = Data,
-            .Context = Context,
-        };
+        
     }
+    //     //This should be used to decode a Header from RAM.
+    //     const int NumberOfParentFlags = decode_int(src, Offset + sizeof(size_t)), NumberOfTypeFlags = decode_int(src, Offset + (sizeof(size_t))), SizeOfData = decode_size_t(src, Offset);
+    //     Offset += sizeof(size_t) * 3;
+    //     hcontext_t Context = (hcontext_t){
+    //         .Flags = (HeaderFlagsTuple){
+    //             .IsMultipleTypes = src[Offset],
+    //             .IsProcess = src[Offset + 1],
+    //             .IsShared = src[Offset + 2],
+    //             .Permissions = decode_int(src, Offset + 3),
+    //             .ParentFlags = (h_pflags_t *)decode_int_array(src, Offset + 3 + sizeof(int), NumberOfParentFlags * sizeof(int)),
+    //             .TypeFlags = (h_tflags_t *)decode_int_array(src, Offset + 3 + sizeof(int) + (NumberOfParentFlags * sizeof(int)), NumberOfTypeFlags * sizeof(int)),
+    //         },
+    //         Offset += 3 + sizeof(int) + (NumberOfParentFlags * sizeof(int)),
+    //         .HeaderID = slice_bytes(src, Offset, IDSize),
+    //         .ProgramID = &(pID_t){
+    //             .ProgramLocation_InMemory = decode_size_t(src, Offset + 1),
+    //             Offset +=sizeof(size_t),
+    //             ._pID = slice_bytes(src, Offset, ProcessIDSize),},
+    //         .ThreadID = &(pID_t){
+    //             Offset += ProcessIDSize,
+    //             .ProgramLocation_InMemory = decode_size_t(src, Offset),
+    //             ._pID = slice_bytes(src, Offset, ProcessIDSize),},
+    //             Offset += ProcessIDSize,
+    //         .HeaderID = slice_bytes(src, Offset, IDSize),
+    //     };
+    //     Offset += IDSize;
+    //     uint8_t *Data = slice_bytes(src, Offset, SizeOfData);
+    //     return (header_t){
+    //         .Data = Data,
+    //         .Context = Context,
+    //     };
+    // }
 }
 
 //Encodes the Header into a uint8_t array, which can be used to store the Header in RAM.
 //Stored in the order of Size of Data, Number of Parent flags, Number of Type flags, Permissions, boolean flags, ProgramID, ThreadID, HeaderIDFlags:(ParentFlags, TypeFlags), Data.
-uint8_t *header_encode(const header_t H, uint8_t ParentFlagsSize, uint8_t TypeFlagsSize, size_t DataSize){
-    uint8_t *Data;
+size_t header_encode(uint8_t *array, const header_t H, uint8_t ParentFlagsSize, uint8_t TypeFlagsSize, size_t DataSize){
     encode_hcontext_t(Data, H.Context, 0);
     memappend_unsafe(Data, false, H.Data, sizeof(H.Data));
+    //
     // size_t cc =1;
     // size_t Offset = 0, cc = 0, HSize = sizeof(H.Data);
     // //Store the Header in Data, don't intrude into the Metadata Header.
@@ -245,21 +248,17 @@ void encode_int(uint8_t *array, int value, size_t offset){
         array[offset + i] = (uint8_t)((value >> (i * 8)) & 0xFF);
     }
 }
-void encode_hcontext_t(uint8_t *array, hcontext_t Context, size_t offset){
+size_t encode_hcontext_t(uint8_t *array, hcontext_t Context, size_t offset){
     //Encode the Header Context into the array.
     encode_size_t(array, Context.Flags.IsMultipleTypes, offset);
     encode_size_t(array, Context.Flags.IsProcess, offset + sizeof(bool));
     encode_size_t(array, Context.Flags.IsShared, offset + sizeof(bool) * 2);
     encode_int(array, Context.Flags.Permissions, offset + sizeof(bool) * 3);
     //Encode ParentFlags and TypeFlags.
-    size_t ParentFlagsOffset = offset + sizeof(bool) * 3 + sizeof(int);
-    for (size_t i = 0; i < sizeof(Context.Flags.ParentFlags)/sizeof(int); i++) {
-        encode_int(array, Context.Flags.ParentFlags[i], ParentFlagsOffset + i * sizeof(int));
-    }
-    size_t TypeFlagsOffset = ParentFlagsOffset + (sizeof(Context.Flags.ParentFlags)/sizeof(int) * sizeof(int));
-    for (size_t i = 0; i < sizeof(Context.Flags.TypeFlags)/sizeof(int); i++) {
-        encode_int(array, Context.Flags.TypeFlags[i], TypeFlagsOffset + i * sizeof(int));
-    }
+    int i =0;
+    while(i < ParentFlagsSize){encode_int(array, Context.Flags.ParentFlags[i], ParentFlagsOffset + i * sizeof(int));    i++;}
+    i =0;
+    while(i < TypeFlagsSize){encode_int(array, Context.Flags.TypeFlags[i], TypeFlagsOffset + i * sizeof(int));  i++}
     //Encode ProgramID and ThreadID.
     encode_size_t(array, Context.ProgramID->ProgramLocation_InMemory, TypeFlagsOffset + (sizeof(Context.Flags.TypeFlags)/sizeof(int) * sizeof(int)));
     memcpy_unsafe(array, TypeFlagsOffset + (sizeof(Context.Flags.TypeFlags)/sizeof(int) * sizeof(int)) + sizeof(size_t), Context.ProgramID->_pID, ProcessIDSize);
