@@ -283,15 +283,7 @@ bool address_validate(size_t Offset){
     return false;
 }
 
-bool compare_array(uint8_t *array1, uint8_t *array2){
-    if(sizeof(array1) != sizeof(array2)){return false;}
-    int cc =0;
-    while(cc < sizeof(array1)){
-        if(array1[cc] != array2[cc]){return false;}
-        ++cc;
-    }
-    return true;
-}
+
 
 bool used_at(size_t address){
     if(!address_validate(address)){return false;}
@@ -299,11 +291,5 @@ bool used_at(size_t address){
     return (address_[0] >= address && address <= address_[1]);
 }
 /*
-uint32_t decode_uint32(const uint8_t *array) {
-    uint32_t value = 0;
-    for (int i = 0; i < 4; i++) {
-        value |= ((uint32_t)array[i]) << (i * 8);
-    }
-    return value;
-}
+
 */
