@@ -8,7 +8,7 @@ volatile size_t Pointer;
 volatile uint8_t *RAM;
 size_t *RAMMeta;
 #define IDSize 8
-#define context_size sizeof(bool)*4 + IDSize*2
+#define context_size sizeof(bool)*4 + IDSize*2 + sizeof(size_t)*2
 #define ID_t _ID
 #define header_t header
 #define hcontext_t headercontext
@@ -24,7 +24,6 @@ typedef struct header{
 
 typedef struct headercontext{
     ID_t ID;
-    size_t addr;
     hflags_t flags;
 }headercontext;
 
@@ -38,10 +37,11 @@ typedef enum HContextPeekerAttr{
     HContextPeekerAttr_HeaderID =0xF1,
     HContextPeekerAttr_ProcessID =0xF2,
     HContextPeekerAttr_Address =0xF3,
-    HContextPeekerAttr_IsProcess =0xF4,
-    HContextPeekerAttr_IsThread =0xF5,
-    HContextPeekerAttr_IsKernel =0xF6,
-    HContextPeekerAttr_IsPrivate =0xF7,
+    HContextPeekerAttr_Size =0xF4,
+    HContextPeekerAttr_IsProcess =0xF5,
+    HContextPeekerAttr_IsThread =0xF6,
+    HContextPeekerAttr_IsKernel =0xF7,
+    HContextPeekerAttr_IsPrivate =0xF8,
 }HContextPeekerAttr;
 
 void memcpy_unsafe(uint8_t *dest, const size_t offset, const uint8_t *src, const size_t n);

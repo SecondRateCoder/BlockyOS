@@ -7,22 +7,36 @@ size_t header_encode(uint8_t *array, header_t h){
     return context_size + h.size;
 }
 //Stores in the order:
-//    ID: ProcessID; ID, addr, hflags_t: IsProcess; IsThread; IsKernel; IsPrivate.
-size_t context_encode(uint8_t *array, const context_t c){
+//    ID: ProcessID; ID, addr, size, hflags_t: IsProcess; IsThread; IsKernel; IsPrivate.
+size_t context_encode(uint8_t *array, const header_t h){
 	size_t Offset =0;
-	memcpy_unsafe(array, 0, c.ID.ProcessID, IDSize);
+	//ProgramID encoded.
+	memcpy_unsafe(array, 0, h.context.ID.ProcessID, IDSize);
 	Offset += IDSize;
-	memcpy_unsafe(array, Offset, c.ID.HeaderID, IDSize);
+	//HeaderID encoded.
+	memcpy_unsafe(array, Offset, h.context.ID.HeaderID, IDSize);
 	Offset += IDSize;
-	uint8_t array_[sizeof(size_t)];
-	encode_size_t(array, c.addr, 0);
-	memcpy_unsafe(array, Offset, array_, sizeof(size_t));
+	//Address encoded.
+	encode_size_t(array, h.addr, Offset);
+	Offset += sizeof(size_t);
+	//size encoded.
+	encode_size_t(array, h.size, Offset);
+	Offset += sizeof(size_t);
+
+	//booleans
+	memcpy_unsafe(array, h.context.flags.IsProcess, Offset);
+	++Offset;
+	memcpy_unsafe(array, h.context.flags.IsThread, Offset);
+	++Offset;
+	memcpy_unsafe(array, h.context.flags.IsKernel, Offset);
+	++Offset;
+	memcpy_unsafe(array, h.context.flags.IsPrivate, Offset);
     return context_size;
 }
 
 void headerMeta_store(const header_t H){
     uint8_t context_encoded[context_size];
-    context_encode(context_encoded, H.context);
+    context_encode(context_encoded, H);
     RAMMeta-=context_size;
     memcpy_unsafe(RAMMeta, 0, context_encoded, context_size);
 }
@@ -39,18 +53,21 @@ uint8_t *headerpeek_unsafe(size_t addrInMeta, hpeek_t peeker){
 
 		case HContextPeekerAttr_Address:
 			return slice_bytes(RAM, RAMMeta + addrInMeta + (IDSize *2), IDSize);
-		
-		case HContextPeekerAttr_IsProcess:
+
+		case HContextPeekerAttr_Size:
 			return slice_bytes(RAM, RAMMeta + addrInMeta + (IDSize *2) + sizeof(size_t), IDSize);
 		
+		case HContextPeekerAttr_IsProcess:
+			return slice_bytes(RAM, RAMMeta + addrInMeta + (IDSize *2) + (sizeof(size_t)*2), IDSize);
+		
 		case HContextPeekerAttr_IsThread:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize + (IDSize *2) + sizeof(size_t) + 1, IDSize);
+			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 1, IDSize);
 
 		case HContextPeekerAttr_IsKernel:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize + (IDSize *2) + sizeof(size_t) + 2, IDSize);
+			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 2, IDSize);
 		
 		case HContextPeekerAttr_IsPrivate:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize + (IDSize *2) + sizeof(size_t) + 3, IDSize);	
+			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 3, IDSize);	
 	}
 }
 
@@ -68,7 +85,7 @@ bool address_validate(size_t addr){
 bool space_validate(size_t address, size_t concurrent_size){
     size_t cc =0;
     while(cc < NumberOfBlocks){
-        if(clamp_size_t(Address, Address + Size, address + concurrent_size) != address + size){return true;}
+        
         cc+=context_size;
     }
     return false;
@@ -81,4 +98,17 @@ int headers_underprocess(uint8_t ProcessID[IDSize]){
 		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), ProcessID) == true){++counter;}
 		startFrom += context_size;
 	}
+	return counter;
+}
+
+size_t memorysize_underprocess(uint8_t ProcessID[IDSize]){
+	size_t startFrom = RAMMeta;
+	int counter =0;
+	while(startFrom < _ram_length){
+		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), ProcessID) == true){
+			counter += headerpeek_unsafe(startFrom, HContextPeekerAttr_Size);
+		}
+		startFrom += context_size;
+	}
+	return counter;
 }
