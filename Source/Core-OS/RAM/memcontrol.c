@@ -27,10 +27,6 @@ uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length){
     return result;
 }
 
-size_t point_nextfree(size_t ){
-
-}
-
 /*
 bool space_validate(size_t address, size_t concurrent_size){
     size_t cc =0;

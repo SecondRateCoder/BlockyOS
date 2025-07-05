@@ -6,7 +6,7 @@ extern uintptr_t _ram_start, _ram_length, _heap_start, _heap_length;
 volatile size_t Pointer;
 
 volatile uint8_t *RAM;
-size_t *RAMMeta;
+uint8_t *RAMMeta = (uint8_t *)_ram_length;
 #define IDSize 8
 #define context_size sizeof(bool)*4 + IDSize*2 + sizeof(size_t)*2
 #define metanumber_inblocks (_ram_length - *RAMMeta)/context_size
