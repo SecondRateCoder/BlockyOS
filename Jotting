@@ -1,0 +1,3 @@
+((addr < Definedaddr || addr > Definedaddr + DefineSiza) && !(addr > Definedaddr && addr < Definedaddr + DefineSiza)) && (addr + size < addr || addr + size > Definedaddr + DefineSiza)
+(clamp_size_t(addr to Definedaddr and Definedaddr+DefineSiza) != addr) then addr is either > Definedaddr+DefineSiza or below Definedaddr
+(clamp_size_t(addr + size to Definedaddr and Definedaddr+DefineSiza)) then addr+size < Definedaddr or addr + size > Definedaddr+DefineSiza

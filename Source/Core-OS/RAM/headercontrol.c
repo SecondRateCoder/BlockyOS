@@ -84,11 +84,12 @@ bool address_validate(size_t addr){
 
 bool space_validate(size_t address, size_t concurrent_size){
     size_t cc =0;
-    while(cc < NumberOfBlocks){
-        
+    while(cc < metanumber_inblocks){
+		size_t addr = headerpeek_unsafe(cc, HContextPeekerAttr_Address), size = headerpeek_unsafe(cc, HContextPeekerAttr_Size);
+        if(!clamp_size_t(addr, addr+size, address) == address){if(!clamp_size_t(addr, size, address+concurrent_size) == address+concurrent_size){return false;}}
         cc+=context_size;
     }
-    return false;
+    return true;
 }
 
 int headers_underprocess(uint8_t ProcessID[IDSize]){

@@ -9,6 +9,7 @@ volatile uint8_t *RAM;
 size_t *RAMMeta;
 #define IDSize 8
 #define context_size sizeof(bool)*4 + IDSize*2 + sizeof(size_t)*2
+#define metanumber_inblocks (_ram_length - *RAMMeta)/context_size
 #define ID_t _ID
 #define header_t header
 #define hcontext_t headercontext
