@@ -70,6 +70,8 @@ uint8_t *hash(const uint8_t *val, size_t length){
     return result;
 }
 
+bool is_set(uint8_t Item, uint8_t X){return (Item & (1U << (X > 7? 0: X))) ? 1 : 0;}
+
 /*
 function hash(string, a, num_buckets):
     hash = 0

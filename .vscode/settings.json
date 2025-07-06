@@ -3,6 +3,7 @@
     "files.associations": {
         "*.gitignore": "c",
         "memtypes.h": "c",
-        "publics.h": "c"
+        "publics.h": "c",
+        "cstdint": "c"
     }
 }

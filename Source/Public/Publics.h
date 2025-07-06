@@ -10,3 +10,4 @@ size_t clamp_size_t(size_t lower, size_t upper, size_t value);
 uint8_t encode_size_t(uint8_t *array, size_t value, size_t offset);
 uint8_t encode_int(uint8_t *array, int value, size_t offset);
 bool compare_array(uint8_t *array1, size_t size, uint8_t *array2, size_t size2);
+bool is_set(uint8_t Item, uint8_t X);
