@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 struct MPR {
     uint32_t base;
     uint32_t size;

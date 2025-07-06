@@ -24,13 +24,15 @@ size_t context_encode(uint8_t *array, const header_t h){
 	Offset += sizeof(size_t);
 
 	//booleans
-	memcpy_unsafe(array, h.context.flags.IsProcess, Offset);
+	memcpy_unsafe(array, Offset, h.context.checks, 1);
 	++Offset;
-	memcpy_unsafe(array, h.context.flags.IsThread, Offset);
+	memcpy_unsafe(array, Offset, h.context.flags.IsProcess, 1);
 	++Offset;
-	memcpy_unsafe(array, h.context.flags.IsKernel, Offset);
+	memcpy_unsafe(array, Offset, h.context.flags.IsThread, 1);
 	++Offset;
-	memcpy_unsafe(array, h.context.flags.IsPrivate, Offset);
+	memcpy_unsafe(array, Offset, h.context.flags.IsKernel, 1);
+	++Offset;
+	memcpy_unsafe(array, Offset, h.context.flags.IsPrivate, 1);
     return context_size;
 }
 
@@ -41,37 +43,37 @@ void headerMeta_store(const header_t H){
     memcpy_unsafe(RAMMeta, 0, context_encoded, context_size);
 }
 
-uint8_t *headerpeek_unsafe(size_t addrInMeta, hpeek_t peeker){
-    if(!Metaaddress_validate(addrInMeta)){return NULL;}
-	if(context_size+Offset>_ram_length){return NULL;}
+uint8_t *headerpeek_unsafe(size_t maddr, hpeek_t peeker){
+	if(maddr < RAMMeta || maddr >= _ram_length){return NULL;}
+    if(!Metaaddress_validate(maddr)){return NULL;}
 	switch(peeker){
 		case HContextPeekerAttr_ProcessID:
-			return slice_bytes(RAM, RAMMeta + addrInMeta, IDSize);
+			return slice_bytes(RAM, RAMMeta + maddr, IDSize);
 		
 		case HContextPeekerAttr_HeaderID:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize, IDSize);
+			return slice_bytes(RAM, RAMMeta + maddr + IDSize, IDSize);
 
 		case HContextPeekerAttr_Address:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + (IDSize *2), IDSize);
+			return slice_bytes(RAM, RAMMeta + maddr + (IDSize *2), IDSize);
 
 		case HContextPeekerAttr_Size:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + (IDSize *2) + sizeof(size_t), IDSize);
+			return slice_bytes(RAM, RAMMeta + maddr + (IDSize *2) + sizeof(size_t), IDSize);
 		
 		case HContextPeekerAttr_IsProcess:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + (IDSize *2) + (sizeof(size_t)*2), IDSize);
+			return slice_bytes(RAM, RAMMeta + maddr + (IDSize *2) + (sizeof(size_t)*2), IDSize);
 		
 		case HContextPeekerAttr_IsThread:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 1, IDSize);
+			return slice_bytes(RAM, RAMMeta + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 1, IDSize);
 
 		case HContextPeekerAttr_IsKernel:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 2, IDSize);
+			return slice_bytes(RAM, RAMMeta + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 2, IDSize);
 		
 		case HContextPeekerAttr_IsPrivate:
-			return slice_bytes(RAM, RAMMeta + addrInMeta + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 3, IDSize);	
+			return slice_bytes(RAM, RAMMeta + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 3, IDSize);	
 	}
 }
 
-bool Metaaddress_validate(size_t maddr){return ((float)addrInMeta)/((float)context_size) == 0;}
+bool Metaaddress_validate(size_t maddr){return ((float)maddr)/((float)context_size) == 0;}
 
 bool address_validate(size_t addr){
 	size_t startingaddr = RAMMeta;
@@ -85,7 +87,7 @@ bool address_validate(size_t addr){
 bool space_validate(size_t address, size_t concurrent_size){
     size_t cc = 0;
     while(cc < _ram_length){
-        size_t addr = headerpeek_unsafe(cc, HContextPeekerAttr_Address), size = headerpeek_unsafe(cc, HContextPeekerAttr_Size);
+        size_t addr = decode_size_t(headerpeek_unsafe(cc, HContextPeekerAttr_Address), 0), size = decode_size_t(headerpeek_unsafe(cc, HContextPeekerAttr_Size), 0);
         if((address < addr+size) && (addr < address+concurrent_size)){
             // regions overlap
             return false;
@@ -99,7 +101,7 @@ int headers_underprocess(uint8_t ProcessID[IDSize]){
 	size_t startFrom = RAMMeta;
 	int counter =0;
 	while(startFrom < _ram_length){
-		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), ProcessID) == true){++counter;}
+		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), IDSize, ProcessID, IDSize) == true){++counter;}
 		startFrom += context_size;
 	}
 	return counter;
@@ -109,10 +111,51 @@ size_t memorysize_underprocess(uint8_t ProcessID[IDSize]){
 	size_t startFrom = RAMMeta;
 	int counter =0;
 	while(startFrom < _ram_length){
-		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), ProcessID) == true){
-			counter += headerpeek_unsafe(startFrom, HContextPeekerAttr_Size);
+		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), IDSize, ProcessID, IDSize) == true){
+			counter += decode_size_t(headerpeek_unsafe(startFrom, HContextPeekerAttr_Size), 0);
 		}
 		startFrom += context_size;
 	}
 	return counter;
 }
+
+size_t address_pointfree(size_t startfrom, size_t concurrent_size) {
+	size_t prev_end = startfrom > RAMMeta ? startfrom : RAMMeta;
+    size_t cc = RAMMeta;
+    while (cc < _ram_length) {
+        uint8_t *addr_ptr = headerpeek_unsafe(cc, HContextPeekerAttr_Address);
+        uint8_t *size_ptr = headerpeek_unsafe(cc, HContextPeekerAttr_Size);
+        if (addr_ptr && size_ptr) {
+            size_t region_addr = decode_size_t(addr_ptr, 0);
+            size_t region_size = decode_size_t(size_ptr, 0);
+            // Check if the gap before this region is big enough
+            if (region_addr >= prev_end && (region_addr - prev_end) >= concurrent_size) {
+                return prev_end;
+            }
+            // Move prev_end to the end of this region if it's further
+            if (region_addr + region_size > prev_end) {
+				prev_end = region_addr + region_size;
+            }
+        }
+        cc += context_size;
+    }
+    // Check for space after the last region
+    if (_ram_end > prev_end && (_ram_end - prev_end) >= concurrent_size) {
+		return prev_end;
+    }
+    return (size_t)-1; // No free space found
+}
+/*
+size_t address_pointfree(size_t startfrom, size_t concurrent_size){
+	size_t addr;
+	if(!address_validate(startfrom)){
+		addr = startfrom;
+	}else{addr =0;}
+	while(addr < _ram_end){
+		size_t addr_ = decode_size_t(headerpeek_unsafe(addr, HContextPeekerAttr_Address), 0), size = decode_size_t(headerpeek_unsafe(addr, HContextPeekerAttr_Size), 0);
+		if(space_validate(addr_+size, concurrent_size) == true){return addr;}
+		addr+=context_size;
+	}
+	return 0; // No free space found
+}
+*/

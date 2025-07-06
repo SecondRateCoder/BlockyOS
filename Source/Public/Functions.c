@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include "./Source/Public/Publics.h"
 
 size_t decode_size_t(const uint8_t *array, const int Offset){
     size_t value = Offset;
@@ -47,15 +47,12 @@ uint8_t encode_int(uint8_t *array, int value, size_t offset){
     return i;
 }
 
-bool compare_array(uint8_t *array1, uint8_t *array2){
-    if(sizeof(array1) != sizeof(array2)){return false;}
+bool compare_array(uint8_t *array1, size_t size, uint8_t *array2, size_t size2){
+    if(size != size2){return false;}
     int cc =0;
     while(cc < sizeof(array1)){
         if(array1[cc] != array2[cc]){return false;}
         ++cc;
     }
     return true;
-}
-bool compare_id(ID_t ID1, ID_t ID2){
-    
 }

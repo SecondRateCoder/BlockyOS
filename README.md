@@ -63,6 +63,8 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
     Data that may be accesssed frequently is stored at publicly available adrresses that are updated on every [Interrupt](#interrupts).
 * ## Interrupts:
     100 times per second an Interrupt occurs, allowing Low-Priority Instructions to be run etc.
+* ## Dynamic Program loading and sanitation:
+    Programs are loaded into RAM, they will have OS-dependent binaries swapped out for a supported alternative.
 <br><br><br>
 
 * # <ins>Changes:</ins>

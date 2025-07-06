@@ -1,3 +1,7 @@
 {
-    "makefile.configureOnOpen": false
+    "makefile.configureOnOpen": false,
+    "files.associations": {
+        "*.gitignore": "c",
+        "memtypes.h": "c"
+    }
 }
