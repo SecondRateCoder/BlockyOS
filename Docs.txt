@@ -1,0 +1,258 @@
+||||||PCEe Configuration Space||||||
+Command Register (0x04)
+3:	Special Cycle Enable: Does not apply to PCIe. Hardwired to 0.
+4:	Memory Write and Invalidate: Does not apply to PCIe. Hardwired to 0.
+5:	VGA Palette Snoop: Does not apply to PCIe. Hardwired to 0.
+7:	IDSEL Stepping/Wait Cycle Control: Does not apply to PCIe. Hardwired to 0.
+9:	Fast Back-to-Back Transactions Enable: Does not apply to PCIe. Hardwired to 0.
+
+
+Status Register (0x06)
+4:	    Capabilities List: All PCIe devices are required to implement the capability structure. Hardwired to 1.
+5:	    66 MHz Capable: Does not apply to PCIe. Hardwired to 0.
+7:	    Fast Back-to-Back Transactions Capable: Does not apply to PCIe. Hardwired to 0.
+10:9:	DEVSEL Timing: Does not apply to PCIe. Hardwired to 0.
+
+
+Master Latency Timer Register (0x0D)
+All Bits:	Does not apply to PCIe. Hardwired to 0.
+
+
+Base Address Registers (0x10:0x24):
+    All Bits:
+    	PCIe Endpoint devices must set the BAR's prefetchable bit while the range does not contain memory with read side-effects or where the memory does not tolerate write merging.
+        64-Bit Addressing MUST be supported by non legacy Endpoint devices.
+        The minimum memory address range requested by a BAR 128-bytes.
+
+Min_Gnt/Max_Lat Registers (0x3E:0x3F)	All Bits:	Does not apply to PCIe. Hardwired to 0.
+
+
+Base Address Registers (0x10:0x24)
+    All Bits:	PCIe Endpoint devices must set the BAR's prefetchable bit while the range does not contain memory with read side-effects or where the memory does not tolerate write merging. 64-Bit Addressing MUST be supported by non legacy Endpoint devices. The minimum memory address range requested by a BAR 128-bytes.
+Primary Bus Number (0x18)
+	All Bits:	Implemented for legacy purposes only.
+Secondary Latency Timer (0x1B)
+	All Bits:	Does not apply to PCIe. Hardwired to 0.
+Secondary Status Register (0x1E)
+	5:	66 MHz Capable: Does not apply to PCIe. Hardwired to 0.
+    7:	Fast Back-to-Back Transactions Capable: Does not apply to PCIe. Hardwired to 0.
+    10:9:	DEVSEL Timing: Does not apply to PCIe. Hardwired to 0.
+Prefetchable Memory Base/Limit (0x24)
+	All Bits:	Must indicate support for 64-bit addresses.
+Bridge Control Register (0x3E)
+    5:  	Master Abort Mode: Does not apply to PCIe. Hardwired to 0.
+    7:  	Fast Back-to-Back Transactions Enable: Does not apply to PCIe. Hardwired to 0.
+    8:  	Primary Discard Timer: Does not apply to PCIe. Hardwired to 0.
+    9:  	Secondary Discard Timer: Does not apply to PCIe. Hardwired to 0.
+    10:	    Discard Timer Status: Does not apply to PCIe. Hardwired to 0.
+    11: 	Discard Timer SERR# Enable: Does not apply to PCIe. Hardwired to 0.
+
+Enhanced Configuration Mechanism:
+    
+Offset	     |Length    |Description
+0            |	4	    |   Table Signature ("MCFG")
+4            |	4	    |   Length of table (in bytes)
+8            |	1	    |   Revision (1)
+9            |	1	    |   Checksum (sum of all bytes in table & 0xFF = 0)
+10           |	6	    |   OEM ID (same meaning as other ACPI tables)
+16           |	8	    |   OEM table ID (manufacturer model ID)
+24           |	4	    |   OEM Revision (same meaning as other ACPI tables)
+28           |	4	    |   Creator ID (same meaning as other ACPI tables)
+32           |	4	    |   Creator Revision (same meaning as other ACPI tables)
+36           |	8	    |   Reserved
+44 + (16 * n)|	16	    |   Configuration space base address allocation structures. Each structure uses the following format:
+{
+    Offset	|Length	|Description
+    0	    |8	    |Base address of enhanced configuration mechanism
+    8	    |2	    |PCI Segment Group Number
+    10	    |1	    |Start PCI bus number decoded by this host bridge
+    11	    |1	    |End PCI bus number decoded by this host bridge
+    12	    |4	    |Reserved
+}
+
+
+Physical_Address = MMIO_Starting_Physical_Address + ((Bus) << 20 | Device << 15 | Function << 12);
+(((bus * 256) + (slot * 8) + func) * 4096) + offs;
+((pcie_ecam[bus][slot][func] * 4096) + offs);
+
+
+
+
+
+
+||||||PCI Configuration Space||||||
+
+Bit 31	  |Bits 30-24	|Bits 23-16	    |Bits 15-11	    |Bits 10-8	        |Bits 7-0
+Enable Bit|Reserved	    |Bus Number	    |Device Number	|Function Number	|Register Offset1
+(Register Offset has to point to consecutive DWORDs, ie. bits 1:0 are always 0b00. They are still part of the Register Offset.)
+(CONFIG_ADDRESS specifies the configuration address that is required to be accesses, 
+    while accesses to CONFIG_DATA will actually generate the configuration access and will transfer the data to or from the CONFIG_DATA register.)
+
+PCI Device Structure:
+    The PCI Specification defines the organization of the 256-byte Configuration Space registers and imposes a specific template for the space.
+    Figures 2 & 3 show the layout of the 256-byte Configuration space.
+    All PCI compliant devices must support the Vendor ID, Device ID, Command and Status, Revision ID, Class Code and Header Type fields.
+    Implementation of the other registers is optional, depending upon the devices functionality.
+    
+Register	|Offset	    |Bits 31-24     Bits 23-16	    |Bits 15-8	    |Bits 7-0
+0x0	        |0x0	    |Device ID	    |               |Vendor ID
+0x1	        |0x4	    |Status	        |               |Command
+0x2	        |0x8	    |Class code	    |Subclass	    |Prog IF	    |Revision ID
+0x3	        |0xC	    |BIST	        |Header type	|Latency Timer	|Cache Line Size
+
+    Device ID: Identifies the particular device.
+        Where valid IDs are allocated by the vendor.
+        |Bits 11-15	|Bit 10	            |Bit 9	                    |Bit 8	                    |Bit 7	    |Bit 6	                |Bit 5	            |Bit 4	                            |Bit 3	        |Bit 2      |Bit 1	        |Bit 0
+        |Reserved	|Interrupt Disable	|Fast Back-to-Back Enable	|SERR# Enable	            |Reserved	|Parity Error Response	|VGA Palette Snoop	|Memory Write and Invalidate Enable	|Special Cycles	|Bus Master	|Memory Space	|I/O Space
+                    |RW	                |RO	                        |RW	                        |RO	        |RW	                    |RO	                |RO	                                |RO	            |RW	        |RW	            |RW
+			Interrupt Disable - If set to 1 the assertion of the devices INTx# signal is disabled; otherwise, assertion of the signal is enabled.
+			Fast Back-Back Enable - If set to 1 indicates a device is allowed to generate fast back-to-back transactions; otherwise, fast back-to-back transactions are only allowed to the same agent.
+			SERR# Enable - If set to 1 the SERR# driver is enabled; otherwise, the driver is disabled.
+			Bit 7 - As of revision 3.0 of the PCI local bus specification this bit is hardwired to 0.
+				In earlier versions of the specification this bit was used by devices and may have been hardwired to 0, 1, or implemented as a read/write bit.
+			Parity Error Response - If set to 1 the device will take its normal action when a parity error is detected; otherwise, when an error is detected, the device will set bit 15 of the Status register (Detected Parity Error Status Bit), but will not assert the PERR# (Parity Error) pin and will continue operation as normal.
+			VGA Palette Snoop - If set to 1 the device does not respond to palette register writes and will snoop the data; otherwise, the device will treat palette write accesses like all other accesses.
+			Memory Write and Invalidate Enable - If set to 1 the device can generate the Memory Write and Invalidate command; otherwise, the Memory Write command must be used.
+			Special Cycles - If set to 1 the device can monitor Special Cycle operations; otherwise, the device will ignore them.
+			Bus Master - If set to 1 the device can behave as a bus master; otherwise, the device can not generate PCI accesses.
+			Memory Space - If set to 1 the device can respond to Memory Space accesses; otherwise, the device's response is disabled.
+			I/O Space - If set to 1 the device can respond to I/O Space accesses; otherwise, the device's response is disabled.
+			If the kernel configures the BARs of the devices, the kernel also have to enable bits 0 and 1 for it to activate.
+
+
+    Vendor ID: Identifies the manufacturer of the device.
+        Where valid IDs are allocated by PCI-SIG (the list is here) to ensure uniqueness and 0xFFFF is an invalid value that will be returned on read accesses to Configuration Space registers of non-existent devices.
+    
+	
+	Status: A register used to record status information for PCI bus related events.
+        Bit 15	                |Bit 14	                |Bit 13	                |Bit 12	                |Bit 11	                |Bits 9-10	    |Bit 8	                    |Bit 7	                    |Bit 6		|Bit 5			|Bit 4				|Bit 3				|Bits 0-2
+        Detected Parity Error	|Signaled System Error	|Received Master Abort	|Received Target Abort	|Signaled Target Abort	|DEVSEL Timing	|Master Data Parity Error	|Fast Back-to-Back Capable	|Reserved	|66 MHz Capable	|Capabilities List	|Interrupt Status	Reserved
+        RW1C	                |RW1C	                |RW1C	                |RW1C	                |RW1C	                |RO	            |RW1C	                    |RO	                        |RO			|RO				|RO					|RO	
+            Detected Parity Error - This bit will be set to 1 whenever the device detects a parity error, even if parity error handling is disabled.
+            Signaled System Error - This bit will be set to 1 whenever the device asserts SERR#.
+            Received Master Abort - This bit will be set to 1, by a master device, whenever its transaction (except for Special Cycle transactions) is terminated with Master-Abort.
+            Received Target Abort - This bit will be set to 1, by a master device, whenever its transaction is terminated with Target-Abort.
+            Signaled Target Abort - This bit will be set to 1 whenever a target device terminates a transaction with Target-Abort.
+            DEVSEL Timing - Read only bits that represent the slowest time that a device will assert DEVSEL# for any bus command except Configuration Space read and writes. Where a value of 0x0 represents fast timing, a value of 0x1 represents medium timing, and a value of 0x2 represents slow timing.
+            Master Data Parity Error - This bit is only set when the following conditions are met. The bus agent asserted PERR# on a read or observed an assertion of PERR# on a write, the agent setting the bit acted as the bus master for the operation in which the error occurred, and bit 6 of the Command register (Parity Error Response bit) is set to 1.
+            Fast Back-to-Back Capable - If set to 1 the device can accept fast back-to-back transactions that are not from the same agent; otherwise, transactions can only be accepted from the same agent.
+            Bit 6 - As of revision 3.0 of the PCI Local Bus specification this bit is reserved. In revision 2.1 of the specification this bit was used to indicate whether or not a device supported User Definable Features.
+            66 MHz Capable - If set to 1 the device is capable of running at 66 MHz; otherwise, the device runs at 33 MHz.
+            Capabilities List - If set to 1 the device implements the pointer for a New Capabilities Linked list at offset 0x34; otherwise, the linked list is not available.
+            Interrupt Status - Represents the state of the device's INTx# signal. If set to 1 and bit 10 of the Command register (Interrupt Disable bit) is set to 0 the signal will be asserted; otherwise, the signal will be ignored.
+	
+	Command: Provides control over a device's ability to generate and respond to PCI cycles.
+        Where the only functionality guaranteed to be supported by all devices is, when a 0 is written to this register, the device is disconnected from the PCI bus for all accesses except Configuration Space access.
+    
+	
+	Class Code: A read-only register that specifies the type of function the device performs.
+    
+	
+	Subclass: A read-only register that specifies the specific function the device performs.
+    
+	
+	Prog IF(Programming Interface Byte): A read-only register that specifies a register-level programming interface the device has, if it has any at all.
+    
+	
+	Revision ID: Specifies a revision identifier for a particular device. Where valid IDs are allocated by the vendor.
+    
+	
+	BIST: Represents that status and allows control of a devices BIST (built-in self test).
+    
+	
+	Header Type: Identifies the layout of the rest of the header beginning at byte 0x10 of the header.
+        If bit 7 of this register is set, the device has multiple functions; otherwise, it is a single function device.
+			Header type 0x0:
+				Register	|Offset	|Bits 31-24	|Bits 23-16		|Bits 15-8		|Bits 7-0
+				0x0			|0x0	|Device ID	|				|Vendor ID		|
+				0x1			|0x4	|Status		|Command		|				|
+				0x2			|0x8	|Class code	|Subclass		|Prog IF		|Revision ID
+				0x3			|0xC	|BIST		|Header type	|Latency Timer	|Cache Line Size
+				0x4			|0x10	|Base address #0 (BAR0)		|
+				0x5			|0x14	|Base address #1 (BAR1)		|
+				0x6			|0x18	|Base address #2 (BAR2)		|
+				0x7			|0x1C	|Base address #3 (BAR3)		|
+				0x8			|0x20	|Base address #4 (BAR4)		|
+				0x9			|0x24	|Base address #5 (BAR5)		|
+				0xA			|0x28	|Cardbus CIS Pointer		|
+				0xB			|0x2C	|Subsystem ID				|Subsystem Vendor ID
+				0xC			|0x30	|Expansion ROM base address
+				0xD			|0x34	|Reserved					|				|Capabilities Pointer
+				0xE			|0x38	|Reserved
+				0xF			|0x3C	|Max latency|Min Grant		|Interrupt PIN	|Interrupt Line
+				
+				The following field descriptions apply if the Header Type is 0x0:
+					CardBus CIS Pointer: Points to the Card Information Structure and is used by devices that share silicon between CardBus and PCI.
+					Interrupt Line: Specifies which input of the system interrupt controllers the device's interrupt pin is connected to and is implemented by any device that makes use of an interrupt pin. For the x86 architecture this register corresponds to the PIC IRQ numbers 0-15 (and not I/O APIC IRQ numbers) and a value of 0xFF defines no connection.
+					Interrupt Pin: Specifies which interrupt pin the device uses. Where a value of 0x1 is INTA#, 0x2 is INTB#, 0x3 is INTC#, 0x4 is INTD#, and 0x0 means the device does not use an interrupt pin.
+					Max Latency: A read-only register that specifies how often the device needs access to the PCI bus (in 1/4 microsecond units).
+					Min Grant: A read-only register that specifies the burst period length, in 1/4 microsecond units, that the device needs (assuming a 33 MHz clock rate).
+					Capabilities Pointer: Points (i.e. an offset into this function's configuration space) to a linked list of new capabilities implemented by the device. Used if bit 4 of the status register (Capabilities List bit) is set to 1. The bottom two bits are reserved and should be masked before the Pointer is used to access the Configuration Space.
+			
+
+			Header Type 0x1 (PCI-to-PCI bridge)
+				This table is applicable if the Header Type is 0x1 (PCI-to-PCI bridge):
+
+						Register	|Offset	|Bits 31-24				|Bits 23-16				|Bits 15-8				|Bits 7-0
+						0x0			|0x0	|Device ID										|Vendor ID
+						0x1			|0x4	|Status											|Command
+						0x2			|0x8	|Class code				|Subclass				|Prog IF				|Revision ID
+						0x3			|0xC	|BIST					|Header type			|Latency Timer			|Cache Line Size
+						0x4			|0x10	|Base address #0 (BAR0)
+						0x5			|0x14	|Base address #1 (BAR1)
+						0x6			|0x18	|Secondary Latency Timer|Subordinate Bus Number|Secondary Bus Number	|Primary Bus Number
+						0x7			|0x1C	|Secondary Status								|I/O Limit				|I/O Base
+						0x8			|0x20	|Memory Limit									|Memory Base
+						0x9			|0x24	|Prefetchable Memory Limit						|Prefetchable Memory Base
+						0xA			|0x28	|Prefetchable Base Upper 32 Bits
+						0xB			|0x2C	|Prefetchable Limit Upper 32 Bits
+						0xC			|0x30	|I/O Limit Upper 16 Bits						|I/O Base Upper 16 Bits
+						0xD			|0x34	|Reserved																|Capability Pointer
+						0xE			|0x38	|Expansion ROM base address
+						0xF			|0x3C	|Bridge Control									|Interrupt PIN			|Interrupt Line
+
+						Here is the layout of the Header Type register:
+							Bit 7	|Bits 6-0
+							MF		|Header Type
+								MF - If MF = 1 Then this device has multiple functions.
+								Header Type - 0x0 Standard Header - 0x1 PCI-to-PCI Bridge - 0x2 CardBus Bridge
+							
+							BIST Register
+							Here is the layout of the BIST register:
+								Bit 7			|Bit 6			|Bits 4-5	|Bits 0-3
+								BIST Capable	|Start BIST		|Reserved	|Completion Code
+									BIST Capable - Will return 1 the device supports BIST.
+									Start BIST - When set to 1 the BIST is invoked. This bit is reset when BIST completes. If BIST does not complete after 2 seconds the device should be failed by system software.
+									Completion Code - Will return 0, after BIST execution, if the test completed successfully.
+									Header Type 0x2 (PCI-to-CardBus bridge)
+									This table is applicable if the Header Type is 0x2 (PCI-to-CardBus bridge)
+
+
+				Header Type 0x2 (PCI-to-CardBus bridge):
+				Register	|Offset		|Bits 31-24		|Bits 23-16		|Bits 15-8		|Bits 7-0
+				0x0	0x0	Device ID	Vendor ID
+				0x1	0x4	Status	Command
+				0x2	0x8	Class code	Subclass	Prog IF	Revision ID
+				0x3	0xC	BIST	Header type	Latency Timer	Cache Line Size
+				0x4	0x10	CardBus Socket/ExCa base address
+				0x5	0x14	Secondary status	Reserved	Offset of capabilities list
+				0x6	0x18	CardBus latency timer	Subordinate bus number	CardBus bus number	PCI bus number
+				0x7	0x1C	Memory Base Address 0
+				0x8	0x20	Memory Limit 0
+				0x9	0x24	Memory Base Address 1
+				0xA	0x28	Memory Limit 1
+				0xB	0x2C	I/O Base Address 0
+				0xC	0x30	I/O Limit 0
+				0xD	0x34	I/O Base Address 1
+				0xE	0x38	I/O Limit 1
+				0xF	0x3C	Bridge Control	Interrupt PIN	Interrupt Line
+				0x10	0x40	Subsystem Vendor ID	Subsystem Device ID
+				0x11	0x44	16-bit PC Card legacy mode base address
+
+    Types:
+        0x0: a general device
+        0x1: a PCI-to-PCI bridge
+        0x2: a PCI-to-CardBus bridge.
+    Latency Timer: Specifies the latency timer in units of PCI bus clocks.
+    Cache Line Size: Specifies the system cache line size in 32-bit units.
+        A device can limit the number of cacheline sizes it can support, if a unsupported value is written to this field, the device will behave as if a value of 0 was written.

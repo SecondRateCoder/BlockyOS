@@ -2,6 +2,7 @@
     "makefile.configureOnOpen": false,
     "files.associations": {
         "*.gitignore": "c",
-        "memtypes.h": "c"
+        "memtypes.h": "c",
+        "publics.h": "c"
     }
 }
