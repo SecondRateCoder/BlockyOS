@@ -56,3 +56,26 @@ bool compare_array(uint8_t *array1, size_t size, uint8_t *array2, size_t size2){
     }
     return true;
 }
+
+uint8_t *hash(const uint8_t *val, size_t length){
+    // This is a simple hash function that uses the FNV-1a algorithm.
+    // It is not cryptographically secure but is suitable for hash tables.
+    uint32_t hash = 2166136261u;
+    for (size_t i = 0; i < length; i++) {
+        hash ^= val[i];
+        hash *= 16777619;
+}
+    uint8_t *result = (uint8_t *)malloc(sizeof(uint32_t));
+    if (result) {encode_uint32(result, hash);}
+    return result;
+}
+
+/*
+function hash(string, a, num_buckets):
+    hash = 0
+    string_len = length(string)
+    for i = 0, 1, ..., string_len:
+        hash += (a ** (string_len - (i+1))) * char_code(string[i])
+    hash = hash % num_buckets
+    return hash
+*/
