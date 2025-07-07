@@ -4,6 +4,7 @@
         "*.gitignore": "c",
         "memtypes.h": "c",
         "publics.h": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "stdint.h": "c"
     }
 }

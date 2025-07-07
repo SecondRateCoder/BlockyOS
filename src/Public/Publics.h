@@ -1,6 +1,5 @@
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
+#include <src/Public/stdint.h>
+#include <src/Public/stdbool.h>
 
 size_t decode_size_t(const uint8_t *array, const int Offset);
 int decode_int(const uint8_t *array, size_t Offset);

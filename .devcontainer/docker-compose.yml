@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  qemu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    privileged: true
+    environment:
+      - DISPLAY=:1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    ports:
+      - "6080:80"
+    tty: true
+  qemu_2:
+    image: qemux/qemu
+    container_name: qemu_2
+    environment:
+      BOOT: "alpine"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+    volumes:
+      - ./qemu:/storage
+    restart: always
+    stop_grace_period: 2m
