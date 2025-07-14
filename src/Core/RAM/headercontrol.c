@@ -1,11 +1,7 @@
-#include "./Source/Core-OS/RAM/memtypes.h"
+#include "./src/Core/RAM/memtypes.h"
+#include <./src/Core/General.h>
 
 
-size_t header_encode(uint8_t *array, hcontext_t h){
-    context_encode(array, h);
-	memcpy_unsafe(array, context_size, (uint8_t *)h.addr, h.size);
-    return context_size + h.size;
-}
 //Stores in the order:
 //    ID: ProcessID; ID, addr, size, hflags_t: IsProcess; IsThread; IsKernel; IsPrivate.
 size_t context_encode(uint8_t *array, const hcontext_t h){
@@ -24,7 +20,7 @@ size_t context_encode(uint8_t *array, const hcontext_t h){
 	Offset += sizeof(size_t);
 
 	//booleans
-	array[Offset] = h.Checks;
+	array[Offset] = h.checks;
 	++Offset;
 	array[Offset] = h.flags.IsProcess;
 	++Offset;
@@ -49,9 +45,9 @@ void headerMeta_store(const hcontext_t H){
 void headerMeta_swrite(uint8_t *data, ID_t ID, hpeek_t peeker){
 	size_t temp = RAMMeta;
 	while(temp < _ram_end){
-		if((compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID), ID.HeaderID) &&
-		compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID) == ID.ProcessID)) || ID.ProcessID == KERNEL_ID){
-			headerMeta_write(temp, peeker);
+		if((compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID), ID.HeaderID, IDSize) &&
+		compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID), ID.ProcessID, IDSize)) || ID.ProcessID == KERNEL_ID){
+			headerMeta_write(data, peeker, temp);
 		}
 		temp+=context_size;
 	}
@@ -88,9 +84,6 @@ void headerMeta_write(uint8_t *data, hpeek_t peeker, size_t maddr){
 		
 		case HContextPeekerAttr_IsStream:
 			memcpy_unsafe(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 4, data, 1);
-
-		case HContextPeekerAttr_IsStream:
-			memcpy_unsafe(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 5, data, CONTEXTEXTRAS_SIZE);
 		default: return INVALID_ADDR;
 	}
 }
@@ -98,8 +91,8 @@ void headerMeta_write(uint8_t *data, hpeek_t peeker, size_t maddr){
 uint8_t *headerpeeksearch_unsafe(ID_t ID, hpeek_t peeker){
 	size_t temp = RAMMeta;
 	while(temp < _ram_end){
-		if((compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID), ID.HeaderID) &&
-		compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID), ID.ProcessID)) || ID.ProcessID == KERNEL_ID){
+		if((compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID), ID.HeaderID, IDSize) &&
+		compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID), ID.ProcessID, IDSize)) || ID.ProcessID == KERNEL_ID){
 			return headerpeek_unsafe(temp, peeker);
 		}
 		temp+=context_size;
@@ -137,8 +130,6 @@ uint8_t *headerpeek_unsafe(size_t maddr, hpeek_t peeker){
 	
 		case HContextPeekerAttr_IsStream:
 			return slice_bytes(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 4, 1);
-		case HContextPeekerAttr_IsStream:
-			return slice_bytes(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 5, CONTEXTEXTRAS_SIZE);
 		default: return INVALID_ADDR;
 	
 	}
@@ -172,7 +163,7 @@ int headers_underprocess(uint8_t ProcessID[IDSize]){
 	size_t startFrom = RAMMeta;
 	int counter =0;
 	while(startFrom < _ram_length){
-		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), IDSize, ProcessID, IDSize) == true){++counter;}
+		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), ProcessID, IDSize) == true){++counter;}
 		startFrom += context_size;
 	}
 	return counter;
@@ -182,7 +173,7 @@ size_t memorysize_underprocess(uint8_t ProcessID[IDSize]){
 	size_t startFrom = RAMMeta;
 	int counter =0;
 	while(startFrom < _ram_length){
-		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), IDSize, ProcessID, IDSize) == true){
+		if(compare_array(headerpeek_unsafe(startFrom, HContextPeekerAttr_ProcessID), ProcessID, IDSize) == true){
 			counter += decode_size_t(headerpeek_unsafe(startFrom, HContextPeekerAttr_Size), 0);
 		}
 		startFrom += context_size;

@@ -1,4 +1,6 @@
-#include "./Source/Public/Publics.h"
+#include <./src/Public/Publics.h>
+#include <./src/Core/General.h>
+
 
 size_t decode_size_t(const uint8_t *array, const int Offset){
     size_t value = Offset;
@@ -32,30 +34,29 @@ uint32_t decode_uint32(const uint8_t *array) {
 
 size_t clamp_size_t(size_t lower, size_t upper, size_t value){return value > upper? upper : (value < lower? lower : value);}
 
-uint8_t encode_size_t(uint8_t *array, size_t value, size_t offset){
+void encode_size_t(uint8_t *array, size_t value, size_t offset){
     size_t i = 0;
     for (; i < sizeof(size_t); i++) {
         array[offset + i] = (uint8_t)((value >> (i * 8)) & 0xFF);
     }
-    return i;
+    return;
 }
-uint8_t encode_int(uint8_t *array, int value, size_t offset){
+void encode_int(uint8_t *array, int value, size_t offset){
     size_t i = 0;
     for (; i < sizeof(int); i++) {
         array[offset + i] = (uint8_t)((value >> (i * 8)) & 0xFF);
     }
-    return i;
+    return;
 }
-uint8_t encode_uint32(uint8_t array, const uint32_t value, size_t offset){
+void encode_uint32(uint8_t *array, const uint32_t value, size_t offset){
     for (int i = 0; i < 4; i++) {
-        array[Offset + i] = (uint8_t)((value >> (i*8)) && 0xFF);
+        array[offset + i] = (uint8_t)((value >> (i*8)) && 0xFF);
     }
-    return value;
+    return;
 }
 
 
-bool compare_array(uint8_t *array1, size_t size, uint8_t *array2, size_t size2){
-    if(size != size2){return false;}
+bool compare_array(uint8_t *array1, uint8_t *array2, size_t size2){
     int cc =0;
     while(cc < sizeof(array1)){
         if(array1[cc] != array2[cc]){return false;}
@@ -73,7 +74,7 @@ uint8_t *hash(const uint8_t *val, size_t length){
         hash *= 16777619;
 }
     uint8_t *result = (uint8_t *)malloc(sizeof(uint32_t));
-    if (result) {encode_uint32(result, hash);}
+    if (result) {encode_uint32(result, hash, 0);}
     return result;
 }
 
@@ -89,6 +90,7 @@ size_t strlen(char *string){
 }
 
 bool strcompare_l(char *str1, char *str2, size_t length){
+    size_t cc =0;
     while(cc < length){
 		if(str1[cc] != str2[cc]){return false;}
 		++cc;

@@ -1,4 +1,4 @@
-#include "./src/Core/memtypes.h"
+#include "./src/Core/RAM/memtypes.h"
 
 /*
 [0] The Device index that the Stream sources it's data from,

@@ -1,4 +1,4 @@
-#include "./Source/Core-OS/RAM/memtypes.h"
+#include "./src/Core/RAM/memtypes.h"
 
 void memcpy_unsafe(uint8_t *dest, const size_t offset, const uint8_t *src, const size_t n){
     size_t i =0;
@@ -31,10 +31,10 @@ uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length){
 }
 
 //Not robust rn but like I gues it is what it is ngl.
-uint8_t *define_hid(){return hash(encode_size_t(RAMmeta), sizeof(size_t));}
+uint8_t *define_hid(){size_t _t; hash(slice_bytes, sizeof(size_t));}
 
 uint8_t *define_pid(){
-    size_t temp = RAMmeta;
+    size_t temp = RAMMeta;
     uint32_t result =0;
     while(temp < _ram_end){
         if(headerpeek_unsafe(temp, HContextPeekerAttr_IsProcess) == true){

@@ -1,10 +1,10 @@
-#include "./src/Core/RAM/memtypes.h"
+#include "./src/Core/PLoader/Programs.h"
 
 signed int program_load(uint8_t *program, size_t size){
     size++;
     size_t temp = address_pointfree(0xFF, size);
     if(temp == INVALID_ADDR){return -1;}
-    headerMeta_store((header_t){
+    headerMeta_store((hcontext_t){
         .ID = (ID_t){
             .ProcessID = define_pid(),
             .HeaderID = 0x00
@@ -26,12 +26,18 @@ signed int program_load(uint8_t *program, size_t size){
 
 void program_run(ID_t ID){
     size_t addr = headerpeeksearch_unsafe(ID, HContextPeekerAttr_Address);
-    asm(
-        "jmp *%0":
-        "r(addr)":
-        "memory", "cc"
-
+    asm volatile ( // Added 'volatile'
+    "jmp *%0"
+    : // No output operands for jmp
+    : "r"(addr) // Input: addr in a general-purpose register
+    : "memory", "cc" // Clobbers: potentially all memory and condition codes
     );
+    // asm(
+    //     "jmp *%0":
+    //     "r(addr)":
+    //     "memory", "cc"
+
+    // );
 }
 /*
 

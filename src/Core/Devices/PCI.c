@@ -1,4 +1,5 @@
 #include "./src/Core/Devices/PCI.h"
+#include "./src/Core/Publics/General.h"
 
 uint32_t pciconfig_read32(device_t device, uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset){
     uint32_t address = (1U << 31)
@@ -84,7 +85,6 @@ uint16_t pci_checkvendor(uint8_t bus, uint8_t slot){
        device = pciconfig_readword(bus, slot, 0, 2);
     } return (vendor);
 }
-#pragma endregion
 
 // Function to calculate checksum
 uint8_t calculate_checksum(const void* ptr, size_t length){
@@ -100,14 +100,14 @@ uint8_t calculate_checksum(const void* ptr, size_t length){
 RSDPDescriptor* find_rsdp_bios(){
     const char* rsdp_signature = "RSD PTR ";
     RSDPDescriptor* rsdp = NULL;
-
+    
     // 1. Search in EBDA
     // In real mode/early protected mode, you'd access 0x40E directly.
     // This is highly platform-specific and requires careful memory mapping if in protected mode.
     // For simplicity, let's assume direct physical access (DANGEROUS for real OS without mapping)
     uint16_t ebda_segment_ptr = *(volatile uint16_t*)0x40E;
     uint32_t ebda_start_address = (uint32_t)ebda_segment_ptr << 4; // Segment * 16
-
+    
     for (uint32_t addr = ebda_start_address; addr < ebda_start_address + 1024; addr += 16) {
         RSDPDescriptor* current_rsdp = (RSDPDescriptor*)addr; // Treat memory as RSDP structure
         if (memcmp(current_rsdp->Signature, rsdp_signature, 8) == 0) {
@@ -118,25 +118,6 @@ RSDPDescriptor* find_rsdp_bios(){
             // If ACPI 2.0+, also check extended checksum
             if (current_rsdp->Revision >= 2) {
                 // For ACPI 2.0, the length field is valid
-                uint32_t total_length = ((RSDPDescriptor_20*)current_rsdp)->Length;
-                if (calculate_checksum(current_rsdp, total_length) == 0) {
-                    return current_rsdp;
-                }
-            }
-        }
-    }
-
-    // 2. Search in BIOS ROM area (0xE0000 to 0xFFFFF)
-    for (uint32_t addr = 0xE0000; addr < 0x100000; addr += 16) { // 0x100000 is 1MB
-        RSDPDescriptor* current_rsdp = (RSDPDescriptor*)addr;
-        if (memcmp(current_rsdp->Signature, rsdp_signature, 8) == 0) {
-            // Check ACPI 1.0 checksum
-            if (calculate_checksum(current_rsdp, 20) == 0) {
-                return current_rsdp;
-            }
-            // If ACPI 2.0+, also check extended checksum
-            if (current_rsdp->Revision >= 2) {
-                // Need a separate struct for ACPI 2.0 RSDP to access 'Length'
                 typedef struct {
                     RSDPDescriptor v1_part;
                     uint32_t Length;
@@ -144,28 +125,53 @@ RSDPDescriptor* find_rsdp_bios(){
                     uint8_t  ExtendedChecksum;
                     uint8_t  Reserved[3];
                 } RSDPDescriptor_20;
-                uint32_t total_length = ((RSDPDescriptor_20*)current_rsdp)->Length;
-                if (calculate_checksum(current_rsdp, total_length) == 0) {
-                    return current_rsdp;
-                }
+                uint32_t total_length = ((RSDPDescriptor_20 *)current_rsdp)->Length;
+                if (calculate_checksum(current_rsdp, total_length) == 0) {return current_rsdp;}
             }
         }
     }
-
+    
+    // 2. Search in BIOS ROM area (0xE0000 to 0xFFFFF)
+    for (uint32_t addr = 0xE0000; addr < 0x100000; addr += 16) { // 0x100000 is 1MB
+        RSDPDescriptor* current_rsdp = (RSDPDescriptor*)addr;
+        if (memcmp(current_rsdp->Signature, rsdp_signature, 8) == 0) {
+            // Check ACPI 1.0 checksum
+            if (calculate_checksum(current_rsdp, 20) == 0) {return current_rsdp;}
+            // If ACPI 2.0+, also check extended checksum
+            if (current_rsdp->Revision >= 2) {
+                // Need a separate struct for ACPI 2.0 RSDP to access 'Length'
+                typedef struct RSDPDescriptor_20{
+                    RSDPDescriptor v1_part;
+                    uint32_t Length;
+                    uint64_t XsdtAddress;
+                    uint8_t  ExtendedChecksum;
+                    uint8_t  Reserved[3];
+                }RSDPDescriptor_20;
+                uint32_t total_length = ((RSDPDescriptor_20*)current_rsdp)->Length;
+                if (calculate_checksum(current_rsdp, total_length) == 0) {return current_rsdp;}
+            }
+        }
+    }
+    
     return NULL; // RSDP not found
 }
 
-void *findFACP(void *RootSDT){
-    RSDT *rsdt = (RSDT *) RootSDT;
-    int entries = (rsdt->h.Length - sizeof(rsdt->h)) / 4;
-
-    for (int i = 0; i < entries; i++){
-        ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
-        if (!strcompare_l(h->Signature, "FACP", 4)){
-            return (void *) h;
-        }
-    }
-
-    // No FACP found
-    return NULL;
+void *get_facp(void *rsdp){
+    rsdt_t *temp;
 }
+
+// void *findFACP(void *RootSDT){
+//     rsdt_t *rsdt = (RSDT *)RootSDT;
+//     int entries = (rsdt->h.Length - sizeof(rsdt->h)) / 4;
+
+//     for (int i = 0; i < entries; i++){
+    //         ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
+    //         if (!strcompare_l(h->Signature, "FACP", 4)){
+        //             return (void *) h;
+        //         }
+        //     }
+        
+        //     // No FACP found
+        //     return NULL;
+        // }
+#pragma endregion

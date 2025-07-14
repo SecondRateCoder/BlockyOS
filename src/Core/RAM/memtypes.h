@@ -1,25 +1,16 @@
-#include "./Source/Public/Publics.h"
-#include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
+#include <./src/Public/Publics.h>
 
 extern uintptr_t _ram_start, _ram_length, _heap_start, _heap_length;
 volatile size_t Pointer;
 
 volatile uint8_t *RAM;
 uint8_t *RAMMeta;
-#define IDSize 8
-#define _ram_end _ram_length + _ram_start
-#define context_size sizeof(bool)*4 + IDSize*2 + sizeof(size_t)*2
-#define metanumber_inblocks (_ram_length - *RAMMeta)/context_size
+
 #define ID_t _ID
 #define hcontext_t headercontext
 #define hflags_t headerflags
 #define hpeek_t HContextPeekerAttr
-#define INVALID_ADDR (size_t)-1
-#define CHECK_PROTECT 0xFF
-#define DEFAULTSTART 0xF1F1
-#define CONTEXTEXTRAS_SIZE 55
+
 
 //(2^120)-1 representable numbers.
 #define MAXINDEXERSIZE 15
@@ -59,9 +50,8 @@ uint8_t *define_hid();
 uint8_t *define_pid();
 
 
-size_t header_encode(uint8_t *array, header_t h);
-size_t context_encode(uint8_t *array, const header_t h);
-void headerMeta_store(const header_t H);
+size_t context_encode(uint8_t *array, const hcontext_t h);
+void headerMeta_store(const hcontext_t H);
 uint8_t *headerpeek_unsafe(size_t addrInMeta, hpeek_t peeker);
 uint8_t *headerpeeksearch_unsafe(ID_t ID, hpeek_t peeker);
 bool Metaaddress_validate(size_t maddr);

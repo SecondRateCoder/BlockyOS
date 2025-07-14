@@ -5,6 +5,9 @@
         "memtypes.h": "c",
         "publics.h": "c",
         "cstdint": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "stdbool.h": "c",
+        "general.h": "c",
+        "alltypes.h": "c"
     }
 }

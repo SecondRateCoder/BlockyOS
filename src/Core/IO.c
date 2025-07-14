@@ -1,3 +1,5 @@
+#include <./src/Core/General.h>
+
 void outl(uint16_t port, uint32_t value){
     asm(
         "outl %0, %1":

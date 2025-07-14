@@ -3,9 +3,13 @@
 A modular OS featuring to include some interesting features, <br/> It will include the features in **[Features](#Features:)**.
 
 ## <ins>Table of Contents</ins>:
-* [Features](#Features:)
-* [Features Explained](#features-explained)
-* [Concepts](#concepts)
+- [](#)
+- [BlockyOS](#blockyos)
+	- [Table of Contents:](#table-of-contents)
+	- [Features:](#features)
+		- [Features to be included:](#features-to-be-included)
+- [Features explained:](#features-explained)
+- [Concepts:](#concepts)
 
 ## <ins>Features:<ins>
 ### <ins>Features to be included:</ins>
@@ -27,21 +31,28 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
 		A Path executable must contain the signature "_start(uint8_t *args, size_t arglen)" function which will contain args.
 	- ### "goonrepo" Priviledge Raiser(a string Path to Locaton on Disk, int how many tries):
 		Goonrepo is a **NOT IMPLEMENTED!** Program that will raise a Program's Admin level.
-		- ### SphereOS:
-			Oh my gosh, Spheres?!?!?!!!
-			So blasphemous.
-			Use the **sphos** command with goonrepo for it to clear out RAM,
-			killing the OS,
-			causing the OS to crash.
-		- ### How does it work?
-			The Program defines a Stream,
-			The Buffer is zeroed,
-			It takes the returned Pointer and decrements the size_t address, it does this till it meets the starting point of the Stream object **A string Path and a Buffer.**
-			The Path is overidden to point to the OS's text(Code), the address is set to point back to the buffer,
-			The buffer reads from the grippy cli Executable,
-			goonrepo will override the grippy cli in RAM with the inputted Program's code.
-			**The Program's size will be capped to how much of the grippy cli has been loaded to RAM.**
-			**The cli may crash due to the execution suddenly changing, or being executed whilst being written to, goonrepo may repeat this instruction multiple times until the rewrite has function properly.**
+		- ### Arguments:
+			- ### SphereOS:
+				Oh my gosh, Spheres?!?!?!!!
+				So blasphemous.
+				Use the **sphos** command with goonrepo for it to clear out RAM,
+				killing the OS,
+				causing the OS to crash.
+			- ### How does it work?
+				**<ins>Option 1:</ins>**<br>
+				The Program defines a Stream,
+				The Buffer is zeroed,
+				It takes the returned Pointer and decrements the size_t address, it does this till it meets the starting point of the Stream object **A string Path and a Buffer.**
+				The Path is overidden to point to the OS's text(Code), the address is set to point back to the buffer,
+				The buffer reads from the grippy cli Executable,
+				goonrepo will override the grippy cli in RAM with the inputted Program's code.
+				**The Program's size will be capped to how much of the grippy cli has been loaded to RAM.**
+				**The cli may crash due to the execution suddenly changing, or being executed whilst being written to, goonrepo may repeat this instruction multiple times until the rewrite has function properly.**
+				<br><br><br>
+				**<ins>Option 2:</ins>**<br>
+				The 
+
+
 > [!NOTE]
 > Remember this cli, It is **NOT IMPLEMENTED!!**
 
@@ -72,6 +83,15 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
 <br><br><br>
 
 # <ins>Concepts:</ins>
+* ## Kernel Threads:
+	The OS comes with a pre-built, binary tree describing each function and it's dependencies.
+	This tree can be loaded directly into memory without parsing as it will be constructed from the OSses binaries.
+	This tree will define a config to use for isolating functions, this will be the core of spawning secure kernel threads, where the funcction itself will be isolated from the OS.
+	The OS will use this to spawn isolated threads that can be considered priviledged however will not beexpected to last, these threads will not be protected, they will be de-spawned if nor used in 10 [Process frames](#frames), the fathering Process/thread is informed of this.
+
+> [!NOTE]
+> I use the phrase "spawning bytes" to loosely describe the process of bytes being loaded to memory.
+	<br><br>
 * ## Headers:
 	Headers describe a data block and Context about the data stored there, this simplifies how data blocks are regarded and how they are accessed.
 	Headers are not directly stored in RAM, instead the Data is stored in RAM, with the Header's starting address and it's Context stored in RAM.

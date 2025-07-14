@@ -1,4 +1,4 @@
-#include "./src/Core/streams.h"
+#include "./src/Core/RAM/Streams/streams.h"
 
 
 stream_t stream_init(char *Path, size_t Length, int TargetDevice[2], bool args[3], size_t BufferMultiplier){

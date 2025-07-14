@@ -1,4 +1,4 @@
-#include "./src/Core/IO.h"
+#include "./src/Core/Publics/General.h"
 
 #define PCI_CONFIG_ADDRESS 0xCF8
 #define PCI_CONFIG_DATA    0xCFC
@@ -7,6 +7,13 @@
 #define PCI_STATUSOFFSET 0x06
 #define PCI_CONFIGSIZE 256
 #define PCIe_CONFIGSIZE 4*1024
+#define LENSOLVE8(h){(h.Length - sizeof(h))/8;}
+#define LENSOLVE4(h){(h.Length - sizeof(h))/4;}
+
+#define rsdt_t RSDT
+#define rsdtdesc_t RSDPDescriptor
+#define xdst_t XSDT
+#define pcih_t PCI_Header
 
 #define device_t Device
 #define pci_meta_t PCI_Header
@@ -33,7 +40,7 @@ typedef struct Device{
     */
 } Device;
 
-struct ACPISDTHeader {
+typedef struct ACPISDTHeader {
     char Signature[4];
     uint32_t Length;
     uint8_t Revision;
@@ -45,18 +52,18 @@ struct ACPISDTHeader {
     uint32_t CreatorRevision;
 };
 
-struct RSDT {
+typedef struct RSDT {
     struct ACPISDTHeader h;
-    uint32_t PointerToOtherSDT[(h.Length - sizeof(h)) / 4];
+    uint32_t *PointerToOtherSDT;
 };
-struct XSDT {
-  struct ACPISDTHeader h;
-  uint64_t PointerToOtherSDT[(h.Length - sizeof(h)) / 8];
+typedef struct XSDT {
+    struct ACPISDTHeader h;
+    uint64_t *PointerToOtherSDT;
 };
 
 #pragma region PCI Metadata
 #pragma pack(push, 1)
-typedef struct {
+typedef struct RSDPDescriptor{
     char     Signature[8];    // "RSD PTR "
     uint8_t  Checksum;
     char     OEMID[6];
