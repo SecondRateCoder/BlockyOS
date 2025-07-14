@@ -1,7 +1,7 @@
 #include "./src/Core/streams.h"
 
 
-stream_t stream_init(char *Path, size_t Length, uint8_t TargetDevice, bool args[3], size_t BufferMultiplier){
+stream_t stream_init(char *Path, size_t Length, int TargetDevice[2], bool args[3], size_t BufferMultiplier){
 	hcontext_t hc = (hcontext_t){
 		.ID = (ID_t){
 			.HeaderID = define_hid(),
@@ -25,7 +25,7 @@ stream_t stream_init(char *Path, size_t Length, uint8_t TargetDevice, bool args[
 	Path[Length] = NULL;
 	memcpy_unsafe(hc.Extras, hc.Extras[2], Path, Length);
 	hc.Extras[hc.Extras[2]+Length] = Path[Length];
-	hc.Extras[hc.Extras[2]+Length+1] /*= Will be habdshaked.*/;
+	hc.Extras[hc.Extras[2]+Length+1] /*= Will be handshaked.*/;
 }
 
 void stream_inc(ID_t ID){

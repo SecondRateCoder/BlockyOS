@@ -79,6 +79,65 @@ uint8_t *hash(const uint8_t *val, size_t length){
 
 bool is_set(uint8_t Item, uint8_t X){return (Item & (1U << (X > 7? 0: X))) ? 1 : 0;}
 
+size_t strlen(char *string){
+    size_t cc =0;
+    while(cc <  MAXSTR_LENGTH){
+        if(string[cc] == NULL){return cc;}
+        ++cc;
+    }
+    return MAXSTR_LENGTH;
+}
+
+bool strcompare_l(char *str1, char *str2, size_t length){
+    while(cc < length){
+		if(str1[cc] != str2[cc]){return false;}
+		++cc;
+	}
+	return true;
+}
+
+bool strcompare(char *str1, char *str2){
+    size_t siz1 = strlen(str1), cc =0;
+    if(siz1 != strlen(str2)){return false;}
+    strcompare_l(str1, str2, siz1);
+	return true;
+}
+
+bool strcompare_s(char *str1, char *str2, float benchmark){
+	size_t siz1 = strlen(str1), cc =0, compfloat =0;
+    if(siz1 != strlen(str2)){return false;}
+	const int counter  =1/siz1;
+    while(cc < siz1){
+		if(str1[cc] != str2[cc]){compfloat -= counter;}
+		else{compfloat += counter;}
+		++cc;
+	}
+	return true;
+}
+
+char *strslice(char *c, size_t newlen){
+    size_t cc =0;
+    char *str = alloca(newlen, KERNEL_ID);
+    while(cc < newlen){
+        c[cc] = str[cc];
+        ++cc;
+    }
+}
+
+int strslice_till(char *src, char *dest, char cond, size_t maxlen){
+    int cc =0;
+    while(cc < maxlen){
+        if(src[cc] == cond){
+            dest = strslice(src, cc);
+            return cc;
+        }
+        ++cc;
+    }
+    return cc;
+}
+
+bool is_num(char c){return (int)c>=(int)'0'&&(int)c<=(int)'9';}
+
 /*
 function hash(string, a, num_buckets):
     hash = 0

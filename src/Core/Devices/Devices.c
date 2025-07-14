@@ -1,0 +1,3 @@
+void link_device(int Device_config[2]){
+    return;
+}

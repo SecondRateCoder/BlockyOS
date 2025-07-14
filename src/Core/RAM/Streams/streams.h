@@ -17,3 +17,12 @@
 
 #define stream_t STREAM
 typedef uint8_t *STREAM;
+
+#define streamconfig_t stream_type
+typedef struct stream_type{
+    Input = 0x21,
+    Output = 0x22,
+    Video = 0x23,
+    Audio = 0x24,
+    File =0x25,
+}stream_type;

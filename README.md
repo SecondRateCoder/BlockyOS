@@ -16,6 +16,34 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
 <br><br><br><br>
 
 # Features explained:
+* ## **kernel protection:**
+	At set intervals a checksum is compiled from a Program's code,
+	for Kernel Programs this checksum validates that the Program has not been overwritten, such as by [goonrepo](#goonrepo-priviledge-raisera-string-path-to-locaton-on-disk-int-how-many-tries).
+* ## **"grippy" cli(Command Line Interface):**
+	- ### Enviroment variables:
+		These are short 30 char names that can be used to represent Executable Paths.
+		The [Path](./src/Public/Publics.h) struct's Path contains the whole Path.
+		A Path executable must contain the signature "_start(uint8_t *args, size_t arglen)" function which will contain args.
+	- ### "goonrepo" Priviledge Raiser(a string Path to Locaton on Disk, int how many tries):
+		Goonrepo is a **NOT IMPLEMENTED!** Program that will raise a Program's Admin level.
+		- ### SphereOS:
+			Oh my gosh, Spheres?!?!?!!!
+			So blasphemous.
+			Use the **sphos** command with goonrepo for it to clear out RAM,
+			killing the OS,
+			causing the OS to crash.
+		- ### How does it work?
+			The Program defines a Stream,
+			The Buffer is zeroed,
+			It takes the returned Pointer and decrements the size_t address, it does this till it meets the starting point of the Stream object **A string Path and a Buffer.**
+			The Path is overidden to point to the OS's text(Code), the address is set to point back to the buffer,
+			The buffer reads from the grippy cli Executable,
+			goonrepo will override the grippy cli in RAM with the inputted Program's code.
+			**The Program's size will be capped to how much of the grippy cli has been loaded to RAM.**
+			**The cli may crash due to the execution suddenly changing, or being executed whilst being written to, goonrepo may repeat this instruction multiple times until the rewrite has function properly.**
+> [!NOTE]
+> Remember this cli, It is **NOT IMPLEMENTED!!**
+
 * ## **Memory Manager:**
 	- ### Static allocation:
 		This will automatically allocate Memory by a prediction of how much Memory a program or a function will use.
@@ -38,7 +66,7 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
 		* Explicit Execution requires the Psarameters to be inputted as arguments when the function is being called.
 		* Implicit Execution does not require the Parameter to be inputted as arguments, the arguments can be loaded into a specific Memory Adress or stored in a variable with both the expected Type and a double dollar sign ($$)  before the name.
 		> [!NOTE] 
-		> See [Exception List](./Source/Public/FunctionInterruptHashes.csv).
+		> See [Exception List](./src/Public/FunctionInterruptHashes.csv).
 
 <br><br><br>
 
@@ -71,6 +99,3 @@ A modular OS featuring to include some interesting features, <br/> It will inclu
 <br><br><br>
 
 * # <ins>Changes:</ins>
-	* ## Part rework of [RAM](./Source/Core-OS/RAM/):
-		This reword will include how headers are save in RAM, the Data will is saved directly to RAM, 
-		and the Context being saved in [Header Metadata](./Source/Core-OS/RAM/header_control.c).

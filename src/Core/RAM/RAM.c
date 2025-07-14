@@ -8,6 +8,10 @@ void *alloca(size_t Size, ID_t ProcessID){
 	}
 	else{memcpy_unsafe(RAM, freeaddr, (uint8_t *){0}, Size);}
 }
+
+bool is_alloca(void *data){
+	
+}
 #pragma endregion
 
 #pragma region De-Alloca
