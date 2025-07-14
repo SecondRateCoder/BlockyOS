@@ -1,20 +1,20 @@
 #include "./Source/Core-OS/RAM/memtypes.h"
 
 
-size_t header_encode(uint8_t *array, header_t h){
-    context_encode(array, h.context);
-	memcpy_unsafe(array, context_size, h.addr, h.size);
+size_t header_encode(uint8_t *array, hcontext_t h){
+    context_encode(array, h);
+	memcpy_unsafe(array, context_size, (uint8_t *)h.addr, h.size);
     return context_size + h.size;
 }
 //Stores in the order:
 //    ID: ProcessID; ID, addr, size, hflags_t: IsProcess; IsThread; IsKernel; IsPrivate.
-size_t context_encode(uint8_t *array, const header_t h){
+size_t context_encode(uint8_t *array, const hcontext_t h){
 	size_t Offset =0;
 	//ProgramID encoded.
-	memcpy_unsafe(array, 0, h.context.ID.ProcessID, IDSize);
+	memcpy_unsafe(array, 0, h.ID.ProcessID, IDSize);
 	Offset += IDSize;
 	//HeaderID encoded.
-	memcpy_unsafe(array, Offset, h.context.ID.HeaderID, IDSize);
+	memcpy_unsafe(array, Offset, h.ID.HeaderID, IDSize);
 	Offset += IDSize;
 	//Address encoded.
 	encode_size_t(array, h.addr, Offset);
@@ -24,23 +24,34 @@ size_t context_encode(uint8_t *array, const header_t h){
 	Offset += sizeof(size_t);
 
 	//booleans
-	memcpy_unsafe(array, Offset, h.context.checks, 1);
+	array[Offset] = h.Checks;
 	++Offset;
-	memcpy_unsafe(array, Offset, h.context.flags.IsProcess, 1);
+	array[Offset] = h.flags.IsProcess;
 	++Offset;
-	memcpy_unsafe(array, Offset, h.context.flags.IsThread, 1);
+	array[Offset] = h.flags.IsThread;
 	++Offset;
-	memcpy_unsafe(array, Offset, h.context.flags.IsKernel, 1);
+	array[Offset] = h.flags.IsKernel;
 	++Offset;
-	memcpy_unsafe(array, Offset, h.context.flags.IsPrivate, 1);
+	array[Offset] = h.flags.IsPrivate;
     return context_size;
 }
 
-void headerMeta_store(const header_t H){
+void headerMeta_store(const hcontext_t H){
     uint8_t context_encoded[context_size];
     context_encode(context_encoded, H);
     RAMMeta-=context_size;
-    memcpy_unsafe(RAMMeta, 0, context_encoded, context_size);
+    memcpy_unsafe((uint8_t *)RAMMeta, 0, context_encoded, context_size);
+}
+
+uint8_t *headerpeeksearch_unsafe(ID_t ID, hpeek_t peeker){
+	size_t temp = RAMMeta;
+	while(temp < _ram_end){
+		if(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID) == ID.HeaderID &&
+		headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID) == ID.ProcessID){
+			return headerpeek_unsafe(temp, peeker);
+		}
+		temp+=context_size;
+	}
 }
 
 uint8_t *headerpeek_unsafe(size_t maddr, hpeek_t peeker){
@@ -129,20 +140,14 @@ size_t address_pointfree(size_t startfrom, size_t concurrent_size) {
             size_t region_addr = decode_size_t(addr_ptr, 0);
             size_t region_size = decode_size_t(size_ptr, 0);
             // Check if the gap before this region is big enough
-            if (region_addr >= prev_end && (region_addr - prev_end) >= concurrent_size) {
-                return prev_end;
-            }
+            if (region_addr >= prev_end && (region_addr - prev_end) >= concurrent_size){return prev_end;}
             // Move prev_end to the end of this region if it's further
-            if (region_addr + region_size > prev_end) {
-				prev_end = region_addr + region_size;
-            }
+            if (region_addr + region_size > prev_end){prev_end = region_addr + region_size;}
         }
         cc += context_size;
     }
     // Check for space after the last region
-    if (_ram_end > prev_end && (_ram_end - prev_end) >= concurrent_size) {
-		return prev_end;
-    }
+    if (_ram_end > prev_end && (_ram_end - prev_end) >= concurrent_size) {return prev_end;}
     return (size_t)-1; // No free space found
 }
 /*

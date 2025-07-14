@@ -46,6 +46,13 @@ uint8_t encode_int(uint8_t *array, int value, size_t offset){
     }
     return i;
 }
+uint8_t encode_uint32(uint8_t array, const uint32_t value, size_t offset){
+    for (int i = 0; i < 4; i++) {
+        array[Offset + i] = (uint8_t)((value >> (i*8)) && 0xFF);
+    }
+    return value;
+}
+
 
 bool compare_array(uint8_t *array1, size_t size, uint8_t *array2, size_t size2){
     if(size != size2){return false;}

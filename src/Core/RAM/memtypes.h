@@ -17,16 +17,12 @@ uint8_t *RAMMeta;
 #define hcontext_t headercontext
 #define hflags_t headerflags
 #define hpeek_t HContextPeekerAttr
-
-#pragma pack(1)
-typedef struct header{
-    size_t size, *addr;
-    hcontext_t context;
-}header;
-#pragma pop()
+#define INVALID_ADDR (size_t)-1
+#define CHECK_PROTECT 0xFF
 
 typedef struct headercontext{
     ID_t ID;
+    size_t size, addr;
     uint8_t checks;
     hflags_t flags;
 }headercontext;
@@ -38,8 +34,8 @@ typedef struct headerflags{
 }headerflags;
 
 typedef enum HContextPeekerAttr{
-    HContextPeekerAttr_HeaderID =0xF1,
-    HContextPeekerAttr_ProcessID =0xF2,
+    HContextPeekerAttr_ProcessID =0xF1,
+    HContextPeekerAttr_HeaderID =0xF2,
     HContextPeekerAttr_Address =0xF3,
     HContextPeekerAttr_Size =0xF4,
     HContextPeekerAttr_IsProcess =0xF5,
@@ -56,6 +52,7 @@ size_t header_encode(uint8_t *array, header_t h);
 size_t context_encode(uint8_t *array, const header_t h);
 void headerMeta_store(const header_t H);
 uint8_t *headerpeek_unsafe(size_t addrInMeta, hpeek_t peeker);
+uint8_t *headerpeeksearch_unsafe(ID_t ID, hpeek_t peeker);
 bool Metaaddress_validate(size_t maddr);
 bool address_validate(size_t addr);
 bool space_validate(size_t address, size_t concurrent_size);
@@ -63,3 +60,5 @@ int headers_underprocess(uint8_t ProcessID[IDSize]);
 size_t memorysize_underprocess(uint8_t ProcessID[IDSize]);
 size_t address_pointfree(size_t startfrom, size_t concurrent_size);
 
+uint8_t *define_hid();
+uint8_t *define_pid();

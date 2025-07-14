@@ -27,6 +27,22 @@ uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length){
     return result;
 }
 
+//Not robust rn but like I gues it is what it is ngl.
+uint8_t *define_hid(){return hash(encode_size_t(RAMmeta), sizeof(size_t));}
+
+uint8_t *define_pid(){
+    size_t temp = RAMmeta;
+    uint32_t result =0;
+    while(temp < _ram_end){
+        if(headerpeek_unsafe(temp, HContextPeekerAttr_IsProcess) == true){
+            result += decode_uint32(slice_bytes(RAM, temp, IDSize));
+        }
+        temp += context_size;
+    }
+    uint8_t array[sizeof(uint32_t)];
+    encode_uint32(array, result, 0);
+    return array;
+}
 /*
 bool space_validate(size_t address, size_t concurrent_size){
     size_t cc =0;
