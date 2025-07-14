@@ -33,6 +33,10 @@ size_t context_encode(uint8_t *array, const hcontext_t h){
 	array[Offset] = h.flags.IsKernel;
 	++Offset;
 	array[Offset] = h.flags.IsPrivate;
+	++Offset;
+	array[Offset] = h.flags.IsStream;
+	++Offset;
+	memcpy_unsafe(array, Offset, h.Extras, CONTEXTEXTRAS_SIZE);
     return context_size;
 }
 
@@ -41,6 +45,54 @@ void headerMeta_store(const hcontext_t H){
     context_encode(context_encoded, H);
     RAMMeta-=context_size;
     memcpy_unsafe((uint8_t *)RAMMeta, 0, context_encoded, context_size);
+}
+void headerMeta_swrite(uint8_t *data, ID_t ID, hpeek_t peeker){
+	size_t temp = RAMMeta;
+	while(temp < _ram_end){
+		if(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID) == ID.HeaderID &&
+		headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID) == ID.ProcessID){
+			headerMeta_write(temp, peeker);
+		}
+		temp+=context_size;
+	}
+}
+
+void headerMeta_write(uint8_t *data, hpeek_t peeker, size_t maddr){
+	size_t temp = RAMMeta;
+	if(maddr < temp || maddr >= _ram_length){return NULL;}
+    if(!Metaaddress_validate(maddr)){return NULL;}
+	switch(peeker){
+		case HContextPeekerAttr_ProcessID:
+			memcpy_unsafe(RAM, temp + maddr, data, 8);
+		
+		case HContextPeekerAttr_HeaderID:
+			memcpy_unsafe(RAM, temp + maddr + IDSize, data, 8);
+
+		case HContextPeekerAttr_Address:
+			memcpy_unsafe(RAM, temp + maddr + (IDSize *2), data, sizeof(size_t));
+
+		case HContextPeekerAttr_Size:
+			memcpy_unsafe(RAM, temp + maddr + (IDSize *2) + sizeof(size_t), data, sizeof(size_t));
+		
+		case HContextPeekerAttr_IsProcess:
+			memcpy_unsafe(RAM, temp + maddr + (IDSize *2) + (sizeof(size_t)*2), data, 1);
+		
+		case HContextPeekerAttr_IsThread:
+			memcpy_unsafe(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 1, data, 1);
+
+		case HContextPeekerAttr_IsKernel:
+			memcpy_unsafe(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 2, data, 1);
+		
+		case HContextPeekerAttr_IsPrivate:
+			memcpy_unsafe(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 3, data, 1);
+		
+		case HContextPeekerAttr_IsStream:
+			memcpy_unsafe(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 4, data, 1);
+
+		case HContextPeekerAttr_IsStream:
+			memcpy_unsafe(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 5, data, CONTEXTEXTRAS_SIZE);
+		default: return INVALID_ADDR;
+	}
 }
 
 uint8_t *headerpeeksearch_unsafe(ID_t ID, hpeek_t peeker){
@@ -55,32 +107,40 @@ uint8_t *headerpeeksearch_unsafe(ID_t ID, hpeek_t peeker){
 }
 
 uint8_t *headerpeek_unsafe(size_t maddr, hpeek_t peeker){
-	if(maddr < RAMMeta || maddr >= _ram_length){return NULL;}
+	size_t temp = RAMMeta;
+	if(maddr < temp || maddr >= _ram_length){return NULL;}
     if(!Metaaddress_validate(maddr)){return NULL;}
 	switch(peeker){
 		case HContextPeekerAttr_ProcessID:
-			return slice_bytes(RAM, RAMMeta + maddr, IDSize);
+			return slice_bytes(RAM, temp + maddr, IDSize);
 		
 		case HContextPeekerAttr_HeaderID:
-			return slice_bytes(RAM, RAMMeta + maddr + IDSize, IDSize);
+			return slice_bytes(RAM, temp + maddr + IDSize, IDSize);
 
 		case HContextPeekerAttr_Address:
-			return slice_bytes(RAM, RAMMeta + maddr + (IDSize *2), IDSize);
+			return slice_bytes(RAM, temp + maddr + (IDSize *2), sizeof(size_t));
 
 		case HContextPeekerAttr_Size:
-			return slice_bytes(RAM, RAMMeta + maddr + (IDSize *2) + sizeof(size_t), IDSize);
+			return slice_bytes(RAM, temp + maddr + (IDSize *2) + sizeof(size_t), sizeof(size_t));
 		
 		case HContextPeekerAttr_IsProcess:
-			return slice_bytes(RAM, RAMMeta + maddr + (IDSize *2) + (sizeof(size_t)*2), IDSize);
+			return slice_bytes(RAM, temp + maddr + (IDSize *2) + (sizeof(size_t)*2), 1);
 		
 		case HContextPeekerAttr_IsThread:
-			return slice_bytes(RAM, RAMMeta + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 1, IDSize);
+			return slice_bytes(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 1, 1);
 
 		case HContextPeekerAttr_IsKernel:
-			return slice_bytes(RAM, RAMMeta + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 2, IDSize);
+			return slice_bytes(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 2, 1);
 		
 		case HContextPeekerAttr_IsPrivate:
-			return slice_bytes(RAM, RAMMeta + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 3, IDSize);	
+			return slice_bytes(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 3, 1);
+	
+		case HContextPeekerAttr_IsStream:
+			return slice_bytes(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 4, 1);
+		case HContextPeekerAttr_IsStream:
+			return slice_bytes(RAM, temp + maddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 5, CONTEXTEXTRAS_SIZE);
+		default: return INVALID_ADDR;
+	
 	}
 }
 
@@ -164,3 +224,5 @@ size_t address_pointfree(size_t startfrom, size_t concurrent_size){
 	return 0; // No free space found
 }
 */
+
+

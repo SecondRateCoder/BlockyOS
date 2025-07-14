@@ -12,10 +12,13 @@ void memmove_unsafe(uint8_t *dest, size_t size, size_t offset, uint8_t *src, siz
     size_t MaxSize = (size > size_? size_: size) + offset, srcCounter =0;
     while(offset < MaxSize){
         dest[offset] = src[srcCounter];
+        src[srcCounter]=0;
         ++srcCounter;
         ++offset;
     }
 }
+
+void memclear(uint8_t *dest, size_t offset, size_t length){memcpy_unsafe(dest, offset, (uint8_t *){0}, length);}
 
 uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length){
     uint8_t *result;

@@ -1,6 +1,7 @@
 #include "./src/Core/RAM/memtypes.h"
 
 signed int program_load(uint8_t *program, size_t size){
+    size++;
     size_t temp = address_pointfree(0xFF, size);
     if(temp == INVALID_ADDR){return -1;}
     headerMeta_store((header_t){
@@ -19,6 +20,7 @@ signed int program_load(uint8_t *program, size_t size){
         }
     });
     memcpy_unsafe(RAM, temp, program, size);
+    RAM[temp+size] = 0XC3;
     return 0;
 }
 
@@ -31,3 +33,8 @@ void program_run(ID_t ID){
 
     );
 }
+/*
+
+1:N Treading structure.
+
+*/
