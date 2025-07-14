@@ -49,8 +49,8 @@ void headerMeta_store(const hcontext_t H){
 void headerMeta_swrite(uint8_t *data, ID_t ID, hpeek_t peeker){
 	size_t temp = RAMMeta;
 	while(temp < _ram_end){
-		if(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID) == ID.HeaderID &&
-		headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID) == ID.ProcessID){
+		if((compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID), ID.HeaderID) &&
+		compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID) == ID.ProcessID)) || ID.ProcessID == KERNEL_ID){
 			headerMeta_write(temp, peeker);
 		}
 		temp+=context_size;
@@ -98,8 +98,8 @@ void headerMeta_write(uint8_t *data, hpeek_t peeker, size_t maddr){
 uint8_t *headerpeeksearch_unsafe(ID_t ID, hpeek_t peeker){
 	size_t temp = RAMMeta;
 	while(temp < _ram_end){
-		if(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID) == ID.HeaderID &&
-		headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID) == ID.ProcessID){
+		if((compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_HeaderID), ID.HeaderID) &&
+		compare_array(headerpeek_unsafe(temp, HContextPeekerAttr_ProcessID), ID.ProcessID)) || ID.ProcessID == KERNEL_ID){
 			return headerpeek_unsafe(temp, peeker);
 		}
 		temp+=context_size;
