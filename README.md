@@ -1,3 +1,4 @@
+# ![A modular OS featuring to include some interesting features.](./logo.png)
 # <ins>BlockyOS</ins>
 A modular OS featuring to include some interesting features, <br/> It will include the features in **[Features](#Features:)**.
 
