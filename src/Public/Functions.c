@@ -78,7 +78,8 @@ uint8_t *hash(const uint8_t *val, size_t length){
     return result;
 }
 
-bool is_set(uint8_t Item, uint8_t X){return (Item & (1U << (X > 7? 0: X))) ? 1 : 0;}
+bool is_set(size_t Item, uint8_t X){return (Item & (1U << (X > sizeof(size_t)? 0: X))) ? 1 : 0;}
+void set(size_t Item, uint8_t X){Item = Item & ~(1UL << bit_position);}
 
 size_t strlen(char *string){
     size_t cc =0;
@@ -139,6 +140,11 @@ int strslice_till(char *src, char *dest, char cond, size_t maxlen){
 }
 
 bool is_num(char c){return (int)c>=(int)'0'&&(int)c<=(int)'9';}
+
+uint32_t uintconv64_32(uint64_t value){return (uint32_t)(value & 0xFFFFFFFFULL);}
+uint16_t uintconv32_16(uint32_t value){return (uint16_t)(value & 0xFFFFU);}
+uint8_t uintconv16_8(uint16_t value){return (uint8_t)(value & 0xFF);}
+
 
 /*
 function hash(string, a, num_buckets):

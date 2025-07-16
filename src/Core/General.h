@@ -10,6 +10,9 @@
 #define _ram_end _ram_length + _ram_start
 #define context_size sizeof(bool)*4 + IDSize*2 + sizeof(size_t)*2
 #define metanumber_inblocks (_ram_length - *RAMMeta)/context_size
+#define DWORD uint32_t
+#define BIT8_MASK (uint8_t)0xFF
+#define BIT16_MASK (uint16_t)0xFFFF
 
 //The Program ID will be absolute zero.
 #define KERNEL_ID (uint8_t[IDSize]){0}
