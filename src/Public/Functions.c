@@ -79,7 +79,11 @@ uint8_t *hash(const uint8_t *val, size_t length){
 }
 
 bool is_set(size_t Item, uint8_t X){return (Item & (1U << (X > sizeof(size_t)? 0: X))) ? 1 : 0;}
-void set(size_t Item, uint8_t X){Item = Item & ~(1UL << bit_position);}
+void set(size_t *Item, uint8_t X, uint8_t val){
+    if(val > 0){
+        Item = Item | (1UL << X);
+    }else if(val == 0){Item = Item & ~(1UL << X);}
+}
 
 size_t strlen(char *string){
     size_t cc =0;

@@ -18,6 +18,7 @@ void scan_pci_devices(){
                     .vendor_id = vendor_id,
                     .device_id = device_id
                 };
+                Devices[devicenum_].meta = device_readmeta(Devices[devicenum_]);
                 Devices[devicenum_].numof_funcs = func;
             }
             devicenum_++;
@@ -26,11 +27,6 @@ void scan_pci_devices(){
 }
 
 uint32_t pci_read32(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset){
-    // uint32_t addr = (1U << 31)
-    //     | ((uint32_t)bus << 16)
-    //     | ((uint32_t)slot << 11)
-    //     | ((uint32_t)func << 8)
-    //     | (offset & 0xFC);
     uint32_t addr = (uint32_t)(
         (1U << 31)|
         ((uint32_t)bus << 16)|
@@ -88,7 +84,7 @@ uint16_t device_vendorcheck(const device_t dev){
 }
 
 //Return a 128 byte buffer.
-pcih_t device_readall(const device_t dev){
+pcih_t device_readmeta(const device_t dev){
     //Needs to read 4 32bit values.
     uint32_t h[4];
     h[0] = device_read32(dev, REG1OFFSET);
@@ -108,7 +104,7 @@ pcih_t device_readall(const device_t dev){
         .latency_timer =(uint8_t)((h[3] >> 8) & 0xFF),
         .header_type =(uint8_t)((h[3] >> 16) & 0xFF),
         .bist =(uint8_t)((h[3] >> 24) & 0xFF)//END.
-    }
+    };
 }
 
 // void pci_baseaddressconfigure(device_t *device){

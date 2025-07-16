@@ -24,6 +24,7 @@ void encode_int(uint8_t *array, int value, size_t offset);
 void encode_uint32(uint8_t *array, const uint32_t value, size_t offset);
 bool compare_array(uint8_t *array1, uint8_t *array2, size_t size2);
 bool is_set(uint8_t Item, uint8_t X);
+void set(size_t Item, uint8_t X, uint8_t val)
 uint8_t *hash(const uint8_t *val, size_t length);
 bool strcompare(char *str1, char *str2);
 bool strcompare_s(char *str1, char *str2, float benchmark);
