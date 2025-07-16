@@ -34,5 +34,12 @@ bool is_num(char c);
 char *strslice(char *c, size_t newlen);
 int strslice_till(char *src, char *dest, char cond, size_t maxlen);
 
+uint32_t uintconv64_32(uint64_t value);
+uint32_t uintconv32_64(uint32_t high, uint32_t low);
+uint16_t uintconv32_16(uint32_t value);
+uint32_t uintconv16_32(uint16_t high, uint16_t low);
+uint8_t uintconv16_8(uint16_t value);
+uint32_t uintconv8_16(uint8_t high, uint8_t low);
+
 #define IDSize 8
 void *alloca(size_t Size, uint8_t ProcessID[IDSize]);

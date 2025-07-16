@@ -146,9 +146,11 @@ int strslice_till(char *src, char *dest, char cond, size_t maxlen){
 bool is_num(char c){return (int)c>=(int)'0'&&(int)c<=(int)'9';}
 
 uint32_t uintconv64_32(uint64_t value){return (uint32_t)(value & 0xFFFFFFFFULL);}
+uint32_t uintconv32_64(uint32_t high, uint32_t low){return ((uint64_t)high << 32) | low;}
 uint16_t uintconv32_16(uint32_t value){return (uint16_t)(value & 0xFFFFU);}
+uint32_t uintconv16_32(uint16_t high, uint16_t low){return ((uint32_t)high << 16) | low;}
 uint8_t uintconv16_8(uint16_t value){return (uint8_t)(value & 0xFF);}
-
+uint32_t uintconv8_16(uint8_t high, uint8_t low){return ((uint16_t)high << 8) | low;}
 
 /*
 function hash(string, a, num_buckets):

@@ -7,9 +7,9 @@ void scan_pci_devices(){
             uint8_t func =0;
             for (; func < 8; ++func) {
                 uint32_t data = pci_config_read32(bus, slot, func, 0x00);
-                uint16_t vendor_id = data & 0xFFFF;
-                if (vendor_id == 0xFFFF) continue; // No device
-                uint16_t device_id = (data >> 16) & 0xFFFF;
+                uint16_t vendor_id = data & BIT16_MASK;
+                if (vendor_id == BIT16_MASK) continue; // No device
+                uint16_t device_id = (data >> 16) & BIT16_MASK;
                 // Now you have bus, slot, func, vendor_id, device_id
                 Devices[devicenum_] = (device_t){
                     .bus = bus,
@@ -84,26 +84,85 @@ uint16_t device_vendorcheck(const device_t dev){
 }
 
 //Return a 128 byte buffer.
-pcih_t device_readmeta(const device_t dev){
+void device_metaconfig(device_t *dev){
     //Needs to read 4 32bit values.
-    uint32_t h[4];
+    uint32_t h[15];
     h[0] = device_read32(dev, REG1OFFSET);
     h[1] = device_read32(dev, REG2OFFSET);
     h[2] = device_read32(dev, REG3OFFSET);
     h[3] = device_read32(dev, REG4OFFSET);
-    return (pcih_t){
-        .vendor_id =(uint16_t)(h[0] & 0xFFFF),//uint16_t ->
-        .device_id =(uint16_t)((h[0] >> 16) & 0xFFFF),
-        .command =(uint16_t)(h[1] & 0xFFFF),
-        .status =(uint16_t)((h[1] >> 16) & 0xFFFF),//END.
-        .revision_id =(uint8_t)(h[2] & 0xFF),//uint8_t ->
-        .prog_if =(uint8_t)((h[2] >> 8) & 0xFF),
-        .subclass =(uint8_t)((h[2] >> 16) & 0xFF),
-        .base_class =(uint8_t)((h[2] >> 24) & 0xFF),
-        .cache_line_size =(uint8_t)(h[3] & 0xFF),
-        .latency_timer =(uint8_t)((h[3] >> 8) & 0xFF),
-        .header_type =(uint8_t)((h[3] >> 16) & 0xFF),
-        .bist =(uint8_t)((h[3] >> 24) & 0xFF)//END.
+    h[4] = device_read32(dev, REG5OFFSET);
+    h[5] = device_read32(dev, REG6OFFSET);
+    h[6] = device_read32(dev, REG7OFFSET);
+    h[7] = device_read32(dev, REG8OFFSET);
+    h[8] = device_read32(dev, REG9OFFSET);
+    h[9] = device_read32(dev, REG10OFFSET);
+    h[10] = device_read32(dev, REG11OFFSET);
+    h[11] = device_read32(dev, REG12OFFSET);
+    h[12] = device_read32(dev, REG13OFFSET);
+    h[14] = device_read32(dev, REG15OFFSET);
+    dev->meta = (pcih_t *){
+        .vendor_id =(uint16_t)(h[0] & BIT16_MASK),
+        .device_id =(uint16_t)((h[0] >> 16) & BIT16_MASK),
+        .command =(uint16_t)(h[1] & BIT16_MASK),
+        .status =(uint16_t)((h[1] >> 16) & BIT16_MASK),
+        .revision_id =(uint8_t)(h[2] & BIT8_MASK),
+        .prog_if =(uint8_t)((h[2] >> 8) & BIT8_MASK),
+        .subclass =(uint8_t)((h[2] >> 16) & BIT8_MASK),
+        .base_class =(uint8_t)((h[2] >> 24) & BIT8_MASK),
+        .cache_line_size =(uint8_t)(h[3] & BIT8_MASK),
+        .latency_timer =(uint8_t)((h[3] >> 8) & BIT8_MASK),
+        .header_type =(uint8_t)((h[3] >> 16) & BIT8_MASK),
+        .bist =(uint8_t)((h[3] >> 24) & BIT8_MASK),
+        if(dev->meta.header_type & 0xF == 0x0){
+            #pragma region Type 0x0
+            .BAR[0] = h[4],
+            .BAR[1] = h[5],
+            .BAR[2] = h[6],
+            .BAR[3] = h[7],
+            .BAR[4] = h[8],
+            .BAR[5] = h[9],
+            //Disable Memory & IO write.
+            uint8_t new_command =0,
+            COMMANDBITS_MEMORYSPACEW(new_command, 0),
+            COMMANDBITS_IO_SPACEW(new_command, 0),
+            device_write32(dev, 0x4, uintconv8_16(dev->meta.status, new_command)),
+            for(int cc =0; cc < BARSIZE, ++cc){.BAR[cc] = ((BAR[cc] & 0xFFFFFFF0) + (BAR[cc+1 >= BARSIZE? BARSIZE-1: cc+1] & 0xFFFFFFFF)) << 32,},
+            .subsystem_id =(uint16_t)(h[10] & BIT16_MASK),
+            .subsystem_vendor_id =(uint16_t)((h[10] >> 16) & BIT16_MASK),
+            .expansion_ROM_base_address = h[11],
+            .capabilities_pointer =(uint8_t)((h[12] >> 24) & BIT8_MASK),
+            .max_latency =(uint8_t)((h[14]) & BIT8_MASK),
+            .min_grant =(uint8_t)((h[14] >> 8) & BIT8_MASK),
+            .interrupt_pin =(uint8_t)((h[14] >> 16) & BIT8_MASK),
+            .interrupt_line =(uint8_t)((h[14] >> 24) & BIT8_MASK),
+            #pragma endregion
+        }else if(dev->meta.header_type & 0xF == 0x1){
+            #pragma region Type 0x1
+            .BAR[0] =h[4],
+            .BAR[1] =h[5],
+            .secondary_latency_timer =(uint8_t)(h[6] & BIT8_MASK),
+            .subordinate_bus_number =(uint8_t)((h[6] >> 8) & BIT8_MASK),
+            .secondary_bus_number =(uint8_t)((h[6] >> 16) & BIT8_MASK),
+            .primary_bus_number =(uint8_t)((h[6] >> 24) & BIT8_MASK),
+            .secondary_status =(uint16_t)(h[7] & BIT16_MASK),
+            .IO_limit =(uint8_t)((h[7] >> 16) & BIT8_MASK),
+            .IO_base =(uint8_t)((h[7] >> 24) & BIT8_MASK),
+            .memory_limit =(uint16_t)(h[8] & BIT16_MASK),
+            .memory_base =(uint16_t)((h[8] >> 16) & BIT16_MASK),
+            .prefetch_memory_limit =(uint16_t)((h[9]) & BIT16_MASK),
+            .prefetch_memory_base =(uint16_t)((h[9] >> 16) & BIT16_MASK),
+            .prefetch_base_upper_32_bits =h[10],
+            .prefetch_limit_upper_32_bits =h[11],
+            .IO_limit_upper_16bits = (uint16_t)(h[12] & BIT16_MASK),
+            .IO_base_upper_16bits =(uint16_t)((h[12] >> 16) & BIT16_MASK),
+            .capabilities_pointer =(uint8_t)((h[13] >> 24) & BIT8_MASK),
+            .expansion_ROM_base_address =h[14],
+            .bridge_control =(uint16_t)(h[15] & BIT16_MASK),
+            .interrupt_pin =(uint8_t)((h[15] >> 16) & BIT8_MASK),
+            .interrupt_line =(uint8_t)((h[15] >> 24) & BIT8_MASK)
+            #pragma endregion
+        },
     };
 }
 
@@ -145,15 +204,15 @@ pcih_t device_readmeta(const device_t dev){
 //     outl(0xCF8, address);
 //     // Read in the data
 //     // (offset & 2) * 8) = 0 will choose the first word of the 32-bit register
-//     tmp = (uint16_t)((inl(0xCFC) >> ((offset & 2) * 8)) & 0xFFFF);
+//     tmp = (uint16_t)((inl(0xCFC) >> ((offset & 2) * 8)) & BIT16_MASK);
 //     return tmp;
 // }
 
 // uint16_t pci_checkvendor(uint8_t bus, uint8_t slot){
 //     uint16_t vendor, device;
 //     /* Try and read the first configuration register. Since there are no
-//     * vendors that == 0xFFFF, it must be a non-existent device. */
-//     if ((vendor = pciconfig_readword(bus, slot, 0, 0)) != 0xFFFF) {
+//     * vendors that == BIT16_MASK, it must be a non-existent device. */
+//     if ((vendor = pciconfig_readword(bus, slot, 0, 0)) != BIT16_MASK) {
 //        device = pciconfig_readword(bus, slot, 0, 2);
 //     } return (vendor);
 // }
@@ -203,7 +262,7 @@ pcih_t device_readmeta(const device_t dev){
 //         }
 //     }
     
-//     // 2. Search in BIOS ROM area (0xE0000 to 0xFFFFF)
+//     // 2. Search in BIOS ROM area (0xE0000 to BIT16_MASKF)
 //     for (uint32_t addr = 0xE0000; addr < 0x100000; addr += 16) { // 0x100000 is 1MB
 //         RSDPDescriptor* current_rsdp = (RSDPDescriptor*)addr;
 //         if (memcmp(current_rsdp->Signature, rsdp_signature, 8) == 0) {
