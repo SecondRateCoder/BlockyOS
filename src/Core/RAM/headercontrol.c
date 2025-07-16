@@ -1,6 +1,4 @@
 #include "./src/Core/RAM/memtypes.h"
-#include <./src/Core/General.h>
-
 
 //Stores in the order:
 //    ID: ProcessID; ID, addr, size, hflags_t: IsProcess; IsThread; IsKernel; IsPrivate.

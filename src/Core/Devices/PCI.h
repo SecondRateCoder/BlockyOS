@@ -1,4 +1,4 @@
-#include "./src/Core/Publics/General.h"
+#include "./src/Core/General.h"
 
 #define PCI_CONFIG_ADDRESS 0xCF8
 #define PCI_CONFIG_DATA    0xCFC
@@ -50,16 +50,16 @@ typedef struct ACPISDTHeader {
     uint32_t OEMRevision;
     uint32_t CreatorID;
     uint32_t CreatorRevision;
-};
+}ACPISDTHeader;
 
 typedef struct RSDT {
     struct ACPISDTHeader h;
     uint32_t *PointerToOtherSDT;
-};
+}RSDT;
 typedef struct XSDT {
     struct ACPISDTHeader h;
     uint64_t *PointerToOtherSDT;
-};
+}XSDT;
 
 #pragma region PCI Metadata
 #pragma pack(push, 1)

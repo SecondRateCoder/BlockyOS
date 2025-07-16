@@ -1,4 +1,5 @@
 #include <./src/Public/Publics.h>
+#include <./src/Core/General.h>
 
 extern uintptr_t _ram_start, _ram_length, _heap_start, _heap_length;
 volatile size_t Pointer;

@@ -1,5 +1,4 @@
 #include "./src/Core/Devices/PCI.h"
-#include "./src/Core/Publics/General.h"
 
 uint32_t pciconfig_read32(device_t device, uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset){
     uint32_t address = (1U << 31)
@@ -156,22 +155,14 @@ RSDPDescriptor* find_rsdp_bios(){
     return NULL; // RSDP not found
 }
 
-void *get_facp(void *rsdp){
-    rsdt_t *temp;
+void *findFACP(void *RootSDT){
+    rsdt_t *rsdt = (RSDT *)RootSDT;
+    int entries = (rsdt->h.Length - sizeof(rsdt->h)) / 4;
+    for (int i = 0; i < entries; i++){
+        ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
+        if (!strcompare_l(h->Signature, "FACP", 4)){return (void *) h;}
+    }
+        // No FACP found
+        return NULL;
 }
-
-// void *findFACP(void *RootSDT){
-//     rsdt_t *rsdt = (RSDT *)RootSDT;
-//     int entries = (rsdt->h.Length - sizeof(rsdt->h)) / 4;
-
-//     for (int i = 0; i < entries; i++){
-    //         ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
-    //         if (!strcompare_l(h->Signature, "FACP", 4)){
-        //             return (void *) h;
-        //         }
-        //     }
-        
-        //     // No FACP found
-        //     return NULL;
-        // }
 #pragma endregion
