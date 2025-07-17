@@ -1,7 +1,0 @@
-{
-  "name": "QEMU Codespace",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "qemu",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "shutdownAction": "none"
-}
