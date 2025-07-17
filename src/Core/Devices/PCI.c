@@ -210,6 +210,13 @@ void device_metaconfig(device_t *dev){
             .interrupt_line =(uint8_t)((h[15] >> 24) & BIT8_MASK)
             #pragma endregion
         },
+        #pragma region MSI-X
+        uint8_t new_status = status & 0b00010000,
+        device_write32(dev, REG1OFFSET, new_status),
+        int cc=0,
+        while(device_read32(dev, capabilities_pointer+cc) & 0x00010001 != 0x11){++cc;},
+        .message_control = 
+        #pragma endregion
     };
 }
 

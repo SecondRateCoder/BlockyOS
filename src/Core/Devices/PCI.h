@@ -80,7 +80,7 @@ Analogy: Imagine a row of warning lights on a dashboard.
 #define STATUSBITS_SIGNALLED_TARGETABORTC(S) set((size_t)S, 11, 1)
 #define STATUSBITS_SIGNALLED_TARGETABORT(S) is_set((size_t)S, 11)
 //Read-Only, Longest time it takes for PCI device to recognise any bus command(except Config space Read-Write), 0x0:FAST, 0x2:SLOW.
-#define STATUSBITS_DESVEL_TIMING(S) ((uint8_t)((is_set((size_t)(S), 9) << 1) | (is_set((size_t)(S), 10) << 0)))
+#define STATUSBITS_DESVEL_TIMING(S) (uint8_t[2]){(is_set((size_t)(S), 9) << 1), (is_set((size_t)(S), 10) << 0)}
 //Read-Write, 1 = Clear. Set if Data corruption recieved, device driver acted as the bus master for the Error-ed operation & "COMMANDBITS_PARITYERROR_RESPONSE" is set.
 #define STATUSBITS_MASTERDATA_PARITYERRORC(S) set((size_t)S, 8, 1)
 #define STATUSBITS_MASTERDATA_PARITYERROR(S) is_set((size_t)S, 8)
@@ -92,6 +92,44 @@ Analogy: Imagine a row of warning lights on a dashboard.
 #define STATUSBITS_CAPABILITIES(S) is_set((size_t)S, 4)
 //Read-Only, if set and "COMMANDBITS_INTERRUPTDISABLE" is !set, then the Interrupt goes through.
 #define STATUSBITS_INTERRUPTSTATUS(S) is_set((size_t)S, 3)
+#pragma endregion
+
+// #pragma region MSIBITS
+// #define PER_VECTORMASKING(M) is_set((size_t)M, 8)
+// #define BIT64(M) is_set((size_t)M, 7)
+// /*
+// Defines the number of low Message Data bits("message_addr_low") may be modified.
+// MME |   #Interrupts
+// 000 |	1
+// 001 |	2
+// 010 |	4
+// 011 |	8
+// 100 |	16
+// 101 |	32
+// */
+// #define MULTIMESSAGE_ENABLE(M) (uint8_t[3]){is_set((size_t)M, 6), is_set((size_t)M, 5), is_set((size_t)M, 4)}
+// #define MULTIMESSAGE_CAPABLE(M) (uint8_t[3]){is_set((size_t)M, 3), is_set((size_t)M, 2), is_set((size_t)M, 1)}
+// #define ENABLE(M) is_set((size_t)M, 0)
+// #pragma endregion
+
+#pragma region MSIX_BITS
+#define ENABLE(MX) is_set((size_t)MX, 15)
+#define FUNCTION_MASK(MX) is_set((size_t)MX, 14)
+#define TABLE_SIZE(MX) (uint8_t[11]){is_set((size_t)M, 10), is_set((size_t)M, 9), is_set((size_t)M, 8), \
+is_set((size_t)M, 7), is_set((size_t)M, 6), is_set((size_t)M, 5), is_set((size_t)M, 4), \
+is_set((size_t)M, 3), is_set((size_t)M, 2), is_set((size_t)M, 1), is_set((size_t)M, 0)}
+
+#define VECTOR_CONTROL(MU, ML) ((uint32_t)((MU) >> 32))
+#define MESSAGE_DATA(MU, ML) ((uint32_t)((MU) & 0xFFFFFFFFULL))
+#define MESSAGEADDRESS_HIGH(MU, ML) ((uint32_t)((ML) >> 32))
+#define MESSAGEADDRESS_LOW(MU, ML) ((uint32_t)((ML) & 0xFFFFFFFFULL))
+#define CAPABILITIESLIST_ID 0x11
+/*
+Capabilities Pointer: Read the Capabilities Pointer register at offset 0x34 in the device's PCI Configuration Space. This points to the first capability structure.
+
+Capability List: Traverse the linked list of capabilities by reading the Next Capability Pointer,
+ in each structure until you find the one with a Capability ID of 0x11 (which is the MSI-X Capability ID)
+*/
 #pragma endregion
 
 // #define rsdt_t RSDT
@@ -151,6 +189,14 @@ typedef struct PCI_Header{
     uint16_t secondary_status, memory_limit, memory_base, prefetch_memory_limit, prefetch_memory_base, IO_limit_upper_16bits, IO_base_upper_16bits, bridge_control;
     uint32_t prefetch_base_upper_32_bits, prefetch_limit_upper_32_bits;
     #pragma endregion
+
+	#pragma region MSI_X Interrupts
+    uint16_t message_control, messabe_data;
+    uint8_t next_pointer, capability_id;
+    uint32_t message_addr_low, message_addr_high, mask, pending;
+
+	uint8_t table_offset[3], pendingbit_offset[3], BIR, pendingbit_BIR;
+	#pragma endregion
 }PCI_Header;
 #pragma pop(1)
 
