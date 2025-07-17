@@ -1,5 +1,55 @@
 #include "./src/Core/Devices/PCI.h"
 
+void MMIO_configure(device_t *dev){
+    uint32_t *BAR = dev->meta->BAR;
+    
+}
+void enableaddr_read(const device dev){
+    uint8_t new_command =0;
+    COMMANDBITS_MEMORYSPACEW(new_command, 0);
+    COMMANDBITS_IO_SPACEW(new_command, 0);
+    COMMANDBITS_BUSMASTERW(new_command, 0);
+    device_write32(dev, 0x4, uintconv8_16(dev->meta->status, new_command));
+}
+void disableaddr_read(const device dev){
+    uint8_t new_command =0;
+    COMMANDBITS_MEMORYSPACEW(new_command, 1);
+    COMMANDBITS_IO_SPACEW(new_command, 1);
+    COMMANDBITS_BUSMASTERW(new_command, 1);
+    device_write32(dev, 0x4, uintconv8_16(dev->meta->status, new_command));
+}
+bool device_alloca(const device_t dev, uint8_t baroffset){
+    enableaddr_read(dev);
+    uint32_t obar = device_read32(dev, baroffset), nbar =0;
+    device_write32(dev, baroffset, 0xFFFFFFFF);
+    nbar = device_read32(dev, baroffset);
+    device_write32(dev, baroffset, obar);
+    size_t size;
+    uint64_t base_address;
+    switch(nbar & 0x1){
+        case 0:
+            uint8_t mem_type = (bar_value >> 1) & 0x3;
+            if(mem_type == 0x2){
+                uint32_t high_bar_value = pci_config_read32(bus, dev, func, bar_offset + 4); // Read next BAR
+
+                // Calculate size for 64-bit BAR
+                // Invert the bits that were readable (excluding type/control bits) and add 1
+                size = ~(((uint64_t)bar_value & 0xFFFFFFF0) | ((uint64_t)high_bar_value << 32)) + 1;
+                // The base address is the original_bar_value with the lowest 4 bits masked out
+                // base_address = ((uint64_t)original_bar_value & 0xFFFFFFF0) | ((uint64_t)pci_config_read32(bus, dev, func, bar_offset + 4) << 32);
+            }else{
+                size = (~(bar_value & 0xFFFFFFF0)) + 1; // Mask out lower 4 bits (type/control)
+                // The base address is the original_bar_value with the lowest 4 bits masked out
+                // base_address = original_bar_value & 0xFFFFFFF0;
+            }
+            break;
+        
+        default:
+            return false;
+    }
+    device_write32(dev, baroffset, (size_t)alloca(size, KERNEL_ID));
+    disableaddr_read(dev);
+}
 void scan_pci_devices(){
     int devicenum_ = 0; // Reset device count
     for (uint8_t bus = 0; bus < 256; ++bus) {

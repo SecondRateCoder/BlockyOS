@@ -5,7 +5,17 @@
 #define PCI_BAR0OFFSET   0x10
 #define PCI_COMMANDOFFSET 0x04
 #define PCI_STATUSOFFSET 0x06
+#define PCIe_CACHELINESIZE 0x0C
 #define PCI_CONFIGSIZE 256
+#pragma region PCIe Type 0x0
+    #define PCIe_BARBASE 0x10
+    #define PCIe_BARLIMIT 0x24 
+#pragma endregion
+#pragma region PCIe Type 0x1
+    #define PCIe_PRIMARY_BUSNUMBER 0x18
+    //64-bit addresses
+    #define PCIe_PREFETCHMEMORY_BASEORLIMIT 0x24
+#pragma endregion
 #define BARSIZE 6
 
 // #define PCIe_CONFIGSIZE 4*1024
@@ -83,8 +93,6 @@ Analogy: Imagine a row of warning lights on a dashboard.
 //Read-Only, if set and "COMMANDBITS_INTERRUPTDISABLE" is !set, then the Interrupt goes through.
 #define STATUSBITS_INTERRUPTSTATUS(S) is_set((size_t)S, 3)
 #pragma endregion
-
-
 
 // #define rsdt_t RSDT
 // #define rsdtdesc_t RSDPDescriptor
