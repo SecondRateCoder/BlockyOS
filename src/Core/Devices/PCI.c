@@ -173,10 +173,7 @@ void device_metaconfig(device_t *dev){
             .BAR[4] = h[8],
             .BAR[5] = h[9],
             //Disable Memory & IO write.
-            uint8_t new_command =0,
-            COMMANDBITS_MEMORYSPACEW(new_command, 0),
-            COMMANDBITS_IO_SPACEW(new_command, 0),
-            device_write32(dev, 0x4, uintconv8_16(dev->meta.status, new_command)),
+            enableaddr_read(dev),
             for(int cc =0; cc < BARSIZE, ++cc){.BAR[cc] = ((BAR[cc] & 0xFFFFFFF0) + (BAR[cc+1 >= BARSIZE? BARSIZE-1: cc+1] & 0xFFFFFFFF)) << 32,},
             .subsystem_id =(uint16_t)(h[10] & BIT16_MASK),
             .subsystem_vendor_id =(uint16_t)((h[10] >> 16) & BIT16_MASK),
