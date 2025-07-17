@@ -2,21 +2,21 @@
 
 void MMIO_configure(device_t *dev){
     uint32_t *BAR = dev->meta->BAR;
-    
+    device_alloca(*dev, REG4OFFSET);
 }
-void enableaddr_read(const device dev){
+void enableaddr_read(const device_t dev){
     uint8_t new_command =0;
     COMMANDBITS_MEMORYSPACEW(new_command, 0);
     COMMANDBITS_IO_SPACEW(new_command, 0);
     COMMANDBITS_BUSMASTERW(new_command, 0);
-    device_write32(dev, 0x4, uintconv8_16(dev->meta->status, new_command));
+    device_write32(dev, 0x4, uintconv8_16(dev.meta->status, new_command));
 }
-void disableaddr_read(const device dev){
+void disableaddr_read(const device_t dev){
     uint8_t new_command =0;
     COMMANDBITS_MEMORYSPACEW(new_command, 1);
     COMMANDBITS_IO_SPACEW(new_command, 1);
     COMMANDBITS_BUSMASTERW(new_command, 1);
-    device_write32(dev, 0x4, uintconv8_16(dev->meta->status, new_command));
+    device_write32(dev, 0x4, uintconv8_16(dev.meta->status, new_command));
 }
 bool device_alloca(const device_t dev, uint8_t baroffset){
     enableaddr_read(dev);
@@ -28,17 +28,17 @@ bool device_alloca(const device_t dev, uint8_t baroffset){
     uint64_t base_address;
     switch(nbar & 0x1){
         case 0:
-            uint8_t mem_type = (bar_value >> 1) & 0x3;
+            uint8_t mem_type = (nbar >> 1) & 0x3;
             if(mem_type == 0x2){
-                uint32_t high_bar_value = pci_config_read32(bus, dev, func, bar_offset + 4); // Read next BAR
+                uint32_t high_bar_value = device_read32(dev, baroffset + 4); // Read next BAR
 
                 // Calculate size for 64-bit BAR
                 // Invert the bits that were readable (excluding type/control bits) and add 1
-                size = ~(((uint64_t)bar_value & 0xFFFFFFF0) | ((uint64_t)high_bar_value << 32)) + 1;
+                size = ~(((uint64_t)nbar & 0xFFFFFFF0) | ((uint64_t)high_bar_value << 32)) + 1;
                 // The base address is the original_bar_value with the lowest 4 bits masked out
                 // base_address = ((uint64_t)original_bar_value & 0xFFFFFFF0) | ((uint64_t)pci_config_read32(bus, dev, func, bar_offset + 4) << 32);
             }else{
-                size = (~(bar_value & 0xFFFFFFF0)) + 1; // Mask out lower 4 bits (type/control)
+                size = (~(nbar & 0xFFFFFFF0)) + 1; // Mask out lower 4 bits (type/control)
                 // The base address is the original_bar_value with the lowest 4 bits masked out
                 // base_address = original_bar_value & 0xFFFFFFF0;
             }
@@ -49,6 +49,7 @@ bool device_alloca(const device_t dev, uint8_t baroffset){
     }
     device_write32(dev, baroffset, (size_t)alloca(size, KERNEL_ID));
     disableaddr_read(dev);
+    return true;
 }
 void scan_pci_devices(){
     int devicenum_ = 0; // Reset device count
@@ -64,13 +65,13 @@ void scan_pci_devices(){
                 Devices[devicenum_] = (device_t){
                     .bus = bus,
                     .slot = slot,
-                    .func[func] = func,
                     .vendor_id = vendor_id,
                     .device_id = device_id
                 };
+                Devices[devicenum_].funcs[func] = func;
                 Devices[devicenum_].meta = device_readmeta(Devices[devicenum_]);
-                Devices[devicenum_].numof_funcs = func;
             }
+            Devices[devicenum_].numof_funcs = func;
             devicenum_++;
         }
     }
@@ -92,7 +93,7 @@ uint32_t device_read32(const device_t dev, uint8_t offset){
         (1U << 31)|
         ((uint32_t)dev.bus << 16)|
         ((uint32_t)dev.slot << 11)|
-        ((uint32_t)dev.func << 8)|
+        ((uint32_t)dev.funcs << 8)|
         (offset & 0xFC)|
         ((uint32_t)0x80000000));
     outl(addr+PCI_CONFIG_ADDRESS, addr);
@@ -115,7 +116,7 @@ void device_write32(const device_t dev, uint8_t offset, uint32_t value){
         (1U << 31)|
         ((uint32_t)dev.bus << 16)|
         ((uint32_t)dev.slot << 11)|
-        ((uint32_t)dev.func << 8)|
+        ((uint32_t)dev.funcs << 8)|
         (offset & 0xFC)|
         ((uint32_t)0x80000000));
     outl(addr, value);
@@ -124,36 +125,39 @@ void device_write32(const device_t dev, uint8_t offset, uint32_t value){
 
 uint16_t pci_vendorcheck(uint16_t bus, uint16_t slot){
     uint16_t vendor = (uint16_t)pci_read32(bus, slot, 0, 0);
-    if(vendor != INVLAID_DEVICE){pci_read32(bus, slot, 0, 2);}
+    if(vendor != INVALID_DEVICE){pci_read32(bus, slot, 0, 2);}
     return vendor;
 }
 uint16_t device_vendorcheck(const device_t dev){
     uint16_t vendor = (uint16_t)pci_read32(dev.bus, dev.slot, 0, 0);
-    if(vendor != INVLAID_DEVICE){pci_read32(dev.bus, dev.slot, 0, 2);}
+    if(vendor != INVALID_DEVICE){pci_read32(dev.bus, dev.slot, 0, 2);}
     return vendor;
 }
 
 //Return a 128 byte buffer.
 void device_metaconfig(device_t *dev){
     //Needs to read 4 32bit values.
-    uint32_t h[15];
-    h[0] = device_read32(dev, REG1OFFSET);
-    h[1] = device_read32(dev, REG2OFFSET);
-    h[2] = device_read32(dev, REG3OFFSET);
-    h[3] = device_read32(dev, REG4OFFSET);
-    h[4] = device_read32(dev, REG5OFFSET);
-    h[5] = device_read32(dev, REG6OFFSET);
-    h[6] = device_read32(dev, REG7OFFSET);
-    h[7] = device_read32(dev, REG8OFFSET);
-    h[8] = device_read32(dev, REG9OFFSET);
-    h[9] = device_read32(dev, REG10OFFSET);
-    h[10] = device_read32(dev, REG11OFFSET);
-    h[11] = device_read32(dev, REG12OFFSET);
-    h[12] = device_read32(dev, REG13OFFSET);
-    h[14] = device_read32(dev, REG15OFFSET);
-    dev->meta = (pcih_t *){
-        .vendor_id =(uint16_t)(h[0] & BIT16_MASK),
+    uint32_t h[16] = {
+        [0] = device_read32(*dev, REG0OFFSET),
+        [1] = device_read32(*dev, REG1OFFSET),
+        [2] = device_read32(*dev, REG2OFFSET),
+        [3] = device_read32(*dev, REG3OFFSET),
+        [4] = device_read32(*dev, REG4OFFSET),
+        [5] = device_read32(*dev, REG5OFFSET),
+        [6] = device_read32(*dev, REG6OFFSET),
+        [7] = device_read32(*dev, REG7OFFSET),
+        [8] = device_read32(*dev, REG8OFFSET),
+        [9] = device_read32(*dev, REG9OFFSET),
+        [10] = device_read32(*dev, REG10OFFSET),
+        [11] = device_read32(*dev, REG11OFFSET),
+        [12] = device_read32(*dev, REG12OFFSET),
+        [13] = device_read32(*dev, REG13OFFSET),
+        [14] = device_read32(*dev, REG14OFFSET),
+        [15] = device_read32(*dev, REG15OFFSET),
+    };
+    dev->meta = &(pcih_t){
         .device_id =(uint16_t)((h[0] >> 16) & BIT16_MASK),
+        .vendor_id =(uint16_t)(h[0] & BIT16_MASK),
         .command =(uint16_t)(h[1] & BIT16_MASK),
         .status =(uint16_t)((h[1] >> 16) & BIT16_MASK),
         .revision_id =(uint8_t)(h[2] & BIT8_MASK),
@@ -164,60 +168,61 @@ void device_metaconfig(device_t *dev){
         .latency_timer =(uint8_t)((h[3] >> 8) & BIT8_MASK),
         .header_type =(uint8_t)((h[3] >> 16) & BIT8_MASK),
         .bist =(uint8_t)((h[3] >> 24) & BIT8_MASK),
-        if(dev->meta.header_type & 0xF == 0x0){
-            #pragma region Type 0x0
-            .BAR[0] = h[4],
-            .BAR[1] = h[5],
-            .BAR[2] = h[6],
-            .BAR[3] = h[7],
-            .BAR[4] = h[8],
-            .BAR[5] = h[9],
-            //Disable Memory & IO write.
-            enableaddr_read(dev),
-            for(int cc =0; cc < BARSIZE, ++cc){.BAR[cc] = ((BAR[cc] & 0xFFFFFFF0) + (BAR[cc+1 >= BARSIZE? BARSIZE-1: cc+1] & 0xFFFFFFFF)) << 32,},
-            .subsystem_id =(uint16_t)(h[10] & BIT16_MASK),
-            .subsystem_vendor_id =(uint16_t)((h[10] >> 16) & BIT16_MASK),
-            .expansion_ROM_base_address = h[11],
-            .capabilities_pointer =(uint8_t)((h[12] >> 24) & BIT8_MASK),
-            .max_latency =(uint8_t)((h[14]) & BIT8_MASK),
-            .min_grant =(uint8_t)((h[14] >> 8) & BIT8_MASK),
-            .interrupt_pin =(uint8_t)((h[14] >> 16) & BIT8_MASK),
-            .interrupt_line =(uint8_t)((h[14] >> 24) & BIT8_MASK),
-            #pragma endregion
-        }else if(dev->meta.header_type & 0xF == 0x1){
-            #pragma region Type 0x1
-            .BAR[0] =h[4],
-            .BAR[1] =h[5],
-            .secondary_latency_timer =(uint8_t)(h[6] & BIT8_MASK),
-            .subordinate_bus_number =(uint8_t)((h[6] >> 8) & BIT8_MASK),
-            .secondary_bus_number =(uint8_t)((h[6] >> 16) & BIT8_MASK),
-            .primary_bus_number =(uint8_t)((h[6] >> 24) & BIT8_MASK),
-            .secondary_status =(uint16_t)(h[7] & BIT16_MASK),
-            .IO_limit =(uint8_t)((h[7] >> 16) & BIT8_MASK),
-            .IO_base =(uint8_t)((h[7] >> 24) & BIT8_MASK),
-            .memory_limit =(uint16_t)(h[8] & BIT16_MASK),
-            .memory_base =(uint16_t)((h[8] >> 16) & BIT16_MASK),
-            .prefetch_memory_limit =(uint16_t)((h[9]) & BIT16_MASK),
-            .prefetch_memory_base =(uint16_t)((h[9] >> 16) & BIT16_MASK),
-            .prefetch_base_upper_32_bits =h[10],
-            .prefetch_limit_upper_32_bits =h[11],
-            .IO_limit_upper_16bits = (uint16_t)(h[12] & BIT16_MASK),
-            .IO_base_upper_16bits =(uint16_t)((h[12] >> 16) & BIT16_MASK),
-            .capabilities_pointer =(uint8_t)((h[13] >> 24) & BIT8_MASK),
-            .expansion_ROM_base_address =h[14],
-            .bridge_control =(uint16_t)(h[15] & BIT16_MASK),
-            .interrupt_pin =(uint8_t)((h[15] >> 16) & BIT8_MASK),
-            .interrupt_line =(uint8_t)((h[15] >> 24) & BIT8_MASK)
-            #pragma endregion
-        },
-        #pragma region MSI-X
-        uint8_t new_status = status & 0b00010000,
-        device_write32(dev, REG1OFFSET, new_status),
-        int cc=0,
-        while(device_read32(dev, capabilities_pointer+cc) & 0x00010001 != 0x11){++cc;},
-        .message_control = 
+    };
+    if(dev->meta->header_type & 0xF == 0x0){
+        #pragma region Type 0x0
+        dev->meta->BAR[0] = h[4];
+        dev->meta->BAR[1] = h[5];
+        dev->meta->BAR[2] = h[6];
+        dev->meta->BAR[3] = h[7];
+        dev->meta->BAR[4] = h[8];
+        dev->meta->BAR[5] = h[9];
+        //Disable Memory & IO write.
+        enableaddr_read(*dev);
+        for(int cc =0; cc < BARSIZE; ++cc){dev->meta->BAR[cc] = ((dev->meta->BAR[cc] & 0xFFFFFFF0) + (dev->meta->BAR[cc+1 >= BARSIZE? BARSIZE-1: cc+1] & 0xFFFFFFFF)) << 32;};
+        dev->meta->subsystem_id =(uint16_t)(h[10] & BIT16_MASK);
+        dev->meta->subsystem_vendor_id =(uint16_t)((h[10] >> 16) & BIT16_MASK);
+        dev->meta->expansion_ROM_base_address = h[11];
+        dev->meta->capabilities_pointer =(uint8_t)((h[12] >> 24) & BIT8_MASK);
+        dev->meta->max_latency =(uint8_t)((h[14]) & BIT8_MASK);
+        dev->meta->min_grant =(uint8_t)((h[14] >> 8) & BIT8_MASK);
+        dev->meta->interrupt_pin =(uint8_t)((h[14] >> 16) & BIT8_MASK);
+        dev->meta->interrupt_line =(uint8_t)((h[14] >> 24) & BIT8_MASK);
+        #pragma endregion
+    }else if(dev->meta->header_type & 0xF == 0x1){
+        #pragma region Type 0x1
+        dev->meta->BAR[0] =h[4];
+        dev->meta->BAR[1] =h[5];
+        dev->meta->secondary_latency_timer =(uint8_t)(h[6] & BIT8_MASK);
+        dev->meta->subordinate_bus_number =(uint8_t)((h[6] >> 8) & BIT8_MASK);
+        dev->meta->secondary_bus_number =(uint8_t)((h[6] >> 16) & BIT8_MASK);
+        dev->meta->primary_bus_number =(uint8_t)((h[6] >> 24) & BIT8_MASK);
+        dev->meta->secondary_status =(uint16_t)(h[7] & BIT16_MASK);
+        dev->meta->IO_limit =(uint8_t)((h[7] >> 16) & BIT8_MASK);
+        dev->meta->IO_base =(uint8_t)((h[7] >> 24) & BIT8_MASK);
+        dev->meta->memory_limit =(uint16_t)(h[8] & BIT16_MASK);
+        dev->meta->memory_base =(uint16_t)((h[8] >> 16) & BIT16_MASK);
+        dev->meta->prefetch_memory_limit =(uint16_t)((h[9]) & BIT16_MASK);
+        dev->meta->prefetch_memory_base =(uint16_t)((h[9] >> 16) & BIT16_MASK);
+        dev->meta->prefetch_base_upper_32_bits =h[10];
+        dev->meta->prefetch_limit_upper_32_bits =h[11];
+        dev->meta->IO_limit_upper_16bits = (uint16_t)(h[12] & BIT16_MASK);
+        dev->meta->IO_base_upper_16bits =(uint16_t)((h[12] >> 16) & BIT16_MASK);
+        dev->meta->capabilities_pointer =(uint8_t)((h[13] >> 24) & BIT8_MASK);
+        dev->meta->expansion_ROM_base_address =h[14];
+        dev->meta->bridge_control =(uint16_t)(h[15] & BIT16_MASK);
+        dev->meta->interrupt_pin =(uint8_t)((h[15] >> 16) & BIT8_MASK);
+        dev->meta->interrupt_line =(uint8_t)((h[15] >> 24) & BIT8_MASK);
         #pragma endregion
     };
+    #pragma region MSI-X
+    uint8_t new_status = dev->meta->status & 0b00010000;
+    device_write32(*dev, REG1OFFSET, new_status);
+    int cc=0;
+    while(device_read32(*dev, dev->meta->capabilities_pointer+cc) & 0x00010001 != 0x11){++cc;};
+    dev->meta->message_control = 0;
+    disableaddr_read(*dev);
+    #pragma endregion
 }
 
 // void pci_baseaddressconfigure(device_t *device){

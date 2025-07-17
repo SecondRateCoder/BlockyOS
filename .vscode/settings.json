@@ -8,6 +8,7 @@
         "stdint.h": "c",
         "stdbool.h": "c",
         "general.h": "c",
-        "alltypes.h": "c"
+        "alltypes.h": "c",
+        "pci.h": "c"
     }
 }

@@ -18,7 +18,13 @@ void memmove_unsafe(uint8_t *dest, size_t size, size_t offset, uint8_t *src, siz
     }
 }
 
-void memclear(uint8_t *dest, size_t offset, size_t length){memcpy_unsafe(dest, offset, (uint8_t *){0}, length);}
+void memclear(uint8_t *dest, size_t offset, size_t length){
+    const size_t end = offset+length;
+    while(offset < end){
+        dest[offset] = 0;
+        ++offset;
+    }
+}
 
 uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length){
     uint8_t *result;
@@ -31,7 +37,13 @@ uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length){
 }
 
 //Not robust rn but like I gues it is what it is ngl.
-uint8_t *define_hid(){size_t _t; hash(slice_bytes, sizeof(size_t));}
+uint8_t *define_hid(){
+    //Store last and 2nd byte of addresses in array.
+    uint8_t *out;
+    size_t size;
+    uint8_t addr[sizeof(size_t)];
+    
+}
 
 uint8_t *define_pid(){
     size_t temp = RAMMeta;

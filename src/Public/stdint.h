@@ -4,6 +4,7 @@ typedef unsigned int uint32_t;
 typedef unsigned long uint64_t;
 typedef unsigned long uintptr_t;
 typedef unsigned long long size_t;
+typedef signed long long ssize_t;
 
 #define INT8_MIN   (-1-0x7f)
 #define INT16_MIN  (-1-0x7fff)

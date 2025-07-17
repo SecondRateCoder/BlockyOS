@@ -112,25 +112,7 @@ Analogy: Imagine a row of warning lights on a dashboard.
 // #define ENABLE(M) is_set((size_t)M, 0)
 // #pragma endregion
 
-#pragma region MSIX_BITS
-#define ENABLE(MX) is_set((size_t)MX, 15)
-#define FUNCTION_MASK(MX) is_set((size_t)MX, 14)
-#define TABLE_SIZE(MX) (uint8_t[11]){is_set((size_t)M, 10), is_set((size_t)M, 9), is_set((size_t)M, 8), \
-is_set((size_t)M, 7), is_set((size_t)M, 6), is_set((size_t)M, 5), is_set((size_t)M, 4), \
-is_set((size_t)M, 3), is_set((size_t)M, 2), is_set((size_t)M, 1), is_set((size_t)M, 0)}
 
-#define VECTOR_CONTROL(MU, ML) ((uint32_t)((MU) >> 32))
-#define MESSAGE_DATA(MU, ML) ((uint32_t)((MU) & 0xFFFFFFFFULL))
-#define MESSAGEADDRESS_HIGH(MU, ML) ((uint32_t)((ML) >> 32))
-#define MESSAGEADDRESS_LOW(MU, ML) ((uint32_t)((ML) & 0xFFFFFFFFULL))
-#define CAPABILITIESLIST_ID 0x11
-/*
-Capabilities Pointer: Read the Capabilities Pointer register at offset 0x34 in the device's PCI Configuration Space. This points to the first capability structure.
-
-Capability List: Traverse the linked list of capabilities by reading the Next Capability Pointer,
- in each structure until you find the one with a Capability ID of 0x11 (which is the MSI-X Capability ID)
-*/
-#pragma endregion
 
 // #define rsdt_t RSDT
 // #define rsdtdesc_t RSDPDescriptor
@@ -143,7 +125,7 @@ device_t *Devices;
 size_t devicenum;
 
 typedef struct Device{
-    uint8_t bus, slot, *func, numof_funcs;
+    uint8_t bus, slot, *funcs, numof_funcs;
     uint16_t vendor_id, device_id;
     size_t size;
     pci_meta_t *meta;
@@ -201,21 +183,22 @@ typedef struct PCI_Header{
 #pragma pop(1)
 
 typedef enum REGOFFSET{
-    REG1OFFSET 0x0,
-    REG2OFFSET 0x4,
-    REG3OFFSET 0x8,
-    REG4OFFSET 0xC,
-    REG5OFFSET 0x10,
-    REG6OFFSET 0x14,
-    REG7OFFSET 0x18,
-    REG8OFFSET 0x1C,
-    REG9OFFSET 0x20,
-    REG10OFFSET 0x24,
-    REG11OFFSET 0x2C,
-    REG12OFFSET 0x30,
-    REG13OFFSET 0x34,
-    REG14OFFSET 0x38,
-    REG15OFFSET 0x3C,
+    REG0OFFSET= 0x0,
+    REG1OFFSET= 0x4,
+    REG2OFFSET= 0x8,
+    REG3OFFSET= 0xC,
+    REG4OFFSET= 0x10,
+    REG5OFFSET= 0x14,
+    REG6OFFSET= 0x18,
+    REG7OFFSET= 0x1C,
+    REG8OFFSET= 0x20,
+    REG9OFFSET= 0x24,
+    REG10OFFSET= 0x28,
+    REG11OFFSET= 0x2C,
+    REG12OFFSET= 0x30,
+    REG13OFFSET= 0x34,
+    REG14OFFSET= 0x38,
+    REG15OFFSET= 0x3C,
 }REGOFFSET;
 
 // typedef struct ACPISDTHeader {
@@ -253,16 +236,20 @@ typedef enum REGOFFSET{
     
 #pragma endregion
 
-
-
-void link_devices(int Device_config[2]);
-uint8_t calculate_checksum(const void* ptr, size_t length);
-uint16_t pci_checkvendor(uint8_t bus, uint8_t slot);
-uint16_t pciconfig_readword(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset);
-void pci_deviceconfigure(device_t *device);
-void pci_baseaddressconfigure(device_t *device);
 void scan_pci_devices();
 uint32_t pciconfig_read32(device_t device, uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset);
+void MMIO_configure(device_t *dev);
+void enableaddr_read(const device_t dev);
+void disableaddr_read(const device_t dev);
+bool device_alloca(const device_t dev, uint8_t baroffset);
+uint32_t pci_read32(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset);
+uint32_t device_read32(const device_t dev, uint8_t offset);
+void pci_write32(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset, uint32_t value);
+void device_write32(const device_t dev, uint8_t offset, uint32_t value);
+uint16_t pci_vendorcheck(uint16_t bus, uint16_t slot);
+uint16_t device_vendorcheck(const device_t dev);
+void device_metaconfig(device_t *dev);
+
 
 /*
 typedef struct {

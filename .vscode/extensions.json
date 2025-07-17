@@ -4,6 +4,9 @@
         "ms-vscode.cpptools-extension-pack",
         "ms-vscode.cpptools-themes",
         "ms-vscode.cmake-tools",
-        "repreng.csv"
+        "repreng.csv",
+        "aaron-bond.better-comments",
+        "adamraichu.pdf-viewer",
+        "vscode-icons-team.vscode-icons"
     ]
 }
