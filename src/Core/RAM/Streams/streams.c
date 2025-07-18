@@ -8,20 +8,18 @@ stream_t stream_init(char *Path, size_t Length, int TargetDevice[2], bool args[3
 			.ProcessID = define_pid()
 		},
 		.size = CONTEXTEXTRAS_SIZE,
-		.addr = address_pointfree(DEFAULTSTART, Size),
-		if(addr == INVALID_ADDR){return NULL;},
-		.checks = CHECK_PROTECT,
-		.flags = (hflags_t){
-			false,
-			false,
-			is_kernelprotected(TargetDevice),
-			true},
-		.Extras = (uint8_t[CONTEXTEXTRAS_SIZE]){
-			[0] = TargetDevice,
-			[1] = concat_flags((bool[8])args),
-			[2] = /*Device will handshake.*/
-		}
+		.addr = address_pointfree(DEFAULTSTART, Length),	
 	};
+	hc.checks= CHECK_PROTECT;
+	hc.flags= (hflags_t){
+		false,
+		false,
+		is_kernelprotected(TargetDevice),
+		true
+	};
+	hc.Extras[1]= TargetDevice;
+	hc.Extras[2]= concat_flags(args);
+	if(hc.addr == INVALID_ADDR){return NULL;}
 	Path[Length] = NULL;
 	memcpy_unsafe(hc.Extras, hc.Extras[2], Path, Length);
 	hc.Extras[hc.Extras[2]+Length] = Path[Length];
@@ -53,8 +51,8 @@ uint8_t stream_read(ID_t ID){
 	return NULL;
 }
 
-uint8_t concat_flags(bool flags[8]){
-	uitn8_t out = 0;
+uint8_t concat_flags(uint8_t flags[8]){
+	uint8_t out = 0;
 	for(uint8_t cc =0; cc < 8;cc++){
 		if(flags[cc] == NULL){continue;}
 		switch(cc){

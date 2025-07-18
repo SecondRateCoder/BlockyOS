@@ -66,7 +66,7 @@ size_t get_hcontextaddr(size_t hcontextaddress);
 void hcontext_attrwrite(uint8_t *data, ID_t ID, hpeek_t peeker);
 void hcontext_attrwrite_unsafe(uint8_t *data, hpeek_t peeker, size_t hcontextaddr);
 void direct_extraswrite(size_t hcontextaddr, uint8_t value, uint8_t index);
-uint8_t *hcontext_attrpeek(uint8_t *data, ID_t ID, hpeek_t peeker);
+uint8_t *hcontext_attrpeek(ID_t ID, hpeek_t peeker);
 uint8_t *hcontext_attrpeek_unsafe(size_t hcontextaddr, hpeek_t peeker);
 bool address_validate(size_t addr);
 bool space_validate(size_t address, size_t concurrent_size);

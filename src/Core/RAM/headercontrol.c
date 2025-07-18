@@ -109,12 +109,12 @@ void direct_extraswrite(size_t hcontextaddr, uint8_t value, uint8_t index){
 }
 
 
-uint8_t *hcontext_attrpeek(uint8_t *data, ID_t ID, hpeek_t peeker){
+uint8_t *hcontext_attrpeek(ID_t ID, hpeek_t peeker){
 	size_t temp = RAMMeta;
 	while(temp < _ram_end){
 		if((compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_HeaderID), ID.HeaderID, IDSize) &&
 		compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_ProcessID), ID.ProcessID, IDSize)) || ID.ProcessID == KERNEL_ID){
-			headerMeta_write(data, peeker, temp);
+			headerMeta_attrpeek_unsafe(peeker, temp);
 		}
 		temp+=context_size;
 	}
