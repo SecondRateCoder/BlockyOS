@@ -24,3 +24,13 @@ pthread spawn_thread(void *function){
 pthread spawn_kthread(void *kfunc){
     return spawn_thread(kfunc);
 }
+
+void thread_switch(pthread *thr){
+    register size_t addr asm("r0") = thr->program_counter;
+    asm(
+        "jmp %0"
+        :
+        : "r"(addr)
+        :"memory", "cc"
+    )
+}

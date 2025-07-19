@@ -239,3 +239,27 @@ size_t address_pointfree(size_t startfrom, size_t concurrent_size){
 */
 
 
+bool memclean(){
+	size_t temp =RAMMeta;
+	const size_t snapshot = temp;
+	/*
+	Clean Memory, moving similar ProcessIDs to be near each-other, move "re-alloca" blocks next to thier neighbours.
+	*/
+	int phase = 0;
+	while(phase < 3){
+		switch(phase){
+			case 0:
+				while(temp < _ram_end){
+					if(hcontext_attrpeek_unsafe(tempo, HC))
+					temp += context_size;
+				}
+		}
+	}
+}
+	// while(temp < _ram_end){
+	// 	size_t addr =decode_size_t(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_Address));
+	// 	if(addr == 0){/*No Header there.*/continue;}else{
+
+	// 	}
+	// 	temp += context_size;
+	// }
