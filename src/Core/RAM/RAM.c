@@ -20,7 +20,7 @@ void realloca(void *object, size_t new_size){
 	}else if(new_size < curr_size){headerMeta_write(new_size, HContextPeekerAttr_Size, (size_t)object);}
 }
 void *alloca(size_t Size, uint8_t ProcessID[IDSize]){
-	size_t freeaddr = address_pointfree(RAMMeta, Size);
+	size_t freeaddr = address_pointfree(RAMMeta, Size+1);
 	if(freeaddr == INVALID_ADDR){
 		/*Define Virt-RAM in File-system.*/
 	}
@@ -41,6 +41,8 @@ void *alloca(size_t Size, uint8_t ProcessID[IDSize]){
 		},
 		.size = Size,
 	});
+	RAM[addr+Size+1] = NULL;
+	return (void *)(&RAM[freeaddr]);
 }
 #pragma endregion
 

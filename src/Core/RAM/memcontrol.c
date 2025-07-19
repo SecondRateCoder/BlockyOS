@@ -1,5 +1,15 @@
 #include "./src/Core/RAM/memtypes.h"
 
+#define MAX_SEARCH 1024*30
+
+size_t memsize(void *ptr){
+    size_t addr = (size_t)ptr;
+    while(addr < MAX_SEARCH){
+        if(RAM[addr] == NULL){return NULL;}
+        ++addr;
+    }
+}
+
 void memcpy_unsafe(uint8_t *dest, const size_t offset, const uint8_t *src, const size_t n){
     size_t i =0;
     while(i < n){
@@ -49,7 +59,7 @@ uint8_t *define_pid(){
     size_t temp = RAMMeta;
     uint32_t result =0;
     while(temp < _ram_end){
-        if(headerpeek_unsafe(temp, HContextPeekerAttr_IsProcess) == true){
+        if(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_IsProcess) == true){
             result += decode_uint32(slice_bytes(RAM, temp, IDSize));
         }
         temp += context_size;

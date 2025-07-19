@@ -59,6 +59,7 @@ uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length);
 void memclear(uint8_t *dest, size_t offset, size_t length);
 uint8_t *define_hid();
 uint8_t *define_pid();
+size_t memsize(void *ptr);
 
 size_t hcontext_encode(uint8_t *array, const hcontext_t h);
 void hcontext_store(const hcontext_t H);
