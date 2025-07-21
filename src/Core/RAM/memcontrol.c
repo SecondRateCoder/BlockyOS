@@ -17,7 +17,20 @@ void memcpy_unsafe(uint8_t *dest, const size_t offset, const uint8_t *src, const
         i++;
     }
 }
-
+void mem_displace(uint8_t *src, size_t blockaddr, const size_t blocksize, const ssize_t displacement){
+    const size_t endaddr = blockaddr + blocksize;
+    uint8_t temp = 0;
+    while(blockaddr < endaddr){
+        if(displacement > 0){
+            //Move from the end of data block.
+            src[blockaddr]
+            blockaddr--;
+        }else{
+            //Move from the start of data block.
+            blockaddr++;
+        }
+    }
+}
 void memmove_unsafe(uint8_t *dest, size_t size, size_t offset, uint8_t *src, size_t size_){
     size_t MaxSize = (size > size_? size_: size) + offset, srcCounter =0;
     while(offset < MaxSize){
@@ -44,15 +57,6 @@ uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length){
         ++cc;
     }
     return result;
-}
-
-//Not robust rn but like I gues it is what it is ngl.
-uint8_t *define_hid(){
-    //Store last and 2nd byte of addresses in array.
-    uint8_t *out;
-    size_t size;
-    uint8_t addr[sizeof(size_t)];
-    
 }
 
 uint8_t *define_pid(){

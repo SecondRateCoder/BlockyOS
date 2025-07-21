@@ -7,6 +7,7 @@ volatile size_t Pointer;
 volatile uint8_t *RAM;
 volatile uint8_t *RAMMeta;
 bound_t *memtobefreed;
+size_t memtobefreed_length;
 
 #define INFO(context) (uint8_t)((context.Extras >> 50) & BIT5_MASK)
 
@@ -22,7 +23,7 @@ bound_t *memtobefreed;
 #define STREAM_ID 6
 #define EXTENSION_IDT(S) if(is_set(S, EXTENSION_ID)){set(S, EXTENSION_ID, 0);}else{set(S, EXTENSION_ID, 1);}
 #define EXTENSION_ID 7
-
+#define MAXMEM_MOVE 1024*50
 
 typedef struct Bounds{uint8_t *addr; ssize_t offset;}Bounds;
 

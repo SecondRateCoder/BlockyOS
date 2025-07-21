@@ -74,12 +74,23 @@ void dealloca_unsafe(void *header){
 				
 	*/
 	//Get Header location and location and end address of Parent Process.
-	const size_t addr = (size_t)header, haddr = get_hcontextaddr(addr);
+	const size_t addr = (size_t)header, haddr = get_hcontextaddr(addr), size = hcontext_attrpeek_unsafe(haddr, HContextPeekerAttr_Size);
 	const uint8_t ProcessID[IDSize] = hcontext_attrpeek_unsafe(haddr, HContextPeekerAttr_ProcessID);
 	const hflags_t flags = (hflags_t){true, true, false, true, false}, mask = (hflags_t){false, true, true, true, true};
-	//Search for the same ProcessID but with the Proecess flag set, so it returns the parent P.
-	const size_t parent_startaddr = hcontext_attrpeekh(ProcessID, HContextPeekerAttr_Address, flags, mask), parent_endaddr = memorysize_underprocess(Process_ID);
-	if(addr > )
+	//Search with the same ProcessID but with the Process flag set, so it returns the 1st address pointing to a Process with the same ProcessID.
+	const size_t parent_startaddr = hcontext_attrpeekh(ProcessID, HContextPeekerAttr_Address, flags, mask), parent_memlen = memorysize_underprocess(Process_ID), parent_endaddr = parent_memlen+ parent_startaddr;
+	if((parent_memlen/2)+parent_startaddr > MAXMEM_MOVE){
+		//Too large to be feasible, put to be freed later.
+		memtobefreed = realloca(memtobefreed, sizeof(bound_t));
+		memtobefreed[memtobefreed] = (bound_t){addr, addr > (parent_memlen/2)+parent_startaddr? -((ssize_t)size): (ssize_t)size};
+		memtobefreed_length++;
+	}else{mem_displace(RAM, addr, ((size_t)addr)-((size_t)parent_endaddr), 0-((ssize_t)size));}
+	
+	//Clean Header Context.
+	mem_displace(RAMMeta, 0, ((size_t)haddr)-((size_t)RAMMeta), context_size);
+	RAMMeta+=context_size;
+	// memmove_unsafe(RAMMeta, ((size_t)_ram_length), haddr, RAMMeta)
+
 	/*
 		!UNSAFE
 			Get the pointer to header,
