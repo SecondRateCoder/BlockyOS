@@ -5,7 +5,8 @@ extern uintptr_t _ram_start, _ram_length, _heap_start, _heap_length;
 volatile size_t Pointer;
 
 volatile uint8_t *RAM;
-uint8_t *RAMMeta;
+volatile uint8_t *RAMMeta;
+bound_t *memtobefreed;
 
 #define INFO(context) (uint8_t)((context.Extras >> 50) & BIT5_MASK)
 
@@ -13,6 +14,7 @@ uint8_t *RAMMeta;
 #define hcontext_t headercontext
 #define hflags_t headerflags
 #define hpeek_t HContextPeekerAttr
+#define bound_t Bounds
 
 #define STREAM_IDT(S) if(is_set(S, DEVICE_ID)){set(S, DEVICE_ID, 0);}else{set(S, DEVICE_ID, 1);}
 #define DEVICE_ID 5
@@ -22,12 +24,13 @@ uint8_t *RAMMeta;
 #define EXTENSION_ID 7
 
 
+typedef struct Bounds{uint8_t *addr; ssize_t offset;}Bounds;
 
 //(2^120)-1 representable numbers.
 #define MAXINDEXERSIZE 15
 typedef struct headercontext{
     ID_t ID;
-    size_t size, addr;
+    size_t addr, size;
     uint8_t checks;
     hflags_t flags;
     //Uses a 2, 4 bit IDs at the  to identify headers, meaning a Memory Block can only have 2 modifiers.
@@ -45,12 +48,13 @@ typedef enum HContextPeekerAttr{
     HContextPeekerAttr_HeaderID =0x12,
     HContextPeekerAttr_Address =0x13,
     HContextPeekerAttr_Size =0x14,
-    HContextPeekerAttr_IsProcess =0x15,
-    HContextPeekerAttr_IsThread =0x16,
-    HContextPeekerAttr_IsKernel =0x17,
-    HContextPeekerAttr_IsPrivate =0x18,
-    HContextPeekerAttr_IsStream =0x19,
-    HContextPeekerAttr_Extras =0x1A,
+    HContextPeekerAttr_Checks =0x15,
+    HContextPeekerAttr_IsProcess =0x16,
+    HContextPeekerAttr_IsThread =0x17,
+    HContextPeekerAttr_IsKernel =0x18,
+    HContextPeekerAttr_IsPrivate =0x19,
+    HContextPeekerAttr_IsStream =0x20,
+    HContextPeekerAttr_Extras =0x21,
 }HContextPeekerAttr;
 
 void memcpy_unsafe(uint8_t *dest, const size_t offset, const uint8_t *src, const size_t n);

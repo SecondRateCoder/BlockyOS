@@ -19,45 +19,78 @@ void realloca(void *object, size_t new_size){
 		for(; cc < sizeof(size_t)*2; cc++){direct_extraswrite(next_hcaddr, addr_encoded[cc-1], cc);}
 	}else if(new_size < curr_size){headerMeta_write(new_size, HContextPeekerAttr_Size, (size_t)object);}
 }
+
 void *alloca(size_t Size, uint8_t ProcessID[IDSize]){
-	size_t freeaddr = address_pointfree(RAMMeta, Size+1);
-	if(freeaddr == INVALID_ADDR){
-		/*Define Virt-RAM in File-system.*/
+	Size++;
+	const hflags_t flags = (hflags_t){true, true, true, true, false}, mask = (hflags_t){true, true, true, true, false};
+	size_t finaladdr = decode_size_t(hcontext_attrpeekh(ProcessID, HContextPeekerAttr_Address, flags, mask)) + memorysize_underprocess(ProcessID);
+	if(space_validate(finaladdr), Size){
+		//Manually store at parent's end location.
+		hcontext_store(
+			(hcontext_t){
+				.ID = (ID_t){ProcessID, headers_underprocess(ProcessID)++},
+				.addr = finaladdr+1,
+				.size = Size-1,
+				.checks = CHECK_PROTECT,
+				.flags = (hflags_t){false, false, false, true, false},
+				.Extras = (uint8_t[CONTEXTEXTRAS_SIZE]){0}
+			}
+		);
+		finaladdr = parent_endaddr+1;
+	}else{
+		//Store at random Location.
+		finaladdr = address_pointfree(RAMMeta, Size);
+		if(finaladdr == INVALID_ADDR){
+			//Store in Virt-RAM.
+		}else{
+			if(RAM[finaladdr] != 0){memclear(RAM, finaladdr, Size);}
+			hcontext_store(
+				(hcontext_t){
+					.ID = (ProcessID, headers_underprocess(ProcessID)++),
+					.addr = finaladdr,
+					.size = Size-1,
+					.checks = CHECK_PROTECT,
+					.flags = (hflags_t){false, false, false, true, false},
+					.Extras = (uint8_t[CONTEXTEXTRAS_SIZE]){0}
+				}
+			);
+		}
 	}
-	else{memclear(RAM, freeaddr, Size);}
-	hcontext_store((hcontext_t){
-		.addr = freeaddr,
-		.checks = CHECK_PROTECT,
-		.flags = (hflags_t){
-			.IsKernel = (ProcessID == KERNEL_ID),
-			.IsPrivate = true,
-			.IsProcess = false, 
-			.IsStream = false,
-			.IsThread = false
-		},
-		.ID = (ID_t){
-			.ProcessID = ProcessID,
-			.HeaderID = define_hid()
-		},
-		.size = Size,
-	});
-	RAM[addr+Size+1] = NULL;
-	return (void *)(&RAM[freeaddr]);
+	RAM[finaladdr+Size] = NULL;
+	return (void *)&RAM[finaladdr];
 }
 #pragma endregion
 
 #pragma region De-Alloca
 void dealloca_unsafe(void *header){
+	//Cleaner
 	/*
-		Get the pointer to header,
-		find the Metadata location where it lies or is within,
-		Clear out the HeaderMetadata.
+	Should assist in the cleaning of Memory Blocks.
+	1st:	Find specific location in Parent Process's heap.
+	2nd:	Based on the distance between the location and the end addr of Heap either
+				save it's addr and end addr to the memtobefreed Buffer. (So that it's de-allocing can be handled later.).
+				or move ProgramData to pver-write itself.
+				Starting from RAMMeta all the Headers above it should be moved down and over-write it's data,
+				
 	*/
-	size_t temp = RAMMeta, addr = (size_t)header;
-	const size_t size =decode_size_t(headerpeek_unsafe(addr, HContextPeekerAttr_Size), 0);
-	memclear(RAM, get_maddr(addr), size);
-	// write over the de-allocated header.
-	memclear(RAM, decode_size_t(headerpeek_unsafe(addr, HContextPeekerAttr_Address), 0), size);
+	//Get Header location and location and end address of Parent Process.
+	const size_t addr = (size_t)header, haddr = get_hcontextaddr(addr);
+	const uint8_t ProcessID[IDSize] = hcontext_attrpeek_unsafe(haddr, HContextPeekerAttr_ProcessID);
+	const hflags_t flags = (hflags_t){true, true, false, true, false}, mask = (hflags_t){false, true, true, true, true};
+	//Search for the same ProcessID but with the Proecess flag set, so it returns the parent P.
+	const size_t parent_startaddr = hcontext_attrpeekh(ProcessID, HContextPeekerAttr_Address, flags, mask), parent_endaddr = memorysize_underprocess(Process_ID);
+	if(addr > )
+	/*
+		!UNSAFE
+			Get the pointer to header,
+			find the Metadata location where it lies or is within,
+			Clear out the HeaderMetadata.
+		size_t temp = RAMMeta, addr = (size_t)header;
+		const size_t size =decode_size_t(headerpeek_unsafe(addr, HContextPeekerAttr_Size), 0);
+		memclear(RAM, get_maddr(addr), size);
+		// write over the de-allocated header.
+		memclear(RAM, decode_size_t(headerpeek_unsafe(addr, HContextPeekerAttr_Address), 0), size);
+	*/
 }
 
 #pragma endregion

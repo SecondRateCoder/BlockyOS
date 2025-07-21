@@ -16,10 +16,10 @@ size_t hcontext_encode(uint8_t *array, const hcontext_t h){
 	//size encoded.
 	encode_size_t(array, h.size, Offset);
 	Offset += sizeof(size_t);
-
-	//booleans
+	//Checker.
 	array[Offset] = h.checks;
 	++Offset;
+	//booleans
 	array[Offset] = h.flags.IsProcess;
 	++Offset;
 	array[Offset] = h.flags.IsThread;
@@ -70,34 +70,49 @@ void hcontext_attrwrite_unsafe(uint8_t *data, hpeek_t peeker, size_t hcontextadd
 	switch(peeker){
 		case HContextPeekerAttr_ProcessID:
 			memcpy_unsafe(RAM, temp + hcontextaddr, data, 8);
+			break;
 		
 		case HContextPeekerAttr_HeaderID:
 			memcpy_unsafe(RAM, temp + hcontextaddr + IDSize, data, 8);
+			break;
 
 		case HContextPeekerAttr_Address:
 			memcpy_unsafe(RAM, temp + hcontextaddr + (IDSize *2), data, sizeof(size_t));
+			break;
 
 		case HContextPeekerAttr_Size:
 			memcpy_unsafe(RAM, temp + hcontextaddr + (IDSize *2) + sizeof(size_t), data, sizeof(size_t));
-		
-		case HContextPeekerAttr_IsProcess:
+			break;
+
+		case HContextPeekerAttr_Checks:
 			memcpy_unsafe(RAM, temp + hcontextaddr + (IDSize *2) + (sizeof(size_t)*2), data, 1);
-		
+			break;
+
+		case HContextPeekerAttr_IsProcess:
+			memcpy_unsafe(RAM, temp + hcontextaddr + (IDSize *2) + (sizeof(size_t)*2) + 1, data, 1);
+			break;
+
 		case HContextPeekerAttr_IsThread:
-			memcpy_unsafe(RAM, temp + hcontextaddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 1, data, 1);
+			memcpy_unsafe(RAM, temp + hcontextaddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 2, data, 1);
+			break;
 
 		case HContextPeekerAttr_IsKernel:
-			memcpy_unsafe(RAM, temp + hcontextaddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 2, data, 1);
-		
-		case HContextPeekerAttr_IsPrivate:
 			memcpy_unsafe(RAM, temp + hcontextaddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 3, data, 1);
-		
-		case HContextPeekerAttr_IsStream:
+			break;
+
+		case HContextPeekerAttr_IsPrivate:
 			memcpy_unsafe(RAM, temp + hcontextaddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 4, data, 1);
+			break;
+
+		case HContextPeekerAttr_IsStream:
+			memcpy_unsafe(RAM, temp + hcontextaddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 5, data, 1);
+			break;
 
 		case HContextPeekerAttr_Extras:
-			memcpy_unsafe(RAM, temp + hcontextaddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 5, data, CONTEXTEXTRAS_SIZE);
-		default: return INVALID_ADDR;
+			memcpy_unsafe(RAM, temp + hcontextaddr + IDSize + (IDSize *2) + (sizeof(size_t)*2) + 6, data, CONTEXTEXTRAS_SIZE);
+			break;
+		
+		default: return;
 	}
 }
 void direct_extraswrite(size_t hcontextaddr, uint8_t value, uint8_t index){
@@ -108,16 +123,32 @@ void direct_extraswrite(size_t hcontextaddr, uint8_t value, uint8_t index){
 	return;
 }
 
-
+uint8_t *hcontext_attrpeekh(const uint8_t hereditary_id[IDSize], const hpeek_t peeker, const hflags_t flags, const hflags_t ignore){
+	size_t temp = RAMMeta;
+	while(temp < _ram_end){
+		if((compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_IsKernel), flags.IsKernel, 1) || !ignore.IsKernel) &&
+			(compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_IsPrivate), flags.IsPrivate, 1) || !ignore.IsPrivate) &&
+			(compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_IsProcess), flags.IsProcess, 1) || !ignore.IsProcess) &&
+			(compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_IsStream), flags.IsStream, 1) || !ignore.IsStream) &&
+			(compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_IsThread), flags.IsThread, 1) || !ignore.IsThread)){
+				if((compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_HeaderID), hereditary_id, IDSize) ||
+				compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_ProcessID), hereditary_id, IDSize)) || ID.ProcessID == KERNEL_ID){
+					headerMeta_attrpeek_unsafe(peeker, temp);
+				}
+				temp+=context_size;
+		}
+	}
+}
 uint8_t *hcontext_attrpeek(ID_t ID, hpeek_t peeker){
 	size_t temp = RAMMeta;
 	while(temp < _ram_end){
 		if((compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_HeaderID), ID.HeaderID, IDSize) &&
 		compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_ProcessID), ID.ProcessID, IDSize)) || ID.ProcessID == KERNEL_ID){
-			headerMeta_attrpeek_unsafe(peeker, temp);
+			return headerMeta_attrpeek_unsafe(peeker, temp);
 		}
 		temp+=context_size;
 	}
+	return NULL;
 }
 uint8_t *hcontext_attrpeek_unsafe(size_t hcontextaddr, hpeek_t peeker){
 	size_t temp = RAMMeta;
