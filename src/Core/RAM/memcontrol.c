@@ -17,17 +17,23 @@ void memcpy_unsafe(uint8_t *dest, const size_t offset, const uint8_t *src, const
         i++;
     }
 }
-void mem_displace(uint8_t *src, size_t blockaddr, const size_t blocksize, const ssize_t displacement){
-    const size_t endaddr = blockaddr + blocksize;
-    uint8_t temp = 0;
-    while(blockaddr < endaddr){
-        if(displacement > 0){
-            //Move from the end of data block.
-            src[blockaddr]
-            blockaddr--;
-        }else{
-            //Move from the start of data block.
-            blockaddr++;
+void memdisplace(uint8_t *src, size_t blockaddr, const size_t blocksize, const ssize_t displacement){
+    if(blockaddr+displacement < 0 || src == NULL){return;}
+    const size_t naddr = blockaddr + displacement, endaddr = blockaddr+blocksize;
+    ssize_t counter =0;
+    if(displacement < 0){
+        //Write from addr to naddr.
+        while(blockaddr+counter < endaddr){
+            src[naddr+counter] = src[blockaddr+counter];
+            src[blockaddr+counter] = 0;
+            counter++;
+        }
+    }else if(displacement > 0){
+        counter = blocksize-1;
+        while(counter > -1){
+            src[naddr+counter] = src[blockaddr+counter];
+            src[blockaddr+counter] = 0;
+            counter--;
         }
     }
 }

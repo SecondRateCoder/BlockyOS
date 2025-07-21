@@ -87,7 +87,7 @@ void dealloca_unsafe(void *header){
 	}else{mem_displace(RAM, addr, ((size_t)addr)-((size_t)parent_endaddr), 0-((ssize_t)size));}
 	
 	//Clean Header Context.
-	mem_displace(RAMMeta, 0, ((size_t)haddr)-((size_t)RAMMeta), context_size);
+	memdisplace(RAMMeta, 0, ((size_t)haddr)-((size_t)RAMMeta), context_size);
 	RAMMeta+=context_size;
 	// memmove_unsafe(RAMMeta, ((size_t)_ram_length), haddr, RAMMeta)
 
