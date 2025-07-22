@@ -1,5 +1,5 @@
 ENTRY(_start)
-OUTPUT_FORMAT(elf64-x86-64)
+OUTPUT_FORMAT("binary")
 STARTUP(crt0.o)
 INPUT()
 OUTPUT(BlockyOS.bin)
@@ -44,4 +44,18 @@ _heap_size = . - _heap_start;
 ASSERT( _ram_end >= ADDR(.bss) + SIZEOF(.bss), "RAM overflow: .bss section is too large for RAM!" );
 ASSERT( LENGTH(RAM) >= (_heap_end - _ram_start) + _stack_size_defined_elsewhere, "RAM overflow: Heap/Stack clash!" );
 
+}
+
+/DISCARD/ :
+{
+    *(.eh_frame)
+    *(.fini)
+    *(.interp)
+    *(.note.ABI-tag)
+    *(.note.gnu.build-id)
+    *(.stab)
+    *(.stabstr)
+    *(.comment)
+    *(.debug*)
+    *(.gnu.attributes)
 }
