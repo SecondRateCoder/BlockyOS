@@ -1,27 +1,63 @@
 #include "./src/Core/RAM/memtypes.h"
 
+
+#define LASTBLOCKINDEX 5
+#define NEXTBLOCKINDEX 12
+
 #pragma region Alloca & Re-alloca
-void realloca(void *object, size_t new_size){
+void *realloca(void *object, size_t new_size){
 	const size_t addr = (size_t)object, hcontextaddr = get_hcontextaddr(addr);
 	if(address_validate(addr)){return;}
 	const size_t curr_size =hcontext_attrpeek_unsafe((size_t)object, HContextPeekerAttr_Size);
 	const uint8_t ProcessID[IDSize] = hcontext_attrpeek_unsafe(hcontextaddr, HContextPeekerAttr_ProcessID), extras[CONTEXTEXTRAS_SIZE] = hcontext_attrpeek_unsafe(hcontextaddr, HContextPeekerAttr_Extras);
+	//Re-alloced Header's Extras should have the ID: Extras[0 -> 4]= Num, Extras[5 -> 11]= LastBlockAddr, Extras[12 -> 20]= NextBlockAddr
+	//If there is viable space for the new_size then simply write a new size to the header's hcontext_t
 	if(new_size > curr_size){
-		//alloca new block, store pointer to that header.
-		size_t next_addr =(size_t)alloca(new_size-curr_size, KERNEL_ID), next_hcaddr = get_hcontextaddr(next_addr);
-		uint8_t addr_encoded[sizeof(size_t)];
-		encode_size_t(addr_encoded, next_addr, 0);
-		//Write the new size_t address.
-		int cc =1;
-		for(; cc < sizeof(size_t); cc++){direct_extraswrite(addr, addr_encoded[cc-1], cc);}
-		//write the last address in the new header.
-		encode_size_t(addr_encoded, addr, 0);
-		for(; cc < sizeof(size_t)*2; cc++){direct_extraswrite(next_hcaddr, addr_encoded[cc-1], cc);}
-	}else if(new_size < curr_size){headerMeta_write(new_size, HContextPeekerAttr_Size, (size_t)object);}
+		// //!METHOD 1
+		// if(space_validate(addr, new_size) == true){hcontext_attrwrite_unsafe(decode_size_t(new_size), HContextPeekerAttr_Size, hcontextaddr);}else{
+		// 	//Allocate new block.
+		// 	const uint8_t *freeaddr = (void *)alloca(new_size-curr_size, ProcessID);
+		// 	const uint8_t *free_hcontextaddr = get_hcontextaddr(freeaddr);
+		// 	uint8_t free_addr_encoded[sizeof(size_t)] = decode_size_t(freeaddr);
+		// 	uint8_t curr_addr_decoded[sizeof(size_t)] = decode_size_t(addr);
+		// 	uint8_t cc =0;
+		// 	while(cc < sizeof(size_t)){
+		// 		direct_extraswrite(hcontextaddr, free_addr_encoded[cc], cc+NEXTBLOCKINDEX);
+		// 		direct_extraswrite(free_hcontextaddr, curr_addr_decoded[cc], cc+LASTBLOCKINDEX);
+		// 		++cc;
+		// 	}
+		// }
+		//!METHOD 2
+		//Simply alloca the new block.
+		uint8_t *freeaddr = alloca(new_size, ProcessID);
+		memmove_unsafe(freeaddr, new_size, 0, object, curr_size);
+		dealloca_unsafe(object);
+		return freeaddr;
+	}else{
+		hcontext_attrwrite_unsafe(decode_size_t(new_size), HContextPeekerAttr_Size, hcontextaddr);
+		return object;
+	}
+
+
+
+	// if(new_size > curr_size){
+	// 	//alloca new block, store pointer to that header.
+	// 	size_t next_addr =(size_t)alloca(new_size-curr_size, KERNEL_ID), next_hcaddr = get_hcontextaddr(next_addr);
+	// 	uint8_t addr_encoded[sizeof(size_t)];
+	// 	encode_size_t(addr_encoded, next_addr, 0);
+	// 	//Write the new size_t address.
+	// 	int cc =1;
+	// 	for(; cc < sizeof(size_t); cc++){direct_extraswrite(addr, addr_encoded[cc-1], cc);}
+	// 	//write the last address in the new header.
+	// 	encode_size_t(addr_encoded, addr, 0);
+	// 	for(; cc < sizeof(size_t)*2; cc++){direct_extraswrite(next_hcaddr, addr_encoded[cc-1], cc);}
+	// }else if(new_size < curr_size){headerMeta_write(new_size, HContextPeekerAttr_Size, (size_t)object);}
 }
 
 void *alloca(size_t Size, uint8_t ProcessID[IDSize]){
+	//INC Size, to have a NULL value at the end of the block.
 	Size++;
+	//Get address of the end of Parent Address.
 	const hflags_t flags = (hflags_t){true, true, true, true, false}, mask = (hflags_t){true, true, true, true, false};
 	size_t finaladdr = decode_size_t(hcontext_attrpeekh(ProcessID, HContextPeekerAttr_Address, flags, mask)) + memorysize_underprocess(ProcessID);
 	if(space_validate(finaladdr), Size){
@@ -38,7 +74,7 @@ void *alloca(size_t Size, uint8_t ProcessID[IDSize]){
 		);
 		finaladdr = parent_endaddr+1;
 	}else{
-		//Store at random Location.
+		//Store at any viable Location.
 		finaladdr = address_pointfree(RAMMeta, Size);
 		if(finaladdr == INVALID_ADDR){
 			//Store in Virt-RAM.
@@ -84,24 +120,11 @@ void dealloca_unsafe(void *header){
 		memtobefreed = realloca(memtobefreed, sizeof(bound_t));
 		memtobefreed[memtobefreed] = (bound_t){addr, addr > (parent_memlen/2)+parent_startaddr? -((ssize_t)size): (ssize_t)size};
 		memtobefreed_length++;
-	}else{mem_displace(RAM, addr, ((size_t)addr)-((size_t)parent_endaddr), 0-((ssize_t)size));}
+	}else{mem_displace(RAM, parent_startaddr, parent_memlen, (ssize_t)size);}
 	
 	//Clean Header Context.
-	memdisplace(RAMMeta, 0, ((size_t)haddr)-((size_t)RAMMeta), context_size);
+	mem_displace(RAMMeta, 0, ((size_t)haddr)-((size_t)RAMMeta), context_size);
 	RAMMeta+=context_size;
-	// memmove_unsafe(RAMMeta, ((size_t)_ram_length), haddr, RAMMeta)
-
-	/*
-		!UNSAFE
-			Get the pointer to header,
-			find the Metadata location where it lies or is within,
-			Clear out the HeaderMetadata.
-		size_t temp = RAMMeta, addr = (size_t)header;
-		const size_t size =decode_size_t(headerpeek_unsafe(addr, HContextPeekerAttr_Size), 0);
-		memclear(RAM, get_maddr(addr), size);
-		// write over the de-allocated header.
-		memclear(RAM, decode_size_t(headerpeek_unsafe(addr, HContextPeekerAttr_Address), 0), size);
-	*/
 }
 
 #pragma endregion

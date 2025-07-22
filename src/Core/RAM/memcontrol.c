@@ -17,7 +17,7 @@ void memcpy_unsafe(uint8_t *dest, const size_t offset, const uint8_t *src, const
         i++;
     }
 }
-void memdisplace(uint8_t *src, size_t blockaddr, const size_t blocksize, const ssize_t displacement){
+void mem_displace(uint8_t *src, size_t blockaddr, const size_t blocksize, const ssize_t displacement){
     if(blockaddr+displacement < 0 || src == NULL){return;}
     const size_t naddr = blockaddr + displacement, endaddr = blockaddr+blocksize;
     ssize_t counter =0;

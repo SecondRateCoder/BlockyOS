@@ -16,7 +16,20 @@
 #define STREAM_FLAG_KERNEL_ONLY    (1 << 4) // Bit 4 (00010000_2)
 
 #define stream_t STREAM
-typedef uint8_t *STREAM;
+typedef void(* stream_inc)(stream_t*, void*);
+typedef void(* stream_dec)(stream_t*, void*);
+typedef size_t(* stream_read)(stream_t*, void*);
+
+typedef struct STREAM{
+    void *addr;
+    size_t size;
+    const stream_inc str_inc;
+    const stream_dec str_dec;
+    const stream_read str_read;
+}STREAM;
+
+typedef struct STREAM_FLAGS{uint8_t ParentProc[IDSize]; streamconfig_t strconfig;}STREAM_FLAGS;
+
 
 #define streamconfig_t stream_type
 typedef struct stream_type{

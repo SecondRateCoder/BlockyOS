@@ -34,7 +34,6 @@ typedef struct headercontext{
     size_t addr, size;
     uint8_t checks;
     hflags_t flags;
-    //Uses a 2, 4 bit IDs at the  to identify headers, meaning a Memory Block can only have 2 modifiers.
     uint8_t Extras[CONTEXTEXTRAS_SIZE];
 }headercontext;
 
