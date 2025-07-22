@@ -16,6 +16,7 @@
 #define STREAM_FLAG_KERNEL_ONLY    (1 << 4) // Bit 4 (00010000_2)
 
 #define stream_t STREAM
+#define streamconfig_t stream_type
 typedef void(* stream_inc)(stream_t*, void*);
 typedef void(* stream_dec)(stream_t*, void*);
 typedef size_t(* stream_read)(stream_t*, void*);
@@ -31,11 +32,10 @@ typedef struct STREAM{
 typedef struct STREAM_FLAGS{uint8_t ParentProc[IDSize]; streamconfig_t strconfig;}STREAM_FLAGS;
 
 
-#define streamconfig_t stream_type
-typedef struct stream_type{
-    Input = 0x21,
-    Output = 0x22,
-    Video = 0x23,
-    Audio = 0x24,
-    File =0x25,
+typedef enum stream_type{
+    STREAMTYPE_INPUT =0x21,
+    STREAMTYPE_OUTPUT = 0x22,
+    STREAMTYPE_VIDEO = 0x23,
+    STREAMTYPE_AUDIO = 0x24,
+    STREAMTYPE_FILE =0x25,
 }stream_type;

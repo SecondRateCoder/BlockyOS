@@ -132,7 +132,7 @@ uint8_t *hcontext_attrpeekh(const uint8_t hereditary_id[IDSize], const hpeek_t p
 			(compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_IsStream), flags.IsStream, 1) || !ignore.IsStream) &&
 			(compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_IsThread), flags.IsThread, 1) || !ignore.IsThread)){
 				if((compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_HeaderID), hereditary_id, IDSize) ||
-				compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_ProcessID), hereditary_id, IDSize)) || ID.ProcessID == KERNEL_ID){
+				compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_ProcessID), hereditary_id, IDSize)) || compare_array(hereditary_id, KERNEL_ID, IDSize)){
 					headerMeta_attrpeek_unsafe(peeker, temp);
 				}
 				temp+=context_size;
@@ -143,7 +143,7 @@ uint8_t *hcontext_attrpeek(ID_t ID, hpeek_t peeker){
 	size_t temp = RAMMeta;
 	while(temp < _ram_end){
 		if((compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_HeaderID), ID.HeaderID, IDSize) &&
-		compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_ProcessID), ID.ProcessID, IDSize)) || ID.ProcessID == KERNEL_ID){
+		compare_array(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_ProcessID), ID.ProcessID, IDSize)) || compare_array(ID.ProcessID, KERNEL_ID, IDSize)){
 			return headerMeta_attrpeek_unsafe(peeker, temp);
 		}
 		temp+=context_size;
@@ -270,23 +270,23 @@ size_t address_pointfree(size_t startfrom, size_t concurrent_size){
 */
 
 
-bool memclean(){
-	size_t temp =RAMMeta;
-	const size_t snapshot = temp;
-	/*
-	Clean Memory, moving similar ProcessIDs to be near each-other, move "re-alloca" blocks next to thier neighbours.
-	*/
-	int phase = 0;
-	while(phase < 3){
-		switch(phase){
-			case 0:
-				while(temp < _ram_end){
-					if(hcontext_attrpeek_unsafe(tempo, HC))
-					temp += context_size;
-				}
-		}
-	}
-}
+// bool memclean(){
+// 	size_t temp =RAMMeta;
+// 	// const size_t snapshot = temp;
+// 	/*
+// 	Clean Memory, moving similar ProcessIDs to be near each-other, move "re-alloca" blocks next to thier neighbours.
+// 	*/
+// 	int phase = 0;
+// 	while(phase < 3){
+// 		switch(phase){
+// 			case 0:
+// 				while(temp < _ram_end){
+// 					if(hcontext_attrpeek_unsafe(temp, HC))
+// 					temp += context_size;
+// 				}
+// 		}
+// 	}
+// }
 	// while(temp < _ram_end){
 	// 	size_t addr =decode_size_t(hcontext_attrpeek_unsafe(temp, HContextPeekerAttr_Address));
 	// 	if(addr == 0){/*No Header there.*/continue;}else{

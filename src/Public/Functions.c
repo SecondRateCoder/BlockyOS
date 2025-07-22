@@ -18,7 +18,7 @@ int decode_int(const uint8_t *array, size_t Offset){
 }
 int *decode_int_array(const uint8_t *array, size_t Offset, const size_t Length){
     if(((float)Length)/(float)sizeof(int) != 0){return NULL;}
-    int result[Length];
+    int *result = alloca(Length, calling_id());
     for (size_t i = Offset; i < (Length+Offset); i++) {
         result[i] = decode_int(array, Offset + i * sizeof(int));
     }
@@ -81,8 +81,8 @@ uint8_t *hash(const uint8_t *val, size_t length){
 bool is_set(size_t Item, uint8_t X){return (Item & (1U << (X > sizeof(size_t)? 0: X))) ? 1 : 0;}
 void set(size_t *Item, uint8_t X, uint8_t val){
     if(val > 0){
-        Item = Item | (1UL << X);
-    }else if(val == 0){Item = Item & ~(1UL << X);}
+        Item = *Item | (1UL << X);
+    }else if(val == 0){Item = *Item & ~(1UL << X);}
 }
 
 size_t strlen(char *string){

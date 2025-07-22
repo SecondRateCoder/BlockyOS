@@ -6,8 +6,6 @@ volatile size_t Pointer;
 
 volatile uint8_t *RAM;
 volatile uint8_t *RAMMeta;
-bound_t *memtobefreed;
-size_t memtobefreed_length;
 
 #define INFO(context) (uint8_t)((context.Extras >> 50) & BIT5_MASK)
 
@@ -59,22 +57,23 @@ typedef enum HContextPeekerAttr{
 
 void memcpy_unsafe(uint8_t *dest, const size_t offset, const uint8_t *src, const size_t n);
 void memmove_unsafe(uint8_t *dest, size_t size, size_t offset, uint8_t *src, size_t size_);
-uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length);
+void mem_displace(uint8_t *src, size_t blockaddr, const size_t blocksize, const ssize_t displacement);
 void memclear(uint8_t *dest, size_t offset, size_t length);
-uint8_t *define_hid();
+uint8_t *slice_bytes(uint8_t *src, size_t start, size_t Length);
 uint8_t *define_pid();
 size_t memsize(void *ptr);
 
 size_t hcontext_encode(uint8_t *array, const hcontext_t h);
 void hcontext_store(const hcontext_t H);
-size_t get_hcontextaddr(size_t hcontextaddress);
+size_t get_hcontextaddr(size_t ramaddress);
 void hcontext_attrwrite(uint8_t *data, ID_t ID, hpeek_t peeker);
 void hcontext_attrwrite_unsafe(uint8_t *data, hpeek_t peeker, size_t hcontextaddr);
 void direct_extraswrite(size_t hcontextaddr, uint8_t value, uint8_t index);
+uint8_t *hcontext_attrpeekh(const uint8_t hereditary_id[IDSize], const hpeek_t peeker, const hflags_t flags, const hflags_t ignore);
 uint8_t *hcontext_attrpeek(ID_t ID, hpeek_t peeker);
 uint8_t *hcontext_attrpeek_unsafe(size_t hcontextaddr, hpeek_t peeker);
-bool address_validate(size_t addr);
-bool space_validate(size_t address, size_t concurrent_size);
 int headers_underprocess(uint8_t ProcessID[IDSize]);
 size_t memorysize_underprocess(uint8_t ProcessID[IDSize]);
+bool address_validate(size_t addr);
+bool space_validate(size_t address, size_t concurrent_size);
 size_t address_pointfree(size_t startfrom, size_t concurrent_size);

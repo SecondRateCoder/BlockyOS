@@ -30,7 +30,7 @@ void program_run(ID_t ID){
     RAM[addr+size] = 0XC3;
     int out;
     // 64-bit assembly
-    asm volatile (
+    asm volatile(
         // Step 1: Prepare the function address for the 'call' instruction.
         // Input operand %1 will be in an available 64-bit register (e.g., RDI, RSI, etc.).
         // We will call the address in that register.

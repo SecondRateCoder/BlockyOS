@@ -26,3 +26,4 @@ uint32_t inl(uint16_t port);
 
 void *alloca(size_t Size, uint8_t ProcessID[IDSize]);
 void dealloca_unsafe(void *header);
+void *realloca(void *object, size_t new_size);
