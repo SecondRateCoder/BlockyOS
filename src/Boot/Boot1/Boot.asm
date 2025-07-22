@@ -33,7 +33,7 @@ ebr_system_id:				db 'FAT12	'
 
 _start:
     xor ax, ax
-    mox ds, ax
+    mov ds, ax
     mov es, ax
 
     ;Stack set-up
@@ -46,7 +46,7 @@ _start:
 	mov bx, 0x7E00
 	call diskread
 
-    ; print msg
+    ; print msg_hello
     mov si, msg_hello
     call putstr
 
@@ -62,7 +62,7 @@ _start:
     or al, al
     jz .done
 
-    mov ah, 0x8C
+    mov ah, 0x0E
     int 0x10
 
     jmp .loop
@@ -87,15 +87,13 @@ lbatochs:
 
 	inc dx
 	mov cx, dx
-	dix word [bdb_heads]
+	div word [bdb_heads]
 
 	mov dh, dl
 	mov ch, al
 	shl ch, 6
 	or cl, ah
 
-	pop ax
-	mox dl, al
 	pop ax
 	ret
 
@@ -106,8 +104,6 @@ diskread:
 	push dx
 	push di
 
-
-	push cx
 	call lbatochs
 	pop ax
 
@@ -205,7 +201,7 @@ pmode:
 ; flatcode    db 0xff, 0xff, 0, 0, 0, 10011010b, 10001111b, 0
 ; flatdata    db 0xff, 0xff, 0, 0, 0, 10010010b, 11001111b, 0
 
-msg: db 'hello there!', ENDL, 0
+msg_hello: db 'hello there!', ENDL, 0
 disk_errormsg: db 'Error when reading Disk', ENDL, 0
 
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
