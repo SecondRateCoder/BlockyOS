@@ -20,9 +20,10 @@ $(BUILD_DIR)/$(FLOPPY_TARGET):	$(BUILD_DIR)/Boot1.bin $(BUILD_DIR)/Boot2.bin $(E
 $(EXE_PATH):
 	make -C ./src/Core/Makefile all
 
+# Compile Boot Stage1:
 $(BUILD_DIR)/Boot1.bin:	$(CURR_DIR)/Boot1/Boot.asm
 	$(ASM) $(CURR_DIR)/Boot1/Boot.asm -f bin -o $(BUILD_DIR)/Boot1.bin
-
+# Compile Boot stage2:
 $(BUILD_DIR)/Boot2.bin:	$(CURR_DIR)/Boot2/Boot.asm
 	$(ASM) $(CURR_DIR)/Boot2/Boot.asm -f bin -o $(BUILD_DIR)/Boot1.bin
 
