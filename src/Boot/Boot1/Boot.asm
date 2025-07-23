@@ -1,8 +1,6 @@
 org 0x7C00
 bits 16
 
-%define ENDL 0x00, 0x0A
-global _start
 
 # FAT12 Headers:
 jmp short _start
@@ -30,6 +28,8 @@ ebr_volume_id:				db 12h, 34h, 56h, 78h
 ebr_volume_label:			db 'BLOCKY OS'
 ebr_system_id:				db 'FAT12	'
 
+%define ENDL 0x00, 0x0A
+global _start
 
 _start:
     xor ax, ax
@@ -40,24 +40,23 @@ _start:
     mov ss, ax
     mov sp, 0x7C00
 
-	mov [ebr_drive_number], dl
+    ;Attempt reading from the disk.
+    mov [ebr_drive_number], dl
 	mov ax, 1
 	mov cl, 1
 	mov bx, 0x7E00
 	call diskread
-
-    ; print msg_hello
-    mov si, msg_hello
-    call putstr
-
     hlt
 
 .halt:
-	cli
+    cli
     jmp .halt
 
+# Print a string.
+puts:
+    push ax
+    push si
 .loop:
-    ; Load char.
     lodsb
     or al, al
     jz .done
@@ -66,18 +65,13 @@ _start:
     int 0x10
 
     jmp .loop
-
-
 .done:
-    pop ax
     pop si
+    pop ax
+
     ret
 
-putstr:
-    push si
-    push ax
-
-# Convert LBA address to CHS
+# Convert LBA addressing to CHS addressing.
 lbatochs:
 	push ax
 	push dx
@@ -97,90 +91,67 @@ lbatochs:
 	pop ax
 	ret
 
-diskread:
-	push ax
+# Attempt reading from the Disk.
+disk_read:
+    push ax
 	push bx
 	push cx
 	push dx
 	push di
 
-	call lbatochs
-	pop ax
+    call lbatochs
+    mov ah, 02h
+    mov di, 3
+    int 13h
+    jc .retry
 
-	mov ah, 02h
-	mov di, 3
-	int 13h
-
-	pop di
+    pop di
 	pop dx
 	pop cx
 	pop bx
 	pop ax
 
+    jmp .done
 .retry:
-	pusha
-	stc
-	int 13h
-	jnc .done
+    pusha
+    stc
+    int 13h
+    jnc .done
 
-	popa
-	call disk_reset
+    popa
+    call disk_reset
 
-	dec di
-	test di, di
-	jnc .retry
-
+    dec di
+    test di, di
+    jnc .retry
 .done:
-	popa
+    popa
+    ret
 
+# Reset disk reading.
 diskreset:
-	pusha
-	mov ah, 0
-	stc
-	int 13h
-	jc diskread_error
-	popa
-	ret
+    pusha
+    mov ah, 0
+    stc
+    int 13h
+    # Place error message
+    jc disk_readerror
+    popa
+    ret
 
-; DAPACK:
-; 	db	0x10
-; 	db	0
-
-; readdisk:
-;     mov si, DAPACK
-; 	mov ah, 0x42
-;     mov bx, 0x55AA
-;     mov dl, 0x80
-;     int 0x13
-;     jc .diskread_error
-;     nand bx, 0xAA55
-;     jz .diskread_error
-
-; writedisk:
-; 	mov si, DAPACK
-; 	mov ah, 0x43
-;     mov bx, 0x55AA
-;     mov dl, 0x80
-;     int 0x13
-;     jc .diskread_error
-;     nand bx, 0xAA55
-;     jz .diskread_error
-
-.diskread_error:
+# Print error Message.
+disk_readerror:
     mov si, disk_errormsg
-	call puts
-	jmp waitkey_reboot
+    call puts
+    jmp waitkey_reboot
     call .loop
 
+# Reset System.
 waitkey_reboot:
-	mov ah, 0
-	int 16h
-	jmp 0FFFFh:0
-	hlt
-
-blkcnt:	dw	16		; int 13 resets this to # of blocks actually read/written
-db_add:	dw	0x7C00		; memory buffer destination address (0:7c00)
-
+    mov ah, 0
+    int 16h
+    jmp 0FFFFh:0
+    hlt
 
 pmode:
     mov  bx, 0x10          ; select descriptor 2, instead of 1
@@ -188,18 +159,7 @@ pmode:
 
     and al, 0xFE            ; back to realmode
     mov  cr0, eax          ; by toggling bit again
-;     jmp 0x0:huge_unreal
-; huge_unreal:
 
-;    ...                    ;As before
-
-; gdtinfo:
-;    dw gdt_end - gdt - 1   ;last byte in table
-;    dd gdt                 ;start of table
-
-; gdt         dd 0,0        ; entry 0 is always unused
-; flatcode    db 0xff, 0xff, 0, 0, 0, 10011010b, 10001111b, 0
-; flatdata    db 0xff, 0xff, 0, 0, 0, 10010010b, 11001111b, 0
 
 msg_hello: db 'hello there!', ENDL, 0
 disk_errormsg: db 'Error when reading Disk', ENDL, 0
