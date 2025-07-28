@@ -14,6 +14,9 @@ typedef struct PATH{
     char Name[MAXNAME_LENGTH];
 }PATH;
 
+#define rad_deg_t rad_deg
+typedef struct rad_deg{ldouble_t radians, degrees;}rad_deg;
+
 size_t decode_size_t(const uint8_t *array, const int Offset);
 int decode_int(const uint8_t *array, size_t Offset);
 int *decode_int_array(const uint8_t *array, size_t Offset, const size_t Length);
