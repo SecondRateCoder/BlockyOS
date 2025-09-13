@@ -1,0 +1,19 @@
+{
+    "": {
+        "Boot": [
+            "Stage1: ",
+                "Read from drive, load Stage 2",
+            "Stage 2: ",
+                "Perform accurate Enviroment Diagnostics",
+                "Resolve Enviroment",
+                "Set-Up: ",
+                    "Enviroment based off diagnostics",
+                    "Page Table",
+                    "Interrupts",
+                    "Stack and Heap",
+                    "OS Priviledges",
+                "Load in OS with the Enviroment diagnostics as input",
+                "Jump to OS code"
+        ]
+    }
+}
