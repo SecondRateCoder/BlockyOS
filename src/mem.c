@@ -1,5 +1,5 @@
 char *RAM;
-volatile size_t num_headers;
+volatile uint num_headers;
 char *RAMHeaders;
 
 bool addr_validate(void *addr){return (get_haddr(addr) == NULL);}
@@ -55,3 +55,24 @@ void *hcontext_attr_do(void *blockaddr, void *haddr, blockye_t function, void *v
 		}
 }
 
+size_t get_memsize(void *memblock){return hcontext_attr_do(memblock, NULL, H_ATTRPEEK_SIZE, NULL, 0);}
+
+bool hcontext_store(memh_t *header, int index){
+	if(index > num_headers){index = num_headers +1;}
+	if(index == -1){
+		// Place at any location, basically append the header.
+		if(space_validate(&RAMHeaders[index* sizeof(memh_t)+5], sizeof(memh_t) == true){
+			RAMHeaders[index* sizeof(memh_t)+5] = header;
+			return true;
+		}else{
+			if(blockdisplace(&RAMHeaders[index* sizeof(memh_t)+5], {BLOCKY_ENUM_DO_LONG, 20}) == true){
+				RAMHeaders[index* sizeof(memh_t)+5] = header;
+				return true;
+			}else{return false;}
+		}
+	}else{
+		// Update the header at the specified index
+		RAMHeaders[index* sizeof(memh_t)+5] = header;
+		return true;
+	}
+}
