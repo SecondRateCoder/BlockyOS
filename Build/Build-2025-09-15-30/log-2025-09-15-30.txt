@@ -1,0 +1,5 @@
+Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-09-15-30\objs\boot1.bin
+!Compilation of C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm failed. NASM Code: 1
+Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-09-15-30\objs\boot2.bin
+Successfully compiled C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm
+Command:  C:\msys64\ucrt64\bin\qemu-system-x86_64.exe -fda C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-09-15-30\floppy-2025-09-15-30.img

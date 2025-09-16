@@ -1,82 +1,194 @@
-#* Compile both Boot assembly files and append them to the floppy.img in the build folder
-
-#! Parameters
 param(
-	[Parameter(Mandatory=$false)]
-	[string]$LinkerDir
+    [Parameter(Mandatory=$true)]
+    [string[]]$AsmFiles, # List of .asm file paths
+
+    [Parameter(Mandatory=$false)]
+    [string]$LinkerScript, # Linker script file path
+
+    [Parameter(Mandatory=$false)]
+    [bool]$Run
 )
+#C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\compile.ps1 -AsmFiles "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm", "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm" -Run 1
+$NASM = "C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe"
+$LD = "ld"
+$QEMU = "C:\msys64\ucrt64\bin\qemu-system-x86_64.exe"
 
-#! Directory setup
-$Build = Join-Path (Get-Location) "Build"
-$Image = Join-Path $Build ("floppy_" + (Get-Date -Format "yyyy-MM-dd_HH-mm-ss") + ".img")
-$Logdir = Join-Path $Build "Logs\"
-$Log = Join-Path $logDir ("log_" + (Get-Date -Format "yyyy-MM-dd_HH-mm-ss") + ".txt")
-$bootDir = Join-Path (Get-Location) "src\Boot\"
+$Date = (Get-Date -Format "yyyy-MM-dd-ss")
+$Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
+$Image = Join-Path $Build ("floppy-" + $Date + ".img")
+$Objdir = Join-Path $Build "objs"
+$Log = Join-Path $Build ("log-" + $Date + ".txt")
 
-#! Compiler setup
-#* Just use gcc and directly enter the assembly stage or use NASM which ever.
-$NASM = "nasm"
-$LINKER = "ld"
-
-#! Functions
-function Log-Write{
-    param ([string]$Message)
-    Write-Host $Message
-    Add-Content -Path $Log -Value $Message
+function Log-Write {
+    param([string]$Msg)
+    Write-Host $Msg
+    Add-Content -Path $Log -Value $Msg
 }
 
 function Img-Push {
-    param(
-        [byte[]]$Data
-    )
-    
-    # Open the file stream in Append mode
-    $fs = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
+    param([byte[]]$data)
+    $file = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
     try {
-        $fs.Write($Data, 0, $Data.Length)
+        if($data){
+            $file.Write($data, 0, $data.Length)
+        }
     } finally {
-        $fs.Close()
+        $file.Close()
     }
 }
 
-function Test-GccAvailability {
-    Log-Write "Checking for GCC availability..."
-    try {
-        $null = & $gccPath --version 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Log-Write "GCC found: $($gccPath)"
-            return $true
-        } else {
-            Log-Write "GCC not found or not callable. Please ensure GCC is installed and in your system's PATH."
+function Prepare {
+    if (-not (Test-Path $Build)) {
+        New-Item -Path $Build -ItemType Directory -Force
+    }
+    if (-not (Test-Path $Objdir)) {
+        New-Item -Path $Objdir -ItemType Directory -Force
+    }
+    if (-not (Test-Path $Log)) {
+        New-Item -Path $Log -ItemType File -Force
+    }
+
+    if (-not (Test-Path $NASM)) {
+        Log-Write "NASM not found at $NASM. Please install NASM."
+        exit 1
+    }
+
+    if (-not (Get-Command $LD -ErrorAction SilentlyContinue)) {
+        Log-Write "GNU Linker not found in PATH. Please install GNU Linker."
+        exit 1
+    }
+}
+function Asm-Compile{
+    param(
+        [string[]]$fPaths,
+        [string]$format
+    )
+    foreach ($file in $fPaths) {
+        try {
+            if (Test-Path $file) {
+                $outputPath = Join-Path $Objdir ([System.IO.Path]::GetFileNameWithoutExtension($file) + ".bin")
+                $argument = "-f "+ $format+ " "+ $file+ " -o "+ $outputPath
+                Log-Write "Command: $($NASM) $($argument)"
+                $nasmOutput = & $NASM "-f" $format $file "-o" $outputPath "-s"
+                if ($?) {
+                    Log-Write "Successfully compiled $($file)"
+                    if ($nasmOutput) {
+                        # $nasmOutput | ForEach-Object { Log-Write "Output: $($_)" }
+                        foreach($item in $nasmOutput){
+                            Log-Write "Output: $($item)"
+                        }
+                    }
+                } else {
+                    Log-Write "!Compilation of $($file) failed. NASM Code: $($LASTEXITCODE)"
+                    if ($nasmOutput) {
+                        # $nasmOutput | ForEach-Object { Log-Write "#!: $_" }
+                        foreach($item in $nasmOutput){
+                            Log-Write ("! " + $item)
+                        }
+                    }
+                }
+            }
+        } catch {
+            Log-Write "CRITICAL ERROR: Exception during compilation of $($file):"
+            Log-Write $_.Exception.ToString()
+        }
+    }
+}
+
+# Optional override for linker script
+# $LinkerScript_Out = if ($LinkerScript) { $LinkerScript } else { Join-Path (Get-Location) "Boot\boot_linker.ld" }
+
+# Main Logic
+(Prepare)
+(Asm-Compile -fPaths $AsmFiles -format "bin")
+
+$succ_ = @()
+$cc = 0
+foreach ($file in $AsmFiles) {
+    $temp = Join-Path $Objdir ([System.IO.Path]::GetFileNameWithoutExtension($file) + ".bin")
+    if(Test-Path $temp){
+        $data = Get-Content -Path $temp -Raw -Encoding Byte
+        Img-Push -data $data
+        $succ_ += $true
+        $cc++
+    }
+}
+
+if($Run){
+    foreach($success in $succ_){
+        if( -not ($success -eq $true)){
             return $false
         }
-    } catch {
-        Log-Write "Error checking GCC: $($_.Exception.Message)"
-        Log-Write "Please ensure GCC is installed and in your system's PATH."
-        return $false
     }
+    Log-Write "Command:  $($QEMU) -fda $($Image)"
+    $args_qemu = @("-fda", "$($Image)")
+    & $QEMU @args_qemu
+    return $true
 }
 
-function Boot_Compile {
-	param()
-	$asmFiles = Get-ChildItem -Path $bootDir -Filter "*.asm" -Recurse | Select-Object -ExpandProperty FullName
-	if($asmFiles){
-		foreach($file in $asmFiles){
-			$arguments = "-f bin" + $file + [System.IO.Path]::GetFileNameWithoutExtension($file) + ".bin"
-			$nasmOutput = & $NASM $arguments 2>&1
-			Log-Write $nasmOutput
-		}
-	}
-}
+# # Check if NASM is available
+# if (-not (Get-Command $NASM -ErrorAction SilentlyContinue)) {
+#     Write-Error "NASM not found in PATH. Please install NASM."
+#     exit 1
+# }
+# # Check if LD is available
+# if (-not (Get-Command LD -ErrorAction SilentlyContinue)) {
+#     Write-Error "LD (GNU linker) not found in PATH. Please install binutils or compatible LD."
+#     exit 1
+# }
 
-#Links each Boot file then appends them to the Image
-function Boot_Link{
-	param(
-		[string[]]$objPaths
-	)
-	if($LinkerDir){
-		# Use specified Linker
-	}else{
-		# Use default Linker
-	}
-}
+# # Directory to store object files
+# $objDir = Join-Path (Get-Location) "Build\objs"
+# if (-Not (Test-Path $objDir)) {
+#     New-Item -ItemType Directory -Path $objDir | Out-Null
+# }
+
+# # Assemble each.asm file to an object file
+# $objFiles = @()
+# foreach ($asm in $AsmFiles) {
+#     if (-Not (Test-Path $asm)) {
+#         Write-Error "Assembly file not found: $asm"
+#         exit 1
+#     }
+    
+#     # Generate object filename (replace.asm with.o)
+#     $objFile = Join-Path $objDir ([IO.Path]::GetFileNameWithoutExtension($asm) + ".o")
+    
+#     # NASM command: Use -f elf64 for 64-bit (modify if targeting 32-bit)
+#     # You can adjust -f elf32 if targeting 32-bit
+#     $nasmCmd = "nasm -f elf64 `"$asm`" -o `"$objFile`""
+    
+#     Write-Host "Assembling $asm..."
+#     Invoke-Expression $nasmCmd
+    
+#     if (-not (Test-Path $objFile)) {
+#         Write-Error "Failed to assemble $asm"
+#         exit 1
+#     }
+    
+#     $objFiles += $objFile
+# }
+
+# # Check if linker script exists
+# $LinkerScript_Out = "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\boot_linker.ld"
+# if (-Not (Test-Path $LinkerScript)) {
+#     Write-Error "Linker script not found: $($LinkerScript)"
+# }else{
+#     $LinkerScript_Out = $LinkerScript
+# }
+
+# # Link the object files using ld and the specified linker script
+# # This assumes your linker script handles symbols like img_push correctly.
+# # If you want to ensure certain functions like img_push are included,
+# # you can add linker flags or scripts accordingly.
+# $ldCmd = "ld -o `"$OutputFile`" -T `"$LinkerScript`" " + ($objFiles -join " ")
+
+# Write-Host "Linking objects..."
+# Invoke-Expression $ldCmd
+
+# if (-not (Test-Path $OutputFile)) {
+#     Write-Error "Linking failed: Output file $OutputFile not created"
+#     exit 1
+# }
+
+# Write-Host "Build successful: $OutputFile"
