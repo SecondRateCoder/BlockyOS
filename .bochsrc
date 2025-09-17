@@ -1,0 +1,7 @@
+megs: 32
+romimage: file=BIOS-bochs-latest
+vgaromimage: file=VGABIOS-lgpl-latest
+boot: floppy
+floppya: 1_44=floppy.img, status=inserted
+log: bochs.log
+display_library: sdl

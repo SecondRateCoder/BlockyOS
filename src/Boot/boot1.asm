@@ -31,6 +31,7 @@ ebr_system_id:				db 'FAT12   '
 global start
 
 %define ENDL 0x00, 0x0A
+BOOT2: db 0x7E00
 ; This file will simply load Boot2, Boot2 will be the main booting file
 
 start:
@@ -56,10 +57,13 @@ start:
 	mov ax, 1
 	mov cl, 1
     ; Location to load Boot2
-	mov bx, 0x7E00
+	mov bx, [BOOT2]
     mov ah, 0x02
     mov al, 2
 	call disk_read
+    mov si, msg_bt2lod
+    call puts
+    jmp [BOOT2]
     hlt
 
 .halt:
@@ -113,11 +117,11 @@ lbatochs:
     xor dx, dx ; No remainder
     div word [bdb_heads] ; ax = (LBA / [bdb_sectors_per_track]) / [bdb_heads] = LBA-CHS cylinder
                          ; && dx = (LBA / [bdb_sectors_per_track]) % [bdb_heads] = LBA-CHS head
-    mov dh, dx  ;!         ; dh = LBA-CHS head
-    mov ch, ax  ;!       ; ch implemented
+    mov dh, dl  ;!         ; dh = LBA-CHS head
+    mov ch, al  ;!       ; ch implemented
 	mov dl, [ebr_drive_number]
     shr ax, 6            ; ch [8 - 15] = LBA-CHS cylinder
-	or cl, ax ;!
+	or cl, al ;!
     ;CX			CH | AX | CL
 	; cylinder: 8b,	
     ; sector:		2b,  6b
@@ -145,9 +149,6 @@ lbatochs:
 ; dl: drive number(0)
 ; es:bx Memory address to store data at
 disk_read:
-    push cl  ;!
-    push ch  ;!
-    push dh  ;!
 	push cx
 
     ; Warn of reading attempt
@@ -166,7 +167,7 @@ disk_read:
     pusha
     stc	; set carry flag
     int 13h
-    jnc .done	; If fail the BIOS should have carry flag NOT set
+    jc .done	; If fail the BIOS should have carry flag NOT set
 
 	; If carry flag still set then failed, reset and jmp to beginning.
     popa
@@ -177,16 +178,17 @@ disk_read:
     jnz .retry
 ; Disk reading, gave up
 .done:
+    mov si, disk_readsucc
+    call puts
 	pop cx
-    pop dh	;!
-    pop ch	;!
-	pop cl	;!
     ret
 
 ; Reset disk reading.
 ; three tries
 ; No arguments
 disk_reset:
+    mov si, disk_resetmsg
+    call puts
     pusha
     mov ah, 0
 	mov dl, [ebr_drive_number]
@@ -220,9 +222,12 @@ halt:
 ;     mov  cr0, eax          ; by toggling bit again
 
 
-msg_hello: db 'hello there!', ENDL, 0
-msg_disk_read: db 'Reading from disk', ENDL, 0
-disk_errormsg: db 'Error when reading Disk', ENDL, 0
+msg_hello: db 'hello there! ', ENDL, 0
+msg_bt2lod: db 'Jumping to Bootloader 2. ', ENDL, 0
+msg_disk_read: db 'Reading from disk. ', ENDL, 0
+disk_errormsg: db 'Error when reading Disk. ', ENDL, 0
+disk_resetmsg: db 'Resetting Floppy disk. ', ENDL, 0
+disk_readsucc: db 'Disk read success...', ENDL, 0
 
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
 dw 0xAA55              ; The final 2 bytes will be the boot signature.

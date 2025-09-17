@@ -6,12 +6,19 @@ param(
     [string]$LinkerScript, # Linker script file path
 
     [Parameter(Mandatory=$false)]
-    [bool]$Run
+    [bool]$Run,
+
+    [Parameter(Mandatory = $false)]
+    [string]$Bochs_Src,
+
+    [Parameter(Mandatory = $false)]
+    [bool]$Run_Bochs
 )
 #C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\compile.ps1 -AsmFiles "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm", "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm" -Run 1
 $NASM = "C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe"
 $LD = "ld"
 $QEMU = "C:\msys64\ucrt64\bin\qemu-system-x86_64.exe"
+$BOCHS = "C:\Users\olusa\Bochs-3.0\bochs.exe"
 
 $Date = (Get-Date -Format "yyyy-MM-dd-ss")
 $Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
@@ -19,6 +26,18 @@ $Image = Join-Path $Build ("floppy-" + $Date + ".img")
 $Objdir = Join-Path $Build "objs"
 $Log = Join-Path $Build ("log-" + $Date + ".txt")
 
+$BOCHSRC = Join-Path $Build ".bochsrc"
+
+$Line_Up = "megs: 32
+romimage: file=BIOS-bochs-latest
+vgaromimage: file=VGABIOS-lgpl-latest
+boot: floppy
+floppya: 1_44="
+$Line_Down = ", status=inserted
+log: bochs.log
+display_library: nogui
+pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
+"
 function Log-Write {
     param([string]$Msg)
     Write-Host $Msg
@@ -47,15 +66,25 @@ function Prepare {
     if (-not (Test-Path $Log)) {
         New-Item -Path $Log -ItemType File -Force
     }
-
+    
     if (-not (Test-Path $NASM)) {
         Log-Write "NASM not found at $NASM. Please install NASM."
         exit 1
     }
-
+    
     if (-not (Get-Command $LD -ErrorAction SilentlyContinue)) {
         Log-Write "GNU Linker not found in PATH. Please install GNU Linker."
         exit 1
+    }
+    if(-not (Test-Path $BOCHSRC)){
+        New-Item -Path $BOCHSRC -ItemType File -Force
+        try{
+            $floppy_temp = [System.IO.Path]::GetFileNameWithoutExtension($Image)
+            Add-Content -Path $BOCHSRC -Value ($Line_Up + $floppy_temp + $Line_Down)
+            # $file.Write($floppy_temp, 0, $floppy_temp.Length)
+            # $file.Write($Line_Down, 0, $Line_Down.Length)
+        }finally{
+        }
     }
 }
 function Asm-Compile{
@@ -114,17 +143,24 @@ foreach ($file in $AsmFiles) {
     }
 }
 
-if($Run){
-    foreach($success in $succ_){
-        if( -not ($success -eq $true)){
-            return $false
-        }
+foreach($success in $succ_){
+    if(($success -eq $false)){
+        return $false
     }
+}
+
+
+if($Run){
     Log-Write "Command:  $($QEMU) -fda $($Image)"
     $args_qemu = @("-fda", "$($Image)")
     & $QEMU @args_qemu
-    return $true
 }
+
+if($Run_Bochs -and $Bochs_Src){
+    & $BOCHS "-f" $Bochs_Src
+}
+
+return $true
 
 # # Check if NASM is available
 # if (-not (Get-Command $NASM -ErrorAction SilentlyContinue)) {

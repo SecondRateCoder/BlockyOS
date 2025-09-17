@@ -2,7 +2,7 @@ org 0x7E00
 bits 16
 
 %define ENDL 0x00, 0x0A
-global _start
+global start
 
 start:
     mov si, msg_hello
