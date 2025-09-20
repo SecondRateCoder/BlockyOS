@@ -1,6 +1,8 @@
 param(
     [Parameter(Mandatory=$false)]
-    [bool]$RunBochs
+    [bool]$RunBochs,
+    [Parameter(Mandatory=$false)]
+    [bool]$Run
 )
 
 $TRUE_COMPILE = "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\compile.ps1"
@@ -10,10 +12,10 @@ $LinkerScript = "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot
 
 if($RunBochs){
     if($RunBochs -eq $true){
-        & $TRUE_COMPILE -AsmFiles $BOOT1, $BOOT2 -LinkerScript $LinkerScript -Bochs_Src "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\.bochsrc" -Run_Bochs 1
+        & $TRUE_COMPILE -AsmFiles $BOOT1, $BOOT2 -LinkerScript $LinkerScript -Run_Bochs 1
     }else{
-        & $TRUE_COMPILE -AsmFiles $BOOT1, $BOOT2 -LinkerScript $LinkerScript -Run 1
+        & $TRUE_COMPILE -AsmFiles $BOOT1, $BOOT2 -LinkerScript $LinkerScript -Run $Run
     }
 }else{
-    & $TRUE_COMPILE -AsmFiles $BOOT1, $BOOT2 -LinkerScript $LinkerScript -Run 1
+    & $TRUE_COMPILE -AsmFiles $BOOT1, $BOOT2 -LinkerScript $LinkerScript -Run $Run
 }

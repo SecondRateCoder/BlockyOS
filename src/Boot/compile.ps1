@@ -9,9 +9,6 @@ param(
     [bool]$Run,
 
     [Parameter(Mandatory = $false)]
-    [string]$Bochs_Src,
-
-    [Parameter(Mandatory = $false)]
     [bool]$Run_Bochs
 )
 #C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\compile.ps1 -AsmFiles "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm", "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm" -Run 1
@@ -27,6 +24,7 @@ $Objdir = Join-Path $Build "objs"
 $Log = Join-Path $Build ("log-" + $Date + ".txt")
 
 $BOCHSRC = Join-Path $Build ".bochsrc"
+$BOCHSLOG = Join-Path $Build "bochs.log"
 
 $Line_Up = "megs: 32
 romimage: file=BIOS-bochs-latest
@@ -34,10 +32,9 @@ vgaromimage: file=VGABIOS-lgpl-latest
 boot: floppy
 floppya: 1_44="
 $Line_Down = ", status=inserted
-log: bochs.log
 display_library: nogui
 pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
-"
+log: "
 function Log-Write {
     param([string]$Msg)
     Write-Host $Msg
@@ -80,7 +77,7 @@ function Prepare {
         New-Item -Path $BOCHSRC -ItemType File -Force
         try{
             $floppy_temp = [System.IO.Path]::GetFileNameWithoutExtension($Image)
-            Add-Content -Path $BOCHSRC -Value ($Line_Up + $floppy_temp + $Line_Down)
+            Add-Content -Path $BOCHSRC -Value ($Line_Up + $floppy_temp + $Line_Down + $BOCHSLOG)
             # $file.Write($floppy_temp, 0, $floppy_temp.Length)
             # $file.Write($Line_Down, 0, $Line_Down.Length)
         }finally{
@@ -156,8 +153,8 @@ if($Run){
     & $QEMU @args_qemu
 }
 
-if($Run_Bochs -and $Bochs_Src){
-    & $BOCHS "-f" $Bochs_Src
+if($Run_Bochs -and $BOCHSRC){
+    & $BOCHS "-f" $BOCHSRC
 }
 
 return $true

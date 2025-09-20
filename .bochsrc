@@ -4,4 +4,4 @@ vgaromimage: file=VGABIOS-lgpl-latest
 boot: floppy
 floppya: 1_44=floppy.img, status=inserted
 log: bochs.log
-display_library: sdl
+display_library: nogui

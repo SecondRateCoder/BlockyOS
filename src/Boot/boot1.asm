@@ -31,7 +31,7 @@ ebr_system_id:				db 'FAT12   '
 global start
 
 %define ENDL 0x00, 0x0A
-BOOT2: db 0x7E00
+BOOT2: db word 0x7E00
 ; This file will simply load Boot2, Boot2 will be the main booting file
 
 start:
@@ -121,13 +121,15 @@ lbatochs:
                          ; && dx = (LBA / [bdb_sectors_per_track]) % [bdb_heads] = LBA-CHS head
     mov dh, dl  ;!         ; dh = LBA-CHS head
     mov ch, al  ;!       ; ch implemented
-	mov dl, [ebr_drive_number]
-    shr ax, 6            ; ch [8 - 15] = LBA-CHS cylinder
-	or cl, al ;!
+    shl ah, 6
+	; mov dl, [ebr_drive_number]
+    ; shl cx, 6            ; cx [8 - 15] = LBA-CHS cylinder
+	or cl, ah ;!
     ;CX			CH | AX | CL
 	; cylinder: 8b,	
     ; sector:		2b,  6b
 	; save modified registers,
+    mov dl, al
 	pop ax
 	pop dx
 	ret
@@ -160,7 +162,7 @@ disk_read:
     ; Convert to CHS
     call lbatochs
     mov ah, 0x02
-    ; mov al, 1
+    mov al, [maxsector_read]
     mov di, 4
 	jmp .retry
     jmp .done
@@ -169,15 +171,16 @@ disk_read:
     pusha
     stc	; set carry flag
     int 13h
-    jnc .done	; If fail the BIOS should have carry flag NOT set
+    jnc .done	; If the BIOS fails it should have carry flag un-set
 
-	; If carry flag still set then failed, reset and jmp to beginning.
+	; If carry flag still set then failed, disk should be reset and jump to beginning.
     popa
-    call disk_reset
+    call .disk_reset
 
     dec di
     test di, di
     jnz .retry
+    jnc .disk_readerror
 ; Disk reading, gave up
 .done:
     mov si, disk_readsucc
@@ -188,15 +191,11 @@ disk_read:
 ; Reset disk reading.
 ; three tries
 ; No arguments
-disk_reset:
+.disk_reset:
     mov si, disk_resetmsg
     call puts
     pusha
-    mov ah, 0
-	mov dl, [ebr_drive_number]
-    stc
-    int 13h
-    jnc .disk_readerror
+    
     popa
     ret
 ; Print error Message.
@@ -230,6 +229,7 @@ msg_disk_read: db 'Reading from disk. ', ENDL, 0
 disk_errormsg: db 'Error when reading Disk. ', ENDL, 0
 disk_resetmsg: db 'Resetting Floppy disk. ', ENDL, 0
 disk_readsucc: db 'Disk read success...', ENDL, 0
+maxsector_read: db 1
 
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
 dw 0xAA55              ; The final 2 bytes will be the boot signature.
