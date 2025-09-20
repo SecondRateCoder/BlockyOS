@@ -1,8 +1,0 @@
-megs: 32
-romimage: file=BIOS-bochs-latest
-vgaromimage: file=VGABIOS-lgpl-latest
-boot: floppy
-floppya: 1_44=floppy-2025-09-20-43, status=inserted
-display_library: nogui
-pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
-log: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-09-20-43\bochs.log

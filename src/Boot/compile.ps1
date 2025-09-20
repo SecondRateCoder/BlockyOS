@@ -27,13 +27,15 @@ $BOCHSRC = Join-Path $Build ".bochsrc"
 $BOCHSLOG = Join-Path $Build "bochs.log"
 
 $Line_Up = "megs: 32
-romimage: file=BIOS-bochs-latest
-vgaromimage: file=VGABIOS-lgpl-latest
+romimage: file=C:\Users\olusa\Bochs-3.0\BIOS-bochs-latest
+vgaromimage: file=C:\Users\olusa\Bochs-3.0\VGABIOS-lgpl-latest.bin
 boot: floppy
 floppya: 1_44="
 $Line_Down = ", status=inserted
-display_library: nogui
+display_library: win32, options=`"`gui_debug`"`
 pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
+config_interface: win32config
+magic_break: enabled=1
 log: "
 function Log-Write {
     param([string]$Msg)
@@ -77,7 +79,7 @@ function Prepare {
         New-Item -Path $BOCHSRC -ItemType File -Force
         try{
             $floppy_temp = [System.IO.Path]::GetFileNameWithoutExtension($Image)
-            Add-Content -Path $BOCHSRC -Value ($Line_Up + $floppy_temp + $Line_Down + $BOCHSLOG)
+            Add-Content -Path $BOCHSRC -Value ($Line_Up + $Image + $Line_Down + $BOCHSLOG)
             # $file.Write($floppy_temp, 0, $floppy_temp.Length)
             # $file.Write($Line_Down, 0, $Line_Down.Length)
         }finally{
@@ -154,7 +156,7 @@ if($Run){
 }
 
 if($Run_Bochs -and $BOCHSRC){
-    & $BOCHS "-f" $BOCHSRC
+    & $BOCHS "-f" $BOCHSRC "-debugger"
 }
 
 return $true

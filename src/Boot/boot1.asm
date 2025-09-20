@@ -59,6 +59,7 @@ start:
     ; Location to load Boot2
 	mov bx, [BOOT2]
     mov ah, 0x02
+    ;* Why is it starting here?
     mov al, 2
 	call disk_read
     mov si, msg_bt2lod
