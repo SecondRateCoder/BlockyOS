@@ -64,6 +64,8 @@ start:
     mov si, msg_bt2lod
     call puts
     jmp [BOOT2]
+    mov si, [BOOT2]
+    call puts
     hlt
 
 .halt:
@@ -167,7 +169,7 @@ disk_read:
     pusha
     stc	; set carry flag
     int 13h
-    jc .done	; If fail the BIOS should have carry flag NOT set
+    jnc .done	; If fail the BIOS should have carry flag NOT set
 
 	; If carry flag still set then failed, reset and jmp to beginning.
     popa

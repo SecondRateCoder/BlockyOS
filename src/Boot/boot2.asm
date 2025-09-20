@@ -2,6 +2,8 @@ org 0x7E00
 bits 16
 
 %define ENDL 0x00, 0x0A
+boot2msg: db 'This is Boot2', ENDL, 0
+
 global start
 
 start:
