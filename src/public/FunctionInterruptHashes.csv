@@ -1,0 +1,14 @@
+Function Name,Binary Hash,Explanation,Operand(s),Operand Type(s),Return Type,Return type explained
+NoOperation(),0x00000000,The Process' operation time is skipped for a set period of time,Time in ms.,size_t,void,
+Alloca(),0x00000001,The process is allocated memory from the heap this memory is automatically freed on Process end and if it is not accessed frrequently,Number of bytes.,size_t,uint_t *,A pointer to the Starting point of the memory block.
+Free(),0x00000002,A block of memory allocated to a process is freed to be usable later.,The allocated block.,uint8_t *,void,
+Peek(),0x00000003,Returns data about the Process.,,,size_t *,An array of data describing the Process.
+Begin(),0x00000004,A Process is loaded into Memory and begins running.,The file path of the .exe file.,char * or string,int,An integer describing the final state of the Process.
+End(),0x00000005,A Process is forced to close. Any errors should be handled by a calling of the Closing event.,The starting point of the Process's execution block.,uint8_t *,int,An integer describing the final state of the Process.
+
+
+
+
+
+
+

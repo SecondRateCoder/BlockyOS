@@ -156,7 +156,7 @@ if($Run){
 }
 
 if($Run_Bochs -and $BOCHSRC){
-    & $BOCHS "-f" $BOCHSRC "-debugger"
+    & $BOCHS "-f" $BOCHSRC "-debugger" "-q"
 }
 
 return $true

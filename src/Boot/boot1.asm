@@ -1,4 +1,5 @@
 org 0x7C00
+; 0xf0000:e05b
 bits 16
 
 
@@ -35,6 +36,7 @@ BOOT2: db word 0x7E00
 ; This file will simply load Boot2, Boot2 will be the main booting file
 
 start:
+    xchg bx, bx
     ; Print hello
     mov si, msg_hello
     call puts
@@ -46,14 +48,13 @@ start:
     ;Stack set-up
     mov ss, ax
     ; Calculate the offs so that it doesn't overwrite itself
-    push ax
     mov ax, 0x7C00
     add ax, 512
     mov sp, ax
-    pop ax
 
     ;Attempt reading from the disk.
     mov [ebr_drive_number], dl
+    xor ax, ax
 	mov ax, 1
 	mov cl, 1
     ; Location to load Boot2
@@ -181,8 +182,18 @@ disk_read:
     dec di
     test di, di
     jnz .retry
-    jnc .disk_readerror
+    jc .disk_readerror
+
 ; Disk reading, gave up
+; - | AH Value | Meaning 
+; | 01h    | Invalid function or parameter
+; | 02h    | Address mark not found
+; | 04h    | Sector not found
+; | 10h    | CRC error
+; | 20h    | Controller failure
+; | 40h    | Seek failure
+; | 80h    | Disk timeout
+
 .done:
     mov si, disk_readsucc
     call puts
