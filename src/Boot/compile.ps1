@@ -148,7 +148,6 @@ foreach($success in $succ_){
     }
 }
 
-
 if($Run){
     Log-Write "Command:  $($QEMU) -fda $($Image)"
     $args_qemu = @("-fda", "$($Image)")
@@ -158,6 +157,24 @@ if($Run){
 if($Run_Bochs -and $BOCHSRC){
     & $BOCHS "-f" $BOCHSRC "-debugger" "-q"
 }
+
+$targetSize = 1024
+
+# Get current size
+$currentSize = (Get-Item $imgPath).Length
+
+# Calculate how much padding is needed
+$padding = $targetSize - $currentSize
+
+# Pad if needed
+if ($padding -gt 0) {
+    $padBytes = New-Object byte[] $padding
+    [System.IO.File]::OpenWrite($Image).Write($padBytes, 0, $padding)
+    Log-Write "Padded $Image with $padding bytes."
+} else {
+    Log-Write "$Image is already $currentSize bytes or larger."
+}
+
 
 return $true
 

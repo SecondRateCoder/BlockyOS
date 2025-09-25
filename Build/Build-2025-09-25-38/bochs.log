@@ -28,7 +28,7 @@
 00000000000i[USBCTL] Pluggable USB devices
 00000000000i[USBCTL]   floppy mouse tablet keypad keyboard hub disk cdrom
 00000000000i[USBCTL]   printer
-00000000000i[MEM0  ] allocated memory at 0000027ADDE42040. after alignment, vector=0000027ADDE43000, block_size = 128K
+00000000000i[MEM0  ] allocated memory at 0000011DF99A8040. after alignment, vector=0000011DF99A9000, block_size = 128K
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('C:\Users\olusa\Bochs-3.0\BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Tue Sep 23 19:22:28   2025 tz=utc (time0=1758655348)
+00000000000i[CMOS  ] Setting initial clock to: Thu Sep 25 19:32:38   2025 tz=utc (time0=1758828758)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -59,7 +59,7 @@
 00000000000i[MEM0  ] rom at 0xc0000/32768 ('C:\Users\olusa\Bochs-3.0\VGABIOS-lgpl-latest.bin')
 00000000000i[PLUGIN] init_dev of 'floppy' plugin device by virtual method
 00000000000i[DMA   ] channel 2 used by Floppy Drive
-00000000000i[FLOPPY] fd0: 'C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-09-23-28\floppy-2025-09-23-28.img' ro=0, h=2,t=80,spt=18
+00000000000i[FLOPPY] fd0: 'C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-09-25-38\floppy-2025-09-25-38.img' ro=0, h=2,t=80,spt=18
 00000000000i[FLOPPY] Using boot sequence floppy, none, none
 00000000000i[FLOPPY] Floppy boot signature check is enabled
 00000000000i[PLUGIN] init_dev of 'acpi' plugin device by virtual method
@@ -263,7 +263,27 @@
 00001519663i[VBIOS ] VBE Bios ID: vbe.c 2025-01-08
 00013810525i[BIOS  ] Booting from 0000:7c00
 00013810582i[CPU0  ] [13810582] Stopped on MAGIC BREAKPOINT
-00013827133i[BIOS  ] int13_diskette: read/write/verify: parameter out of range
-00013840009i[BIOS  ] int13_diskette: read/write/verify: parameter out of range
-00013852911i[BIOS  ] int13_diskette: read/write/verify: parameter out of range
-00013865792i[BIOS  ] int13_diskette: read/write/verify: parameter out of range
+00013824540e[FLOPPY] partial read() on floppy image returns 56/512
+00013872508e[DEV   ] read from port 0x0001 with len 2 returns 0xffff
+00013872523i[CPU0  ] CPU is in real mode (active)
+00013872523i[CPU0  ] CS.mode = 16 bit
+00013872523i[CPU0  ] SS.mode = 16 bit
+00013872523i[CPU0  ] EFER = 0x00000000: ffxsr nxe lma lme sce
+00013872523i[CPU0  ] XCR0=0x00000001: tiledata tilecfg hwp lbr uintr hdc cet_s cet_u pasid pkru pt hi_zmm zmm_hi256 opmask bndcfg bndregs ymm sse FPU
+00013872523i[CPU0  ] | EAX=00007e00  EBX=00000000  ECX=00090202  EDX=00000001
+00013872523i[CPU0  ] | ESP=00007c43  EBP=00000000  ESI=000e0000  EDI=00000002
+00013872523i[CPU0  ] | EFLAGS=00000286: id vip vif ac vm rf nt IOPL=0 of df IF tf SF zf af PF cf
+00013872523i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00013872523i[CPU0  ] |  CS:0000( 0004| 0|  0) 00000000 0000ffff 0 0
+00013872523i[CPU0  ] |  DS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00013872523i[CPU0  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00013872523i[CPU0  ] |  ES:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00013872523i[CPU0  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00013872523i[CPU0  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00013872523i[CPU0  ] | EIP=00007de7 (00007de7)
+00013872523i[CPU0  ] | CR0=0x60000010: pg CD NW ac wp ne ET ts em mp pe
+00013872523i[CPU0  ] | CR2=0x00000000
+00013872523i[CPU0  ] | CR3=0x00000000
+00013872523i[CPU0  ] | CR4=0x00000000: lass uintr pks cet pke smap smep keylock osxsave pcid fsgsbase smx vmx la57 umip osxmmexcpt osfxsr pce pge mce pae pse de tsd pvi vme
+00013872523i[CMOS  ] Last time: 1758828761 tz=utc (Thu Sep 25 19:32:41   2025)
+00013872523i[SIM   ] quit_sim called with exit code 0

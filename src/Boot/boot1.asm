@@ -32,7 +32,7 @@ ebr_system_id:				db 'FAT12   '
 global start
 
 %define ENDL 0x00, 0x0A
-BOOT2: db word 0x7E00
+BOOT2: db word 0x7F00
 ; This file will simply load Boot2, Boot2 will be the main booting file
 
 start:
@@ -41,7 +41,11 @@ start:
     mov si, msg_hello
     call puts
     ; Clear ax, ds and es
-    xor ax, ax
+    db 0x66             ; Operand-size override
+    xor ax, ax          ; Actually clears EAX
+    xor ah, ah
+    xor al, al
+    
     mov ds, ax
     mov es, ax
 
@@ -53,10 +57,11 @@ start:
     mov sp, ax
 
     ;Attempt reading from the disk.
-    mov [ebr_drive_number], dl
+    mov dl, [ebr_drive_number]
     xor ax, ax
 	mov ax, 1
 	mov cl, 1
+    mov ch, 0
     ; Location to load Boot2
 	mov bx, [BOOT2]
     mov ah, 0x02
@@ -131,7 +136,7 @@ lbatochs:
 	; cylinder: 8b,	
     ; sector:		2b,  6b
 	; save modified registers,
-    mov dl, al
+    mov dl, 0x00
 	pop ax
 	pop dx
 	ret
@@ -155,34 +160,57 @@ lbatochs:
 ; dl: drive number(0)
 ; es:bx Memory address to store data at
 disk_read:
-	push cx
+	mov [cx_temp], cx
 
     ; Warn of reading attempt
     mov si, msg_disk_read
     call puts
 
     ; Convert to CHS
-    call lbatochs
-    mov ah, 0x02
-    mov al, [maxsector_read]
+    ; call lbatochs
     mov di, 4
 	jmp .retry
     jmp .done
 ; Retry disk reading
 .retry:
     pusha
-    stc	; set carry flag
+    ; mov ah, 0x02
+    ; mov al, [maxsector_read]
+    ; xor eax, eax
+    mov ax, 0x0
+    mov es, ax         ; Buffer segment
+    mov ah, 0x02        ; Read sector
+    mov al, 0x01        ; One sector
+    mov ch, 0x00        ; Cylinder
+    mov cl, 0x02        ; Sector (must be 1–63)
+    mov dh, 0x00        ; Head
+    mov dl, 0x00        ; Drive (floppy)
+    mov bx, 0x7F00      ; Buffer offset
+
+    ; stc	; set carry flag
     int 13h
     jnc .done	; If the BIOS fails it should have carry flag un-set
 
 	; If carry flag still set then failed, disk should be reset and jump to beginning.
-    popa
+    ; Test for any possible fails.
+    test di, di
+    jnz .diskr_nd
+    test ax, [bios_diskerrA]
+    jz .disk_readerror
+    jmp .diskr_nd
+    test ax, [bios_diskerrB]
+    jz .disk_readerror
+    jmp .diskr_nd
+    test ax, 0x0
+    jz .done
+    ; If not done at all
+.diskr_nd:
     call .disk_reset
+    popa
 
     dec di
     test di, di
     jnz .retry
-    jc .disk_readerror
 
 ; Disk reading, gave up
 ; - | AH Value | Meaning 
@@ -206,9 +234,6 @@ disk_read:
 .disk_reset:
     mov si, disk_resetmsg
     call puts
-    pusha
-    
-    popa
     ret
 ; Print error Message.
 ; No arguments
@@ -242,6 +267,9 @@ disk_errormsg: db 'Error when reading Disk. ', ENDL, 0
 disk_resetmsg: db 'Resetting Floppy disk. ', ENDL, 0
 disk_readsucc: db 'Disk read success...', ENDL, 0
 maxsector_read: db 1
+bios_diskerrA: db 0x02
+bios_diskerrB: db 0x01
+cx_temp: db 0x0
 
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
 dw 0xAA55              ; The final 2 bytes will be the boot signature.
