@@ -7,10 +7,18 @@ param(
 
     [Parameter(Mandatory=$false)]
     [bool]$Run,
-
+    
     [Parameter(Mandatory = $false)]
-    [bool]$Run_Bochs
-)
+    [bool]$Run_Bochs,
+
+    [Parameter(Mandatory=$false)]
+    [string[]]$ExtraFiles,
+
+    [switch]$BroadImage,
+
+    [Parameter(Mandatory=$false)]
+    [int]$SectorNum
+    )
 #C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\compile.ps1 -AsmFiles "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm", "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm" -Run 1
 $NASM = "C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe"
 $LD = "ld"
@@ -20,6 +28,7 @@ $BOCHS = "C:\Users\olusa\Bochs-3.0\bochs.exe"
 $Date = (Get-Date -Format "yyyy-MM-dd-ss")
 $Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
 $Image = Join-Path $Build ("floppy-" + $Date + ".img")
+$BroadImageFile = Join-Path (Get-Location) "Build\temp\floppy.img"
 $Objdir = Join-Path $Build "objs"
 $Log = Join-Path $Build ("log-" + $Date + ".txt")
 
@@ -59,11 +68,19 @@ function Prepare {
     if (-not (Test-Path $Build)) {
         New-Item -Path $Build -ItemType Directory -Force
     }
+    if($BroadImage){
+        if(-not (Test-Path $BroadImageFile)){
+            New-Item -Path $BroadImageFile -ItemType File -Force
+        }
+    }
     if (-not (Test-Path $Objdir)) {
         New-Item -Path $Objdir -ItemType Directory -Force
     }
     if (-not (Test-Path $Log)) {
         New-Item -Path $Log -ItemType File -Force
+    }
+    if(-not (Test-Path $Image)){
+        New-Item -Path $Build -ItemType File -Force
     }
     
     if (-not (Test-Path $NASM)) {
@@ -78,10 +95,7 @@ function Prepare {
     if(-not (Test-Path $BOCHSRC)){
         New-Item -Path $BOCHSRC -ItemType File -Force
         try{
-            $floppy_temp = [System.IO.Path]::GetFileNameWithoutExtension($Image)
             Add-Content -Path $BOCHSRC -Value ($Line_Up + $Image + $Line_Down + $BOCHSLOG)
-            # $file.Write($floppy_temp, 0, $floppy_temp.Length)
-            # $file.Write($Line_Down, 0, $Line_Down.Length)
         }finally{
         }
     }
@@ -148,6 +162,36 @@ foreach($success in $succ_){
     }
 }
 
+
+# Add extra files
+if($ExtraFiles){
+    foreach($path in $ExtraFiles){
+        if(Test-Path -Path $path){
+            $data = Get-Content -Path $path -Raw -Encoding Byte
+            Img-Push -data $data
+        }else{
+            Log-Write -Msg ("File at: " + $path + " is invalid or does not exist");
+        }
+    }
+}
+
+# Calculate how much padding is needed
+$targetSize = $SectorNum * 512
+$padding = $targetSize - (Get-Item $Image).Length
+
+# Pad if needed
+if ($padding -gt 0) {
+    $padBytes = New-Object byte[] $padding
+    Img-Push -data $padBytes
+    Log-Write "Padded $Image with $padding bytes."
+} else {
+    Log-Write "$Image is already $((Get-Item $Image).Length) bytes or larger."
+}
+
+if($BroadImage){
+    Copy-Item -Path $Image -Destination $BroadImageFile
+}
+
 if($Run){
     Log-Write "Command:  $($QEMU) -fda $($Image)"
     $args_qemu = @("-fda", "$($Image)")
@@ -158,89 +202,4 @@ if($Run_Bochs -and $BOCHSRC){
     & $BOCHS "-f" $BOCHSRC "-debugger" "-q"
 }
 
-$targetSize = 1024
-
-# Get current size
-$currentSize = (Get-Item $imgPath).Length
-
-# Calculate how much padding is needed
-$padding = $targetSize - $currentSize
-
-# Pad if needed
-if ($padding -gt 0) {
-    $padBytes = New-Object byte[] $padding
-    [System.IO.File]::OpenWrite($Image).Write($padBytes, 0, $padding)
-    Log-Write "Padded $Image with $padding bytes."
-} else {
-    Log-Write "$Image is already $currentSize bytes or larger."
-}
-
-
 return $true
-
-# # Check if NASM is available
-# if (-not (Get-Command $NASM -ErrorAction SilentlyContinue)) {
-#     Write-Error "NASM not found in PATH. Please install NASM."
-#     exit 1
-# }
-# # Check if LD is available
-# if (-not (Get-Command LD -ErrorAction SilentlyContinue)) {
-#     Write-Error "LD (GNU linker) not found in PATH. Please install binutils or compatible LD."
-#     exit 1
-# }
-
-# # Directory to store object files
-# $objDir = Join-Path (Get-Location) "Build\objs"
-# if (-Not (Test-Path $objDir)) {
-#     New-Item -ItemType Directory -Path $objDir | Out-Null
-# }
-
-# # Assemble each.asm file to an object file
-# $objFiles = @()
-# foreach ($asm in $AsmFiles) {
-#     if (-Not (Test-Path $asm)) {
-#         Write-Error "Assembly file not found: $asm"
-#         exit 1
-#     }
-    
-#     # Generate object filename (replace.asm with.o)
-#     $objFile = Join-Path $objDir ([IO.Path]::GetFileNameWithoutExtension($asm) + ".o")
-    
-#     # NASM command: Use -f elf64 for 64-bit (modify if targeting 32-bit)
-#     # You can adjust -f elf32 if targeting 32-bit
-#     $nasmCmd = "nasm -f elf64 `"$asm`" -o `"$objFile`""
-    
-#     Write-Host "Assembling $asm..."
-#     Invoke-Expression $nasmCmd
-    
-#     if (-not (Test-Path $objFile)) {
-#         Write-Error "Failed to assemble $asm"
-#         exit 1
-#     }
-    
-#     $objFiles += $objFile
-# }
-
-# # Check if linker script exists
-# $LinkerScript_Out = "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\boot_linker.ld"
-# if (-Not (Test-Path $LinkerScript)) {
-#     Write-Error "Linker script not found: $($LinkerScript)"
-# }else{
-#     $LinkerScript_Out = $LinkerScript
-# }
-
-# # Link the object files using ld and the specified linker script
-# # This assumes your linker script handles symbols like img_push correctly.
-# # If you want to ensure certain functions like img_push are included,
-# # you can add linker flags or scripts accordingly.
-# $ldCmd = "ld -o `"$OutputFile`" -T `"$LinkerScript`" " + ($objFiles -join " ")
-
-# Write-Host "Linking objects..."
-# Invoke-Expression $ldCmd
-
-# if (-not (Test-Path $OutputFile)) {
-#     Write-Error "Linking failed: Output file $OutputFile not created"
-#     exit 1
-# }
-
-# Write-Host "Build successful: $OutputFile"

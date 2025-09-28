@@ -1,8 +1,15 @@
 
 #ifndef STDBOOL_H
 #define STDBOOL_H
-#define bool _BOOL
-typedef char _BOOL;
-#define true 1
+
+#define __bool_true_false_are_defined 1
+
+#ifndef __cplusplus
+
+#define bool  _Bool
 #define false 0
-#endif
+#define true  1
+
+#endif /* __cplusplus */
+
+#endif /* _STDBOOL */

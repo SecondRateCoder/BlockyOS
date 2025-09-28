@@ -1,0 +1,40 @@
+; Params:
+	; ax: LBA addressing
+	; bh: Total sector count
+	; es [Location]:bx [Offset]: Memory location
+disk_read:
+    [input]:
+        ax: 1
+        bh: 1
+        es: 7e40
+        
+    ; Convert LBA addressing to CHS addressing.
+    ; ax => LBA adressing scheme
+    ; Returns:
+        ; ch: cylinder number
+        ; cl: sector number + 1
+        ; dh: head number
+    lbatochs:
+        [input]:
+            ax: 1
+        [return]:
+            ch: 12
+            cl: 00
+            dh: 01
+
+    ; mov ah, 0x02        ; BIOS read sector function
+    ; mov al, 1           ; Number of sectors to read
+    ; mov ch, cylinder    ; Cylinder number
+    ; mov cl, sector      ; Sector number (1-based!)
+    ; mov dh, head        ; Head number
+    ; mov dl, drive       ; Drive number (0x00 = floppy, 0x80 = HDD)
+    ; mov bx, buffer      ; ES:BX points to memory buffer
+    int 13h:
+        [input]:
+            ah: 02
+            al: 02
+            ch: 12
+            cl: 12
+            dh: 01
+            dl: 00
+            es:bx: 7f00:00
