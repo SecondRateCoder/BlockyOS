@@ -16,7 +16,7 @@
         {
             "type": "process",
             "label": "gcc Build and Debug FAT file",
-            "dependsOn": "Move cd",
+            "dependsOn": "Prep Broad Image",
             "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
             "args": [
                 "-fdiagnostics-color=always",
