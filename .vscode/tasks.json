@@ -7,11 +7,7 @@
             "args": [
                 "-NoProfile",
                 "-ExecutionPolicy", "Bypass",
-                "-File", "${workspaceFolder}\\run.ps1",
-                "-clear",
-                "-BroadImage",
-                "-extraFiles", "\\x0x2800, ${workspaceFolder}\\src\\public\\text.txt",
-                "-SectorNum", "2000"
+                "-File", "${workspaceFolder}\\.vscode\\intermid.ps1"
             ]
         },
         {

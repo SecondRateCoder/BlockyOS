@@ -51,6 +51,7 @@ typedef struct file_header{
 //! Global variables
 drive_header header;
 
+// FAT table, Metadata table
 unsigned char *FAT;
 
 file_header *rt_dir;
@@ -67,26 +68,26 @@ int main(int argc, char **argv){
     if(argc < 3){
         printf("Syntax: %s <disk image> <file name>\n", argv[0]);
         return -1;
-    }
+    }else{printf("Valid Image...\n");}
 
     FILE *disk = fopen(argv[1], "rb");
 	if(!disk){
 		fprintf(stderr, "INVALID File path: %s", argv[1]);
 		return -1;
-	}
+	}else{printf("Valid file path...\n");}
 
 	if(bs_read(disk) == false){
 		fprintf(stderr, "Reading Boot sector failed");
 		fclose(disk);
 		return -2;
-	}
+	}else{printf("Boot read success...\n");}
 
 	if(FAT_read(disk) == false){
 		fprintf(stderr, "Failed to read FAT metadata!");
 		free(FAT);
 		fclose(disk);
 		return -3;
-	}
+	}else{printf("FAT successfully read\n");}
 
 	if(rtd_read(disk) == false){
 		fprintf(stderr, "Failed to read Root directory...");
@@ -94,7 +95,7 @@ int main(int argc, char **argv){
 		free(rt_dir);
 		fclose(disk);
 		return -4;
-	}
+	}else{printf("Successfully read Root directory...\n");}
 
 	file_header *file = get_file(argv[2]);
 	if(!file){
@@ -103,7 +104,7 @@ int main(int argc, char **argv){
 		free(rt_dir);
 		fclose(disk);
 		return -5;
-	}
+	}else{printf("Successfully got file: %s\n", argv[2]);}
 
 	uint8_t *buffer = (uint8_t *)malloc(file->size + header.bytes_per_sector);
 	if(file_read(file, disk, buffer) != true){
@@ -164,7 +165,9 @@ bool rtd_read(const FILE *disk){
 file_header *get_file(const char *name){
 	for(uint32_t cc = 0; cc < header.dir_entries_count; ++cc){
 		if(rt_dir[cc].name[0] == name[0]){
-			if(memcmp(rt_dir[cc].name, name, 11) == 0){return &rt_dir[cc];}
+			uint32_t len  = 0;
+			for(; len < 11 ; ++len){if(rt_dir[cc].name[len] == ' '){break;}}
+			if(memcmp(rt_dir[cc].name, name, len) == 0){return &rt_dir[cc];}
 		}
 	}
 }
@@ -173,16 +176,12 @@ bool file_read(file_header *entry, FILE *disk, uint8_t *out){
 	bool ok = true;
 	uint16_t cluster_curr = entry->fst_clusterlow;
 	do{
-		uint32_t lba = rtdir_end + ((cluster_curr - 2) *header.sectors_per_cluster);
-		ok = ok && sectors_read(disk, lba, header.sectors_per_cluster, out);
-		out += header.sectors_per_cluster* header.bytes_per_sector;
+		ok = ok && sectors_read(disk, entry->lba, header.sectors_per_cluster, out);
+		out += entry->size;
 
 		uint32_t fatindex = cluster_curr* 1.5;
-		if(cluster_curr % 2 == 0){
-			cluster_curr = (*(uint16_t *)(FAT+ fatindex)) & 0x0FFF;
-		}else{
-			cluster_curr = (*(uint16_t *)(FAT+ fatindex)) >> 4;
-		}
+		if(cluster_curr % 2 == 0){cluster_curr = (*(uint16_t *)(FAT+ fatindex)) & 0x0FFF;
+		}else{cluster_curr = (*(uint16_t *)(FAT+ fatindex)) >> 4;}
 	}while(ok && cluster_curr >= 0xFF8);
 	return ok;
 }

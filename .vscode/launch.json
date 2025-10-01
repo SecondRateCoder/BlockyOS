@@ -9,7 +9,7 @@
             "program": "${workspaceFolder}\\tools\\${fileBasenameNoExtension}.exe",
             "args": [
                 "${workspaceFolder}\\Build\\temp\\floppy.img",
-                "skibidi.txt"
+                "textual.txt"
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

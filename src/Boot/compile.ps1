@@ -216,19 +216,44 @@ if($ExtraFiles){
                 }
             }
         }elseif(Test-Path -Path $path){
-            $data = New-Object byte[] 512
             $data_f = Get-Content -Path $path -Raw -Encoding Byte
-            $data_n = [System.Text.Encoding]::Default.GetBytes([System.IO.Path]::GetFileName($path))
             Log-Write -color Yellow -Msg "Adding file $($path) to floppy image,`n`tFloppy Size: $((Get-Item -Path $Image).Length), Hexa-Decimal: 0x$('{0:X}' -f (Get-Item -Path $Image).Length)`n`tEnd address: $((Get-Item -Path $Image).Length + $data_f.Length +$data_n.Length)"
             Log-Write -color Yellow -Msg "Padding: $(512 - ($data_f.Length +$data_n.Length))"
             $cc = 0
-            foreach($char in $data_n){
-                $data[$cc] = $data_n[$cc]
-                $cc = $cc + 1
-            }
-            foreach($byte in $data_f){
-                $data[$cc] = $data_f[$cc]
-                $cc = $cc + 1
+            $fi = Get-Item -Path $path
+            Log-Write -color Yellow -Msg "
+                Name: $($fi.Name.PadRight(11).Substring(0,11)),`n
+                Attr: 0,`n
+                reserved?: 0,`n
+                creationtime_tenths: 0,`n
+                creationtime: $($fi.CreationTime.ToFileTime() -shr 16),`n
+                creationdate: $($fi.CreationTime.ToFileTime() -shr 32),`n
+                access_date: $($fi.LastAccessTime.ToFileTime() -shr 32),`n
+                fst_clusterhigh: 0,`n
+                modifiedtime: $($fi.LastWriteTime.ToFileTime() -shr 16),`n
+                modified_date: $($fi.LastWriteTime.ToFileTime() -shr 32),`n
+                fst_clusterlow: 0,`n
+                Size: $($fi.Length),`n
+                "
+            $ba = @([System.Text.Encoding]::ASCII.GetBytes($fi.Name.PadRight(11).Substring(0,11))) #Name
+            $ba +=  @([byte]0) + # attributes
+                    @([byte]0) + # _reserved
+                    @([byte]0) + # creationtime_tenths or hundredths
+                    [BitConverter]::GetBytes([uint16]($fi.CreationTime.ToFileTime() -shr 16)) + # creationtime
+                    [BitConverter]::GetBytes([uint16]($fi.CreationTime.ToFileTime() -shr 32)) + # creationdate
+                    [BitConverter]::GetBytes([uint16]($fi.LastAccessTime.ToFileTime() -shr 32)) + # access_date
+                    [BitConverter]::GetBytes([uint16]0) + # fst_clusterhigh
+                    [BitConverter]::GetBytes([uint16]($fi.LastWriteTime.ToFileTime() -shr 16)) + # modifiedtime
+                    [BitConverter]::GetBytes([uint16]($fi.LastWriteTime.ToFileTime() -shr 32)) + # modified_date
+                    [BitConverter]::GetBytes([uint16]0) + # fst_clusterlow
+                    [BitConverter]::GetBytes([uint32]($fi.Length)) #Size
+            
+            $max = if($ba.Length -gt $data_f.Length){$ba.Length}else{$data_f.Length}
+            Log-Write -color Yellow -Msg "File Metadata: $($ba.Length)"
+            $data = New-Object byte[] ((Get-Item -Path $path).Length + $ba.Length)
+            for($cc = 0; $cc -lt $max; $cc++){
+                if($cc -lt $ba.Length){$data[$cc] = $ba[$cc]}
+                if($cc -lt $data_f.Length){$data[$cc + $ba.Length] = $data_f[$cc]}
             }
             Img-Push -data $data
         }else{

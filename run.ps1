@@ -1,3 +1,4 @@
+#./run.ps1 -extrafiles \a0x2800, C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\public\textual.txt -BroadImage -SectorNum 2000 -clear
 param(
     # [Parameter(Mandatory=$false)]
     [switch]$runbochs,
