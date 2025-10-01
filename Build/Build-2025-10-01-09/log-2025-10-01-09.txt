@@ -1,0 +1,23 @@
+Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-01-09\objs\boot1.bin
+Successfully compiled C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm
+Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-01-09\objs\boot2.bin
+Successfully compiled C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm
+Pushing compiled data
+Byte array of size: 512 padded with size: 0, starting at address: 0 and ending at address: 512
+Byte array of size: 56 padded with size: 456, starting at address: 512 and ending at address: 1024
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-01-09\floppy-2025-10-01-09.img with 456 bytes.
+Validating compilation
+Pushing extra files
+Padding to address: 
+	address: 
+		Decimal: 10240, 
+		Hexa-decimal: 0x2800, 
+	File size: 1024, 
+	padding: 9216
+Byte array of size: 9216 padded with size: 8704, starting at address: 1024 and ending at address: 18944
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-01-09\floppy-2025-10-01-09.img with 8704 bytes.
+Byte array of size: 512 padded with size: 0, starting at address: 18944 and ending at address: 19456
+Padding to 1004544 size
+Byte array of size: 1004544 padded with size: 1004032, starting at address: 19456 and ending at address: 2028032
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-01-09\floppy-2025-10-01-09.img with 1004032 bytes.
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-01-09\floppy-2025-10-01-09.img with 1004544 bytes.

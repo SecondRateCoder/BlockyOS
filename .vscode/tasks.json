@@ -3,14 +3,15 @@
         {
             "type": "shell",
             "label": "Prep Broad Image",
-            "dependsOn": "Move cd",
             "command": "powershell.exe",
             "args": [
+                "-NoProfile",
                 "-ExecutionPolicy", "Bypass",
                 "-File", "${workspaceFolder}\\run.ps1",
+                "-clear",
                 "-BroadImage",
-                "-extraFiles", "${workspaceFolder}\\src\\public\\skibidi.txt",
-                "-SectorNum", "10"
+                "-extraFiles", "${workspaceFolder}\\src\\public\\text.txt",
+                "-SectorNum", "2000"
             ]
         },
         {
