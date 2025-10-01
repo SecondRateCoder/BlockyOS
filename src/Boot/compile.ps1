@@ -60,11 +60,7 @@ function Img-Push {
     $padding = $data.Length
     do{
         $padding = [math]::Abs($padding - 512)
-        if($padding -gt 512){
-            break
-        }
-
-    }while($padding -gt 512)
+    }while($padding -ge 512)
     Log-Write -color Yellow -Msg ("Byte array of size: $($data.Length) padded with size: $($padding), starting at address: $((Get-Item -Path $Image).Length) and ending at address: $((Get-Item -Path $Image).Length + $padding + $data.Length)")
     try {
         if($data){
@@ -223,16 +219,20 @@ if($ExtraFiles){
             $data = New-Object byte[] 512
             $data_f = Get-Content -Path $path -Raw -Encoding Byte
             $data_n = [System.Text.Encoding]::Default.GetBytes([System.IO.Path]::GetFileName($path))
+            Log-Write -color Yellow -Msg "Adding file $($path) to floppy image,`n`tFloppy Size: $((Get-Item -Path $Image).Length), Hexa-Decimal: 0x$('{0:X}' -f (Get-Item -Path $Image).Length)`n`tEnd address: $((Get-Item -Path $Image).Length + $data_f.Length +$data_n.Length)"
+            Log-Write -color Yellow -Msg "Padding: $(512 - ($data_f.Length +$data_n.Length))"
             $cc = 0
             foreach($char in $data_n){
                 $data[$cc] = $data_n[$cc]
+                $cc = $cc + 1
             }
             foreach($byte in $data_f){
                 $data[$cc] = $data_f[$cc]
+                $cc = $cc + 1
             }
             Img-Push -data $data
         }else{
-            Log-Write -color Red -Msg ("File at: " + $path + " is invalid or does not exist");
+            Log-Write -color Red -Msg ("File at: $($path) is invalid or does not exist");
         }
     }
 }

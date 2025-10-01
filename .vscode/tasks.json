@@ -10,7 +10,7 @@
                 "-File", "${workspaceFolder}\\run.ps1",
                 "-clear",
                 "-BroadImage",
-                "-extraFiles", "${workspaceFolder}\\src\\public\\text.txt",
+                "-extraFiles", "\\x0x2800, ${workspaceFolder}\\src\\public\\text.txt",
                 "-SectorNum", "2000"
             ]
         },
