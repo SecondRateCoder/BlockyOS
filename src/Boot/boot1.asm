@@ -55,6 +55,23 @@ start:
     add ax, 512
     mov sp, ax
 
+	push es
+	push word .after
+	retf
+.after:
+	; Use BIOS to read disk metadata.
+	push es
+	push ax
+	mov ah, 0x80
+	int 13h
+	jc .full_restart
+	pop ax
+	pop es
+
+	and cl, 0x3F
+	xor ch, ch
+	mov [bdb_sectors_per_track], cx	; Sector count.
+
     ; Params:
 	; ax: LBA addressing
 	; bh: Total sector count
@@ -94,43 +111,22 @@ write:
 
 ;! Disk control
 
-; Attempt reading drive geometry via the OS, does not have any parameters
-; Returns:
-	; dh: number of heads
-	; cl: sectors per track
-read_sectors_tracks_totalheads:
-	mov di, 4
-	jmp .retry
-.retry:
-	; test di, di
-	; jz .full_fail
-
-	xor dh, dh	; Clear dh
-	xor cl, cl	; Clear dl
-
-	mov ah, 8	; Setup for interrupt
-	mov dl, 0x00
+read_disk_meta:
+	push es
+	push ax
+	mov ah, 0x80
 	int 13h
-	test di, di	; If di is 0, (don't retry anymore) then jump to fail.
-	jz .full_fail
-	push di
-	; Test if dh and cl are 0, if so then
-	; jump to .retry
-	; otherwise jump to done
-	; if di = 0
-	; then jump to full_fail as a last resort
-	test dh, dh
-	jz .retry
-	test cl, cl
-	jz .retry
-	jmp .done
-.full_fail:
-	mov dh, [bdb_heads]
-	mov cl, [bdb_sectors_per_track]
-.done:
+	jc .full_restart
+	pop ax
+	pop es
+
+	and cl, 0x3F
+	xor ch, ch
+	mov [bdb_sectors_per_track], cx	; Sector count.
+
 	inc dh
-	and cl, 0x3f
-	ret
+	mov [bdb_heads], dh				;head count
+
 
 ; Convert LBA addressing to CHS addressing.
 ; ax => LBA adressing scheme
@@ -198,16 +194,17 @@ disk_read:
 .begin_retry:
 	mov si, msg_disk_read
 	call write
-	; Push cl
-	push cx
-	add sp, 1
-	mov cl, ch
-	shr cl, 2
-	and cl, 0xC0
-	mov bp, sp
-	or cl, [ss:bp]
-	; pop cl
-	add sp, 1
+	;! IOptional, do register transformaytinos
+	; ;Push cl
+	; push cx
+	; add sp, 1
+	; mov cl, ch
+	; shr cl, 2
+	; and cl, 0xC0
+	; mov bp, sp
+	; or cl, [ss:bp]
+	; ; pop cl
+	; add sp, 1
 	and ch, 0xff
 	mov dl, [ebr_drive_number]
 	mov ah, 0x02

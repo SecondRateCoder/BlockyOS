@@ -1,11 +1,11 @@
-Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-01-48\objs\boot1.bin
+Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-02-57\objs\boot1.bin
 Successfully compiled C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm
-Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-01-48\objs\boot2.bin
+Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-02-57\objs\boot2.bin
 Successfully compiled C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm
 Pushing compiled data
 Byte array of size: 512 padded with size: 0, starting at address: 0 and ending at address: 512
 Byte array of size: 56 padded with size: 456, starting at address: 512 and ending at address: 1024
-Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-01-48\floppy-2025-10-01-48.img with 456 bytes.
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-02-57\floppy-2025-10-02-57.img with 456 bytes.
 Validating compilation
 Pushing extra files
 Padding to address: 
@@ -32,7 +32,7 @@ Padding: 486
 
                 creationdate: 31207575,
 
-                access_date: 31208176,
+                access_date: 31208395,
 
                 fst_clusterhigh: 0,
 
@@ -45,3 +45,9 @@ Padding: 486
                 Size: 26,
 
                 
+File Metadata: 32
+Byte array of size: 58 padded with size: 454, starting at address: 10240 and ending at address: 10752
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-02-57\floppy-2025-10-02-57.img with 454 bytes.
+Padding to 1013248 size
+Byte array of size: 1013248 padded with size: 0, starting at address: 10752 and ending at address: 1024000
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-02-57\floppy-2025-10-02-57.img with 1013248 bytes.

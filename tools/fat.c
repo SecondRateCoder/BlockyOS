@@ -31,28 +31,32 @@ typedef struct drive_header{
     uint8_t sys_id[8];
 }__attribute__((packed)) drive_header;
 
+
 typedef struct file_header{
 	uint8_t name[11],
-			attributes,
-			_reserved,
-			creationtime_tenths;
+	attributes,
+	_reserved,
+	creationtime_tenths;
 	uint16_t creationtime,
-			 creationdate,
-			 access_date,
-			 fst_clusterhigh,
-			 modifiedtime,
-			 modifieddate,
-			 fst_clusterlow;
+	creationdate,
+	access_date,
+	fst_clusterhigh,
+	modifiedtime,
+	modifieddate,
+	fst_clusterlow;
 	uint32_t size;
 	// Properties not to be implemented by fread, for optimisation as to prevent repeat calculation
 	uint32_t lba;
 } __attribute__((packed)) file_header;
+#define true_filehsize sizeof(file_header) - sizeof(uint32_t)
+
+typedef struct ptr_item{void *ptr; uint32_t size;}ptr_item;
 
 //! Global variables
 drive_header header;
 
 // FAT table, Metadata table
-unsigned char *FAT;
+char *FAT;
 
 file_header *rt_dir;
 uint32_t rtdir_end;
@@ -63,6 +67,8 @@ bool FAT_read(const FILE *disk);
 bool rtd_read(const FILE *disk);
 file_header *get_file(const char *name);
 bool file_read(file_header *entry, FILE *disk, uint8_t *out);
+void free_mul(ptr_item *ptr, uint32_t num);
+void file_print(file_header *file, FILE *disk, bool print_header);
 
 int main(int argc, char **argv){
     if(argc < 3){
@@ -84,24 +90,24 @@ int main(int argc, char **argv){
 
 	if(FAT_read(disk) == false){
 		fprintf(stderr, "Failed to read FAT metadata!");
-		free(FAT);
+		if(FAT != NULL){free(FAT); FAT = NULL;}
 		fclose(disk);
 		return -3;
-	}else{printf("FAT successfully read\n");}
-
+	}else{printf("FAT successfully read...\n");}
+	
 	if(rtd_read(disk) == false){
 		fprintf(stderr, "Failed to read Root directory...");
-		free(FAT);
-		free(rt_dir);
+		if(FAT != NULL){free(FAT); FAT = NULL;}
+		if(rt_dir != NULL){free(rt_dir); rt_dir = NULL;}
 		fclose(disk);
 		return -4;
 	}else{printf("Successfully read Root directory...\n");}
-
+	
 	file_header *file = get_file(argv[2]);
 	if(!file){
 		fprintf(stderr, "Failed to get file: %s", argv[2]);
-		free(FAT);
-		free(rt_dir);
+		if(FAT != NULL){free(FAT); FAT = NULL;}
+		if(rt_dir != NULL){free(rt_dir); rt_dir = NULL;}
 		fclose(disk);
 		return -5;
 	}else{printf("Successfully got file: %s\n", argv[2]);}
@@ -109,26 +115,30 @@ int main(int argc, char **argv){
 	uint8_t *buffer = (uint8_t *)malloc(file->size + header.bytes_per_sector);
 	if(file_read(file, disk, buffer) != true){
 		fprintf(stderr, "Failed to get file: %s", argv[2]);
-		free(FAT);
-		free(rt_dir);
-		free(buffer);
+		if(FAT != NULL){free(FAT); FAT = NULL;}
+		if(rt_dir != NULL){free(rt_dir); rt_dir = NULL;}
+		if(buffer != NULL){free(buffer); buffer = NULL;}
 		fclose(disk);
 		return -6;
 	}else{
-		for(uint32_t cc = 0; cc < file->size; ++cc){
+		for(uint32_t cc = 0; cc < (file->size + true_filehsize); ++cc){
 			if(isprint(buffer[cc])){fputc(buffer[cc], stdout);}
 			else{printf("<%02x>", buffer[cc]);}
 		}
 	}
 	printf("\n");
-
-	free(FAT);
-	free(rt_dir);
+	
+	if(FAT != NULL){free(FAT); FAT = NULL;}
+	if(rt_dir != NULL){free(rt_dir); rt_dir = NULL;}
+	if(buffer != NULL){free(buffer); buffer = NULL;}
 	fclose(disk);
     return 0;
 }
 
-bool bs_read(const FILE *bootfile){return fread(&header, sizeof(drive_header), 1, bootfile);}
+bool bs_read(const FILE *bootfile){
+	fseek(bootfile, 0, SEEK_SET);
+	return fread(&header, sizeof(drive_header), 1, bootfile);
+}
 
 bool sectors_read(const FILE *disk, uint32_t lba, uint32_t count, void *out){
 	bool ok = true;
@@ -140,7 +150,7 @@ bool sectors_read(const FILE *disk, uint32_t lba, uint32_t count, void *out){
 }
 
 bool FAT_read(const FILE *disk){
-	FAT = (uint8_t *)malloc(sizeof(unsigned char)* header.sectors_per_fat* header.bytes_per_sector);
+	FAT = (uint8_t *)malloc((header.sectors_per_fat* header.bytes_per_sector) + 5);
 	return sectors_read(disk, header.reserved_sectors, header.sectors_per_fat, FAT);
 }
 
@@ -149,7 +159,7 @@ bool rtd_read(const FILE *disk){
 	// Read off an offset, reading beyond the Image's reserved sectors and Page Table.
 	const uint32_t lba = header.reserved_sectors + (header.sectors_per_fat* header.fat_count);
 	// Byte amount to read.
-	const uint32_t size = (sizeof(file_header) - sizeof(uint32_t)) * header.dir_entries_count;
+	const uint32_t size = (true_filehsize) * header.dir_entries_count;
 	// Sectors to read.
 	uint32_t sectors = (size / header.bytes_per_sector);
 	if(size % header.bytes_per_sector != 0){sectors++;}
@@ -170,6 +180,7 @@ file_header *get_file(const char *name){
 			if(memcmp(rt_dir[cc].name, name, len) == 0){return &rt_dir[cc];}
 		}
 	}
+	return NULL;
 }
 
 bool file_read(file_header *entry, FILE *disk, uint8_t *out){
@@ -180,8 +191,34 @@ bool file_read(file_header *entry, FILE *disk, uint8_t *out){
 		out += entry->size;
 
 		uint32_t fatindex = cluster_curr* 1.5;
-		if(cluster_curr % 2 == 0){cluster_curr = (*(uint16_t *)(FAT+ fatindex)) & 0x0FFF;
-		}else{cluster_curr = (*(uint16_t *)(FAT+ fatindex)) >> 4;}
+		if(cluster_curr % 2 == 0){cluster_curr = ((uint16_t)FAT[fatindex]) & 0x0FFF;
+		}else{cluster_curr = ((uint16_t)FAT[fatindex]) >> 4;}
 	}while(ok && cluster_curr >= 0xFF8);
 	return ok;
+}
+
+void file_print(file_header *file, FILE *disk, bool print_header){
+	unsigned char *buffer = (unsigned char *)malloc(file->size + true_filehsize);
+	file_read(file, disk, buffer);
+	switch(print_header){
+		case false:
+			for(uint32_t cc = true_filehsize; cc < (file->size + true_filehsize); ++cc){
+				if(isprint(buffer[cc])){fputc(buffer[cc], stdout);}
+				else{printf("<%02x>", buffer[cc]);}
+			}
+			return;
+		case true:
+			for(uint32_t cc = 0; cc < (file->size + true_filehsize); ++cc){
+					if(isprint(buffer[cc])){fputc(buffer[cc], stdout);}
+					else{printf("<%02x>", buffer[cc]);}
+				}
+			return;
+	}
+}
+
+void free_mul(ptr_item *ptr, uint32_t num){
+	for(uint32_t cc = 0; cc < num;){
+		free(ptr[cc].ptr);
+		cc+=ptr[cc].size;
+	}
 }

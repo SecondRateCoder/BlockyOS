@@ -119,7 +119,7 @@ function Asm-Compile{
     )
     foreach ($file in $fPaths) {
         try {
-            if (Test-Path $file) {
+            if ((Test-Path $file) -and ([System.IO.Path]::GetExtension($file) -eq '.c')) {
                 $outputPath = Join-Path $Objdir ([System.IO.Path]::GetFileNameWithoutExtension($file) + ".bin")
                 $argument = "-f "+ $format+ " "+ $file+ " -o "+ $outputPath
                 Log-Write -color Yellow "Command: $($NASM) $($argument)"
@@ -141,6 +141,8 @@ function Asm-Compile{
                         }
                     }
                 }
+            }elseif([System.IO.Path]::GetExtension($file) -eq '.c'){
+                
             }
         } catch {
             Log-Write -color Red "CRITICAL ERROR: Exception during compilation of $($file):"
@@ -239,12 +241,12 @@ if($ExtraFiles){
             $ba +=  @([byte]0) + # attributes
                     @([byte]0) + # _reserved
                     @([byte]0) + # creationtime_tenths or hundredths
-                    [BitConverter]::GetBytes([uint16]($fi.CreationTime.ToFileTime() -shr 16)) + # creationtime
-                    [BitConverter]::GetBytes([uint16]($fi.CreationTime.ToFileTime() -shr 32)) + # creationdate
-                    [BitConverter]::GetBytes([uint16]($fi.LastAccessTime.ToFileTime() -shr 32)) + # access_date
+                    [BitConverter]::GetBytes([uint16]($fi.CreationTime.ToFileTime() -shr 16 -band 0xFFFF)) + # creationtime
+                    [BitConverter]::GetBytes([uint16]($fi.CreationTime.ToFileTime() -shr 32 -band 0xFFFF)) + # creationdate
+                    [BitConverter]::GetBytes([uint16]($fi.LastAccessTime.ToFileTime() -shr 32 -band 0xFFFF)) + # access_date
                     [BitConverter]::GetBytes([uint16]0) + # fst_clusterhigh
-                    [BitConverter]::GetBytes([uint16]($fi.LastWriteTime.ToFileTime() -shr 16)) + # modifiedtime
-                    [BitConverter]::GetBytes([uint16]($fi.LastWriteTime.ToFileTime() -shr 32)) + # modified_date
+                    [BitConverter]::GetBytes([uint16]($fi.LastWriteTime.ToFileTime() -shr 16 -band 0xFFFF)) + # modifiedtime
+                    [BitConverter]::GetBytes([uint16]($fi.LastWriteTime.ToFileTime() -shr 32 -band 0xFFFF)) + # modified_date
                     [BitConverter]::GetBytes([uint16]0) + # fst_clusterlow
                     [BitConverter]::GetBytes([uint32]($fi.Length)) #Size
             
