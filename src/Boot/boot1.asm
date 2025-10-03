@@ -9,8 +9,8 @@ nop
 
 bdb_oem:                   	db 'MSWIN4.1'
 bdb_bytes_per_sector:       dw 512
-dbd_sector_per_cluster:     db 1
-dbd_reserved_sectors:       db 2
+bdb_sector_per_cluster:     db 1
+bdb_reserved_sectors:       db 2
 bdb_fat_count:              db 2
 bdb_dir_entries_count:      dw 0F0h
 bdb_total_sectors:			dw 2868
@@ -28,10 +28,14 @@ ebr_signature:				db 29h
 ebr_volume_id:				db 12h, 99h, 40h, 22h
 ebr_volume_label:			db 'BLOCKY OS  '
 ebr_system_id:				db 'FAT12   '
+kernel_cluster: dw 0
+kernel_addr: dw 0
 
 global start
 
 %define ENDL 0x0A, 0x00
+%define DIRH_SIZE 32
+
 BOOT2: db word 0x7F00
 BOOT2_MSG: db word 0x7F03
 ; This file will simply load Boot2, Boot2 will be the main booting file
@@ -39,8 +43,6 @@ BOOT2_MSG: db word 0x7F03
 start:
     xchg bx, bx
     ; Print hello
-    mov si, msg_hello
-    call write
     ; Clear ax, ds and es
     db 0x66             ; Operand-size override
     xor ax, ax          ; Actually clears EAX
@@ -54,40 +56,16 @@ start:
     mov ax, 0x7C00
     add ax, 512
     mov sp, ax
-
+	; Resolve differences in booting
 	push es
 	push word .after
 	retf
 .after:
 	; Use BIOS to read disk metadata.
-	push es
-	push ax
-	mov ah, 0x80
-	int 13h
-	jc .full_restart
-	pop ax
-	pop es
+	call read_disk_meta
 
-	and cl, 0x3F
-	xor ch, ch
-	mov [bdb_sectors_per_track], cx	; Sector count.
-
-    ; Params:
-	; ax: LBA addressing
-	; bh: Total sector count
-	; es [Location]:bx [Offset]: Memory location
 	add ax, 64
 	mov es, ax
-	mov ax, 1
-	mov bh, 1
-	call disk_read
-
-	; Validate that boot2 loaded properly
-	mov si, [BOOT2_MSG]
-	mov si, [si]
-	call write
-	jmp [BOOT2]
-	jmp halt
 
 ; Print a string.
 ; Argument: si => Pointer to string that ends with ENDL macro
@@ -111,12 +89,13 @@ write:
 
 ;! Disk control
 
+; Read drive parameters and push them into the labels: [bdb_heads]: head count and [bdb_sectors_per_track]: sector count
 read_disk_meta:
 	push es
 	push ax
 	mov ah, 0x80
 	int 13h
-	jc .full_restart
+	jc full_restart
 	pop ax
 	pop es
 
@@ -126,6 +105,7 @@ read_disk_meta:
 
 	inc dh
 	mov [bdb_heads], dh				;head count
+	ret
 
 
 ; Convert LBA addressing to CHS addressing.
@@ -184,28 +164,29 @@ lbatochs:
 
 ; Params:
 	; ax: LBA addressing
-	; bh: Total sector count
+	; cl: Total sector count
 	; es [Location]:bx [Offset]: Memory location
 disk_read:
 ;! Using:
 	; ax, cx, dx
+	push cx
 	call lbatochs
 	mov di, 4
 .begin_retry:
 	mov si, msg_disk_read
 	call write
-	;! IOptional, do register transformaytinos
-	; ;Push cl
-	; push cx
-	; add sp, 1
-	; mov cl, ch
-	; shr cl, 2
-	; and cl, 0xC0
-	; mov bp, sp
-	; or cl, [ss:bp]
-	; ; pop cl
-	; add sp, 1
+	; mov ah, 0x02        ; BIOS read sector function
+	; mov al, 1           ; Number of sectors to read
+	; mov ch, cylinder    ; Cylinder number
+	; mov cl, sector      ; Sector number (1-based!)
+	; mov dh, head        ; Head number
+	; mov dl, drive       ; Drive number (0x00 = floppy, 0x80 = HDD)
+	; mov bx, buffer      ; ES:BX points to memory buffer
+	; int 0x13            ; Call BIOS
+	; jc error_handler    ; If carry flag set, handle error
 	and ch, 0xff
+	pop ax
+	; add sp, 1
 	mov dl, [ebr_drive_number]
 	mov ah, 0x02
 	mov al, bh
@@ -256,6 +237,9 @@ msg_bt2lod: db 'Jumping to Bootloader 2. ', ENDL, 0
 msg_disk_read: db 'Reading from disk. ', ENDL, 0
 msg_disk_errormsg: db 'Error when reading Disk. Resetting Floppy disk. ', ENDL, 0
 msg_disk_readsucc: db 'Disk read success...', ENDL, 0
+kernel_name: db "kernel0.bin", ENDL, 0
+
 
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
 dw 0xAA55              ; The final 2 bytes will be the boot signature.
+buffer:

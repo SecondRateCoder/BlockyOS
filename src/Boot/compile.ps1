@@ -117,9 +117,10 @@ function Asm-Compile{
         [string[]]$fPaths,
         [string]$format
     )
+    $cc = 0;
     foreach ($file in $fPaths) {
         try {
-            if ((Test-Path $file) -and ([System.IO.Path]::GetExtension($file) -eq '.c')) {
+            if (((Test-Path $file) -eq $true) -and (($file[0] -ne '\') -and ($file[1] -ne 'x'))) {
                 $outputPath = Join-Path $Objdir ([System.IO.Path]::GetFileNameWithoutExtension($file) + ".bin")
                 $argument = "-f "+ $format+ " "+ $file+ " -o "+ $outputPath
                 Log-Write -color Yellow "Command: $($NASM) $($argument)"
@@ -141,13 +142,21 @@ function Asm-Compile{
                         }
                     }
                 }
-            }elseif([System.IO.Path]::GetExtension($file) -eq '.c'){
-                
+            }elseif($file[0] -eq '\' -and $file[1] -eq 'x'){
+                # Apply arbitrary file size
+                $empty_path = Join-Path -Path $Objdir -ChildPath "empty.bin"
+                $fPaths[$cc] = $empty_path
+                # Decode the following digits
+                $num = [int]($file -replace '\D', '') # Remove all non-digit characters
+                Log-Write -color Yellow -Msg "Padding with $($num * 512) bytes`n`t$($num) sectors..."
+                New-Item -Path $empty_path -ItemType File -Force
+                [System.IO.File]::WriteAllBytes($empty_path, (New-Object byte[] 512))
             }
         } catch {
             Log-Write -color Red "CRITICAL ERROR: Exception during compilation of $($file):"
             Log-Write -color Red $_.Exception.ToString()
         }
+        $cc++
     }
 }
 
