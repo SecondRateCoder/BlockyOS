@@ -1,0 +1,7 @@
+{
+    "Everything is a file": [
+        "Everything is a file, simply with a diff attribute",
+        "HASH optimisation, uses hashing to increase optimisation and overhead from comparing file names",
+        ""
+    ]
+}

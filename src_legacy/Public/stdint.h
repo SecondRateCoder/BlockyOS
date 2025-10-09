@@ -1,4 +1,5 @@
 typedef unsigned char uint8_t;
+typedef uint8_t byte;
 typedef unsigned short int uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned int uint;

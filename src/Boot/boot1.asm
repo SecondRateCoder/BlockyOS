@@ -9,7 +9,7 @@ nop
 
 bdb_oem:                   	db 'MSWIN4.1'
 bdb_bytes_per_sector:       dw 512
-bdb_sector_per_cluster:     db 1
+bdb_sectors_per_cluster:     db 1
 bdb_reserved_sectors:       db 2
 bdb_fat_count:              db 2
 bdb_dir_entries_count:      dw 0F0h
@@ -28,9 +28,7 @@ ebr_signature:				db 29h
 ebr_volume_id:				db 12h, 99h, 40h, 22h
 ebr_volume_label:			db 'BLOCKY OS  '
 ebr_system_id:				db 'FAT12   '
-kernel_cluster: dw 0
-kernel_addr: dw 0
-
+cylinder_count: dw 0
 global start
 
 %define ENDL 0x0A, 0x00
@@ -64,8 +62,44 @@ start:
 	; Use BIOS to read disk metadata.
 	call read_disk_meta
 
-	add ax, 64
+	add ax, 0x64
+	mov bx, ax
+	; Resolve LBA of 2nd boot program...
+	push ax
+	xor ax, ax
+	mov al, byte [bdb_fat_count]
+	xor dx, dx
+	mul word [bdb_sectors_per_fat]
+	xor dx, dx
+	add al, [bdb_reserved_sectors]
+	xor dx, dx
+	mov cl, 1
+
+	; Store the data to jump to later
+	push bx
+	push ax
+	mov ax, es
+	push ax
+	add sp, 2
+	pop ax
+	sub sp, 4
+	mov si, sp
+	mov bp, [ss:si]
+	add sp, 2
+	add si, 2
+	mov [ss:si], bp
+
+	; Params:
+	; ax: LBA addressing
+	; cl: Total sector count
+	; es [Location]:bx [Offset]: Memory location
+	call disk_read
+
+	pop bx
+	pop ax
 	mov es, ax
+	retf
+
 
 ; Print a string.
 ; Argument: si => Pointer to string that ends with ENDL macro
@@ -93,18 +127,20 @@ write:
 read_disk_meta:
 	push es
 	push ax
-	mov ah, 0x80
+	mov ah, 0x08
+	mov dl, [ebr_drive_number] ; set drive number
 	int 13h
 	jc full_restart
-	pop ax
-	pop es
 
 	and cl, 0x3F
+	mov [cylinder_count], cl
 	xor ch, ch
 	mov [bdb_sectors_per_track], cx	; Sector count.
 
 	inc dh
 	mov [bdb_heads], dh				;head count
+	pop ax
+	pop es
 	ret
 
 
@@ -172,9 +208,8 @@ disk_read:
 	push cx
 	call lbatochs
 	mov di, 4
-.begin_retry:
-	mov si, msg_disk_read
-	call write
+	and ch, 0xff
+	pop ax
 	; mov ah, 0x02        ; BIOS read sector function
 	; mov al, 1           ; Number of sectors to read
 	; mov ch, cylinder    ; Cylinder number
@@ -184,12 +219,11 @@ disk_read:
 	; mov bx, buffer      ; ES:BX points to memory buffer
 	; int 0x13            ; Call BIOS
 	; jc error_handler    ; If carry flag set, handle error
-	and ch, 0xff
-	pop ax
-	; add sp, 1
+.begin_retry:
+	mov si, msg_disk_read
+	call write
 	mov dl, [ebr_drive_number]
 	mov ah, 0x02
-	mov al, bh
 	pusha
 	stc
 	int 0x13
@@ -237,7 +271,6 @@ msg_bt2lod: db 'Jumping to Bootloader 2. ', ENDL, 0
 msg_disk_read: db 'Reading from disk. ', ENDL, 0
 msg_disk_errormsg: db 'Error when reading Disk. Resetting Floppy disk. ', ENDL, 0
 msg_disk_readsucc: db 'Disk read success...', ENDL, 0
-kernel_name: db "kernel0.bin", ENDL, 0
 
 
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.

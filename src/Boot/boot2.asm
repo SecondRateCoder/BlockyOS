@@ -2,25 +2,61 @@ org 0x7E00
 bits 16
 
 jmp short start
+; Copy of boot record, overwritten at Run-time...
+boot_record_buffer:
+bdb_oem:                   	db 'MSWIN4.1'
+bdb_bytes_per_sector:       dw 512
+bdb_sectors_per_cluster:     db 1
+bdb_reserved_sectors:       db 2
+bdb_fat_count:              db 2
+bdb_dir_entries_count:      dw 0F0h
+bdb_total_sectors:			dw 2868
+bdb_media_desciptor_type:	db 0F0h
+bdb_sectors_per_fat:		dw 9
+bdb_sectors_per_track:		dw 18
+bdb_heads:					dw 2
+bdb_hidden_sectors:			dd 0
+bdb_large_sector_count:		dd 0
+
+; extended boot record:
+ebr_drive_number:			db 0
+							db 0
+ebr_signature:				db 29h
+ebr_volume_id:				db 12h, 99h, 40h, 22h
+ebr_volume_label:			db 'BLOCKY OS  '
+ebr_system_id:				db 'FAT12   '
+
+%define ENDL 0x00, 0x0A
+kernel_name:                db "kernel0.bin", ENDL, 0
+kernel_addr:                dw 0
+kernel_cluster:             dw 0
 
 %define DIRH_SIZE 32
-%define ENDL 0x00, 0x0A
-
-bdb_sector_per_cluster: db 1
-bdb_fat_count:          db 2
-bdb_sectors_per_fat:    db 9
-bdb_reserved_sectors:   db 2
-bdb_dir_entries_count:  dw 0F0h
-bdb_bytes_per_sector:   dw 512
-kernel_cluster:         dw 0
-kernel_addr:            dw 0
-kernel_name:            db "kernel0.bin"
 
 boot2msg: db 'This is Boot2', ENDL, 0
 
 global start
 
 start:
+    ; Copy over boot record
+    mov ax, 0x7C00
+    mov es, ax
+    mov bx, 72
+.memcpy:
+    test bx, bx
+    jz .memcpy_done
+    mov ax, [es:bx]
+
+    push es
+    push ax
+    mov ax, word boot_record_buffer
+    mov es, ax
+    pop ax
+    mov [es:bx], ax
+    pop es
+    dec di
+
+.memcpy_done:
     ; Compute LBA of Root directory...
 	xor ax, ax
 	add ax, [bdb_fat_count]
@@ -128,7 +164,7 @@ read_root:
 	call disk_read
 	
 	; Load main kernel
-	mov bx, [kernel_ld_segment]
+	mov bx, word [kernel_ld_segment]
 	mov es, bx
 	mov bx, [kernel_ld_offset]
 .ld_kernel:

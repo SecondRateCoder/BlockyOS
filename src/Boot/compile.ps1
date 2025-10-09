@@ -130,7 +130,7 @@ function Asm-Compile{
                     if ($nasmOutput) {
                         # $nasmOutput | ForEach-Object { Log-Write "Output: $($_)" }
                         foreach($item in $nasmOutput){
-                            Log-Write "Output: $($item)"
+                            Log-Write -color Yellow -Msg "Output: $($item)"
                         }
                     }
                 } else {
@@ -153,8 +153,8 @@ function Asm-Compile{
                 [System.IO.File]::WriteAllBytes($empty_path, (New-Object byte[] 512))
             }
         } catch {
-            Log-Write -color Red "CRITICAL ERROR: Exception during compilation of $($file):"
-            Log-Write -color Red $_.Exception.ToString()
+            Log-Write -color Red -Msg "CRITICAL ERROR: Exception during compilation of $($file):"
+            Log-Write -color Red -Msg $_.Exception.ToString()
         }
         $cc++
     }

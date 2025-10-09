@@ -1,0 +1,62 @@
+Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-09-36\objs\boot1.bin
+Successfully compiled C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm
+Padding with 9216 bytes
+	18 sectors...
+Command: C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-09-36\objs\boot2.bin
+Successfully compiled C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm
+Output: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm:167: warning: word data exceeds bounds [-w+number-overflow]
+Output: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm:167: warning: word data exceeds bounds [-w+number-overflow]
+Output: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm:221: warning: word data exceeds bounds [-w+number-overflow]
+Output: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm:225: warning: word data exceeds bounds [-w+number-overflow]
+Pushing compiled data
+Byte array of size: 512 padded with size: 0, starting at address: 0 and ending at address: 512
+Byte array of size: 512 padded with size: 0, starting at address: 512 and ending at address: 1024
+Byte array of size: 727 padded with size: 215, starting at address: 1024 and ending at address: 1966
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-09-36\floppy-2025-10-09-36.img with 215 bytes.
+Validating compilation
+Pushing extra files
+Padding to address: 
+	address: 
+		Decimal: 10240, 
+		Hexa-decimal: 0x2800, 
+	File size: 1966, 
+	padding: 8274
+Byte array of size: 8274 padded with size: 82, starting at address: 1966 and ending at address: 10322
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-09-36\floppy-2025-10-09-36.img with 82 bytes.
+Adding file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\public\textual.txt to floppy image,
+	Floppy Size: 10322, Hexa-Decimal: 0x2852
+	End address: 10348
+Padding: 486
+
+                Name: textual.txt,
+
+                Attr: 0,
+
+                reserved?: 0,
+
+                creationtime_tenths: 0,
+
+                creationtime: 2045219675367,
+
+                creationdate: 31207575,
+
+                access_date: 31209820,
+
+                fst_clusterhigh: 0,
+
+                modifiedtime: 2045245741248,
+
+                modified_date: 31207973,
+
+                fst_clusterlow: 0,
+
+                Size: 26,
+
+                
+File Metadata: 32
+Byte array of size: 58 padded with size: 454, starting at address: 10322 and ending at address: 10834
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-09-36\floppy-2025-10-09-36.img with 454 bytes.
+Padding to 1013166 size
+Byte array of size: 1013166 padded with size: 430, starting at address: 10834 and ending at address: 1024430
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-09-36\floppy-2025-10-09-36.img with 430 bytes.
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-10-09-36\floppy-2025-10-09-36.img with 1013166 bytes.
