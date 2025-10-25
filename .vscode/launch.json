@@ -2,14 +2,29 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug run.ps1",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${cwd}/run.ps1",
+            "args": [
+                "-extrafiles", "\\a0x2800, C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\public\\textual.txt",
+                "-BroadImage",
+                "-SectorNum", "2000",
+                "-clear",
+                "-Reserved", "1"
+            ],
+            "cwd": "${cwd}"
+        },
+        {
             "name": "Debug fat.exe with args",
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask":"gcc Build and Debug FAT file",
-            "program": "${workspaceFolder}\\tools\\${fileBasenameNoExtension}.exe",
+            "program": "${workspaceFolder}\\tools\\frat.exe",
             "args": [
                 "${workspaceFolder}\\Build\\temp\\floppy.img",
-                "textual.txt"
+                "textual.txt",
+                ""
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
@@ -24,6 +39,31 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "Debug frat.exe with args",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask":"gcc Build and Debug FrAT file",
+            "program": "${workspaceFolder}\\tools\\frat.exe",
+            "args": [
+                "${workspaceFolder}\\Build\\temp\\floppy.img",
+                "textual.txt",
+                ""
+            ],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
         },
     ]
 }

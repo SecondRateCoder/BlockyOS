@@ -32,23 +32,23 @@ typedef struct drive_header{
 }__attribute__((packed)) drive_header;
 
 
-typedef struct file_header{
+typedef struct file_entry{
 	uint8_t name[11],
 	attributes,
 	_reserved,
 	creationtime_tenths;
-	uint16_t creationtime,
-	creationdate,
+	uint16_t creation_time,
+	creation_date,
 	access_date,
 	fst_clusterhigh,
-	modifiedtime,
-	modifieddate,
+	modified_time,
+	modified_date,
 	fst_clusterlow;
 	uint32_t size;
 	// Properties not to be implemented by fread, for optimisation as to prevent repeat calculation
 	uint32_t lba;
-} __attribute__((packed)) file_header;
-#define true_filehsize sizeof(file_header) - sizeof(uint32_t)
+} __attribute__((packed)) file_entry;
+#define true_filehsize sizeof(file_entry) - sizeof(uint32_t)
 
 typedef struct ptr_item{void *ptr; uint32_t size;}ptr_item;
 
@@ -58,17 +58,17 @@ drive_header header;
 // FAT table, Metadata table
 char *FAT;
 
-file_header *rt_dir;
+file_entry *rt_dir;
 uint32_t rtdir_end;
 
 bool bs_read(const FILE *bootfile);
 bool sectors_read(const FILE *disk, uint32_t lba, uint32_t count, void *out);
 bool FAT_read(const FILE *disk);
 bool rtd_read(const FILE *disk);
-file_header *get_file(const char *name);
-bool file_read(file_header *entry, FILE *disk, uint8_t *out);
+file_entry *get_file(const char *name);
+bool file_read(file_entry *entry, FILE *disk, uint8_t *out);
 void free_mul(ptr_item *ptr, uint32_t num);
-void file_print(file_header *file, FILE *disk, bool print_header);
+void file_print(file_entry *file, FILE *disk, bool print_header);
 
 int main(int argc, char **argv){
     if(argc < 3){
@@ -103,7 +103,7 @@ int main(int argc, char **argv){
 		return -4;
 	}else{printf("Successfully read Root directory...\n");}
 	
-	file_header *file = get_file(argv[2]);
+	file_entry *file = get_file(argv[2]);
 	if(!file){
 		fprintf(stderr, "Failed to get file: %s", argv[2]);
 		if(FAT != NULL){free(FAT); FAT = NULL;}
@@ -166,13 +166,13 @@ bool rtd_read(const FILE *disk){
 	// In sectors, the number of sectors that makes up the root directory
 	rtdir_end = sectors + lba;
 	//227 file headers
-	rt_dir = (file_header *)malloc(sectors* header.bytes_per_sector);
+	rt_dir = (file_entry *)malloc(sectors* header.bytes_per_sector);
 	const bool out = sectors_read(disk, lba, sectors, rt_dir);
 	rt_dir->lba = lba;
 	return out;
 }
 
-file_header *get_file(const char *name){
+file_entry *get_file(const char *name){
 	for(uint32_t cc = 0; cc < header.dir_entries_count; ++cc){
 		if(rt_dir[cc].name[0] == name[0]){
 			uint32_t len  = 0;
@@ -183,7 +183,7 @@ file_header *get_file(const char *name){
 	return NULL;
 }
 
-bool file_read(file_header *entry, FILE *disk, uint8_t *out){
+bool file_read(file_entry *entry, FILE *disk, uint8_t *out){
 	bool ok = true;
 	uint16_t cluster_curr = entry->fst_clusterlow;
 	do{
@@ -197,7 +197,7 @@ bool file_read(file_header *entry, FILE *disk, uint8_t *out){
 	return ok;
 }
 
-void file_print(file_header *file, FILE *disk, bool print_header){
+void file_print(file_entry *file, FILE *disk, bool print_header){
 	unsigned char *buffer = (unsigned char *)malloc(file->size + true_filehsize);
 	file_read(file, disk, buffer);
 	switch(print_header){

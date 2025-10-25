@@ -2,14 +2,13 @@ org 0x7C00
 ; 0xf0000:e05b
 bits 16
 
-
 ; FAT12 Headers:
 jmp short start
 nop
 
 bdb_oem:                   	db 'MSWIN4.1'
 bdb_bytes_per_sector:       dw 512
-bdb_sectors_per_cluster:     db 1
+bdb_sectors_per_cluster:    db 1
 bdb_reserved_sectors:       db 2
 bdb_fat_count:              db 2
 bdb_dir_entries_count:      dw 0F0h

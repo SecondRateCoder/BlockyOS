@@ -1,14 +1,19 @@
 {
     "makefile.configureOnOpen": false,
     "files.associations": {
+        "*.h": "c",
         "*.gitignore": "c",
-        "memtypes.h": "c",
-        "publics.h": "c",
         "cstdint": "c",
         "stdint.h": "c",
         "stdbool.h": "c",
         "general.h": "c",
         "alltypes.h": "c",
-        "pci.h": "c"
+        "sstream": "c",
+        "chrono": "c",
+        "functional": "c",
+        "__locale": "c",
+        "format": "c",
+        "ios": "c",
+        "*.rh": "c"
     }
 }

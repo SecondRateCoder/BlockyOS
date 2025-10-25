@@ -33,6 +33,7 @@ $Log = Join-Path $Build ("log-" + $Date + ".txt")
 
 $BOCHSRC = Join-Path $Build ".bochsrc"
 $BOCHSLOG = Join-Path $Build "bochs.log"
+$num_empty = 0
 
 $Line_Up = "megs: 32
 romimage: file=C:\Users\olusa\Bochs-3.0\BIOS-bochs-latest
@@ -144,13 +145,14 @@ function Asm-Compile{
                 }
             }elseif($file[0] -eq '\' -and $file[1] -eq 'x'){
                 # Apply arbitrary file size
-                $empty_path = Join-Path -Path $Objdir -ChildPath "empty.bin"
+                $empty_path = Join-Path -Path $Objdir -ChildPath "empty_$($num_empty).bin"
                 $fPaths[$cc] = $empty_path
                 # Decode the following digits
                 $num = [int]($file -replace '\D', '') # Remove all non-digit characters
                 Log-Write -color Yellow -Msg "Padding with $($num * 512) bytes`n`t$($num) sectors..."
                 New-Item -Path $empty_path -ItemType File -Force
-                [System.IO.File]::WriteAllBytes($empty_path, (New-Object byte[] 512))
+                [System.IO.File]::WriteAllBytes($empty_path, (New-Object byte[] (512* $num)))
+                $num_empty++
             }
         } catch {
             Log-Write -color Red -Msg "CRITICAL ERROR: Exception during compilation of $($file):"
@@ -159,6 +161,51 @@ function Asm-Compile{
         $cc++
     }
 }
+
+function Get-StringHash {
+    param (
+        [string]$str,
+        [int]$limit = 12
+    )
+
+    if (-not $str) { return 0 }
+
+    $out = @(0)  # Simulates malloc(sizeof(size_t))
+    $out_fmt = 0
+    $cc = 0
+    foreach ($char in $str.ToCharArray()) {
+        $ascii = [int][char]$char
+        $out[$out_fmt] = (($out[$out_fmt] -shl 5) + $out[$out_fmt]) + $ascii
+        if (($cc % $limit) -eq 0 -and $cc -ne 0) {
+            $out_fmt++
+            $out += 0  # Simulates realloc with pow(2, out_fmt) growth
+        }
+
+        $cc++
+    }
+    return $out
+}
+
+
+# #define 
+# @brief Hash a string into an integer array.
+# @param str The string to be hashed.
+# @param hash The output, malloced internally.
+# @return The size of the hash, use;(sizeof(size_t) * pow(2, n)), for true byte size.
+# uint8_t hash(const char *str, size_t* out){
+#     if(!str){return 0;}
+#     out = malloc(sizeof(size_t)* 2);
+#     if(!out){return 0;}
+#     uint8_t out_fmt = 0;
+# 	int cc = 0;
+#     int c = 0;
+#     while((c = *str++)){
+# 		out[out_fmt] = ((out[out_fmt] << 5) + out[out_fmt]) + c;
+# 		if((cc % HASH_64BIT_LIMIT) == 0){out_fmt++;}
+# 		++cc;
+#     }
+#     return out_fmt;
+# }
 
 # Optional override for linker script
 # $LinkerScript_Out = if ($LinkerScript) { $LinkerScript } else { Join-Path (Get-Location) "Boot\boot_linker.ld" }
@@ -173,7 +220,7 @@ Log-Write -color Cyan -Msg "Pushing compiled data"
 # Push compiled data
 foreach ($file in $AsmFiles) {
     $temp = Join-Path $Objdir ([System.IO.Path]::GetFileNameWithoutExtension($file) + ".bin")
-    if(Test-Path $temp){
+    if(Test-Path -Path $temp){
         $data = Get-Content -Path $temp -Raw -Encoding Byte
         Img-Push -data $data
         $succ_ += $true
