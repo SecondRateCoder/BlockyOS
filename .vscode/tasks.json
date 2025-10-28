@@ -62,14 +62,14 @@
         },
         {
             "type": "process",
-            "label": "gcc Build and Debug active file",
-            "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+            "label": "gcc Build and Debug FrAT file no floppy",
+            "command": "gcc",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
+                "${workspaceFolder}\\tools\\frat.c",
                 "-o",
-                "${fileBasenameNoExtension}.exe"
+                "${cwd}\\tools\\frat.exe"
             ],
             "options": {
                 "cwd": "${cwd}\\tools\\"
