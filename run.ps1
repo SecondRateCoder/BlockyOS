@@ -30,7 +30,7 @@ if($clear -eq $true){
     Remove-Item (Join-Path (Get-Location) "Build") -Force -Recurse
 }
 if($runbochs -eq $true){
-    & $TRUE_COMPILE -AsmFiles $BOOT1, $RESERVED_STR, $HIDDEN_STR, $FATMAP, $BOOT2 -LinkerScript $LinkerScript -Run_Bochs -ExtraFiles $extrafiles -BroadImage $BroadImage -SectorNum $SectorNum
+    & $TRUE_COMPILE -AsmFiles $BOOT1, $BOOT2, $RESERVED_STR, $HIDDEN_STR, $FATMAP -LinkerScript $LinkerScript -Run_Bochs -ExtraFiles $extrafiles -BroadImage $BroadImage -SectorNum $SectorNum
 }elseif ($run -eq $true){
     & $TRUE_COMPILE -AsmFiles $BOOT1, $RESERVED_STR, $HIDDEN_STR, $FATMAP, $BOOT2 -LinkerScript $LinkerScript -Run -ExtraFiles $extrafiles -BroadImage $BroadImage -SectorNum $SectorNum
 }else{

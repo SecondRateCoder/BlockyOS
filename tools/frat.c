@@ -738,6 +738,7 @@ void cmd_handle(char *name){
 	char **out = parse_str(name, sep, &out_len);
 	for(size_t cc = 0; cc < out_len; ++cc){printf(ANSI_YELLOW("\nParsed string output: \"%s\""), out[cc]);}
 	uint32_t cc= 0;
+	bool no_func = false;
 	for(; cc < out_len; ++cc){
 		for(uint32_t cc_cmd= 0; cc_cmd < num_commands && cc < out_len; ++cc_cmd){
 			// printf(ANSI_YELLOW("\nComparing: %s with %s"), out[cc], commands[cc_cmd]); 
@@ -761,7 +762,8 @@ void cmd_handle(char *name){
 						"select",	// Select a specific label to be used. Params: <LABEL NAME>
 						*/
 						case 0:	//open <FILE NAME>
-							if(out_len < 2){
+							no_func = true;
+							if((out_len - cc) < 2){
 								printf(ANSI_RED("\ninvalid open command: SYNTAX: open <FILE NAME>"));
 								cc+=2;
 								continue;
@@ -770,7 +772,8 @@ void cmd_handle(char *name){
 							cc+=2;
 							continue;
 						case 1:	//dopen <FILE NAME>
-							if(out_len < 2){
+							no_func = true;
+							if((out_len - cc) < 2){
 								printf(ANSI_RED("\ninvalid dopen command: SYNTAX: dopen <FILE NAME>"));
 								cc+=2;
 								continue;
@@ -779,11 +782,13 @@ void cmd_handle(char *name){
 							cc+=2;
 							continue;
 						case 2:	//close <NONE>
+							no_func = true;
 							fclose_(false, false);
 							cc++;
 							continue;
 						case 3:	//read <INDEX, NUMBER OF BYTES TO READ>
-							if(out_len < 3){
+							no_func = true;
+							if((out_len - cc) < 3){
 								printf(ANSI_RED("\ninvalid read command: SYNTAX: read <INDEX, NUMBER OF BYTES TO READ>"));
 								cc+=3;
 								continue;
@@ -795,9 +800,10 @@ void cmd_handle(char *name){
 							cc+=3;
 							continue;
 						case 4:	//write <INDEX, DATA SIZE>
+							no_func = true;
 							// fseek(disk, FDATA_START + curr_file->lit_addr + strtol(out[cc + 1], NULL, 10), SEEK_SET);
 							// buffers[0]->data = Fread_curr(strtol(out[cc + 2], NULL, 10), strtol(out[cc + 1], NULL, 10));
-							if(out_len < 3){
+							if((out_len - cc) < 3){
 								printf(ANSI_RED("\ninvalid write command: SYNTAX: write <INDEX, DATA SIZE>"));
 								cc+=3;
 								continue;
@@ -822,18 +828,42 @@ void cmd_handle(char *name){
 							cc+=3;
 							continue;
 						case 5:	//dwrite <INDEX, DATA TO WRITE(IN ASCII)>
-							if(out_len < 4){
+							no_func = true;
+							bool tmp = 0;
+							if((out_len - cc) < 3){
 								printf(ANSI_RED("\ninvalid dwrite command: SYNTAX: dwrite <INDEX, DATA SIZE, DATA TO WRITE(IN ASCII)>"));
 								cc+=4;
 								continue;
 							}
-							buffers[bf_select]->data = realloc(buffers[bf_select]->data, strtol(out[cc + 2], NULL, 10));
-							memcpy(buffers[bf_select]->data, out[cc + 2] + 1, strlen(out[cc + 2] + 1) - 1);
-							cc+= 4;
+							if(buffer_num == 0){
+								printf(ANSI_RED("\nERROR!\nThere must be a buffer/label in existence..."));
+								cc+=3;
+								continue;
+							}
+							if(buffers[bf_select]->data_size < strlen(out[cc + 2] + 1) - 1){
+text_attmpt:
+								printf(ANSI_RED(
+									"ERROR!!\n The selected label/buffer(%s) has a data size of %zu but the inputted data is larger than this(%zu)\n"
+								) ANSI_YELLOW("Continue with write? (y/n):\n\t"),
+									buffers[bf_select]->name, buffers[bf_select]->data_size, strlen(out[cc + 2] + 1) - 1);
+								char buff = fgetc(stdin);
+								if(buff == 'n'){
+										cc+=3;
+										continue;
+								}else if(buff != 'y'){
+									printf(ANSI_RED("Invalid input"));
+									goto text_attmpt;
+								}
+							}
+							buffers[bf_select]->data = realloc(buffers[bf_select]->data, strlen(out[cc + 2]));
+							memcpy(buffers[bf_select]->data, out[cc + 2] + 1, (strlen(out[cc + 2] + 1) - 1 > buffers[bf_select]->data_size? buffers[bf_select]->data_size: strlen(out[cc + 2] + 1) - 1));
+							cc+=3;
 							continue;
-						case 6:	//_fwrite <FILE PATH, RECIEVING INDEX, SENDING INDEX, DATA_NUM>
-							if(out_len < 5){
-								printf(ANSI_RED("\ninvalid _fwrite command: SYNTAX: _fwrite <FILE PATH, RECIEVING INDEX, SENDING INDEX, DATA_NUM>"));
+						case 6:	//_fwrite <FILE PATH, RECIEVING INDEX, SENDING INDEX, DATA_NUM, (NOT MANDATORY)FORMAT>
+							no_func = true;
+							if((out_len - cc) < 5){
+								printf(ANSI_RED("\ninvalid _fwrite command: SYNTAX: _fwrite <FILE PATH, RECIEVING INDEX, SENDING INDEX, DATA_NUM, (NOT MANDATORY)FORMAT>"));
+								printf(ANSI_YELLOW("\nFormat(Only one):\n\tEXTERNAL,\n\tINTERNAL"));
 								cc+=5;
 								continue;
 							}
@@ -841,16 +871,29 @@ void cmd_handle(char *name){
 								file_entry entry_f = *curr_file;
 								// free(curr_file);
 								// curr_file = NULL;
-								FRopen(out[cc + 1]);
-								void *read = Fread_curr(strtol(out[cc + 4], NULL, 10), strtol(out[cc + 3], NULL, 10));
-								fclose_(true, true);
-								*curr_file = entry_f;
-								Fwrite_curr(strtol(out[cc + 4], NULL, 10), strtol(out[cc + 2], NULL, 10), read);
-								free(read);
+								if(out_len >= 6){
+									for(uint8_t cc_ = 0; cc_ < strlen(out[cc + 5]); ++cc_){out[cc + 5][cc_] = tolower(out[cc + 5][cc_]);}
+									if(!strncmp(out[cc + 5], "external", 8)){
+										FILE *f = fopen(out[cc + 1], "rb");
+										void *data = malloc(strtol(out[cc + 4], NULL, 10));
+										fseek(f, strtol(out[cc + 3], NULL, 10), SEEK_SET);
+										fread(data, 1, strtol(out[cc + 4], NULL, 10), f);
+										Fwrite_curr(strtol(out[cc + 4], NULL, 10), strtol(out[cc + 2], NULL, 10), data);
+									}else if(!strncmp(out[cc + 5], "internal", 8)){goto internal_read;}
+								}else{
+									internal_read:
+									FRopen(out[cc + 1]);
+									void *read = Fread_curr(strtol(out[cc + 4], NULL, 10), strtol(out[cc + 3], NULL, 10));
+									fclose_(true, true);
+									*curr_file = entry_f;
+									Fwrite_curr(strtol(out[cc + 4], NULL, 10), strtol(out[cc + 2], NULL, 10), read);
+									free(read);
+								}
 							}else{printf(ANSI_RED("\nERROR! No file has been opened!"));}
 							cc+=5;
 							continue;
 						case 7:	// mread <NONE>
+							no_func = true;
 							if(curr_file != NULL){
 								if(curr_file->FAT_index > FAT_num){printf(ANSI_RED("Current file has invalid FAT entry!"));
 								}else{
@@ -904,7 +947,8 @@ void cmd_handle(char *name){
 							}else{printf(ANSI_RED("\nERROR! No file has been opened!"));}
 							cc++;
 							continue;
-						case 8:	// mwrite <PROPERTY(LOWER_CASE)>, <VALUE(S)>
+						case 8:	// mwrite <PROPERTY(LOWER_CASE), VALUE(S), (NOT MANDATORY)FORMAT>
+							no_func = true;
 							/*
 								Properties:
 									uint8_t name_fmt;
@@ -912,7 +956,7 @@ void cmd_handle(char *name){
 									size_t lit_addr;
 									uint8_t name[];
 							*/
-							if(out_len < 3){
+							if((out_len - cc) < 3){
 								printf(ANSI_RED("\ninvalid mwrite command: SYNTAX: _fwrite <FILE PATH, RECIEVING INDEX, SENDING INDEX, DATA_NUM>"));
 								cc+=2;
 								continue;
@@ -931,14 +975,15 @@ void cmd_handle(char *name){
 							cc+=2;
 							continue;
 						case 9: // create <FILE NAME, SIZE, FORMAT>
-							if(out_len < 4){
+							no_func = true;
+							if((out_len - cc) < 4){
 								printf(ANSI_RED("\ninvalid create command: SYNTAX: create <FILE NAME, SIZE, FORMAT>"));
 								cc+=4;
 								continue;
 							}
 							size_t len = 0;
 							get_FATsize(0, FAT_num + 1, &len, true);
-							size_t flen = Fget_free(0, (out_len > 2?strtol(out[cc + 1], NULL, 10): 0));
+							size_t flen = Fget_free(0, ((out_len - cc) > 2?strtol(out[cc + 1], NULL, 10): 0));
 							size_t *hash_n = NULL;
 							uint8_t fmt = hash(out[cc + 1], &hash_n);
 							FAT_entry *entry = malloc(sizeof(FAT_entry));
@@ -957,7 +1002,7 @@ void cmd_handle(char *name){
 							*file = (file_entry){
 								.padding = {0, 0, 0, 0},
 								.name_len = strlen(out[cc + 1]),
-								._attributes = decode_attr((out_len >= 4?out[cc + 3]: NULL)),
+								._attributes = decode_attr(((out_len - cc) >= 4?out[cc + 3]: NULL)),
 								.creation_time = encode_time(t->tm_hour, t->tm_min, t->tm_sec),
 								.creation_date = t->tm_yday,
 								.access_date = t->tm_yday,
@@ -999,13 +1044,14 @@ void cmd_handle(char *name){
 							);
 							memcpy(file->name, out[cc + 1], strlen(out[cc + 1]));
 							fseek(disk, FDATA_START + entry->lit_addr, SEEK_SET);	// Adress: 10240 bytes
-							printf("\nCreating file/directory: %s", out[cc + 1]);
+							printf("\nCreating file/directory: %s\n", out[cc + 1]);
 							_fwrite(file, sizeof(file_entry) + strlen(out[cc + 1]), 1);
 							// FAT_num++;
 							cc+=4;
 							continue;
 						case 10:	// lcreate <LABEL NAME, STARTING SIZE>
-							if(out_len < 3){
+							no_func = true;
+							if((out_len - cc) < 3){
 								printf(ANSI_RED("\ninvalid lcreate command: SYNTAX: lcreate <LABEL NAME, STARTING SIZE>"));
 								cc+=3;
 								continue;
@@ -1016,11 +1062,12 @@ void cmd_handle(char *name){
 								continue;
 							}
 							buffer_gen(strtol(out[cc + 2], NULL, 10), out[cc + 1]);
-							printf(ANSI_YELLOW("\nCreating buffer %s of size: %zu"), out[cc + 1], strtol(out[cc + 2], NULL, 10));
+							printf(ANSI_YELLOW("\nCreating buffer %s of size: %zu\n"), out[cc + 1], strtol(out[cc + 2], NULL, 10));
 							cc+=3;
 							continue;
 						case 11: 	// select <LABEL NAME>
-							if(out_len < 2){
+							no_func = true;
+							if((out_len - cc) < 2){
 								printf(ANSI_RED("\ninvalid select command: SYNTAX: select <LABEL NAME>"));
 								cc+=2;
 								continue;
@@ -1028,7 +1075,8 @@ void cmd_handle(char *name){
 							buffer_search(out[cc + 1], NULL);
 							cc+=2;
 							continue;
-						case 12:	// help <NONE>
+						case 12:	// help <NONE>	
+							no_func = true;
 							printf(ANSI_YELLOW(
 								"\n"
 								"open,			Open a file with a specific file name, by enumerating FAT. Params: <FILE NAME>\n"
@@ -1036,7 +1084,7 @@ void cmd_handle(char *name){
 								"close,			Close the currently open file. Params: <NONE>\n"
 								"read,			Read off data from the currently open file into the quick label. Params: <INDEX, NUMBER OF BYTES TO READ>\n"
 								"write,			Write into the quick label's data with data from the currently open file. Params: <INDEX, DATA SIZE>\n"
-								"dwrite,		Write into the quick label with data from the Console, Data starts and ends with quote marks. Params: <INDEX, DATA SIZE, DATA TO WRITE(IN ASCII)>\n"
+								"dwrite,		Write into the quick label with data from the Console, Data starts and ends with quote marks. Params: <INDEX, DATA TO WRITE(IN ASCII)>\n"
 								"_fwrite,		Write into the currently open file's contents with all the data of another file. Params: <FILE PATH, RECIEVING INDEX, SENDING INDEX, DATA_NUM>\n"
 								"mread,			Read off the currently open file's Metadata. Params: <NONE>\n"
 								"mwrite,		Read to the currently open file's Metadata. Params: <PROPERTY(LOWER_CASE)>, <VALUE(S)>\n"
@@ -1054,7 +1102,8 @@ void cmd_handle(char *name){
 							cc++;
 							continue;
 						case 13:	// llist <DATA ROWS, DATA MAX>
-							if(out_len < 3){
+							no_func = true;
+							if((out_len - cc) < 3){
 								printf(ANSI_RED("\ninvalid llist command: SYNTAX: llist <DATA ROWS, DATA MAX>"));
 								cc+=2;
 								continue;
@@ -1077,7 +1126,7 @@ void cmd_handle(char *name){
 								continue;
 							}
 							if(buffers[bf_select]->data_size < strtol(out[cc + 2], NULL, 10)){
-								printf(ANSI_RED("\nCannot read up to %d bytes, Label: %s\'s Max size is: %d... Printing up to %d"),
+								printf(ANSI_RED("\nCannot read up to %d bytes, Label: %s\'s Max size is: %d... Printing up to %d\n"),
 								strtol(out[cc + 2], NULL, 10), buffers[bf_select]->name, buffers[bf_select]->data_size, buffers[bf_select]->data_size);
 							}
 							uint32_t cc_ = 0;
@@ -1097,8 +1146,10 @@ void cmd_handle(char *name){
 							cc+=3;
 							continue;
 						case 14:	// exit
+							no_func = true;
 							exit(EXIT_SUCCESS);
 						case 15:	// flist
+							no_func = true;
 							for(FATl_t cc_ = 0; cc_ < FAT_num; ++cc_){
 								size_t len = 0;
 								get_FATsize(0, cc_ + 1, &len, true);
@@ -1130,11 +1181,13 @@ void cmd_handle(char *name){
 							cc++;
 							continue;
 						case 16:	// clear
+							no_func = true;
 							printf("\x1b[2J\x1b[H");
 							cc++;
 							continue;
 						case 17:	// lremove <LABEL NAME>
-							if(out_len < 2){
+							no_func = true;
+							if((out_len - cc) < 2){
 								printf(ANSI_RED("\ninvalid lremove command: SYNTAX: lremove <LABEL NAME>"));
 								cc+=2;
 								continue;
@@ -1151,7 +1204,8 @@ void cmd_handle(char *name){
 							cc+=2;
 							continue;
 						case 18:	// ltell <DATA ROWS, DATA MAX>
-							if(out_len < 3){
+							no_func = true;
+							if((out_len - cc) < 3){
 								printf(ANSI_RED("\ninvalid ltell command: SYNTAX: ltell <DATA ROWS, DATA MAX>"));
 								cc+=2;
 								continue;
@@ -1202,8 +1256,8 @@ void cmd_handle(char *name){
 			}
 		}
 	}
-	if(cc == out_len){printf(ANSI_RED("\nERROR! Unidentified command:") " " ANSI_LBLUE("\"%s\""), name);}
-	for(uint32_t cc =0; cc < out_len; ++cc){free(out[cc]);}
+	if(!no_func){printf(ANSI_RED("\nERROR! Unidentified command:") " " ANSI_LBLUE("\"%s\""), name);}
+	for(uint32_t cc_ =0; cc_ < out_len; ++cc_){free(out[cc_]);}
 	free(out);
 }
 

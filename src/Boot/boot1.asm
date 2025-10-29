@@ -31,77 +31,55 @@ cylinder_count: dw 0
 global start
 
 %define ENDL 0x0A, 0x00
-%define DIRH_SIZE 32
 
-BOOT2: db word 0x7F00
-BOOT2_MSG: db word 0x7F03
 ; This file will simply load Boot2, Boot2 will be the main booting file
 
+; Push decrements sp
+; Pop increments sp
 start:
-    xchg bx, bx
-    ; Print hello
-    ; Clear ax, ds and es
-    db 0x66             ; Operand-size override
-    xor ax, ax          ; Actually clears EAX
-    ; xor ah, ah
-    ; xor al, al
+	xchg bx, bx
+
+	db 0x66
+	xor ax, ax
+	mov ss, ax
+	mov es, ax
 	mov ds, ax
-    mov es, ax
-    ;Stack set-up
-    mov ss, ax
-    ; Calculate the offs so that it doesn't overwrite itself
-    mov ax, 0x7C00
+	mov ax, 0x7C00
     add ax, 512
     mov sp, ax
-	; Resolve differences in booting
 	push es
 	push word .after
 	retf
 .after:
-	; Use BIOS to read disk metadata.
-	call read_disk_meta
+	mov si, msg_hello
+	call write
 
-	add ax, 0x64
+	call diskm_read
+
+	add ax, 512
 	mov bx, ax
-	; Resolve LBA of 2nd boot program...
-	push ax
-	xor ax, ax
-	mov al, byte [bdb_fat_count]
-	xor dx, dx
-	mul word [bdb_sectors_per_fat]
-	xor dx, dx
-	add al, [bdb_reserved_sectors]
-	xor dx, dx
-	mov cl, 1
-
-	; Store the data to jump to later
-	push bx
-	push ax
-	mov ax, es
-	push ax
-	add sp, 2
-	pop ax
-	sub sp, 4
-	mov si, sp
-	mov bp, [ss:si]
-	add sp, 2
-	add si, 2
-	mov [ss:si], bp
-
-	; Params:
-	; ax: LBA addressing
-	; cl: Total sector count
-	; es [Location]:bx [Offset]: Memory location
+	mov ax, 2
+	mov di, 1
 	call disk_read
+	; Setup interface for Boot2 to access Boot1 instructions.
+	mov bx, buffer
+	mov word [bx], start
+	add bx, 2
+	mov word [bx], write
+	add bx, 2
+	mov word [bx], diskm_read
+	add bx, 2
+	mov word [bx], lbatochs
+	add bx, 2
+	mov word [bx], disk_read
+	add bx, 2
+	mov word [bx], full_restart
+	add bx, 2
+	mov word [bx], halt
+	jmp buffer
 
-	pop bx
-	pop ax
-	mov es, ax
-	retf
-
-
-; Print a string.
-; Argument: si => Pointer to string that ends with ENDL macro
+; Params:
+;	si: Offset of a string ending with the ENDL macro
 write:
     push ax
     push si
@@ -120,135 +98,93 @@ write:
 
     ret
 
-;! Disk control
-
-; Read drive parameters and push them into the labels: [bdb_heads]: head count and [bdb_sectors_per_track]: sector count
-read_disk_meta:
-	push es
+; Params:
+;	NONE
+; Returns:
+;	NONE
+diskm_read:
 	push ax
-	mov ah, 0x08
-	mov dl, [ebr_drive_number] ; set drive number
-	int 13h
-	jc full_restart
-
-	and cl, 0x3F
-	mov [cylinder_count], cl
-	xor ch, ch
-	mov [bdb_sectors_per_track], cx	; Sector count.
-
-	inc dh
-	mov [bdb_heads], dh				;head count
-	pop ax
-	pop es
-	ret
-
-
-; Convert LBA addressing to CHS addressing.
-; ax => LBA adressing scheme
-;Returns:
-	; ch: cylinder number
-	; cl: sector number + 1
-	; dh: head number
-lbatochs:
-	; save modified registers,
 	push dx
-    push ax
-    div word [bdb_sectors_per_track]; ax: LBA/bdb_sectors_per_track
-	pop ax							; restore ax: LBA/bdb_sectors_per_track
-                                	; dx: LBA %(Remainder Division) bdb_sectors_per_track
-    inc dx                      	; dx: (LBA%bdb_sectors_per_track) + 1: Sector number
-    push dx							; store Sector number
-	push ax							; store LBA address
-	xor dx, dx
-	mov cx, ax						; store cx: LBA/bdb_sectors_per_track
-    div  word[bdb_heads]        	; dx: (LBA/bdb_sectors_per_track) % bdb_heads: head number
-									; ax: (LBA/bdb_sectors_per_track) / bdb_heads: cylinder number
-
-	;At this point:
-		; ax: cylinder number
-		; dx: head number
-		; cx: LBA/bdb_sectors_per_track
-		; Stack:
-			; [1st]: sector number
-	mov ax, cx
-	mov ch, al						; ch: cylinder number
-	add sp, 2						; "pop" register
-	pop ax							; ax->al: sector number
-	sub sp, 2
-	mov cl, al						; cl: sector number
-	shl dx, 8						; move the head number in dx to the dh register, clearing dl
-	; Pull back to original dl
-	add sp, 1
-	mov bp, sp
-	mov dl, byte [ss:bp]
-	add sp, 1
-	sub sp, 4
+	push cx
+	mov ah, 8
+	int 13h
+	inc dh
+	mov [bdb_heads], dh
+	and cl, 0x3f
+	mov [bdb_sectors_per_track], cl
+	pop cx
+	pop dx
 	pop ax
-	add sp, 4
 	ret
 
-; mov ah, 0x02        ; BIOS read sector function
-; mov al, 1           ; Number of sectors to read
-; mov ch, cylinder    ; Cylinder number
-; mov cl, sector      ; Sector number (1-based!)
-; mov dh, head        ; Head number
-; mov dl, drive       ; Drive number (0x00 = floppy, 0x80 = HDD)
-; mov bx, buffer      ; ES:BX points to memory buffer
-; int 0x13            ; Call BIOS
-; jc error_handler    ; If carry flag set, handle error
+
 
 ; Params:
-	; ax: LBA addressing
-	; cl: Total sector count
-	; es [Location]:bx [Offset]: Memory location
-disk_read:
-;! Using:
-	; ax, cx, dx
-	push cx
-	call lbatochs
-	mov di, 4
-	and ch, 0xff
-	pop ax
-	; mov ah, 0x02        ; BIOS read sector function
-	; mov al, 1           ; Number of sectors to read
-	; mov ch, cylinder    ; Cylinder number
-	; mov cl, sector      ; Sector number (1-based!)
-	; mov dh, head        ; Head number
-	; mov dl, drive       ; Drive number (0x00 = floppy, 0x80 = HDD)
-	; mov bx, buffer      ; ES:BX points to memory buffer
-	; int 0x13            ; Call BIOS
-	; jc error_handler    ; If carry flag set, handle error
-.begin_retry:
-	mov si, msg_disk_read
-	call write
+;	ax: LBA address(as a counter of 512)
+; Returns:
+;	ch: Cylinder num & 0xff
+;	cl: Sector num | ((cylinder num >> 2) & 0xC0)
+;	dh: Head number
+;	dl: drive number
+;	ax: LBA address
+lbatochs:
+	push ax
+	xor dx, dx
+	div word [bdb_sectors_per_track]	; ax: LBA / bdb_sectors_per_track
+										; dx: LBA % bdb_sectors_per_track
+										; ...
+	inc dx								; dx: (LBA % bdb_sectors_per_track) + 1: Sector number
+	mov cx, dx							; cx: Sector number
+	dec dx								; dx: LBA % bdb_sectors_per_track
+	xor dx, dx							; ...
+	div word [bdb_heads]				; dx: (LBA / bdb_sectors_per_track) % db_heads: Head number
+										; ax: (LBA / bdb_sectors_per_track) / db_heads:	Cylinder number
+	; cx: Sector number; (ch: ?, cl: Sector number)
+	; dx: Head number; (dh: ?, dl: Head number)
+	; ax: Cylinder number; (ah: ?, al: Cylinder number)
+	mov ch, al
+	mov dh, dl
 	mov dl, [ebr_drive_number]
-	mov ah, 0x02
-	pusha
-	stc
-	int 0x13
-	popa
-	; carry flag set and ah not 0 if fail, otherwise for success
-	jnc .disk_success
-	dec di
-	test di, di
-	jz .disk_unsure
-.disk_err:
-	mov si, msg_disk_errormsg
-	call write
-	mov ah, 0x0
-	int 0x13
-	jmp .begin_retry
-.disk_unsure:
-	mov si, msg_disk_idk
-	call write
-.disk_success:
-	mov si, msg_disk_readsucc
-	call write
+	; cx: Sector number; (ch: cylinder number, cl: Sector number)
+	; dx: Head number; (dh: head number, dl: Drive number)
+	mov al, ch
+	shr ch, 2
+	and ch, 0xC0
+	or cl, ch
+	mov ch, al
+	and ch, 0xff
+	; ch: Cylinder num & 0xff
+	; cl: Sector num | ((cylinder num >> 2) & 0xC0)
+	; dh: Head number
+	; dl: drive number
+	pop ax
 	ret
 
-
-
-
+; Params:
+;	ax: LBA address
+;	[es:bx]: Buffer address
+;	di: Number of sectors
+disk_read:
+	call lbatochs
+	mov ax, di
+	mov di, 5
+.begin_retry:
+	mov si, msg_diskr
+	call write
+	mov ah, 2
+	stc
+	int 13h
+	jnc .done
+	test di, di
+	jz full_restart
+	mov si, msg_diskf
+	call write
+	jmp .begin_retry
+.done:
+	mov si, msg_disks
+	call write
+	ret
+	
 full_restart:
     mov ah, 0
     int 16h
@@ -257,21 +193,10 @@ halt:
     cli ; Disable interrupts
     hlt
 
-; pmode:
-;     mov  bx, 0x10          ; select descriptor 2, instead of 1
-;     mov  ds, bx            ; 10h = 10000b
-
-;     and al, 0xFE            ; back to realmode
-;     mov  cr0, eax          ; by toggling bit again
-
-msg_disk_idk: db 'Max reads reached.', ENDL, 0
-msg_hello: db 'hello there! ', ENDL, 0
-msg_bt2lod: db 'Jumping to Bootloader 2. ', ENDL, 0
-msg_disk_read: db 'Reading from disk. ', ENDL, 0
-msg_disk_errormsg: db 'Error when reading Disk. Resetting Floppy disk. ', ENDL, 0
-msg_disk_readsucc: db 'Disk read success...', ENDL, 0
-
-
+msg_hello: db 'Hello', ENDL, 0
+msg_diskr: db 'Reading from disk', ENDL, 0
+msg_disks: db 'Disk read success', ENDL, 0
+msg_diskf: db 'Disk read failed', ENDL, 0
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
-dw 0xAA55              ; The final 2 bytes will be the boot signature.
+dw 0xAA55              	; The final 2 bytes will be the boot signature.
 buffer:
