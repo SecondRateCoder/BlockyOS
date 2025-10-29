@@ -1,1 +1,1 @@
-&(Join-Path -Path (Get-Location) -ChildPath "run.ps1") -reserved 0 -extrafiles "\a11776", "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\public\textual.txt" -BroadImage -SectorNum 2000 -clear
+&(Join-Path -Path (Get-Location) -ChildPath "run.ps1") -reserved 0 -extrafiles "\a11776", "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\public\textual.txt" -BroadImage -SectorNum 3000 -clear

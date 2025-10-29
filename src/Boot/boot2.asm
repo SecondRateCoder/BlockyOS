@@ -1,6 +1,7 @@
 org 0x7E00
 bits 16
-
+jmp short start
+db 103
 bt1_main: dw 0
 bt1_write: dw 0
 bt1_dm_read: dw 0

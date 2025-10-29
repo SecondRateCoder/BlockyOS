@@ -332,6 +332,7 @@ if(-not ($padding -eq (Get-Item $Image).Length)){
         $cc = 0;
         foreach($char in [System.Text.Encoding]::Default.GetBytes(("Default.txt This is an empty text file"))){
             $padBytes[$cc] = $char
+            $cc += 1
         }
         Img-Push -data $padBytes
         Log-Write -color Yellow "Padded $Image with $padding bytes."

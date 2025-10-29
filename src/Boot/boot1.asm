@@ -58,11 +58,11 @@ start:
 
 	add ax, 512
 	mov bx, ax
-	mov ax, 2
+	mov ax, 1
 	mov di, 1
 	call disk_read
 	; Setup interface for Boot2 to access Boot1 instructions.
-	mov bx, buffer
+	; mov bx, buffer
 	mov word [bx], start
 	add bx, 2
 	mov word [bx], write
@@ -76,7 +76,7 @@ start:
 	mov word [bx], full_restart
 	add bx, 2
 	mov word [bx], halt
-	jmp buffer
+	jmp [es:bx]
 
 ; Params:
 ;	si: Offset of a string ending with the ENDL macro
@@ -165,6 +165,9 @@ lbatochs:
 ;	[es:bx]: Buffer address
 ;	di: Number of sectors
 disk_read:
+	push bx
+	xchg bx, bx
+	pop bx
 	call lbatochs
 	mov ax, di
 	mov di, 5
@@ -181,11 +184,23 @@ disk_read:
 	call write
 	jmp .begin_retry
 .done:
+	call disk_reset
 	mov si, msg_disks
 	call write
 	ret
+
+disk_reset:
+	push ax
+	push dx
+    mov ah, 00h
+    mov dl, 00h
+    int 13h
+	pop ax
+	pop dx
+	ret
 	
 full_restart:
+	call disk_reset
     mov ah, 0
     int 16h
     jmp 0FFFFH:0
