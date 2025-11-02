@@ -1,0 +1,14 @@
+NASM: 
+Byte array of size: 512 padded with size: 0, starting at address: 0 and ending at address: 512
+C:\Users\olusa\WATCOM\binnt64\wcc.exe -mm -zv -zl -zld -zls -s -fo=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-02-52\objs\boot_c2.obj -i=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c
+WCC: Open Watcom C x86 16-bit Optimizing Compiler Version 2.0 beta Oct 31 2025 02:46:13 (64-bit) Copyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved. Portions Copyright (c) 1984-2002 Sybase, Inc. All Rights Reserved. Source code is available under the Sybase Open Watcom Public License. See https://github.com/open-watcom/open-watcom-v2#readme for details. C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c: 197 lines, included 62, 0 warnings, 3 errors
+NASM: 
+
+
+wlink NAME C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-02-52\objs\boot2.bin FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-02-52\objs\boot_a2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-02-52\objs\boot_c2.obj OPTION MAP=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-02-52\wlink.map @C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-02-52\objs\wlink.lnk
+
+
+
+
+
+wlink failed

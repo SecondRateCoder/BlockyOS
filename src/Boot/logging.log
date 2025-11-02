@@ -1,21 +1,21 @@
 disk_read:
     params:
-        ax(LBA): 20
-        cl(Total sector count): 1
-        [es:bx](The address to read to): [0:0x7e64]
+        ax(LBA): 0x0
+        cl(Total sector count): 0x01
+        [es:bx](The address to read to): [0:0x7e00]
     lbatochs:
         params:
-            ax(LBA): 20
+            ax(LBA): 0x0
         return:
-            ch(cylinder num): 0x14
-            cl(sector num++): 0x03
+            ch(cylinder num): 0x00
+            cl(sector num): 0x01
             dh(head number): 0x00
     disk_read interrupt:
         params:
             ah(disk read instruction): 0x02
-            al(number of sectors to read): 
-            ch(cylinder number): 
-            cl(sector number): 
-            dh(head number): 
-            dl(drive number): 
-            [es:bx](Buffer to read to): 
+            al(number of sectors to read): 0x01
+            ch(cylinder number): 0x00
+            cl(sector number): 0x01
+            dh(head number): 0x00
+            dl(drive number): 0x00
+            [es:bx](Buffer to read to): [0xf000:0x7e00]

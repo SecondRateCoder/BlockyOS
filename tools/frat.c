@@ -193,8 +193,9 @@ char *commands[] = {
 	"clear",			// Clear the screen.
 	"lremove", 			// Remove/delete a label. Params: <LABEL NAME>
 	"ltell", 			// List all the labels/buffers in Memory. Params: <DATA ROWS, DATA MAX>
+	"hash",
 };
-const uint32_t num_commands = 19;
+const uint32_t num_commands = 20;
 
 bool sectors_read(const FILE *disk, uint32_t lba, uint32_t count, void *out);
 bool hash_cmp(size_t *a, size_t *b, uint8_t hash_fmt);
@@ -1096,8 +1097,9 @@ text_attmpt:
 								"exit,			Exit the application.\n"
 								"flist			List all the entries in FAT.\n"
 								"clear			Clear the screen.\n"
-								"lremove 		Remove/delete a label. Params: <LABEL NAME>"
-								"ltell 			List all the labels/buffers in Memory. Params: <DATA ROWS, DATA MAX>"
+								"lremove 		Remove/delete a label. Params: <LABEL NAME>\n"
+								"ltell 			List all the labels/buffers in Memory. Params: <DATA ROWS, DATA MAX>\n"
+								"hash			Return the literal hash of a name as a byte string. Params: <NAME>"
 							));
 							cc++;
 							continue;
@@ -1247,6 +1249,17 @@ text_attmpt:
 							}
 							cc+=3;
 							continue;
+						case 19: // hash <STRING>
+							no_func = true;
+							size_t *hash_ = NULL;
+							uint8_t fmt_ = hash(out[cc + 1], &hash_);
+							printf("\n");
+							for(uint32_t cc_= 0; cc_ < HF_SIZE(fmt_); ++cc_){
+								printf("%hhu ", ((uint8_t *)hash) + cc_);
+							}
+							free(hash_);
+							cc+=2;
+							continue;
 						default:
 							printf(ANSI_RED("\nERROR! Unidentified command:") " " ANSI_LBLUE("\"%s\""), name);
 							cc=out_len;
@@ -1292,6 +1305,7 @@ int main(uint32_t arg_cc, char **arg_vector){
 	// cmd_handle("dwrite 0 10 \"9999999999\"");		// Write 10 characters of data: "\"9999999999\"" into temp_buffers[0]; the quick buffer, at index 0
 	// cmd_handle("write 0, 10");					// Write ten bytes of temp_buffers[0]; the quick buffer into the currently open file
 	bool RUN = true;
+	for(size_t cc =1; cc < arg_cc; ++cc){cmd_handle(arg_vector[cc]);}
 	do{
 		char buffer[256];
 		printf("\nInput a command...\n");

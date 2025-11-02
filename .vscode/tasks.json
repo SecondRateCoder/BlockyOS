@@ -9,7 +9,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-File",
-                "${workspaceFolder}\\.vscode\\intermid.ps1"
+                "${workspaceFolder}\\Compiles\\intermid.ps1"
             ]
         },
         {

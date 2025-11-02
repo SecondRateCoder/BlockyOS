@@ -1,0 +1,2 @@
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(45): Error! E1077: Missing '}'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(47): Error! E1099: Statement must be inside function. Probable cause: missing {

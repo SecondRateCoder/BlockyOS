@@ -1,6 +1,6 @@
+bits 16
 org 0x7C00
 ; 0xf0000:e05b
-bits 16
 
 ; FAT12 Headers:
 jmp short start
@@ -26,11 +26,11 @@ ebr_drive_number:			db 0
 ebr_signature:				db 29h
 ebr_volume_id:				db 12h, 99h, 40h, 22h
 ebr_volume_label:			db 'BLOCKY OS  '
-ebr_system_id:				db 'FAT12   '
+ebr_system_id:				db 'FAT12   '	; 25 bytes
 cylinder_count: dw 0
 global start
 
-%define ENDL 0x0A, 0x00
+%define ENDL 0x0D, 0x0A
 
 ; This file will simply load Boot2, Boot2 will be the main booting file
 
@@ -41,28 +41,30 @@ start:
 
 	db 0x66
 	xor ax, ax
-	mov ss, ax
+	mov ax, 0
 	mov es, ax
 	mov ds, ax
-	mov ax, 0x7C00
-    add ax, 512
+	mov ax, buffer
+	mov ss, ax
+	add ax, 512
     mov sp, ax
+	; stack pointer is not 512 bytes above ss, which is buffer
 	push es
 	push word .after
 	retf
 .after:
-	mov si, msg_hello
-	call write
-
 	call diskm_read
 
-	add ax, 512
-	mov bx, ax
+	mov bx, buffer
+	add bx, 1024
 	mov ax, 1
-	mov di, 1
+	mov di, 2
 	call disk_read
-	; Setup interface for Boot2 to access Boot1 instructions.
-	; mov bx, buffer
+	call bt2_srch
+	test di, di
+	jz .no_ld
+.ld_s:
+	add bx, 3
 	mov word [bx], start
 	add bx, 2
 	mov word [bx], write
@@ -76,7 +78,17 @@ start:
 	mov word [bx], full_restart
 	add bx, 2
 	mov word [bx], halt
-	jmp [es:bx]
+	add bx, 2
+	mov word [bx], bdb_oem
+	add bx, 2
+	
+	push es
+	push word bx
+	retf
+.no_ld:
+	mov si, msg_bt2f
+	call write
+	jmp full_restart
 
 ; Params:
 ;	si: Offset of a string ending with the ENDL macro
@@ -101,6 +113,38 @@ write:
 ; Params:
 ;	NONE
 ; Returns:
+;	di: TRUE(1) if bt2 was found
+;	di: FALSE(0) if bt2 was not found
+bt2_srch:
+	push bx
+	mov bx, buffer
+	add bx, 1024
+	mov di, 512
+.srch_begin:
+	sub [bx], byte 103
+	jz .ld_s
+	add [bx], byte 103
+	add bx, 1
+	sub di, 1
+	test di, di
+	jnz .srch_begin
+.no_ld:
+	mov si, msg_bt2f
+	call write
+	mov di, 0
+	jmp .rett
+.ld_s:
+	add [bx], byte 103
+	mov si, msg_bt2s
+	mov di, 1
+	call write
+.rett:
+	pop bx
+	ret
+
+; Params:
+;	NONE
+; Returns:
 ;	NONE
 diskm_read:
 	push ax
@@ -112,18 +156,18 @@ diskm_read:
 	mov [bdb_heads], dh
 	and cl, 0x3f
 	mov [bdb_sectors_per_track], cl
+	mov ax, 0
+	mov es, ax
 	pop cx
 	pop dx
 	pop ax
 	ret
 
-
-
 ; Params:
 ;	ax: LBA address(as a counter of 512)
 ; Returns:
-;	ch: Cylinder num & 0xff
-;	cl: Sector num | ((cylinder num >> 2) & 0xC0)
+;	ch: Cylinder num ; & 0xff
+;	cl: Sector num ; | ((cylinder num >> 2) & 0xC0)
 ;	dh: Head number
 ;	dl: drive number
 ;	ax: LBA address
@@ -147,12 +191,12 @@ lbatochs:
 	mov dl, [ebr_drive_number]
 	; cx: Sector number; (ch: cylinder number, cl: Sector number)
 	; dx: Head number; (dh: head number, dl: Drive number)
-	mov al, ch
-	shr ch, 2
-	and ch, 0xC0
-	or cl, ch
-	mov ch, al
-	and ch, 0xff
+;	mov al, ch
+;	shr ch, 2
+;	and ch, 0xC0
+;	or cl, ch
+;	mov ch, al
+;	and ch, 0xff
 	; ch: Cylinder num & 0xff
 	; cl: Sector num | ((cylinder num >> 2) & 0xC0)
 	; dh: Head number
@@ -165,26 +209,37 @@ lbatochs:
 ;	[es:bx]: Buffer address
 ;	di: Number of sectors
 disk_read:
-	push bx
-	xchg bx, bx
-	pop bx
+	; push bx
+	; xchg bx, bx
+	; pop bx
 	call lbatochs
 	mov ax, di
-	mov di, 5
+	mov di, 11
 .begin_retry:
+	dec di
 	mov si, msg_diskr
 	call write
 	mov ah, 2
 	stc
+	push ds
 	int 13h
-	jnc .done
+	pop ds
+	; Reset floppy on every other try.
 	test di, di
-	jz full_restart
+	jpo .cont1
+	call disk_reset
+.cont1:
+	push di
+	; Search for Boot2, jump to finish if so
+	call bt2_srch
+	; In this case, if di == 1(true) then 0 flag is set, otherwise then subtract underflows and sets the carry flag
+	sub di, 1
+	pop di
+	jz .done
 	mov si, msg_diskf
 	call write
 	jmp .begin_retry
 .done:
-	call disk_reset
 	mov si, msg_disks
 	call write
 	ret
@@ -205,13 +260,17 @@ full_restart:
     int 16h
     jmp 0FFFFH:0
 halt:
+	mov si, msg_hlt
+	call write
     cli ; Disable interrupts
     hlt
 
-msg_hello: db 'Hello', ENDL, 0
-msg_diskr: db 'Reading from disk', ENDL, 0
-msg_disks: db 'Disk read success', ENDL, 0
-msg_diskf: db 'Disk read failed', ENDL, 0
+msg_hlt: db 'Halt', ENDL
+msg_diskr: db 'Reading disk', ENDL
+msg_disks: db 'Read Success!', ENDL
+msg_diskf: db 'Read Fail!', ENDL
+msg_bt2s: db 'Boot2 found', ENDL
+msg_bt2f: db 'Boot2 not found', ENDL
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
 dw 0xAA55              	; The final 2 bytes will be the boot signature.
 buffer:
