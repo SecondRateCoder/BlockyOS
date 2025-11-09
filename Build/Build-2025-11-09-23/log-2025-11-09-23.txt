@@ -12,4 +12,20 @@ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(10): Er
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(11): Error! E1009: Expecting ',' but found 'lba'
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(11): Error! E1116: An id list not allowed except for function definition
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(13): Error! E1127: Type required in parameter list
-C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(13): Error! E1147: Too many errors: compilation aborted
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(13): Error! E1022: Missing or misspelled data type near 'bool'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(15): Error! E1009: Expecting ',' but found 'header_ptr'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(17): Error! E1012: Expression is not a function
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(17): Error! E1011: Symbol 'uint32_t' has not been declared
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(17): Error! E1009: Expecting ')' but found 'temp'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(17): Error! E1147: Too many errors: compilation aborted
+WCC: Open Watcom C x86 16-bit Optimizing Compiler Version 2.0 beta Nov  3 2025 07:18:07 (64-bit) Copyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved. Portions Copyright (c) 1984-2002 Sybase, Inc. All Rights Reserved. Source code is available under the Sybase Open Watcom Public License. See https://github.com/open-watcom/open-watcom-v2#readme for details.
+NASM: 
+
+
+wlink NAME C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-09-23\objs\boot2.bin FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-09-23\objs\boot_a2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-09-23\objs\boot_c2.obj OPTION MAP=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-09-23\wlink.map @C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2025-11-09-23\objs\wlink.lnk
+
+
+
+
+
+wlink failed

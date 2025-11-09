@@ -1,4 +1,4 @@
-#include "./int.h"
+#include "../kernel/public/kernpublic.h"
 
 extern uint8_t bt1_drive_header[51];
 
@@ -9,6 +9,8 @@ extern void bt1_writecl(uint16_t seg, uint16_t offs);
 extern void bt1_dmreadc(void);
 extern uint8_t *bt1_lbatochs(uint16_t lba);
 extern void bt1_diskrc(uint16_t lba, uint16_t segment, uint16_t offset, uint16_t sector_max);
+
+int *print_num(int *argp, int len, bool sign, int radix);
 
 void _cdecl main(uint16_t header_ptr){
     char *temp = "This is Boot2's C file...";
@@ -33,10 +35,8 @@ void puts(char *str){
 #define PF_DSTEP_BYTE 1
 #define PF_DSTEP_LONG_LONG 8
 
-typedef unsigned char bool;
-#define true 1
-#define false 0
 
+//! Rewrite
 void printf(char *str, ...){
     bool unsigned_ = false;
     int *argp = (int *)&str;
@@ -84,12 +84,13 @@ void printf(char *str, ...){
                         break;
                 }
                 break;
-        } // <-- THIS WAS MISSING
+        }
         cc++;
     }
     return;
 }
 
+//! Old
 /*void _cdecl printf(char *str, ...){
     bool unsigned_ = false;
     int *argp = (int *)&str;

@@ -16,10 +16,11 @@ typedef struct mem_header{
     uint32_t buffer_len;
 	/*
 	Buffer format:
-		1st 8 bytes should be the headerID
-		2nd 8 bytes should be the ProgramID
+		[0]: _attributes
+		[1 - 9]: bytes should be the headerID
+		[10 - 18]: bytes should be the ProgramID
 	*/
-    char *buffer;
+    char buffer[32];
 }mem_header;
 #define memh_t mem_header
 
@@ -122,4 +123,10 @@ bool hcontext_su(memh_t *nh, RAMH_TYPE index);
 */
 RAMH_TYPE get_hindex(void *ptr, bool is_mem);
 
+
+void *malloc_weak(size_t size);
+void *alloca_weak(size_t size);
+void *realloca(void *ptr, size_t nsize);
+void free_weak(void *ptr);
+void dealloca_weak(void *ptr);
 #endif

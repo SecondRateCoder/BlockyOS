@@ -46,8 +46,8 @@ function Img-Push {
     }finally{$file.Close()}
 }
 
-Log-Write -Msg "$($WCC) -mm -zv -zl -zld -zls -s -fo=$($BOOTC_OBJ) -i=$([System.IO.Path]::GetDirectoryName($BOOTC)) $($BOOTC)" -Color Yellow
-$WCC_OUT = (& $WCC "-mm" "-zl" "-zld" "-zls" "-s" "-fo=$($BOOTC_OBJ)" "-i=$([System.IO.Path]::GetDirectoryName($BOOTC))" "$($BOOTC)") 
+Log-Write -Msg ("$($WCC) -mm -zastd=c99 -ef -zl -zld -fr$($Log) -zls -s -fo$($BOOTC_OBJ) -i$(Join-Path (Get-Location) "Documents\Github\BlockyOS\src\kernel\public") $($BOOTC)") -Color Yellow
+$WCC_OUT = (& $WCC @("-mm", "-zastd=c99", "-ef", "-zl", "-zld", "-fr$($Log)", "-zls", "-s", "-fo$($BOOTC_OBJ)", "-i$(Join-Path (Get-Location) "Documents\Github\\BlockyOS\src\kernel\public")", $($BOOTC))) 
 Log-Write -Msg "WCC: $($WCC_OUT)" -Color Yellow
 
 $NASM_OUT = & $NASM "-f" "obj" $BOOTA "-o" $BOOTA_OBJ
