@@ -1,4 +1,5 @@
-#include "../kernel/ram/ram.h"
+#include "../src/kernel/ram/ram.h"
+#include "../src/kernel/public/kernpublic.h"
 
 char *RAM;
 volatile RAMH_TYPE num_headers;
@@ -117,7 +118,7 @@ void *hcontext_attr_do(void *blockaddr, void *haddr, blockye_t function, void *v
 				((memh_t *)haddr)->size = decode_64(value);
 				return NULL;
 			case H_ATTRWRITE_BUFFER:
-				((memh_t *)haddr)->buffer = memcpy(value, val_len);
+				memcpy(((memh_t *)haddr)->buffer, value, val_len);
 				return NULL;
 			case H_ATTRWRITE_BUFFERL:
 				((memh_t *)haddr)->buffer_len = decode_32(value);

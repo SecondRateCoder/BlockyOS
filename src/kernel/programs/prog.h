@@ -34,13 +34,13 @@ typedef enum api_sig{
 typedef struct prog_header{
     uint128_t id;
     uint16_t _attributes;
-    _IO file;
+    IObuf file;
     uint64_t sigdr_num, handle_num;
     HANDLE *handles;
     sig_descr *sigdr_table;
 }prog_header;
 
 /// @brief Using ASM, get the ID of the Program of calling interrupt.
-/// @return 
+/// @return The Program ID o
 uint128_t *prog_get();
 prog_header *get_prog(uint128_t prog_ID);

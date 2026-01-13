@@ -1,0 +1,24 @@
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(63): Warning! W111: Meaningless use of an expression
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(64): Warning! W111: Meaningless use of an expression
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.c(161): Warning! W135: Shift amount too large
+WCC: Open Watcom C x86 16-bit Optimizing Compiler Version 2.0 beta Dec 15 2025 03:01:27 (64-bit) Copyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved. Portions Copyright (c) 1984-2002 Sybase, Inc. All Rights Reserved. Source code is available under the Sybase Open Watcom Public License. See https://github.com/open-watcom/open-watcom-v2#readme for details. C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/boot.c: 199 lines, included 56, 3 warnings, 0 errors
+NASM: 
+
+
+wlink NAME C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\objs\boot2.bin FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\objs\boot_a2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\objs\boot_c2.obj OPTION MAP=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\wlink.map @C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\objs\wlink.lnk
+
+
+
+
+
+Linked: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\objs\boot2.bin
+Byte array of size: 1395 padded with size: 371, starting at address: 512 and ending at address: 2278
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\floppy-2026-01-13-44.img with 371 bytes.
+Byte array of size: 1 padded with size: 511, starting at address: 2278 and ending at address: 2790
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\floppy-2026-01-13-44.img with 511 bytes.
+Byte array of size: 0 padded with size: 0, starting at address: 2789 and ending at address: 2789
+Token not recognized: a
+Padding to 1021211 size
+Byte array of size: 1021211 padded with size: 283, starting at address: 2789 and ending at address: 1024283
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\floppy-2026-01-13-44.img with 283 bytes.
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\floppy-2026-01-13-44.img with 1021211 bytes.

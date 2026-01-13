@@ -1,4 +1,4 @@
-bits 16
+ bits 16
 org 0x7C00
 ; 0xf0000:e05b
 
@@ -7,9 +7,9 @@ jmp short start
 nop
 
 bdb_oem:                   	db 'MSWIN4.1'
-bdb_bytes_per_sector:       dw 512
-bdb_sectors_per_cluster:    db 1
-bdb_reserved_sectors:       db 2
+bdb_bytes_per_sector:       dw 128
+bdb_sectors_per_cluster:    db 2
+bdb_reserved_sectors:       db 10
 bdb_fat_count:              db 2
 bdb_dir_entries_count:      dw 0F0h
 bdb_total_sectors:			dw 2868
@@ -22,15 +22,15 @@ bdb_large_sector_count:		dd 0
 
 ; extended boot record:
 ebr_drive_number:			db 0
-							db 0
 ebr_signature:				db 29h
 ebr_volume_id:				db 12h, 99h, 40h, 22h
 ebr_volume_label:			db 'BLOCKY OS  '
 ebr_system_id:				db 'FAT12   '	; 25 bytes
-cylinder_count: dw 0
+; custom_boot_record
+segment_clusters:			db 128			; 26 bytes
 global start
 
-%define ENDL 0x0D, 0x0A
+%define ENDL 0x0A, 0x0D, 0x00
 
 ; This file will simply load Boot2, Boot2 will be the main booting file
 
@@ -55,34 +55,39 @@ start:
 .after:
 	call diskm_read
 
+	; Address to be loaded at
 	mov bx, buffer
 	add bx, 1024
+
+	; Sectors to be Read.
+	mov di, 20
+
+	; LBA Adress
 	mov ax, 1
-	mov di, 2
+
+	; Disk read
 	call disk_read
 	call bt2_srch
 	test di, di
 	jz .no_ld
+
+	; Load Drive header into Stage 2's space
+	mov si, bdb_oem
+    ; ES:DI = destination
+    mov di, buffer    ; e.g. 1025
+	add di, 1025
+
+    mov cx, segment_clusters - bdb_oem + 1   ; 58 bytes total
+
+    cld
+    rep movsb
+
 .ld_s:
-	add bx, 3
-	mov word [bx], start
-	add bx, 2
-	mov word [bx], write
-	add bx, 2
-	mov word [bx], diskm_read
-	add bx, 2
-	mov word [bx], lbatochs
-	add bx, 2
-	mov word [bx], disk_read
-	add bx, 2
-	mov word [bx], full_restart
-	add bx, 2
-	mov word [bx], halt
-	add bx, 2
-	mov word [bx], bdb_oem
-	add bx, 2
-	
 	push es
+	mov bx, segment_clusters
+	sub bx, bdb_oem
+	add bx, buffer
+	add bx, 1024
 	push word bx
 	retf
 .no_ld:
@@ -93,8 +98,11 @@ start:
 ; Params:
 ;	si: Offset of a string ending with the ENDL macro
 write:
+	push bx
     push ax
     push si
+	; xchg bx, bx
+	pop bx
 .loop:
     lodsb
     or al, al
@@ -217,8 +225,6 @@ disk_read:
 	mov di, 11
 .begin_retry:
 	dec di
-	mov si, msg_diskr
-	call write
 	mov ah, 2
 	stc
 	push ds
@@ -237,6 +243,8 @@ disk_read:
 	pop di
 	jz .done
 	mov si, msg_diskf
+	inc ah
+	mov [msg_diskf_err_code], ah
 	call write
 	jmp .begin_retry
 .done:
@@ -266,9 +274,9 @@ halt:
     hlt
 
 msg_hlt: db 'Halt', ENDL
-msg_diskr: db 'Reading disk', ENDL
-msg_disks: db 'Read Success!', ENDL
-msg_diskf: db 'Read Fail!', ENDL
+msg_disks: db 'Read Success', ENDL
+msg_diskf: db 'Read Fail, Code: '
+msg_diskf_err_code: db '0', ENDL
 msg_bt2s: db 'Boot2 found', ENDL
 msg_bt2f: db 'Boot2 not found', ENDL
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.

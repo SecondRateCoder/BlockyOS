@@ -45,6 +45,7 @@ display_library: win32, options=`"`gui_debug`"`
 pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
 config_interface: win32config
 magic_break: enabled=1
+panic: action=ask
 log: "
 function Log-Write {
     param(
@@ -114,8 +115,8 @@ function Prepare {
     }
 }
 
-$WATCOM = "C:\Users\olusa\WATCOM\binnt64\wcc.exe"  # adjust path to your Watcom compiler
-$WLINK  = "C:\Users\olusa\WATCOM\binnt64\wlink.exe" # optional for linking
+$WATCOM = "wcc"  # adjust path to your Watcom compiler
+$WLINK  = "wlink" # optional for linking
 
 function Compile-Watcom {
     param($src, $args, $out)

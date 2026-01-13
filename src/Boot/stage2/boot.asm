@@ -3,296 +3,205 @@ bits 16
 section _ENTRY class=CODE
 db 103
 
-extern main_
+global bt1_drive_header_
 global start
+extern main_
 
-bt1_main: dw 0
-; Params:
-;	si: Offset of a string ending with the ENDL macro
-bt1_write: dw 0
-; Params:
-;	NONE
-; Returns:
-;	NONE
-bt1_dm_read: dw 0
-; Params:
-;	ax: LBA address(as a counter of 512)
-; Returns:
-;	ch: Cylinder num ; & 0xff
-;	cl: Sector num ; | ((cylinder num >> 2) & 0xC0)
-;	dh: Head number
-;	dl: drive number
-;	ax: LBA address
-bt1_lbatochs: dw 0
-; Params:
-;	ax: LBA address
-;	[es:bx]: Buffer address
-;	di: Number of sectors
-bt1_diskread: dw 0
-
-bt1_frestart: dw 0
-bt1_hlt: dw 0
-; bdb_oem:                   1
-; bdb_bytes_per_sector:      2
-; bdb_sectors_per_cluster:   1
-; bdb_reserved_sectors:      1
-; bdb_fat_count:             1
-; bdb_dir_entries_count:     2
-; bdb_total_sectors:		 2
-; bdb_media_desciptor_type:	 1
-; bdb_sectors_per_fat:		 2
-; bdb_sectors_per_track:	 2
-; bdb_heads:				 2
-; bdb_hidden_sectors:		 4
-; bdb_large_sector_count:	 4; 25 bytes
-
-; ; extended boot record:
-; ebr_drive_number:			1
-; 							1
-; ebr_signature:			1
-; ebr_volume_id:			4
-; ebr_volume_label:			11
-; ebr_system_id:			8; 51 bytes
-global bt1_drive_header
-;uint8_t[51]
-bt1_drive_header: times 51 db 0
-jmp short start
+bt1_drive_header_: times 58 db 0
+jmp short start_
 
 ; Number of sectors to load into RAM, should be the full size of Boot2
-%define ENDL 0x0A, 0x00
+%define ENDL 0x0A, 0x0D, 0x00
 
-start:
+global start_
+; void start(void)
+start_:
+    xchg bx, bx
+    ; Setup stack
 	cli
 	mov ax, ds
 	mov ss, ax
 	mov sp, 512
 	sti
-	mov si, msg_bt2
-	push es
-	push word [bt1_write]
-	call call_bt1
+
+    ; Jump to boot2's .c file
 	call main_
 
-	push es
-	push word [bt1_hlt]
-	call call_bt1
+global _halt
+; void halt(void)
+_halt:
+    xchg bx, bx
+    cli
+    hlt
 
-; Params:
-;	Push segment
-;	Push offset
-; 	call
-call_bt1:
-	retf
+; global _puts_vidteletype
+; ; void puts_vidteletype((uint32_t)(char __far *ptr))
+; _puts_vidteletype:
+;     push bp
+;     mov bp, sp
 
-; global bt1_mainc_, bt1_writec_, bt1_writecl_, bt1_dmreadc_, bt1_lbatochsc_, bt1_diskrc_
-; bt1_mainc_:
-; 	jmp bt1_mainc
-; bt1_writec_:
-; 	jmp bt1_writec
-; bt1_writecl_:
-; 	jmp bt1_writecl
-; bt1_dmreadc_:
-; 	jmp bt1_dmreadc
-; bt1_lbatochsc_:
-; 	jmp bt1_lbatochsc
-; bt1_diskrc_:
-; 	jmp bt1_diskrc
+;     push ax
+;     push si
+; .loop:
+;     lodsb
+;     or al, al
+;     jz .done
 
+;     mov ah, 0x0E
+;     int 0x10
 
-; bt1_mainc:
-; 	add sp, 2	; Pop return address ;! Main does not return...
-; 	push es
-; 	push word [bt1_main]
-; 	retf
+;     jmp .loop
+; .done:
+;     pop si
+;     pop ax
+;     mov sp, bp
+;     pop bp
+;     ret
+global _puts_vidteletype
+; void puts_vidteletype(char __far *ptr)
+_puts_vidteletype:
+    xchg bx, bx
+    push bp
+    mov  bp, sp
 
-; ; void bt1_writec(offset[uint16_t])
-; bt1_writec:
-; 	add sp, 2
-; 	pop si	; Retrieve string offset
-; 	sub sp, 4
-; 	push es
-; 	push word [bt1_writec]
-; 	retf
+    push ax
+    push si
+    push ds
 
-; ; void bt1_writecl(segment[uint16_t], offset[uint16_t])
-; bt1_writecl:	; For long, [segment:offset] string access
-; 	mov ax, es
-; 	add sp, 2
-; 	pop si
-; 	pop es
-; 	sub sp, 4
-; 	push .finish
-; 	push es
-; 	push word [bt1_writec]
-; 	retf
-; .finish:	; Expose .finish on retf, restore es
-; 	mov es, ax
-; 	ret
+    ; Load far pointer from stack
+    mov  si, [bp+4]     ; offset
+    mov  ax, [bp+6]     ; segment
+    mov  ds, ax         ; DS:SI -> string
+    xchg bx, bx
+.loop:
+    lodsb               ; AL = [DS:SI], SI++
+    or   al, al
+    jz   .done
 
-; ; void bt1_dmreadc(void)
-; bt1_dmreadc:
-; 	push es
-; 	push word [bt1_dm_read]
-; 	retf
+    mov  ah, 0Eh
+    int  10h
+    jmp  .loop
 
-; ; uint8_t[4] bt1_lbatochsc(lba[uint16_t])
-; bt1_lbatochsc:
-; 	add sp, 2
-; 	pop ax
-; 	sub sp, 4
-; 	push .finish
-; 	push es
-; 	push word [bt1_lbatochs]
-; 	retf
-; .finish:
-; 	mov [.return], ch
-; 	mov [.return + 1], cl
-; 	mov [.return + 2], dh
-; 	mov [.return + 3], dl
-; 	mov ax, .return
-; 	ret
-; .return: dd 0	; 4 byte return
+.done:
+    pop  ds
+    pop  si
+    pop  ax
+    mov  sp, bp
+    pop  bp
+    ret
 
-; ; void bt1_diskrc(LBA[uint16_t], segment[uin16_t], offset[uint16_t], sector number[uint16_t])
-; bt1_diskrc:
-; 	add sp, 2
-; 	pop di
-; 	pop bx
-; 	mov word [.es_temp], es
-; 	pop es
-; 	pop ax
-; 	sub sp, 10
-; .es_temp: dw 0
-; 	push .finish
-; 	push word [.es_temp]
-; 	push word [bt1_diskread]
-; 	retf
-; .finish:
-; 	mov es, word [.es_temp]
-; 	ret
+global _put_vidteletype
+; void put_vidteletype(char c, char page)
+_put_vidteletype:
+    xchg bx, bx
+    push bp
+    mov  bp, sp
 
+    push bx
+    mov  al, [bp+6]     ; character
+    mov  bh, [bp+4]     ; page number
+    mov  ah, 0Eh
+    int  10h
 
-global bt1_writec_, bt1_writecl_, bt1_mainc_, bt1_dmreadc_, bt1_lbatochsc_, bt1_diskrc_
-; void bt1_writec_(uint16_t offset)
-bt1_writec_:
+    pop  bx
+    mov  sp, bp
+    pop  bp
+    ret
+
+global __div64_32
+;   void _div64_32(uint64_t dividend, uint32_t divisor, uint64_t *quotientOut, uint32_t *remainderOut)
+__div64_32:
+    xchg bx, bx
+
+    ; Generate new call frame.
     push bp
     mov bp, sp
-    ; read first argument (uint16) into AX without changing SP
-    mov ax, [bp+4]
-    ; save callee-saved registers
+    
     push bx
-    push si
-    push di
-    ; move arg to SI (asm routine expects SI)
-    mov si, ax
 
-    ; call existing mechanism that does far dispatch to bt1_write
-    push es
-    push word [bt1_write]
-    call call_bt1
+    mov eax, [bp + 4]       ; eax: dividend upper 32 bits
+    mov ecx, [bp + 12]      ; ecx: divisor
+    xor edx, edx
+    div ecx                 ; eax - quot, edx - rem
 
-    ; restore registers
-    pop di
-    pop si
+    ;   Store upper 32 bits of quot
+    mov bx, [bp + 16]
+    mov [bx], eax
+
+    ; Divide lower 32 bits
+    mov eax, [bp + 4]
+
+    div ecx
+
+    ; Store results
+    mov [bx], eax
+    mov bx, [bp + 18]
+    mov [bx], edx
+
     pop bx
+
+    ; Restore old call frame.
     mov sp, bp
     pop bp
     ret
 
-; void bt1_writecl_(uint16_t seg, uint16_t offs)
-bt1_writecl_:
+
+
+global __U8DR
+; unsigned short __U8DR(unsigned char dividend, unsigned char divisor)
+__U8DR:
+    xchg bx, bx
     push bp
-    mov bp, sp
-    mov ax, [bp+4]    ; seg (first declared param)
-    mov dx, [bp+6]    ; offs (second declared param)
-    push bx
-    push si
-    push di
+    mov  bp, sp
 
-    ; set ES to seg, SI to offs, then call bt1_writec via far dispatch
-    mov si, dx
-    mov ax, ax        ; seg currently in AX
-    mov es, ax        ; be careful: if seg must be moved to ES via other mechanism, adapt
-    push es
-    push word [bt1_write]
-    call call_bt1
+    mov  al, [bp+4]     ; dividend
+    mov  bl, [bp+6]     ; divisor
+    xor  ah, ah         ; clear high byte for 8-bit divide
+    div  bl             ; AL = quotient, AH = remainder
 
-    pop di
-    pop si
-    pop bx
-    mov sp, bp
-    pop bp
+    ; Watcom wants the result in AX (unsigned short)
+    ; We'll return the quotient in AX (low 8 bits used)
+    ; If you want remainder instead, swap AL/AH here.
+    mov  ah, 0          ; ensure high byte is clean
+
+    mov  sp, bp
+    pop  bp
+    ret                 ; cdecl: caller cleans stack
+
+global __U8DQ
+; unsigned short __U8DQ(unsigned char dividend, unsigned char divisor)
+__U8DQ:
+    xchg bx, bx
+    push bp
+    mov  bp, sp
+
+    mov  al, [bp+4]     ; dividend
+    mov  bl, [bp+6]     ; divisor
+    xor  ah, ah
+    div  bl             ; AL = quotient, AH = remainder
+
+    mov  ah, 0          ; AX = quotient (zero-extend)
+
+    mov  sp, bp
+    pop  bp
     ret
 
-; void bt1_mainc_(void)
-bt1_mainc_:
+
+global __U8LS
+; unsigned short __U8LS(unsigned char value, unsigned char shift)
+__U8LS:
+    xchg bx, bx
     push bp
-    mov bp, sp
-    push bx
-    push si
-    push di
+    mov  bp, sp
 
-    push es
-    push word [bt1_main]
-    call call_bt1
+    mov  al, [bp+4]     ; value
+    mov  cl, [bp+6]     ; shift
+    shl  al, cl         ; AL <<= CL
 
-    pop di
-    pop si
-    pop bx
-    mov sp, bp
-    pop bp
+    xor  ah, ah         ; zero-extend to 16-bit (AX)
+    mov  sp, bp
+    pop  bp
     ret
-
-; uint8_t[] bt1_lbatochsc_(uint16_t lba)
-bt1_lbatochsc_:
-    push bp
-    mov bp, sp
-    mov ax, [bp+4]     ; lba
-    push bx
-    push si
-    push di
-
-    mov si, ax         ; pass LBA in AX/SI as your protocol expects
-    push .finish
-    push es
-    push word [bt1_lbatochs]
-    call call_bt1
-.finish:
-    ; copy results into .return (same as you did)
-    mov [.return], ch
-    mov [.return + 1], cl
-    mov [.return + 2], dh
-    mov [.return + 3], dl
-
-    pop di
-    pop si
-    pop bx
-    mov sp, bp
-    pop bp
-    ret
-.return: dd 0
-
-global put_vidteletype_
-; void put_vidteletype(c[char]
-put_vidteletype_:
-	push bp
-	mov bp, sp
-
-	push bx
-	mov ah, 0Eh
-	mov al, [bp + 2]
-	mov bh, [bp + 4]
-
-	int 10h
-	pop bx
-	mov sp, bp
-
-	pop bp
-	ret
-
-; void div64_32
-global div64_32_
-div64_32_:
 
 msg_bt2: db 'This is Boot2', ENDL, 0
 buffer:

@@ -8,7 +8,7 @@ param(
     [switch]$run,
     # [Parameter(Mandatory=$false)]
     [switch]$clear,
-    [switch]$BroadImage,
+    [switch]$broadimage,
     [Parameter(Mandatory=$false)]
     [int]$SectorNum,
     [Parameter(Mandatory=$false)]
@@ -38,15 +38,16 @@ $Log = Join-Path $Build ("log-" + $Date + ".txt")
 $BOCHSRC = Join-Path $Build ".bochsrc"
 $BOCHSLOG = Join-Path $Build "bochs.log"
 
-$Line_Up = "megs: 32
+$LINEUP = "megs: 32
 romimage: file=C:\Users\olusa\Bochs-3.0\BIOS-bochs-latest
 vgaromimage: file=C:\Users\olusa\Bochs-3.0\VGABIOS-lgpl-latest.bin
 boot: floppy
 floppya: 1_44="
-$Line_Down = ", status=inserted
+$LINEDWN = ", status=inserted
 display_library: win32, options=`"`gui_debug`"`
 pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
 config_interface: win32config
+vga: extension=vbe
 magic_break: enabled=1
 log: "
 
@@ -77,7 +78,7 @@ function Img-Push {
 
 function Prepare {
     if(-not(Test-Path $Build)){New-Item -Path $Build -ItemType Directory -Force}
-    if($BroadImage){
+    if($broadimage){
         if(-not(Test-Path $BroadImageFile)){
             Remove-Item -Path $BroadImageFile -Force
             New-Item -Path $BroadImageFile -ItemType File -Force
@@ -104,7 +105,7 @@ function Prepare {
     if(-not(Test-Path $BOCHSRC)){
         New-Item -Path $BOCHSRC -ItemType File -Force
         try{
-            Add-Content -Path $BOCHSRC -Value ($Line_Up + $Image + $Line_Down + $BOCHSLOG)
+            Add-Content -Path $BOCHSRC -Value ($LINEUP + $Image + $LINEDWN + $BOCHSLOG)
         }finally{}
     }
 }
@@ -215,10 +216,12 @@ if(-not ($padding -eq (Get-Item $Image).Length)){
     }
 }
 
-if($BroadImage){Copy-Item -Path $Image -Destination $BroadImageFile}
-if($Run -eq $true){
+if($broadimage){Copy-Item -Path $Image -Destination $BroadImageFile}
+if($run){
     Log-Write -color Yellow "Command:  $($QEMU) -fda $($Image)"
-    $args_qemu = @("-fda", "$($Image)")
+    $args_qemu = @("-fda", "$($Image)",  "-vga", "std")
     & $QEMU @args_qemu
-}elseif(($Run_Bochs -eq $true) -and $BOCHSRC){& $BOCHS "-f" $BOCHSRC "-debugger" "-q"}
+}elseif($runbochs){
+    & $BOCHS "-f" $BOCHSRC "-debugger" "-q"
+}
 

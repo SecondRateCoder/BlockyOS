@@ -1,4 +1,4 @@
-#include "../kernel/ram/ram.h"
+#include "../src/kernel/ram/ram.h"
 
 /// @brief An arbitrary pointer for weak function calls (Marked with "_weak" suffix).
 size_t arbitrary_ptr;

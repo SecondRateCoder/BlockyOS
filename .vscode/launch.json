@@ -5,13 +5,42 @@
             "name": "Debug run.ps1",
             "type": "PowerShell",
             "request": "launch",
-            "script": "${cwd}/run.ps1",
+            "script": "${workspaceFolder}\\Compiles\\run.ps1",
             "args": [
-                "-extrafiles", "\\a0x2800, C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\public\\textual.txt",
+                "-extrafiles", "\\a0x2800",
                 "-BroadImage",
                 "-SectorNum", "2000",
                 "-clear",
                 "-Reserved", "1"
+            ],
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "(QEMU)Debug Kernel",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}\\Compiles\\run.ps1",
+            "args": [
+                "-extrafiles", "\\a0x2800",
+                "-SectorNum", "2000",
+                "-clear",
+                "-Reserved", "1",
+                "-run"
+            ],
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "(bochs)Debug Kernel",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}\\Compiles\\run.ps1",
+            "args": [
+                "-extrafiles", "\\a0x2800",
+                "-BroadImage",
+                "-SectorNum", "2000",
+                "-clear",
+                "-Reserved", "1",
+                "-runbochs"
             ],
             "cwd": "${cwd}"
         },
@@ -44,7 +73,7 @@
             "name": "Debug frat.exe with args",
             "type": "cppdbg",
             "request": "launch",
-            "preLaunchTask":"gcc Build and Debug FrAT file",
+            "preLaunchTask": "gcc Build and Debug FrAT file",
             "program": "${workspaceFolder}\\tools\\frat.exe",
             "args": [
                 "${workspaceFolder}\\Build\\temp\\floppy.img",
@@ -64,31 +93,6 @@
                     "ignoreFailures": true
                 }
             ],
-        },
-        {
-            "name": "Quick-Debug frat.exe with args",
-            "type": "cppdbg",
-            "request": "launch",
-            "preLaunchTask":"gcc Build and Debug FrAT file no floppy",
-            "program": "${workspaceFolder}\\tools\\frat.exe",
-            "args": [
-                "${workspaceFolder}\\Build\\temp\\floppy.img",
-                "textual.txt",
-                ""
-            ],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": true,
-            "MIMode": "gdb",
-            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-        },
+        }
     ]
 }
