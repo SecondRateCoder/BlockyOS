@@ -2,6 +2,8 @@
 
 #include "../public/math/int/_int.h"
 #include "../public/math/int/_bool.h"
+#include "../public/memory/memory.h"
+#include "../public/memory/string.h"
 
 #ifndef PUBLIC_H
 #define PUBLIC_H

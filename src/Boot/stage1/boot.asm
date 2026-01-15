@@ -9,7 +9,7 @@ nop
 bdb_oem:                   	db 'MSWIN4.1'
 bdb_bytes_per_sector:       dw 128
 bdb_sectors_per_cluster:    db 2
-bdb_reserved_sectors:       db 10
+bdb_reserved_sectors:       db 20
 bdb_fat_count:              db 2
 bdb_dir_entries_count:      dw 0F0h
 bdb_total_sectors:			dw 2868
@@ -76,9 +76,9 @@ start:
     ; ES:DI = destination
     mov di, buffer    ; e.g. 1025
 	add di, 1025
-
+	; Calculate bytes
     mov cx, segment_clusters - bdb_oem + 1   ; 58 bytes total
-
+	; Perform move
     cld
     rep movsb
 

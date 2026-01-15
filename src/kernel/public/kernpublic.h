@@ -22,6 +22,6 @@ typedef struct os_obj{
 #define HANDLE os_obj
 
 extern char *RAM;
-extern volatile u8_t num_headers;
+extern volatile RAMH_TYPE num_headers;
 extern char *RAMHeaders;
 #endif

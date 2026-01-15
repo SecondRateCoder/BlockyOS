@@ -16,8 +16,12 @@ $Log_st1 = Join-Path $Build ("log_st1.txt")
 
 $BOOTA = (Join-Path (Get-Location) "src/Boot/stage2/boot.asm")
 $BOOTC = (Join-Path (Get-Location) "src/Boot/stage2/boot.c")
+$STRINGC = (Join-Path (Get-Location) "src/kernel/public/public/memory/string.c")
+$MEMC = (Join-Path (Get-Location) "src/kernel/public/public/memory/memory.c")
 $BOOTA_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT))_a2.obj"
 $BOOTC_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOTC))_c2.obj"
+$STRINGC_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($STRINGC))_c2.obj"
+$MEMC_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($MEMC))_c2.obj"
 $ST2_BIN = Join-Path -Path $Objdir "boot2.bin"
 
 function Log-Write{
@@ -48,8 +52,8 @@ function Img-Push {
 }
 
 $Command = @(
-	"-fo=$($BOOTC_OBJ -replace "\\","/")",
 	"-fr=$($Log -replace "\\","/")", 
+	"-i=$((Join-Path (Get-Location) 'src/kernel/public/public/memory/') -replace "\\","/")"
 	"-i=$((Join-Path (Get-Location) 'src/Boot/stage2/') -replace "\\","/")",
 	"-i=$((Join-Path (Get-Location) 'src/') -replace "\\","/")",
 	"-mm", 
@@ -58,8 +62,7 @@ $Command = @(
 	# "-zl", 
 	# "-zld",
 	"-zls",
-	"-s",
-	"$($BOOTC -replace "\\","/")"
+	"-s"
 )
 # $Command = @(
 # 	"-mm", 
@@ -81,7 +84,11 @@ $WCC = "C:\WATCOM\binnt64\wcc.exe"
 Log-Write -Msg (
 	"$($WCC) $($Command -join " ")"
 ) -Color Yellow
-$WCC_OUT = & $WCC $Command
+$WCC_OUT = & $WCC "-fo=$($BOOTC_OBJ -replace "\\","/")" $Command "$($BOOTC -replace "\\","/")"
+Log-Write -Msg "WCC: $($WCC_OUT)" -Color Yellow
+$WCC_OUT = & $WCC "-fo=$($STRINGC_OBJ -replace "\\","/")" $Command "$($STRINGC -replace "\\","/")"
+Log-Write -Msg "WCC: $($WCC_OUT)" -Color Yellow
+$WCC_OUT = & $WCC "-fo=$($MEMC_OBJ -replace "\\","/")" $Command "$($MEMC -replace "\\","/")"
 Log-Write -Msg "WCC: $($WCC_OUT)" -Color Yellow
 
 $NASM_OUT = & $NASM "-f" "obj" $BOOTA "-o" $BOOTA_OBJ
@@ -115,7 +122,8 @@ ORDER
 # call wlink
 # $args_ = @("@$(Join-Path $Objdir 'wlink.lnk')")
 $args_ = @(
-	"NAME" , "$($ST2_BIN)", "FILE", "$($BOOTA_OBJ)", "FILE", "$($BOOTC_OBJ)", 
+	"NAME" , "$($ST2_BIN)", 
+	"FILE", "$($BOOTA_OBJ)", "FILE", "$($BOOTC_OBJ)", "FILE", "$($STRINGC_OBJ)", "FILE", "$($MEMC_OBJ)", 
 	"OPTION", "MAP=$(Join-Path $Build "wlink.map")", "@$(Join-Path $Objdir 'wlink.lnk')"
 )
 Log-Write -Msg "`n`nwlink $($args_ -join ' ')`n`n" -Color Yellow

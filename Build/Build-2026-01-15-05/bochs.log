@@ -28,7 +28,7 @@
 00000000000i[USBCTL] Pluggable USB devices
 00000000000i[USBCTL]   floppy mouse tablet keypad keyboard hub disk cdrom
 00000000000i[USBCTL]   printer
-00000000000i[MEM0  ] allocated memory at 000001F32387E040. after alignment, vector=000001F32387F000, block_size = 128K
+00000000000i[MEM0  ] allocated memory at 0000026CB2E10040. after alignment, vector=0000026CB2E11000, block_size = 128K
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('C:\Users\olusa\Bochs-3.0\BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Tue Jan 13 19:56:46   2026 tz=utc (time0=1768334206)
+00000000000i[CMOS  ] Setting initial clock to: Thu Jan 15 19:56:08   2026 tz=utc (time0=1768506968)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -59,7 +59,7 @@
 00000000000i[MEM0  ] rom at 0xc0000/32768 ('C:\Users\olusa\Bochs-3.0\VGABIOS-lgpl-latest.bin')
 00000000000i[PLUGIN] init_dev of 'floppy' plugin device by virtual method
 00000000000i[DMA   ] channel 2 used by Floppy Drive
-00000000000i[FLOPPY] fd0: 'C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-13-44\floppy-2026-01-13-44.img' ro=0, h=2,t=80,spt=18
+00000000000i[FLOPPY] fd0: 'C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-15-05\floppy-2026-01-15-05.img' ro=0, h=2,t=80,spt=18
 00000000000i[FLOPPY] Using boot sequence floppy, none, none
 00000000000i[FLOPPY] Floppy boot signature check is enabled
 00000000000i[PLUGIN] init_dev of 'acpi' plugin device by virtual method
@@ -218,50 +218,74 @@
 00000000000i[PLUGIN] reset of 'usb_uhci' plugin device by virtual method
 00000000000i[WINGUI] dimension update x=720 y=400 fontheight=16 fontwidth=9 bpp=8
 00000001740i[BIOS  ] BIOS BUILD DATE: 02/16/25
-00000314450i[KBD   ] reset-disable command received
-00000316434i[BIOS  ] Starting rombios32
-00000316872i[BIOS  ] Shutdown flag 0
-00000317470i[BIOS  ] ram_size=0x02000000
-00000317902i[BIOS  ] ram_end=32MB
-00000358653i[BIOS  ] Found 1 cpu(s)
-00000372611i[BIOS  ] bios_table_addr: 0x000fa168 end=0x000fcc00
-00000700427i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001028362i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
-00001028386i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
-00001028410i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
-00001028434i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
-00001028444i[P2ISA ] write: ELCR2 = 0x0a
-00001029213i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
-00001042889i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
-00001045233i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
-00001047416i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
-00001047651i[PIDE  ] BAR #4: i/o base address = 0xc000
-00001048267i[BIOS  ] region 4: 0x0000c000
-00001050302i[BIOS  ] PCI: bus=0 devfn=0x0a: vendor_id=0x8086 device_id=0x7020 class=0x0c03
-00001050515i[UHCI  ] BAR #4: i/o base address = 0xc020
-00001051131i[BIOS  ] region 4: 0x0000c020
-00001051259i[UHCI  ] new IRQ line = 9
-00001053181i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
-00001053457i[ACPI  ] new IRQ line = 11
-00001053471i[ACPI  ] new IRQ line = 9
-00001053499i[ACPI  ] new PM base address: 0xb000
-00001053513i[ACPI  ] new SM base address: 0xb100
-00001053541i[PCI   ] setting SMRAM control register to 0x4a
-00001217676i[CPU0  ] Enter to System Management Mode
-00001217676i[CPU0  ] enter_system_management_mode: temporary disable VMX while in SMM mode
-00001217686i[CPU0  ] RSM: Resuming from System Management Mode
-00001381742i[PCI   ] setting SMRAM control register to 0x0a
-00001408405i[BIOS  ] MP table addr=0x000fa240 MPC table addr=0x000fa170 size=0xc8
-00001410112i[BIOS  ] SMBIOS table addr=0x000fa250
-00001412201i[BIOS  ] ACPI tables: RSDP addr=0x000fa370 ACPI DATA addr=0x01ff0000 size=0xff8
-00001415186i[BIOS  ] Firmware waking vector 0x1ff00cc
-00001417440i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001418170i[BIOS  ] bios_table_cur_addr: 0x000fa394
-00001518123i[VBIOS ] VGABios ID: vgabios.c 2025-01-08
-00001518202i[BXVGA ] VBE known Display Interface b0c0
-00001518242i[BXVGA ] VBE known Display Interface b0c5
-00001519663i[VBIOS ] VBE Bios ID: vbe.c 2025-01-08
-00013810525i[BIOS  ] Booting from 0000:7c00
-00013810582i[CPU0  ] [13810582] Stopped on MAGIC BREAKPOINT
-00014717040i[CPU0  ] [14717040] Stopped on MAGIC BREAKPOINT
-00014717107i[CPU0  ] [14717107] Stopped on MAGIC BREAKPOINT
+00000317444i[KBD   ] reset-disable command received
+00000319428i[BIOS  ] Starting rombios32
+00000319866i[BIOS  ] Shutdown flag 0
+00000320464i[BIOS  ] ram_size=0x02000000
+00000320896i[BIOS  ] ram_end=32MB
+00000361647i[BIOS  ] Found 1 cpu(s)
+00000375605i[BIOS  ] bios_table_addr: 0x000fa168 end=0x000fcc00
+00000703421i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001031356i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
+00001031380i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
+00001031404i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
+00001031428i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
+00001031438i[P2ISA ] write: ELCR2 = 0x0a
+00001032207i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
+00001045883i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+00001048227i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+00001050410i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+00001050645i[PIDE  ] BAR #4: i/o base address = 0xc000
+00001051261i[BIOS  ] region 4: 0x0000c000
+00001053296i[BIOS  ] PCI: bus=0 devfn=0x0a: vendor_id=0x8086 device_id=0x7020 class=0x0c03
+00001053509i[UHCI  ] BAR #4: i/o base address = 0xc020
+00001054125i[BIOS  ] region 4: 0x0000c020
+00001054253i[UHCI  ] new IRQ line = 9
+00001056175i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+00001056451i[ACPI  ] new IRQ line = 11
+00001056465i[ACPI  ] new IRQ line = 9
+00001056493i[ACPI  ] new PM base address: 0xb000
+00001056507i[ACPI  ] new SM base address: 0xb100
+00001056535i[PCI   ] setting SMRAM control register to 0x4a
+00001220670i[CPU0  ] Enter to System Management Mode
+00001220670i[CPU0  ] enter_system_management_mode: temporary disable VMX while in SMM mode
+00001220680i[CPU0  ] RSM: Resuming from System Management Mode
+00001384736i[PCI   ] setting SMRAM control register to 0x0a
+00001411399i[BIOS  ] MP table addr=0x000fa240 MPC table addr=0x000fa170 size=0xc8
+00001413106i[BIOS  ] SMBIOS table addr=0x000fa250
+00001415195i[BIOS  ] ACPI tables: RSDP addr=0x000fa370 ACPI DATA addr=0x01ff0000 size=0xff8
+00001418180i[BIOS  ] Firmware waking vector 0x1ff00cc
+00001420434i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001421164i[BIOS  ] bios_table_cur_addr: 0x000fa394
+00001521117i[VBIOS ] VGABios ID: vgabios.c 2025-01-08
+00001521196i[BXVGA ] VBE known Display Interface b0c0
+00001521236i[BXVGA ] VBE known Display Interface b0c5
+00001522657i[VBIOS ] VBE Bios ID: vbe.c 2025-01-08
+00013810529i[BIOS  ] Booting from 0000:7c00
+00013810586i[CPU0  ] [13810586] Stopped on MAGIC BREAKPOINT
+00014717044i[CPU0  ] [14717044] Stopped on MAGIC BREAKPOINT
+00014717060i[CPU0  ] [14717060] Stopped on MAGIC BREAKPOINT
+00014731478i[CPU0  ] [14731478] Stopped on MAGIC BREAKPOINT
+00014738121i[CPU0  ] [14738121] Stopped on MAGIC BREAKPOINT
+00014738145i[CPU0  ] [14738145] Stopped on MAGIC BREAKPOINT
+00014738162i[CPU0  ] [14738162] Stopped on MAGIC BREAKPOINT
+00014738177i[CPU0  ] [14738177] Stopped on MAGIC BREAKPOINT
+00014738197i[CPU0  ] [14738197] Stopped on MAGIC BREAKPOINT
+00014738260i[CPU0  ] [14738260] Stopped on MAGIC BREAKPOINT
+00014738323i[CPU0  ] [14738323] Stopped on MAGIC BREAKPOINT
+00014738386i[CPU0  ] [14738386] Stopped on MAGIC BREAKPOINT
+00014738449i[CPU0  ] [14738449] Stopped on MAGIC BREAKPOINT
+00014738512i[CPU0  ] [14738512] Stopped on MAGIC BREAKPOINT
+00014738575i[CPU0  ] [14738575] Stopped on MAGIC BREAKPOINT
+00014738638i[CPU0  ] [14738638] Stopped on MAGIC BREAKPOINT
+00014738701i[CPU0  ] [14738701] Stopped on MAGIC BREAKPOINT
+00014738764i[CPU0  ] [14738764] Stopped on MAGIC BREAKPOINT
+00014738827i[CPU0  ] [14738827] Stopped on MAGIC BREAKPOINT
+00014738890i[CPU0  ] [14738890] Stopped on MAGIC BREAKPOINT
+00014738953i[CPU0  ] [14738953] Stopped on MAGIC BREAKPOINT
+00014739016i[CPU0  ] [14739016] Stopped on MAGIC BREAKPOINT
+00014739079i[CPU0  ] [14739079] Stopped on MAGIC BREAKPOINT
+00014739142i[CPU0  ] [14739142] Stopped on MAGIC BREAKPOINT
+00014739205i[CPU0  ] [14739205] Stopped on MAGIC BREAKPOINT
+00014739268i[CPU0  ] [14739268] Stopped on MAGIC BREAKPOINT
+00014739331i[CPU0  ] [14739331] Stopped on MAGIC BREAKPOINT
