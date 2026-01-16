@@ -20,11 +20,11 @@ void main16(uint16_t header_ptr){
 //      e.g %bl: Prints long as decimal, (10).
 // %x.: Use hexadecimal radix:
 //      e.g %xl: Prints long as hex, (16).
-// &b: byte
+// &a: byte
 // %c: char
 // %h: short
 // %l: long
-// %d: integer
+// %i: integer
 // %z: long long
 // %s: string
 void printf16(char *fmt, ...){
@@ -52,54 +52,44 @@ void printf16(char *fmt, ...){
             }else if(*(fmt + 2) == 'd'){offs_ = 3;    radix = 10;
             }else if(*(fmt + 3) == 'd'){offs_ = 4;    radix = 10;}
 
-			if(*fmt == 'h'){			offs_ = 1;    radix = 16;
-            }else if(*(fmt + 1) == 'h'){offs_ = 2;    radix = 16;
-            }else if(*(fmt + 2) == 'h'){offs_ = 3;    radix = 16;
-            }else if(*(fmt + 3) == 'h'){offs_ = 4;    radix = 16;}
+			if(*fmt == 'x'){			offs_ = 1;    radix = 16;
+            }else if(*(fmt + 1) == 'x'){offs_ = 2;    radix = 16;
+            }else if(*(fmt + 2) == 'x'){offs_ = 3;    radix = 16;
+            }else if(*(fmt + 3) == 'x'){offs_ = 4;    radix = 16;}
             fmt += offs_;
             switch(*fmt){
-				case 'c': 
-                case 'h': 
-                case 'b': {
-                    bochs_breakpoint();
+				case 'c':	// char 
+                case 'h': 	// short
+                case 'a': {	// byte
                     char *temp = printarg16(argp + words, 1, sign, radix);
                     puts(temp);
 					words++;
 					break;
                 }
-                case 'd':
-				case 'l': {
-                    bochs_breakpoint();
+                case 'i':	// integer
+				case 'l': {	// long
                     char *temp = printarg16(argp + words, 2, sign, radix);
                     puts(temp);
 					words += 2;
 					break;
                 }
-				case 'z': {
-                    bochs_breakpoint();
+				case 'z': {	// long long
                     char *temp = printarg16(argp + words, 4, sign, radix);
                     puts(temp);
 					words += 4;
 					break;
                 }
-				case 's': {
-                    bochs_breakpoint();
-                    // puts(argp + words);
-					// words += 2;
-					// break;
+				case 's': {	// string
                     uint16_t ofs = argp[words];
                     uint16_t seg = argp[words + 1];
                     char __far *fp = (char __far *)(((uint32_t)seg << 16) | ofs);
                     words += 2;
                     puts(fp);
-
+					break;
                 }
             }
-            fmt++;
-        }else{
-            putc(*fmt);
-            fmt++;
-        }
+        }else{putc(*fmt);}
+		fmt++;
     }
 }
 
@@ -164,7 +154,6 @@ char *printarg16(uint16_t *argp, uint8_t words, bool sign, uint8_t radix){
         // uint32_t rem = num % radix;
         uint32_t rem;
         _div64_32(num, radix, &num, &rem);
-        // num = num / radix;
         out[pos++] = g_hexes[rem];
     }while(num > 0);
     if(sign && num_sign < 0){out[pos++] = '-';}
@@ -172,68 +161,3 @@ char *printarg16(uint16_t *argp, uint8_t words, bool sign, uint8_t radix){
     bochs_breakpoint();
     return out;
 }
-
-// char *printarg16(uint16_t *argp, uint8_t len, bool sign, uint8_t radix){
-//     bochs_breakpoint();
-//     uint64_t num = 0;
-//     int8_t num_sign = 0;
-//     static char out[32] = {0};
-//     int8_t pos = 0;
-//     switch(len){
-//         case 1: {   // 8-bit
-//             int tmp = *argp;
-//             if(sign){
-//                 int8_t n = (int8_t)tmp;
-//                 if(n < 0){ n = -n; num_sign = 1; }
-//                 num = (uint8_t)n;
-//             }else{num = (uint8_t)tmp;}
-//             break;
-//         }
-//         case 2: {   // 16-bit
-//             int tmp = *argp;
-//             if(sign){
-//                 int16_t n = (int16_t)tmp;
-//                 if(n < 0){ n = -n; num_sign = 1; }
-//                 num = (uint16_t)n;
-//             }else{num = (uint16_t)tmp;}
-//             break;
-//         }
-//         case 4: {   // 32-bit
-//             uint32_t low  = argp[0];
-//             uint32_t high = argp[1];
-//             uint32_t val  = (high << 16) | low;
-//             if(sign){
-//                 int32_t n = (int32_t)val;
-//                 if(n < 0){ n = -n; num_sign = 1; }
-//                 num = (uint32_t)n;
-//             }else{num = val;}
-//             break;
-//         }
-//         case 8: {   // 64-bit
-//             uint64_t p0 = argp[0];
-//             uint64_t p1 = argp[1];
-//             uint64_t p2 = argp[2];
-//             uint64_t p3 = argp[3];
-//             uint64_t val = (p3 << 48) | (p2 << 32) | (p1 << 16) | p0;
-//             if(sign){
-//                 int64_t n = (int64_t)val;
-//                 if(n < 0){ n = -n; num_sign = 1; }
-//                 num = (uint64_t)n;
-//             }else{num = val;}
-//             break;
-//         }
-//     }
-
-//     bochs_breakpoint();
-//     if(num == 0){out[pos++] = '\0';
-//     }else{
-//         while(num > 0){
-//             uint32_t r;
-//             _div64_32(num, radix, &num, &r);
-//             out[pos++] = g_hexes[r];
-//         }
-//     }
-
-//     if(num_sign){out[pos++] = '-';}
-//     return out;
-// }
