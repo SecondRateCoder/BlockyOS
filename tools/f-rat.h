@@ -28,15 +28,10 @@
 #define ANSI_CYAN(TEXT) ANSI_COLOR_CYAN TEXT ANSI_COLOR_RESET
 #define ANSI_LBLUE(TEXT) ANSI_COLOR_LBLUE TEXT ANSI_COLOR_RESET
 
-#define FDATA_START (((drive.sectors_per_fat * drive.fat_count) + drive.reserved_sectors + 1) * drive.bytes_per_sector)	// 72 + (((9 * 2) + 2 + 0) * 512) = 10312 bytes
-#define FAT_START ((drive.reserved_sectors + 1) * drive.bytes_per_sector)
-#define CLUSTERMAP_START (drive.bytes_per_sector * (drive.reserved_sectors + 1 + (drive.fat_count * drive.sectors_per_fat)))
+#define FAT_LBA ((drive.reserved_sectors + 1) * drive.bytes_per_sector)
+#define CLUSTERMAP_LBA (FAT_LBA + (drive.sectors_per_fat * drive.fat_count * drive.bytes_per_sector))
 
 #define USED_FAT (FAT[0].segment)
-#define USED_CLUSTERMAP (FAT[0].offset)
-#define MAPBASE_SIZE (drive.bytes_per_sector * drive.sectors_per_cluster)
-#define MAPBASE_ENTRYSTART(FILE) (FILE->name_len/sizeof(MAP_ext_e) + (FILE->name_len%sizeof(MAP_ext_e)? 1: 0))
-// #define MAPBASE_ENTRYINDEXER(FILE, INDEX) FILE->cluster_entries[INDEX + MAPBASE_ENTRYSTART(FILE)]
 
 #define IS_WRITE_FINISH(BYTE) (BYTE & 0x10)
 #define IS_POLL_FINISH(BYTE) (BYTE & 0x08)
