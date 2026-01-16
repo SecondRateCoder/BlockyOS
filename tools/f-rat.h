@@ -55,9 +55,9 @@
 //*		Read file data to terminal,
 //*		Write to a file from a terminal,
 //*		Write from a drive file into the open file,
-//		List all the items in a Directory,
-//		
+//		List all the items in a Directory
 
+#define bytes_per_sector 128
 typedef struct drive_header{
     uint8_t 	BOOT_Instruction[3],
 				OEM_ID[8];
@@ -83,106 +83,100 @@ typedef struct drive_header{
 	uint8_t segment_clusters;
 } __attribute__((packed)) drive_header;
 
-typedef union MAP_ext_e{
-    struct{
-        uint32_t segment,
-        offset;
-    };
-    size_t address;
-}__attribute__((packed)) MAP_ext_e;
+#define LBAget(ull) (ull & 0x7FFFFFFFFFFFFFFF)
+#define FATused(ull) (ull & 0x1000000000000000)
+#define FATusedt(ull) (ull ^ 0x1000000000000000)
+typedef struct FAT_e{
+	// ALWAYS clear top-most bit,
+	// This is the LBA of the file's base Sector.
+	uint64_t LBA;
+}FAT_e;
 
-typedef MAP_ext_e FAT_e;
-typedef MAP_ext_e INDEX_e;
+// 0b0000000000000000
+#define FrATBASEsector_Ring(base) ((uint8_t)((base).flags & 0b0000000000000111))
+#define FrATBASEsector_ReadEnable(base) ((uint8_t)((base).flags & 0b0000000000001000)
+#define FrATBASEsector_WriteEnable(base) ((uint8_t)((base).flags & 0b0000000000010000)
+#define FrATBASEsector_TransferFinish(base) ((uint8_t)((base).flags & 0b0000000000100000)
+#define FrATBASEsector_TransferDirectionBit(base) ((uint8_t)((base).flags & 0b0000000001000000)
+#define FrATBASEsector_ReadFinish(base) ((uint8_t)((base).flags & 0b0000000010000000)
+#define FrATBASEsector_WriteFinish(base) ((uint8_t)((base).flags & 0b0000000100000000)
+#define FrATBASEsector_IsArchive(base) ((uint8_t)((base).flags & 0b0000001000000000)
+#define FrATBASEsector_IsDirectory(base) ((uint8_t)((base).flags & 0b0000010000000000)
+#define FrATBASEsector_IsExecutable(base) ((uint8_t)((base).flags & 0b0000100000000000)
+#define FrATBASEsector_Reserved(base) ((uint8_t)((base).flags & 0b0000000000000000)
 
-typedef struct MAP_ext_h{
-    uint8_t security_code[15];
-    MAP_ext_e prev_header;
-    MAP_ext_e next_header;
-}__attribute__((packed)) MAP_ext_h;
+#define FrATBASEsector_RingSet(base, bit) ((uint8_t)((base).flags |= (bit & 0b00000111))
+#define FrATBASEsector_ReadEnableSet(base, bit) ((uint8_t)((base).flags |= ((bit)? 0b0000000000001000: 0x0))
+#define FrATBASEsector_WriteEnableSet(base, bit) ((uint8_t)((base).flags |= ((bit)? 0b0000000000010000: 0x0))
+#define FrATBASEsector_TransferFinishSet(base, bit) ((uint8_t)((base).flags |= ((bit)? 0b0000000000100000: 0x0))
+#define FrATBASEsector_TransferDirectionBitSet(base, bit) ((uint8_t)((base).flags |= ((bit)? 0b0000000001000000: 0x0))
+#define FrATBASEsector_ReadFinishSet(base, bit) ((uint8_t)((base).flags |= ((bit)? 0b0000000010000000: 0x0))
+#define FrATBASEsector_WriteFinishSet(base, bit) ((uint8_t)((base).flags |= ((bit)? 0b0000000100000000: 0x0))
+#define FrATBASEsector_IsArchiveSet(base, bit) ((uint8_t)((base).flags |= ((bit)? 0b0000001000000000: 0x0))
+#define FrATBASEsector_IsDirectorySet(base, bit) ((uint8_t)((base).flags |= ((bit)? 0b0000010000000000: 0x0))
+#define FrATBASEsector_IsExecutableSet(base, bit) ((uint8_t)((base).flags |= ((bit)? 0b0000100000000000: 0x0))
+#define FrATBASEsector_ReservedSet(base, bit) ((uint8_t)((base).flags |= (bit & 0b01111111))
 
-typedef struct MAP_ext_m{
-	const uint8_t attributes;
-	size_t size;
-	uint16_t 	creation_time,
-				modified_time;
+typedef struct FrATBASEsector{
+	union{
+		struct{
+			uint32_t FATindex;
+			union{
+				struct{
+					uint8_t last_sector_used_bytes;
+					uint8_t dataaddresses_start;
+					// [0-2]: Ring
+					// [3]: Read Enable
+					// [4]: Write Enable
+					// [5]: Transfer Finish
+					// [6]: Transfer Direction Bit
+					// [7]: Read Finish
+					// [8]: Write Finish
+					// [9]: Is Archive
+					// [10]: Is Directory
+					// [11]: Is Executable
+					// [12-15]: Reserved
+					uint16_t flags;
+				}
+				uint32_t jam;
+			}
+			union{
+				struct{
+					uint16_t Num_extensionaddresses;
+					uint8_t depth;
+				}
+				uint32_t bottom;
+			}
+			uint32_t reserved;
+		}
+		uint64_t sector[2];
+	}
+	FAT_e entries[(bytes_per_sector - sizeof(FrATBASEsector)) / sizeof(FAT_e)];
+}FrATBASEsector;
 
-	uint16_t 	creation_date,
-				access_date,
-				modified_date;
-}__attribute__((packed)) MAP_ext_m;
-
-/// @brief This is the type used to extend the cluster Map of a file, 
-///         it acts as a header for connected clusters for security purposes.
-///         The number of bytes should be: ((bytes_per_sector * sectors_per_cluster) - sizeof(MAP_cluster)): 
-///         e.g  
-typedef struct MAP_cluster{
-    MAP_ext_h drive;
-    uint8_t pad;
-    uint8_t data[];
-}__attribute__((packed)) MAP_cluster;
-
-/// @brief This is the base type, 
-///     it's header's prev_header should point to the entry in FAT that contains the file pointer.
-///     This is supposed to be a extensible map of cluster pointers, where each entry points to a MAP_cluster cluster.
-typedef struct MAP_ext_b{
-    uint8_t security_code[15];
-	const uint8_t padding[3];
-    /// @brief The number of extra clusters made use of by this type.
-    uint32_t num_extensions;
-    FAT_e FAT;
-	MAP_ext_m metadata;
-	const uint8_t name_len;
-    MAP_ext_e cluster_entries[];
-}__attribute__((packed)) MAP_ext_b;
-
-
-void fnv1a_120(const void *data, size_t len, uint8_t out[15]);
-
-bool Virt_active;
-/// @brief The FAT table, each entry pointing to a MAP base extension.
-/// @remark Item #0 is the [Number of used entries: Number of used clusters].
-/// @remark For ALL entries aside from [0], the segment must NOT be 0
-FAT_e *FAT;
-drive_header drive;
-FILE *disk;
-
-size_t basebyte_counter;
-MAP_ext_b **base_buffer;
+typedef struct FrATsector{
+	union{
+		struct{
+			uint32_t FATindex;
+			union{
+				struct{
+					uint16_t Num_extensionaddresses;
+					uint8_t dataaddresses_start;
+					uint8_t flags;
+				}
+				uint32_t jam;
+			}
+		}
+		uint64_t sector;
+	}
+}FrATsector;
 
 #ifdef _WIN32
 void enable_ansi(void);
 #endif
 void IMG_Setup(void);
-int consume(uint32_t arg_cc, char **arg_vector);
-
-MAP_ext_b *DIRECTORY_Open(size_t index, FAT_e Directory);
-bool DIRECTORY_Swap(FAT_e new_dir, FAT_e last_dir, size_t FILE_index);
-
-void writed_MAPDATA(MAP_ext_b *file, INDEX_e address, char *path, long offset, uint8_t segment_size, long segment, long max_data);
-void write_MAPDATA(MAP_ext_b *file, INDEX_e address, uint8_t *data, uint8_t num);
-
-void print_MAPDATA(MAP_ext_b *file, uint8_t base, INDEX_e address);
-void print_MAPbase(MAP_ext_b *base);
-void print_DIRENTRIES(MAP_ext_b *base, char *mode);
-
-#include <time.h>
-void FATCompress(void);
-void FDelete(FAT_e entry);
-void Fcreate(char *name, char *mode);
-
-extern MAP_ext_b *base_update;
-extern FAT_e FAT_update;
-extern uint32_t FAT_updateindex;
-void FUpdate();
-void FATUpdate(uint32_t index, INDEX_e index_e);
-
-void BASESync();
-FAT_e BASEMalloc();
-void BASEfree(FAT_e value);
-void MAPEXTB_PLUSalloc(FAT_e index);
 
 uint16_t pack_time(struct tm *t);
-MAP_ext_b *get_Item(FAT_e entry);
 uint8_t strcheck(char *str, const char c);
 extern const char DIGITS[];
 void byte_to_base(uint8_t value, uint32_t base, char out[8]);
