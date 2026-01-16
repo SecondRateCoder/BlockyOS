@@ -33,15 +33,6 @@
 
 #define USED_FAT (FAT[0].segment)
 
-#define IS_WRITE_FINISH(BYTE) (BYTE & 0x10)
-#define IS_POLL_FINISH(BYTE) (BYTE & 0x08)
-#define IS_ENCRYPTED(BYTE) (BYTE & 0x02)
-#define IS_CORRUPTED(BYTE) (BYTE & 0x01)
-#define IS_ARCHIVE(BYTE) (BYTE & 0x04)
-#define IS_SYSTEM(BYTE) (BYTE & 0x20)
-#define IS_FILE(BYTE) (BYTE & 0x40)
-#define IS_DIR(BYTE) (BYTE & 0x80)
-
 // What do I need to do:
 //*		Create a file,
 //*		Delete a File,
@@ -164,6 +155,7 @@ typedef struct FrATsector{
 		}
 		uint64_t sector;
 	}
+	FAT_e entries[(bytes_per_sector - sizeof(FrATBASEsector)) / sizeof(FAT_e)];
 }FrATsector;
 
 #ifdef _WIN32
