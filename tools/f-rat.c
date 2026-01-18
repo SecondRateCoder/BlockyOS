@@ -1,3 +1,4 @@
+// gcc -o f-rat.exe -g ./f-rat.c
 #include "f-rat.h"
 
 drive_header drive;
@@ -13,7 +14,9 @@ char *openFileNames[10];
 // 1 for each Base sector.
 FrATsector openSectors[10];
 // Progress into open sector
-uint8_t progress[10];
+uint64_t progress[10];
+
+bool Virt_active = false;
 
 #ifdef _WIN32
 #include <windows.h>
@@ -26,42 +29,162 @@ void enable_ansi(void){
     SetConsoleMode(hOut, dwMode);
 	Virt_active = true;
 }
+#else
+	void enable_ansi(){return;}
 #endif
 
-bool IMG_Setup(void){
-	for(uint8_T cc =0; cc < 10; ++cc){openFiles[cc] = malloc(sizeofFrATBASEsector));}
+int main(uint32_t argc, char **argv){
+	enable_ansi();
+	IMG_Setup(*(argv + 1));
+	createFile(0, 100, "The 1st File", "rw0");
+	openFile("The 1st File");
+	ptrStep(10, 0);
+	closeFile("The 1st File");
+	return EXIT_SUCCESS;
+}
+
+void IMG_Setup(char *disk_path){
+	for(uint8_t cc =0; cc < 10; ++cc){openFiles[cc] = NULL;}
+	if(!(disk = fopen(disk_path, "rb+"))){
+		printf(ANSI_RED("Cannot open file: %s, reading failed, exiting..."), disk_path);
+		exit(EXIT_FAILURE);
+	}
 	fseek(disk, 0, SEEK_SET);
     if(fread(&drive, sizeof(drive_header), 1, disk) != 1){
-		printf(ANSI_RED("Drive drive reading failed, exiting..."));
+		printf(ANSI_RED("Drive reading failed, exiting..."));
 		exit(EXIT_FAILURE);
 	}
     if(drive.bytes_per_sector == 0){
 		printf(ANSI_RED("Floppy image was NOT valid..."));
 		exit(EXIT_FAILURE);
 	}
-
 	FAT = malloc(drive.sectors_per_fat * drive.bytes_per_sector);
 	memset(FAT, 0, (size_t)(drive.sectors_per_fat * drive.bytes_per_sector));
-	fseek(disk, FAT_START, SEEK_CUR);
-	if(fread(FAT, 1, (drive.sectors_per_fat * drive.bytes_per_sector), disk) == (drive.sectors_per_fat * drive.bytes_per_sector)){
-		printf("Failed to read %d bytes.", drive.sectors_per_fat * drive.bytes_per_sector);
+	fseek(disk, FAT_LBA, SEEK_SET);
+	printf(ANSI_YELLOW("File ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+
+	if(fread(FAT, 1, (drive.sectors_per_fat * drive.bytes_per_sector), disk) != (drive.sectors_per_fat * drive.bytes_per_sector)){
+		printf(ANSI_RED("Failed to read %d bytes."), drive.sectors_per_fat * drive.bytes_per_sector);
 		exit(EXIT_FAILURE);
 	}
 	loadedFATs = 0;
-	while(loadedFATs < (drive.sectors_per_fat * drive.bytes_per_sector) && FATused(FAT[loadedFATs].LBA)){
-		loadedFATs++;
+	while(loadedFATs < (drive.sectors_per_fat * drive.bytes_per_sector) && FATused(FAT[loadedFATs].LBA)){(loadedFATs++);}
+}
+
+void createFile(uint8_t dir, size_t size, char *name, char *mode){
+	fseek(disk, CLUSTERMAP_LBA, SEEK_SET);
+	printf(ANSI_YELLOW("File ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+
+	drive.clustermap_entries++;
+	FrATBASEsector bs = {
+		.FATindex = loadedFATs,
+		.depth = 1,
+		.dataaddresses_start = (Fsector_entries / (strlen(name) + 2)) + 1,
+		.Num_extensionaddresses = 0,
+		.flags = 0,
+		.entries = {0}
+	};
+	uint8_t depth = bs.depth;
+	uint16_t extaddresses = bs.Num_extensionaddresses;
+	FrATbs_ResolveAttributes(size, &depth, &extaddresses);
+	bs.depth = depth;
+	bs.Num_extensionaddresses = extaddresses;
+	bs.last_sector_used_bytes = (128 - 8) - (size % (FBsector_entries * Fsector_entries * bs.depth));
+	FAT = realloc(FAT, (loadedFATs + 1) * sizeof(FAT_e));
+	FAT[loadedFATs] = (FAT_e){ .LBA = drive.clustermap_entries };
+	loadedFATs++;
+	FATusedt(FAT[loadedFATs - 1].LBA);
+	if(strcheck(mode, 'd')){FrATBASEsector_IsDirectorySet(bs, 1);} // Is Directory
+	if(strcheck(mode, 'a')){
+		FrATBASEsector_IsDirectorySet(bs, 1);
+		FrATBASEsector_IsArchiveSet(bs, 1);
+	} // Is Archive
+	if(strcheck(mode, 'e')){FrATBASEsector_IsExecutableSet(bs, 1);} // Is Executable
+	if(strcheck(mode, 'r')){FrATBASEsector_ReadEnableSet(bs, 1);} 	// Read Enable
+	if(strcheck(mode, 'w')){FrATBASEsector_WriteEnableSet(bs, 1);} 	// Write Enable
+	if(strcheck(mode, '0')){FrATBASEsector_RingSet(bs, 0);}			// Ring #0
+	if(strcheck(mode, '1')){FrATBASEsector_RingSet(bs, 1);}			// Ring #1
+	if(strcheck(mode, '2')){FrATBASEsector_RingSet(bs, 2);}			// Ring #2
+	if(strcheck(mode, '3')){FrATBASEsector_RingSet(bs, 3);}			// Ring #3
+	FrATBASEsector *temp = openFiles[0];
+	openFiles[0] = &bs;
+	createSector(0, "n", name);
+	openFiles[0] = temp;
+	fwrite(&bs, sizeof(FrATBASEsector), 1, disk);
+	fflush(disk);
+}
+
+FAT_e MallocSector(uint32_t max){
+	FrATsector temp;
+	fseek(disk, DDATA_LBA, SEEK_SET);
+	printf(ANSI_YELLOW("Sector Malloc ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+
+	for(uint64_t cc =0; cc < max; ++cc){
+		fread(&temp, sizeof(FrATsector), 1, disk);
+		if(!FATused(temp.FATindex)){return (FAT_e){.LBA = FATusedt(cc)};}
 	}
-	return EXIT_SUCCESS;
+	return (FAT_e){.LBA = 0};
+}
+
+bool FreeSector(uint8_t file, uint32_t ptr){
+	if(file < 10 && ptr < FBsector_entries && openFiles[file]){
+		fseek(disk, DDATA_LBA + LBAget(openFiles[file]->entries[ptr].LBA), SEEK_SET);
+		printf(ANSI_YELLOW("Sector Free ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+
+		uint8_t s[sizeof(FrATsector)] = {0};
+		fwrite(&s, 1, sizeof(FrATsector), disk);
+		fflush(disk);
+		return true;
+	}
+	return false;
+}
+
+bool createSector(uint8_t file, char *mode, uint8_t data[Fsector_entries]){
+	if(file < 10 && openFiles[file]){
+		FrATsector s = {
+			.Num_extensionaddresses = openFiles[file]->Num_extensionaddresses,
+			.FATindex = openFiles[file]->FATindex,
+			.depth = openFiles[file]->depth,
+			.dataaddresses_start = openFiles[file]->Num_extensionaddresses
+		};
+		if(strcheck(mode, 'd')){FrATs_DATA(s.flags);}else{
+			if(strcheck(mode, 't')){
+				FrATs_DATIs(s.flags);
+				s.dataaddresses_start++;
+			}
+			if(strcheck(mode, 'n')){
+				FrATs_NAMEs(s.flags);
+				s.dataaddresses_start += strlen((char *)data);
+			}
+			
+		}
+		memcpy(s.entries, data, Fsector_entries * sizeof(FAT_e));
+		if((openFiles[file]->entries[progress[file]] = MallocSector(2000)).LBA == 0){
+			return false;
+		}else{
+			fseek(disk, DDATA_LBA + LBAget(openFiles[file]->entries[progress[file]].LBA), SEEK_SET);
+			printf(ANSI_YELLOW("Sector Create ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+
+			fwrite(&s, sizeof(FrATsector), 1, disk);
+			fflush(disk);
+			return true;
+		}
+	}
 }
 
 bool closeFile(char *name){
-	for(uitn8_t cc =0; cc < 10; ++cc){
+	for(uint8_t cc =0; cc < 10; ++cc){
 		if(openFileNames[cc]){
-			if(!strncmp(openFileNames[cc], name, strlen(name) - 1){
-				if(selectedFile == cc){selectedFile = -1;}
+			if(!strncmp(openFileNames[cc], name, strlen(name) - 1)){
+				fseek(disk, DDATA_LBA + LBAget(FAT[openFiles[cc]->FATindex].LBA), SEEK_SET);
+				printf(ANSI_YELLOW("File Close ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+
+				fwrite(openFiles + cc, sizeof(FrATBASEsector), 1, disk);
 				free(openFiles[cc]);
+				openFiles[cc] = NULL;
 				free(openFileNames[cc]);
-				memcpy(openFileNames + cc, openFileNames + cc + 1, 10 - cc);
+				openFileNames[cc] = NULL;
+				fflush(disk);
 				return true;
 			}		
 		}
@@ -69,28 +192,15 @@ bool closeFile(char *name){
 	return false;
 }
 
-bool ptrStepIn(uint8_t ptr, uint8_t file){
-	if(openFiles[cc] && ptr < (drive.bytes_per_sector - sizeof(FrATBASEsector) / sizeof(FAT_e)){
-		fseek(disk, DDATA_LBA + LBAget(openSectors[cc].entries[ptr] + (progress / 128)), SEEK_SET);
+bool ptrStep(int8_t ptr, uint8_t file){
+	if(file < 10 && openFiles[file]){
+		fseek(disk, LBAget(openFiles[file]->entries[0].LBA) + progress[file] + ptr, SEEK_SET);
+		printf(ANSI_YELLOW("File Step ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 		fread(openSectors + ptr, sizeof(FrATsector), 1, disk);
+		progress[file] += ptr;
+		fflush(disk);
 	}else{
-		printf("File: %d is not open", file);
-		return false;
-	}
-	return true;
-}
-
-bool ptrStepOver(int8_t ptr, uint8_t file){
-	if(openFiles[cc]){
-		if(ptr < (drive.bytes_per_sector - sizeof(FrATBASEsector) / sizeof(FAT_e)){
-			progress += ptr;
-			if(progress > 128 - sizeof(FrATBASEsector)){progress = 128 - sizeof(FrATBASEsector);}
-		}else{
-			printf("ptr(%d) is too large, must be below(%d)", (drive.bytes_per_sector - sizeof(FrATBASEsector) / sizeof(FAT_e));
-			return false;
-		}
-	}else{
-		printf("File: %d is not open", file);
+		printf(ANSI_RED("File: %d is not open"), file);
 		return false;
 	}
 	return true;
@@ -99,25 +209,27 @@ bool ptrStepOver(int8_t ptr, uint8_t file){
 int8_t openFile(char *name){
 	FrATBASEsector *ptr;
 	int8_t out = 0;
-	for(; out < 10; ++cc){
+	for(; out < 10; ++out){
 		if(openFiles[out] == NULL){
-			openFiles[out] = malloc(sizeof(FrATBASEsector));
+			openFiles[out] = calloc(1, sizeof(FrATBASEsector));
 			ptr = openFiles[out];
+			break;
 		}
 	}
 	if(!ptr){return -1;}
 	for(uint32_t cc = 0; cc < loadedFATs; ++cc){
 		fseek(disk, CLUSTERMAP_LBA + LBAget(FAT[loadedFATs].LBA), SEEK_SET);
-		if(fread(*ptr, sizeof(FrATBASEsector), 1, disk) == 1){
+		printf(ANSI_YELLOW("File Open ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+
+		if(fread(ptr, sizeof(FrATBASEsector), 1, disk) == 1){
 			FrATsector *sector = malloc(sizeof(FrATsector));
-			for(uint8_t cc_ = ptr->Num_extensionaddresses + 1; cc_ < (drive.bytes_per_sector - sizeof(FrATBASEsector) / sizeof(FAT_e); ++cc_){
-				if(FATused(ptr->entries[cc_])){continue;}
-				fseek(disk, DDATA_LBA + LBAget(ptr->entries[cc_]), SEEK_SET);
+			for(uint8_t cc_ = ptr->Num_extensionaddresses + 1; cc_ < (drive.bytes_per_sector - sizeof(FrATBASEsector) / sizeof(FAT_e)); ++cc_){
+				if(FATused(ptr->entries[cc_].LBA)){continue;}
+				fseek(disk, DDATA_LBA + LBAget(ptr->entries[cc_].LBA), SEEK_SET);
+				printf(ANSI_YELLOW("File Open ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+
 				fread(sector, sizeof(FrATsector), 1, disk);
-				// Placeholder:
-				// [0]: Date([16]: Year, [16]: Date, [16]: Time)
-				// [1]: Name
-				if(SECTORMETA_NAME(sector->flags)){
+				if(FrATs_NAME(sector->flags)){
 					uint8_t *data = ((uint8_t *)sector->entries) + 48;
 					if(!strncmp(data, name, strlen(name) - 1)){
 						progress[out]= 0;
@@ -134,7 +246,7 @@ int8_t openFile(char *name){
 	free(ptr);
 }
 
-static const char DIGITS[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const char DIGITS[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 void byte_to_base(uint8_t value, uint32_t base, char out[8]){
     if(base < 2 || base > 36){
         out[0] = '\0';
@@ -169,6 +281,18 @@ uint8_t strcheck(char *str, const char c){
 }
 
 //! Written by AI
+
+static inline void FrATbs_ResolveAttributes(uint32_t size, uint8_t *depth, uint16_t *extension_addresses){
+    if (*depth && !*extension_addresses) {
+		*extension_addresses = size / (FBsector_entries * Fsector_entries * (*depth));
+		if(!(*extension_addresses)){(*extension_addresses)++;}
+	}else{
+		*depth = size / (FBsector_entries * Fsector_entries * (*extension_addresses));
+		if(!(*depth)){(*depth)++;}
+	}
+}
+
+
 void fnv1a_120(const void *data, size_t len, uint8_t out[15]){
     const uint8_t *p = data;
 

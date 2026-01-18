@@ -1,0 +1,21 @@
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c(53): Warning! W138: No newline at end of file
+WCC: Open Watcom C x86 16-bit Optimizing Compiler Version 2.0 beta Dec 15 2025 03:01:27 (64-bit) Copyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved. Portions Copyright (c) 1984-2002 Sybase, Inc. All Rights Reserved. Source code is available under the Sybase Open Watcom Public License. See https://github.com/open-watcom/open-watcom-v2#readme for details. C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.c: 54 lines, included 270, 1 warnings, 0 errors
+NASM: 
+
+
+wlink NAME C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\boot2.bin FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\boot_a2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\boot_c2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\string_c2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\memory_c2.obj OPTION MAP=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\wlink.map @C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\wlink.lnk
+
+
+
+
+
+Linked: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\boot2.bin
+Byte array of size: 2351 padded with size: 303, starting at address: 512 and ending at address: 3166
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\floppy-2026-01-18-53.img with 303 bytes.
+Byte array of size: 0 padded with size: 0, starting at address: 3166 and ending at address: 3166
+Byte array of size: 0 padded with size: 0, starting at address: 3166 and ending at address: 3166
+Token not recognized: a
+Padding to 1471394 size
+Byte array of size: 1471394 padded with size: 418, starting at address: 3166 and ending at address: 1474978
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\floppy-2026-01-18-53.img with 418 bytes.
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\floppy-2026-01-18-53.img with 1471394 bytes.

@@ -4,6 +4,8 @@ typedef unsigned char uint8_t;
 typedef signed char int8_t;
 #define u8_t uint8_t
 #define i8_t int8_t
+#define byte int8_t
+#define ubyte uint8_t
 
 typedef unsigned short int uint16_t;
 typedef signed short int int16_t;
@@ -11,7 +13,9 @@ typedef signed short int int16_t;
 #define i16_t int16_t
 
 typedef unsigned int uint32_t;
+typedef unsigned long uinl32_t;
 typedef signed int int32_t;
+typedef signed long inl32_t;
 #define u32_t uint32_t
 #define i32_t int32_t
 

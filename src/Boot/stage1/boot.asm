@@ -27,7 +27,7 @@ ebr_volume_id:				db 12h, 99h, 40h, 22h
 ebr_volume_label:			db 'BLOCKY OS  '
 ebr_system_id:				db 'FAT12   '	; 25 bytes
 ; custom_boot_record
-segment_clusters:			db 128			; 26 bytes
+clustermap_entries:			db 128			; 26 bytes
 global start
 
 %define ENDL 0x0A, 0x0D, 0x00
@@ -37,7 +37,7 @@ global start
 ; Push decrements sp
 ; Pop increments sp
 start:
-	xchg bx, bx
+	; xchg bx, bx
 
 	db 0x66
 	xor ax, ax
@@ -60,7 +60,7 @@ start:
 	add bx, 1024
 
 	; Sectors to be Read.
-	mov di, 20
+	mov di, [bdb_reserved_sectors]
 
 	; LBA Adress
 	mov ax, 1
@@ -77,14 +77,14 @@ start:
     mov di, buffer    ; e.g. 1025
 	add di, 1025
 	; Calculate bytes
-    mov cx, segment_clusters - bdb_oem + 1   ; 58 bytes total
+    mov cx, clustermap_entries - bdb_oem + 1   ; 58 bytes total
 	; Perform move
     cld
     rep movsb
 
 .ld_s:
 	push es
-	mov bx, segment_clusters
+	mov bx, clustermap_entries
 	sub bx, bdb_oem
 	add bx, buffer
 	add bx, 1024

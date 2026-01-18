@@ -7,14 +7,14 @@ global bt1_drive_header_
 extern main16_
 
 bt1_drive_header_: times 58 db 0
-jmp short start_
+jmp short _start
 
 ; Number of sectors to load into RAM, should be the full size of Boot2
 %define ENDL 0x0A, 0x0D, 0x00
 
-global start_
+global _start
 ; void start(void)
-start_:
+_start:
     [bits 16]
     xchg bx, bx
     ; Setup stack
@@ -32,7 +32,9 @@ global _halt
 _halt:
     [bits 16]
     cli
-    jmp _halt
+._halt_
+    nop
+    jmp ._halt_
 
 global _bochs_breakpoint
 ; void _bochs_breakpoint(void)
@@ -41,34 +43,10 @@ _bochs_breakpoint:
     nop
     ret
 
-; global _puts_vidteletype
-; ; void puts_vidteletype((uint32_t)(char __far *ptr))
-; _puts_vidteletype:
-;     push bp
-;     mov bp, sp
-
-;     push ax
-;     push si
-; .loop:
-;     lodsb
-;     or al, al
-;     jz .done
-
-;     mov ah, 0x0E
-;     int 0x10
-
-;     jmp .loop
-; .done:
-;     pop si
-;     pop ax
-;     mov sp, bp
-;     pop bp
-;     ret
 global _puts_vidteletype
-; void puts_vidteletype(char __far *ptr)
+; void puts_vidteletype(char page, char __far *ptr)
 _puts_vidteletype:
     [bits 16]
-    call _bochs_breakpoint
     push bp
     mov bp, sp
 
@@ -76,10 +54,13 @@ _puts_vidteletype:
     push ax
     push si
     push ds
+    push bx
 
+    ; Load page number
+    mov bx, [bp + 4]
     ; Load far pointer from stack
-    mov si, [bp + 6]     ; offset
-    mov ax, [bp + 4]     ; segment
+    mov ax, [bp + 6]     ; segment
+    mov si, [bp + 8]     ; offset
     mov ds, ax         ; DS:SI -> string
 .loop:
     lodsb               ; AL = [DS:SI], SI++
@@ -91,6 +72,7 @@ _puts_vidteletype:
     jmp .loop
 
 .done:
+    pop bx
     pop ds
     pop si
     pop ax
@@ -99,7 +81,7 @@ _puts_vidteletype:
     ret
 
 global _put_vidteletype
-; void put_vidteletype(char c, char page)
+; void put_vidteletype(uint16_t c, uint16_t page)
 ;   Pushed right arg 1st, starting from [bp + 4]
 _put_vidteletype:
     [bits 16]
@@ -120,112 +102,96 @@ _put_vidteletype:
     pop bp
     ret
 
-global __div64_32
-;   void _div64_32(uint64_t dividend, uint32_t divisor, uint64_t __far *quotientOut, uint32_t __far *remainderOut)
-;   Pushed right arg 1st, starting from [bp + 4]
-__div64_32:
+global _div64_32_
+;   void _div64_32(uint64_t dividend, uinl32_t divisor, uint64_t __far *result, uinl32_t __far *remainder)
+_div64_32_:
     [bits 16]
-    call _bochs_breakpoint
 
     ; Generate new call frame.
     push bp
     mov bp, sp
-    
+
+    ; Save modified registers
     push bx
+    push es
 
-    mov eax, [bp + 20]       ; eax: dividend upper 32 bits
-    mov ecx, [bp + 12]      ; ecx: divisor
+    mov es, [bp + 20]   ; Grab segment
+    mov bx, [bp + 18]   ; Grab offset
+    mov eax, [bp + 6]   ; eax: dividend upper 32 bits
+    mov ecx, [bp + 14]  ; ecx: divisor
+
     xor edx, edx
-    div ecx                 ; eax - quot, edx - rem
+    ; Divide upper 32-bits of dividend
+    div ecx             ; eax: result, edx: rem, ecx: divisor
 
-    ;   Store upper 32 bits of quot
-    mov bx, [bp + 8]
-    push es
-    mov es, [bp + 10]
+    ; Store lower 32 bits of quotient
     mov [bx], eax
-    pop es
 
-    ; Divide lower 32 bits
-    mov eax, [bp + 16]
+    ; Divide upper 32 bits of quotient
+    mov eax, [bp + 10]   ; Grab lower 32-bits
+    add eax, edx
 
-    div ecx
+    ; Divide lower 32 bits of quotient
+    xor edx, edx
+    div ecx             ; edx contains remainder
 
-    ; Store results
-    push es
-    mov es, [bp + 6]
+    ; Store lower 32-bit result
+    ; bx still unmodified so no need to change/re-assign it
     mov [bx + 4], eax
 
-    mov bx, [bp + 4]
+    ; Store remainder
+    mov bx, [bp + 22]
+    mov es, [bp + 24]
     mov [bx], edx
-    pop es
 
+    ; Restore modified registers
+    pop es
     pop bx
 
     ; Restore old call frame.
+    leave
+    ret
+
+global __U8LS
+; unsigned short __U8LS(unsigned char value, unsigned char shift)
+__U8LS:
+    [bits 16]
+    push bp
+    mov bp, sp
+
+    push cx              ; preserve callee-saved
+
+    mov al, [bp+4]      ; value
+    mov cl, [bp+6]      ; shift
+    shl al, cl
+
+    xor ah, ah          ; AX = result
+
+    pop cx
     mov sp, bp
     pop bp
     ret
 
-
-
-global __U8DR
-; unsigned short __U8DR(unsigned char dividend, unsigned char divisor)
-;   Pushed right arg 1st, starting from [bp + 4]
-__U8DR:
+global __I8LS
+; short __I8LS(signed char value, unsigned char shift);
+__I8LS:
     [bits 16]
     push bp
     mov  bp, sp
 
-    mov  bl, [bp + 4]     ; divisor
-    mov  al, [bp + 6]     ; dividend
-    xor  ah, ah         ; clear high byte for 8-bit divide
-    div  bl             ; AL = quotient, AH = remainder
+    push cx              ; preserve callee-saved
 
-    ; Watcom wants the result in AX (unsigned short)
-    ; We'll return the quotient in AX (low 8 bits used)
-    ; If you want remainder instead, swap AL/AH here.
-    mov  ah, 0          ; ensure high byte is clean
+    mov  al, [bp+4]      ; value (signed 8-bit)
+    mov  cl, [bp+6]      ; shift count
+    sal  al, cl          ; arithmetic left shift on AL
+    cbw                  ; sign-extend AL -> AX (result)
 
-    mov  sp, bp
-    pop  bp
-    ret                 ; cdecl: caller cleans stack
-
-global __U8DQ
-; unsigned short __U8DQ(unsigned char dividend, unsigned char divisor)
-;   Pushed right arg 1st, starting from [bp + 4]
-__U8DQ:
-    [bits 16]
-    push bp
-    mov  bp, sp
-
-    mov  bl, [bp + 4]     ; divisor
-    mov  al, [bp + 6]     ; dividend
-    xor  ah, ah
-    div  bl             ; AL = quotient, AH = remainder
-
-    mov  ah, 0          ; AX = quotient (zero-extend)
-
+    pop  cx
     mov  sp, bp
     pop  bp
     ret
 
 
-global __U8LS
-; unsigned short __U8LS(unsigned char value, unsigned char shift)
-;   Pushed right arg 1st, starting from [bp + 4]
-__U8LS:
-    [bits 16]
-    push bp
-    mov  bp, sp
-
-    mov  cl, [bp + 4]     ; shift
-    mov  al, [bp + 6]     ; value
-    shl  al, cl         ; AL <<= CL
-
-    xor  ah, ah         ; zero-extend to 16-bit (AX)
-    mov  sp, bp
-    pop  bp
-    ret
 
 msg_bt2: db 'This is Boot2', ENDL, 0
 buffer:

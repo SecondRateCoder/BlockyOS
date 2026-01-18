@@ -6,8 +6,8 @@
                 "${workspaceFolder}/src/"
             ],
             "defines": [
-                "_cdecl=",
-                "__far="
+                "__far=",
+                "_cdecl="
             ],
             "compilerPath": "C:\\WATCOM\\binnt64\\wcc",
             "cStandard": "c99",
@@ -34,7 +34,7 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "_cdecl"
+                "__cdecl"
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/msys64/ucrt64/bin/gcc",

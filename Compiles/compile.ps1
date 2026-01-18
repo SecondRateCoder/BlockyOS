@@ -61,8 +61,8 @@ function Img-Push {
     $file = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
     $padding = $data.Length
     do{
-        $padding = [math]::Abs($padding - 512)
-    }while($padding -ge 512)
+        $padding = [math]::Abs($padding - 256)
+    }while($padding -ge 256)
     Log-Write -color Yellow -Msg ("Byte array of size: $($data.Length) padded with size: $($padding), starting at address: $((Get-Item -Path $Image).Length) and ending at address: $((Get-Item -Path $Image).Length + $padding + $data.Length)")
     try {
         if($data){
@@ -172,8 +172,8 @@ function Asm-Compile{
             # \x - append N empty sectors (count is digits in token)
             } elseif(($file[0] -eq '\') -and ($file[1] -eq 'x')){
                 $num_empty = [int]($file -replace '\D', '') # Removes all non-digit characters
-                $data = New-Object byte[] ($num_empty* 512)
-                Log-Write -color Yellow -Msg ("Adding $($num_empty) empty sectors of overall size $($num_empty* 512), starting at address: $((Get-Item -Path $Image).Length) and ending at address: $((Get-Item -Path $Image).Length + ($num_empty* 512))")
+                $data = New-Object byte[] ($num_empty* 256)
+                Log-Write -color Yellow -Msg ("Adding $($num_empty) empty sectors of overall size $($num_empty* 256), starting at address: $((Get-Item -Path $Image).Length) and ending at address: $((Get-Item -Path $Image).Length + ($num_empty* 256))")
                 Img-Push -data $data
 
             # \a - pad to absolute address (hex or dec)
@@ -189,8 +189,8 @@ function Asm-Compile{
                 }else{
                     $num = [int]($file -replace '\D', '') # Remove all non-digit characters
                 }
-                if($num % 512 -ne 0){
-                    Log-Write -color Red -Msg "Invalid address, must be a multiple of 512, address was: `n`tDecimal: $($num), `n`tHexa-decimal: $('{0:X}' -f $num)"
+                if($num % 256 -ne 0){
+                    Log-Write -color Red -Msg "Invalid address, must be a multiple of 256, address was: `n`tDecimal: $($num), `n`tHexa-decimal: $('{0:X}' -f $num)"
                     $cc++; continue
                 }
                 $curr = (Get-Item -Path $Image).Length
@@ -299,8 +299,8 @@ function Asm-Compile{
                 # Instead replicate the specific extra-file behaviors: \x (empty sectors), \a (absolute pad) and file add.
                 if(($path[0] -eq '\') -and ($path[1] -eq 'x')){
                     $num_empty = [int]($path -replace '\D', '')
-                    $data = New-Object byte[] ($num_empty* 512)
-                    Log-Write -color Yellow -Msg ("Adding $($num_empty) empty sectors of overall size $($num_empty* 512)")
+                    $data = New-Object byte[] ($num_empty* 256)
+                    Log-Write -color Yellow -Msg ("Adding $($num_empty) empty sectors of overall size $($num_empty* 256)")
                     Img-Push -data $data
                 } elseif(($path[0] -eq '\') -and ($path[1] -eq 'a')) {
                     # absolute pad (same handling as above)
@@ -311,8 +311,8 @@ function Asm-Compile{
                     } else {
                         $num = [int]($path -replace '\D', '')
                     }
-                    if($num % 512 -ne 0){
-                        Log-Write -color Red -Msg "Invalid address, must be multiple of 512: $path"; continue
+                    if($num % 256 -ne 0){
+                        Log-Write -color Red -Msg "Invalid address, must be multiple of 256: $path"; continue
                     }
                     $curr = (Get-Item -Path $Image).Length
                     if($num -gt $curr){
@@ -367,7 +367,7 @@ function Asm-Compile{
 
 # text.txt at 0x000051FE
 # Calculate how much padding is needed
-$targetSize = $SectorNum * 512
+$targetSize = $SectorNum * 256
 $padding = [math]::Abs($targetSize - (Get-Item $Image).Length)
 Log-Write -color Cyan -Msg "Padding to $($padding) size"
 if(-not ($padding -eq (Get-Item $Image).Length)){

@@ -45,11 +45,11 @@
             "cwd": "${cwd}"
         },
         {
-            "name": "Debug fat.exe with args",
+            "name": "Debug F-Rat.exe",
             "type": "cppdbg",
             "request": "launch",
-            "preLaunchTask":"gcc Build and Debug FAT file",
-            "program": "${workspaceFolder}\\tools\\frat.exe",
+            "preLaunchTask": "C/C++: gcc.exe build f-rat.c",
+            "program": "${workspaceFolder}\\tools\\f-rat.exe",
             "args": [
                 "${workspaceFolder}\\Build\\temp\\floppy.img",
                 "textual.txt",
@@ -68,31 +68,6 @@
                     "ignoreFailures": true
                 }
             ]
-        },
-        {
-            "name": "Debug frat.exe with args",
-            "type": "cppdbg",
-            "request": "launch",
-            "preLaunchTask": "gcc Build and Debug FrAT file",
-            "program": "${workspaceFolder}\\tools\\frat.exe",
-            "args": [
-                "${workspaceFolder}\\Build\\temp\\floppy.img",
-                "textual.txt",
-                ""
-            ],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": true,
-            "MIMode": "gdb",
-            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
         }
     ]
 }

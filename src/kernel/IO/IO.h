@@ -23,5 +23,5 @@ typedef struct true_IO{
 	IO_device device;
 }true_IO;
 
-void _cdecl outl(uint16_t port, uint32_t val);
+void __cdecl outl(uint16_t port, uint32_t val);
 uint32_t __cdecl inl(uint16_t port);

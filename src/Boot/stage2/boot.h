@@ -1,28 +1,29 @@
 #include "kernel/public/public/public.h"
 
-#define PF_DSTEP_LONG_LONG 8
-#define PF_DSTEP_LONG 4
-#define PF_DSTEP_SHRT 2
-#define PF_DSTEP_BYTE 1
+// #define __far
+// #define __cdecl
+
+#define PF_DSTEP_WORD 1
+#define PF_DSTEP_LONG 2
+#define PF_DSTEP_LONG_LONG 4
 
 //* Assembly Functions
-#define putc(c) put_vidteletype(c, 00)
-#define puts(ptr) puts_vidteletype((char __far *)(ptr))
+#define putc(c) put_vidteletype((c), 00)
+#define puts(ptr) puts_vidteletype(00, (char __far *)(ptr))
 // Halt and restart
-extern void _cdecl start(void);
-extern void _cdecl halt(void);
-extern void _cdecl bochs_breakpoint(void);
+extern void __cdecl start(void);
+extern void __cdecl halt(void);
+extern void __cdecl bochs_breakpoint(void);
 // Print functions
-extern void _cdecl put_vidteletype(char c, u8_t page);
-extern void _cdecl puts_vidteletype(char __far *ptr);
+extern void __cdecl put_vidteletype(uint16_t c, uint16_t page);
+extern void __cdecl puts_vidteletype(char page, char __far *ptr);
 // Division helpers
-extern void _cdecl _div64_32(uint64_t dividend, uint32_t divisor, uint64_t __far *quotientOut, uint32_t __far *remainderOut);
-extern unsigned short _cdecl __U8DR(unsigned char dividend, unsigned char divisor);
-extern unsigned short _cdecl __U8DQ(unsigned char dividend, unsigned char divisor);
-extern unsigned short _cdecl __U8LS(unsigned char dividend, unsigned char divisor);
+#define div64_32(dividend, divisor, result, remainder) div64_32_((uint64_t)(dividend), (uinl32_t)(divisor), (uint64_t __far *)(result), (uint32_t __far *)(remainder))
+extern void __cdecl div64_32_(uint64_t dividend, uinl32_t divisor, uint64_t __far *result, uint32_t __far *remainder);
+extern unsigned short __cdecl __U8LS(unsigned char dividend, unsigned char divisor);
+extern short __cdecl __I8LS(signed char value, unsigned char shift);
 
 #define ENDL "\r\n\0"
-char __ = '\r';
 
 // C Types
 char g_hexes[];
@@ -30,7 +31,7 @@ char g_hexes[];
 void main16(uint16_t header_ptr);
 void printf16(char *str, ...);
 // Returns char[32]
-char *printarg16(uint16_t *argp, uint8_t words, bool sign, uint8_t radix);
+char *printarg16(uint16_t *argp, uint8_t words, bool sign, uint8_t radix, bool printin, bool attach_sign);
 
 #pragma pack(push, 1)
 typedef struct drive_header{

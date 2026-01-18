@@ -58,11 +58,12 @@ $Command = @(
 	"-i=$((Join-Path (Get-Location) 'src/') -replace "\\","/")",
 	"-mm", 
 	"-zastd=c99",
-	# "-ef", 
-	# "-zl", 
-	# "-zld",
+	"-ef", 
+	"-zl", 
+	"-zld",
 	"-zls",
 	"-s"
+	# "-zu"
 )
 # $Command = @(
 # 	"-mm", 
@@ -102,10 +103,10 @@ $LNK = "
 FORMAT RAW BIN
 OPTION QUIET,
 		NODEFAULTLIBS,
-		START=start_,
+		START=_start,
 		VERBOSE,
 		OFFSET=0x8200,
-		STACK=0X200
+		STACK=0x200
 ORDER
 	CLNAME CODE
 		SEGMENT _ENTRY
