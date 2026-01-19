@@ -193,17 +193,34 @@ bool closeFile(char *name){
 }
 
 bool ptrStep(int8_t ptr, uint8_t file){
-	if(file < 10 && openFiles[file]){
-		fseek(disk, LBAget(openFiles[file]->entries[0].LBA) + progress[file] + ptr, SEEK_SET);
-		printf(ANSI_YELLOW("File Step ptr: %d, 0x%x"), ftell(disk), ftell(disk));
-		fread(openSectors + ptr, sizeof(FrATsector), 1, disk);
-		progress[file] += ptr;
-		fflush(disk);
-	}else{
-		printf(ANSI_RED("File: %d is not open"), file);
-		return false;
+	if(openFiles[file] && file < 10){
+		if(progress + ptr > openFiles[file]->size){
+			progress += ptr;
+			return true;
+		}
 	}
-	return true;
+	return false;
+}
+
+bool openSector(uint8_t file){
+	if(openFiles[file] && file < 10){
+		uint8_t item = progress[file] / FrATbs_SIZE(openFiles[file]);
+		uint8_t depth = progress[file] % FrATbs_SIZE(openFiles[file]);
+		return openSectorRecurse(0, item, file, depth);
+	}
+	return false;
+}
+
+bool openSectorRecurse(uint8_t progress, uint8_t ext_item, uint8_t file, uint8_t true_depth){
+	if(ext_item > openFiles[cc]->Num_extensionaddresses){return false;}
+	fseek(disk, DDATA_LBA + LBAget(openSectors[file].entries[ext_item]), SEEK_SET);
+	printf(ANSI_YELLOW("File Step ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+	
+	if(fread(openSectors + ext_item, sizeof(FrATsector), 1, disk) == 1){
+		if(openSectors[file].depth == true_depth){return true;}
+		else{return openSectorRoot(progress++, ext_item, file, true_depth);}
+	}
+	return false;
 }
 
 int8_t openFile(char *name){
