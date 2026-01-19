@@ -144,7 +144,10 @@ typedef struct FrATBASEsector{
 		};
 		uint64_t sector[2];
 	};
-	FAT_e entries[(bytes_per_sector_ - 16) / sizeof(FAT_e)];
+	union{
+		uint8_t data[FBsector_entries * sizeof(FAT_e)];
+		FAT_e entries[FBsector_entries];
+	};
 }__attribute__((packed)) FrATBASEsector;
 
 #define Fsector_entries ((bytes_per_sector_ - 8) / sizeof(FAT_e))
@@ -178,7 +181,10 @@ typedef struct FrATsector{
 		};
 		uint64_t sector;
 	};
-	FAT_e entries[Fsector_entries];
+	union{
+		uint8_t data[Fsector_entries * sizeof(FAT_e)];
+		FAT_e entries[Fsector_entries];
+	};
 }__attribute__((packed)) FrATsector;
 
 #ifdef _WIN32
