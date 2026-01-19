@@ -7,6 +7,8 @@ FILE *disk;
 FAT_e *FAT;
 uint32_t loadedFATs;
 
+uint16_t default_max;
+
 // Index for each depth step, for 1 open file only
 // Limit to only 10 OPEN files.
 FrATBASEsector *openFiles[10];
@@ -72,10 +74,10 @@ void IMG_Setup(char *disk_path){
 }
 
 void createFile(uint8_t dir, size_t size, char *name, char *mode){
-	fseek(disk, CLUSTERMAP_LBA, SEEK_SET);
-	printf(ANSI_YELLOW("File ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+	FAT_e save = MallocSectorSMAP(default_max);
+	fseek(disk, BASEMAP_LBA + LBAget(save.LBA), SEEK_SET);
 
-	drive.clustermap_entries++;
+	drive.sectormap_entries++;
 	FrATBASEsector bs = {
 		.FATindex = loadedFATs,
 		.depth = 1,
@@ -91,7 +93,7 @@ void createFile(uint8_t dir, size_t size, char *name, char *mode){
 	bs.Num_extensionaddresses = extaddresses;
 	bs.last_sector_used_bytes = (128 - 8) - (size % (FBsector_entries * Fsector_entries * bs.depth));
 	FAT = realloc(FAT, (loadedFATs + 1) * sizeof(FAT_e));
-	FAT[loadedFATs] = (FAT_e){ .LBA = drive.clustermap_entries };
+	FAT[loadedFATs] = (FAT_e){ .LBA = drive.sectormap_entries };
 	loadedFATs++;
 	FATusedt(FAT[loadedFATs - 1].LBA);
 	if(strcheck(mode, 'd')){FrATBASEsector_IsDirectorySet(bs, 1);} // Is Directory
@@ -110,18 +112,38 @@ void createFile(uint8_t dir, size_t size, char *name, char *mode){
 	openFiles[0] = &bs;
 	createSector(0, "n", name);
 	openFiles[0] = temp;
-	fwrite(&bs, sizeof(FrATBASEsector), 1, disk);
-	fflush(disk);
+
+	printf(ANSI_YELLOW("Create File ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+	if(fwrite(&bs, sizeof(FrATBASEsector), 1, disk) == 1){
+		fflush(disk);
+	}else{printf(ANSI_RED("Failed to save new sector."));}
 }
 
-FAT_e MallocSector(uint32_t max){
+FAT_e MallocSectorDDATA(uint32_t max){
 	FrATsector temp;
 	fseek(disk, DDATA_LBA, SEEK_SET);
-	printf(ANSI_YELLOW("Sector Malloc ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+	printf(ANSI_YELLOW("Sector DDATA Malloc ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
 	for(uint64_t cc =0; cc < max; ++cc){
 		fread(&temp, sizeof(FrATsector), 1, disk);
-		if(!FATused(temp.FATindex)){return (FAT_e){.LBA = FATusedt(cc)};}
+		if(!FATused(temp.FATindex)){
+			FAT = realloc(FAT, (loadedFATs + 1) * sizeof(FAT_e));
+			FAT[loadedFATs] = FATusedt(cc * drive.bytes_per_sector);
+			loadedFATs++;
+			return (FAT_e){.LBA = FATusedt(cc * drive.bytes_per_sector)};
+		}
+	}
+	return (FAT_e){.LBA = 0};
+}
+
+FAT_e MallocSectorSMAP(uint32_t max){
+	FrATsector temp;
+	fseek(disk, BASEMAP_LBA, SEEK_SET);
+	printf(ANSI_YELLOW("Sector SMAP Malloc ptr: %d, 0x%x"), ftell(disk), ftell(disk));
+
+	for(uint64_t cc =0; cc < max; ++cc){
+		fread(&temp, sizeof(FrATsector), 1, disk);
+		if(!FATused(temp.FATindex)){return (FAT_e){.LBA = FATusedt(cc * drive.bytes_per_sector)};}
 	}
 	return (FAT_e){.LBA = 0};
 }
@@ -159,7 +181,7 @@ bool createSector(uint8_t file, char *mode, uint8_t data[Fsector_entries]){
 			
 		}
 		memcpy(s.entries, data, Fsector_entries * sizeof(FAT_e));
-		if((openFiles[file]->entries[progress[file]] = MallocSector(2000)).LBA == 0){
+		if((openFiles[file]->entries[progress[file]] = MallocSectorDDATA(default_max)).LBA == 0){
 			return false;
 		}else{
 			fseek(disk, DDATA_LBA + LBAget(openFiles[file]->entries[progress[file]].LBA), SEEK_SET);
@@ -194,8 +216,8 @@ bool closeFile(char *name){
 
 bool ptrStep(int8_t ptr, uint8_t file){
 	if(openFiles[file] && file < 10){
-		if(progress + ptr > openFiles[file]->size){
-			progress += ptr;
+		if(progress[file] + ptr < (openFiles[file])){
+			progress[file] += ptr;
 			return true;
 		}
 	}
@@ -204,21 +226,21 @@ bool ptrStep(int8_t ptr, uint8_t file){
 
 bool openSector(uint8_t file){
 	if(openFiles[file] && file < 10){
-		uint8_t item = progress[file] / FrATbs_SIZE(openFiles[file]);
-		uint8_t depth = progress[file] % FrATbs_SIZE(openFiles[file]);
+		uint8_t item = progress[file] / FrATbs_SIZE(*openFiles[file]);
+		uint8_t depth = progress[file] % FrATbs_SIZE(*openFiles[file]);
 		return openSectorRecurse(0, item, file, depth);
 	}
 	return false;
 }
 
 bool openSectorRecurse(uint8_t progress, uint8_t ext_item, uint8_t file, uint8_t true_depth){
-	if(ext_item > openFiles[cc]->Num_extensionaddresses){return false;}
-	fseek(disk, DDATA_LBA + LBAget(openSectors[file].entries[ext_item]), SEEK_SET);
+	if(ext_item > openFiles[file]->Num_extensionaddresses){return false;}
+	fseek(disk, DDATA_LBA + LBAget(openSectors[file].entries[ext_item].LBA), SEEK_SET);
 	printf(ANSI_YELLOW("File Step ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 	
 	if(fread(openSectors + ext_item, sizeof(FrATsector), 1, disk) == 1){
 		if(openSectors[file].depth == true_depth){return true;}
-		else{return openSectorRoot(progress++, ext_item, file, true_depth);}
+		else{return openSectorRecurse(progress++, ext_item, file, true_depth);}
 	}
 	return false;
 }
@@ -235,9 +257,8 @@ int8_t openFile(char *name){
 	}
 	if(!ptr){return -1;}
 	for(uint32_t cc = 0; cc < loadedFATs; ++cc){
-		fseek(disk, CLUSTERMAP_LBA + LBAget(FAT[loadedFATs].LBA), SEEK_SET);
+		fseek(disk, BASEMAP_LBA + LBAget(FAT[cc].LBA), SEEK_SET);
 		printf(ANSI_YELLOW("File Open ptr: %d, 0x%x"), ftell(disk), ftell(disk));
-
 		if(fread(ptr, sizeof(FrATBASEsector), 1, disk) == 1){
 			FrATsector *sector = malloc(sizeof(FrATsector));
 			for(uint8_t cc_ = ptr->Num_extensionaddresses + 1; cc_ < (drive.bytes_per_sector - sizeof(FrATBASEsector) / sizeof(FAT_e)); ++cc_){
@@ -245,14 +266,14 @@ int8_t openFile(char *name){
 				fseek(disk, DDATA_LBA + LBAget(ptr->entries[cc_].LBA), SEEK_SET);
 				printf(ANSI_YELLOW("File Open ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
-				fread(sector, sizeof(FrATsector), 1, disk);
-				if(FrATs_NAME(sector->flags)){
-					uint8_t *data = ((uint8_t *)sector->entries) + 48;
-					if(!strncmp(data, name, strlen(name) - 1)){
-						progress[out]= 0;
-						openFileNames[out] = strdup(data);
-						free(sector);
-						return out;
+				if(fread(sector, sizeof(FrATsector), 1, disk) == 1){
+					if(FrATs_NAME(sector->flags)){
+						if(!strncmp(sector->data + 48, name, strlen(name) - 1)){
+							progress[out]= 0;
+							openFileNames[out] = strdup(sector->data + 48);
+							free(sector);
+							return out;
+						}
 					}
 				}
 			}

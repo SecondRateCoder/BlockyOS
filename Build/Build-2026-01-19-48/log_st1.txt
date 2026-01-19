@@ -1,12 +1,12 @@
 ﻿**********************
 Windows PowerShell transcript start
-Start time: 20260118195454
+Start time: 20260119194449
 Username: MY-DELL-DESKTOP\olusa
 RunAs User: MY-DELL-DESKTOP\olusa
 Configuration Name: 
 Machine: MY-DELL-DESKTOP (Microsoft Windows NT 10.0.19045.0)
 Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS//Compiles//intermid.ps1
-Process ID: 6820
+Process ID: 388
 PSVersion: 5.1.19041.6456
 PSEdition: Desktop
 PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.6456
@@ -16,19 +16,19 @@ WSManStackVersion: 3.0
 PSRemotingProtocolVersion: 2.3
 SerializationVersion: 1.1.0.1
 **********************
-C:\WATCOM\binnt64\wcc.exe -fr=C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/Build/Build-2026-01-18-53/log_.txt -i=C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/ -i=C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/ -i=C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/ -mm -zastd=c99 -ef -zl -zld -zls -s
+C:\WATCOM\binnt64\wcc.exe -fr=C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/Build/Build-2026-01-19-48/log_.txt -i=C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/ -i=C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/ -i=C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/ -mm -zastd=c99 -ef -zl -zld -zls -s
 WCC: Open Watcom C x86 16-bit Optimizing Compiler Version 2.0 beta Dec 15 2025 03:01:27 (64-bit) Copyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved. Portions Copyright (c) 1984-2002 Sybase, Inc. All Rights Reserved. Source code is available under the Sybase Open Watcom Public License. See https://github.com/open-watcom/open-watcom-v2#readme for details. C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/boot.c: 151 lines, included 336, 4 warnings, 0 errors
 WCC: Open Watcom C x86 16-bit Optimizing Compiler Version 2.0 beta Dec 15 2025 03:01:27 (64-bit) Copyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved. Portions Copyright (c) 1984-2002 Sybase, Inc. All Rights Reserved. Source code is available under the Sybase Open Watcom Public License. See https://github.com/open-watcom/open-watcom-v2#readme for details. C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/string.c: 12 lines, included 277, 1 warnings, 0 errors
 WCC: Open Watcom C x86 16-bit Optimizing Compiler Version 2.0 beta Dec 15 2025 03:01:27 (64-bit) Copyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved. Portions Copyright (c) 1984-2002 Sybase, Inc. All Rights Reserved. Source code is available under the Sybase Open Watcom Public License. See https://github.com/open-watcom/open-watcom-v2#readme for details. C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.c: 54 lines, included 270, 1 warnings, 0 errors
 NASM:
 
 
-wlink NAME C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\boot2.bin FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\boot_a2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\boot_c2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\string_c2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\memory_c2.obj OPTION MAP=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\wlink.map @C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\wlink.lnk
+wlink NAME C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-19-48\objs\boot2.bin FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-19-48\objs\boot_a2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-19-48\objs\boot_c2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-19-48\objs\string_c2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-19-48\objs\memory_c2.obj OPTION MAP=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-19-48\wlink.map @C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-19-48\objs\wlink.lnk
 
-Linked: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\objs\boot2.bin
+Linked: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-19-48\objs\boot2.bin
 Byte array of size: 2351 padded with size: 303, starting at address: 512 and ending at address: 3166
-Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-18-53\floppy-2026-01-18-53.img with 303 bytes.
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-19-48\floppy-2026-01-19-48.img with 303 bytes.
 **********************
 Windows PowerShell transcript end
-End time: 20260118195455
+End time: 20260119194449
 **********************

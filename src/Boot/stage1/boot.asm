@@ -27,7 +27,7 @@ ebr_volume_id:				db 12h, 99h, 40h, 22h
 ebr_volume_label:			db 'BLOCKY OS  '
 ebr_system_id:				db 'FAT12   '	; 25 bytes
 ; custom_boot_record
-clustermap_entries:			db 128			; 26 bytes
+sectormap_entries:			db 128			; 26 bytes
 global start
 
 %define ENDL 0x0A, 0x0D, 0x00
@@ -77,14 +77,14 @@ start:
     mov di, buffer    ; e.g. 1025
 	add di, 1025
 	; Calculate bytes
-    mov cx, clustermap_entries - bdb_oem + 1   ; 58 bytes total
+    mov cx, sectormap_entries - bdb_oem + 1   ; 58 bytes total
 	; Perform move
     cld
     rep movsb
 
 .ld_s:
 	push es
-	mov bx, clustermap_entries
+	mov bx, sectormap_entries
 	sub bx, bdb_oem
 	add bx, buffer
 	add bx, 1024

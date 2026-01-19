@@ -31,8 +31,8 @@
 #define ANSI_LBLUE(TEXT) "\n" ANSI_COLOR_LBLUE TEXT ANSI_COLOR_RESET
 
 #define FAT_LBA (((drive.reserved_sectors + 1) * drive.bytes_per_sector * drive.sectors_per_cluster))
-#define CLUSTERMAP_LBA (FAT_LBA + (drive.fat_count * drive.sectors_per_fat * drive.bytes_per_sector))
-#define DDATA_LBA (CLUSTERMAP_LBA + (20 * drive.bytes_per_sector))
+#define BASEMAP_LBA (FAT_LBA + (drive.fat_count * drive.sectors_per_fat * drive.bytes_per_sector))
+#define DDATA_LBA (BASEMAP_LBA + (20 * drive.bytes_per_sector))
 
 #define USED_FAT (FAT[0].segment)
 
@@ -69,12 +69,12 @@ typedef struct drive_header{
     uint8_t 	volume_label[11];
     uint8_t 	sys_id[8];
 	// Custom boot record
-	uint16_t clustermap_entries;
+	uint16_t sectormap_entries;
 }__attribute__((packed)) drive_header;
 
-#define LBAget(ull) (ull & 0x7FFFFFFFFFFFFFFF)
-#define FATused(ull) (ull & 0x1000000000000000)
-#define FATusedt(ull) (ull ^ 0x1000000000000000)
+#define LBAget(ull) (((unsigned long long)(ull)) & 0x7FFFFFFFFFFFFFFF)
+#define FATused(ull) (((unsigned long long)(ull)) & 0x1000000000000000)
+#define FATusedt(ull) (((unsigned long long)(ull)) ^ 0x1000000000000000)
 typedef struct FAT_e{
 	// ALWAYS clear top-most bit,
 	// This is the LBA of the file's base Sector.
@@ -194,11 +194,13 @@ void IMG_Setup(char *disk_path);
 
 bool closeFile(char *name);
 int8_t openFile(char *name);
-FAT_e MallocSector(uint32_t max);
+FAT_e MallocSectorSMAP(uint32_t max);
+FAT_e MallocSectorDDATA(uint32_t max);
 bool ptrStep(int8_t ptr, uint8_t file);
 bool FreeSector(uint8_t file, uint32_t ptr);
 void createFile(uint8_t dir, size_t size, char *name, char *mode);
 bool createSector(uint8_t file, char *mode, uint8_t data[Fsector_entries]);
+bool openSectorRecurse(uint8_t progress, uint8_t ext_item, uint8_t file, uint8_t true_depth);
 
 
 uint16_t pack_time(struct tm *t);
