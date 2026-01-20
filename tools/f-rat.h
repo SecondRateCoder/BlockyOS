@@ -51,8 +51,8 @@ typedef struct drive_header{
     uint8_t 	BOOT_Instruction[3],
 				OEM_ID[8];
     uint16_t 	bytes_per_sector;
-    uint8_t 	sectors_per_cluster,
-				reserved_sectors,
+    uint16_t 	sectors_per_cluster;
+	uint8_t		reserved_sectors,
 				fat_count;
     uint16_t 	dir_entries_count,
 				total_sectors;
@@ -65,11 +65,11 @@ typedef struct drive_header{
     // Extended boot record.
     uint8_t 	drive_number,
 				signature;
-    uint32_t 	volume_id[4];
+    uint8_t 	volume_id[4];
     uint8_t 	volume_label[11];
     uint8_t 	sys_id[8];
 	// Custom boot record
-	uint16_t sectormap_entries;
+	uint8_t sectormap_entries;
 }__attribute__((packed)) drive_header;
 
 #define LBAget(ull) (((unsigned long long)(ull)) & 0x7FFFFFFFFFFFFFFF)

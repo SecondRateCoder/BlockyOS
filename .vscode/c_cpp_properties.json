@@ -34,7 +34,7 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "__cdecl"
+                "__cdecl="
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/msys64/ucrt64/bin/gcc",

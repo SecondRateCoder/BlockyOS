@@ -8,7 +8,7 @@ nop
 
 bdb_oem:                   	db 'MSWIN4.1'
 bdb_bytes_per_sector:       dw 128
-bdb_sectors_per_cluster:    db 2
+bdb_sectors_per_cluster:    dw 2
 bdb_reserved_sectors:       db 20
 bdb_fat_count:              db 2
 bdb_dir_entries_count:      dw 0F0h

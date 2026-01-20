@@ -36,6 +36,7 @@ void enable_ansi(void){
 #endif
 
 int main(uint32_t argc, char **argv){
+	default_max = 2000;
 	enable_ansi();
 	IMG_Setup(*(argv + 1));
 	createFile(0, 100, "The 1st File", "rw0");
@@ -128,7 +129,7 @@ FAT_e MallocSectorDDATA(uint32_t max){
 		fread(&temp, sizeof(FrATsector), 1, disk);
 		if(!FATused(temp.FATindex)){
 			FAT = realloc(FAT, (loadedFATs + 1) * sizeof(FAT_e));
-			FAT[loadedFATs] = FATusedt(cc * drive.bytes_per_sector);
+			FAT[loadedFATs].LBA = FATusedt(cc * drive.bytes_per_sector);
 			loadedFATs++;
 			return (FAT_e){.LBA = FATusedt(cc * drive.bytes_per_sector)};
 		}
@@ -197,11 +198,11 @@ bool createSector(uint8_t file, char *mode, uint8_t data[Fsector_entries]){
 bool closeFile(char *name){
 	for(uint8_t cc =0; cc < 10; ++cc){
 		if(openFileNames[cc]){
-			if(!strncmp(openFileNames[cc], name, strlen(name) - 1)){
+			if(!strncmp(openFileNames[cc], name, strlen(name))){
 				fseek(disk, DDATA_LBA + LBAget(FAT[openFiles[cc]->FATindex].LBA), SEEK_SET);
 				printf(ANSI_YELLOW("File Close ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
-				fwrite(openFiles + cc, sizeof(FrATBASEsector), 1, disk);
+				fwrite(openFiles[cc], sizeof(FrATBASEsector), 1, disk);
 				free(openFiles[cc]);
 				openFiles[cc] = NULL;
 				free(openFileNames[cc]);
@@ -216,7 +217,7 @@ bool closeFile(char *name){
 
 bool ptrStep(int8_t ptr, uint8_t file){
 	if(openFiles[file] && file < 10){
-		if(progress[file] + ptr < (openFiles[file])){
+		if(progress[file] + ptr < FrATbs_SIZE(*openFiles[file])){
 			progress[file] += ptr;
 			return true;
 		}
@@ -238,7 +239,7 @@ bool openSectorRecurse(uint8_t progress, uint8_t ext_item, uint8_t file, uint8_t
 	fseek(disk, DDATA_LBA + LBAget(openSectors[file].entries[ext_item].LBA), SEEK_SET);
 	printf(ANSI_YELLOW("File Step ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 	
-	if(fread(openSectors + ext_item, sizeof(FrATsector), 1, disk) == 1){
+	if(fread(openSectors + file, sizeof(FrATsector), 1, disk) == 1){
 		if(openSectors[file].depth == true_depth){return true;}
 		else{return openSectorRecurse(progress++, ext_item, file, true_depth);}
 	}
@@ -268,7 +269,7 @@ int8_t openFile(char *name){
 
 				if(fread(sector, sizeof(FrATsector), 1, disk) == 1){
 					if(FrATs_NAME(sector->flags)){
-						if(!strncmp(sector->data + 48, name, strlen(name) - 1)){
+						if(!strncmp(sector->data + 48, name, strlen(name))){
 							progress[out]= 0;
 							openFileNames[out] = strdup(sector->data + 48);
 							free(sector);
@@ -278,10 +279,12 @@ int8_t openFile(char *name){
 				}
 			}
 			free(sector);
+			printf(ANSI_RED("Failed to read file: %s"), name);
 		}
 	}
 	openFiles[out] = NULL;
 	free(ptr);
+	return -1;
 }
 
 const char DIGITS[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";

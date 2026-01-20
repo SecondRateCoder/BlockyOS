@@ -2,6 +2,7 @@ param(
 	[string]$Date,
 	[string]$NASM,
 	[string]$WCC,
+	[string]$GCC,
 	[string]$WLINK
 )
 
@@ -14,14 +15,24 @@ $Objdir = Join-Path $Build "objs"
 $Log = Join-Path $Build ("log_.txt")
 $Log_st1 = Join-Path $Build ("log_st1.txt")
 
-$BOOTA = (Join-Path (Get-Location) "src/Boot/stage2/boot.asm")
-$BOOTC = (Join-Path (Get-Location) "src/Boot/stage2/boot.c")
+$BOOT16A = (Join-Path (Get-Location) "src/Boot/stage2/boot16.asm")
+$BOOT16A_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT16A))_a2.obj"
+
+$BOOT32A = (Join-Path (Get-Location) "src/Boot/stage2/boot32.asm")
+$BOOT32A_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT32A))_a2.obj"
+
+$BOOT16C = (Join-Path (Get-Location) "src/Boot/stage2/boot16.c")
+$BOOT16C_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT16C))_c2.obj"
+
+$BOOT32C = (Join-Path (Get-Location) "src/Boot/stage2/boot32.c")
+$BOOT32C_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT32C))_c2.obj"
+
 $STRINGC = (Join-Path (Get-Location) "src/kernel/public/public/memory/string.c")
-$MEMC = (Join-Path (Get-Location) "src/kernel/public/public/memory/memory.c")
-$BOOTA_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT))_a2.obj"
-$BOOTC_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOTC))_c2.obj"
 $STRINGC_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($STRINGC))_c2.obj"
+
+$MEMC = (Join-Path (Get-Location) "src/kernel/public/public/memory/memory.c")
 $MEMC_OBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($MEMC))_c2.obj"
+
 $ST2_BIN = Join-Path -Path $Objdir "boot2.bin"
 
 function Log-Write{
@@ -85,14 +96,25 @@ $WCC = "C:\WATCOM\binnt64\wcc.exe"
 Log-Write -Msg (
 	"$($WCC) $($Command -join " ")"
 ) -Color Yellow
-$WCC_OUT = & $WCC "-fo=$($BOOTC_OBJ -replace "\\","/")" $Command "$($BOOTC -replace "\\","/")"
-Log-Write -Msg "WCC: $($WCC_OUT)" -Color Yellow
-$WCC_OUT = & $WCC "-fo=$($STRINGC_OBJ -replace "\\","/")" $Command "$($STRINGC -replace "\\","/")"
-Log-Write -Msg "WCC: $($WCC_OUT)" -Color Yellow
-$WCC_OUT = & $WCC "-fo=$($MEMC_OBJ -replace "\\","/")" $Command "$($MEMC -replace "\\","/")"
-Log-Write -Msg "WCC: $($WCC_OUT)" -Color Yellow
+# Compile all 16-bit files
+$WCC_OUT = & $WCC "-fo=$($BOOT16C_OBJ -replace "\\","/")" $Command "$($BOOT16C -replace "\\","/")"
+Log-Write -Msg "WCC: $($WCC_OUT -join '`n')" -Color Yellow
 
-$NASM_OUT = & $NASM "-f" "obj" $BOOTA "-o" $BOOTA_OBJ
+$WCC_OUT = & $WCC "-fo=$($STRINGC_OBJ -replace "\\","/")" $Command "$($STRINGC -replace "\\","/")"
+Log-Write -Msg "WCC: $($WCC_OUT -join '`n')" -Color Yellow
+
+$WCC_OUT = & $WCC "-fo=$($MEMC_OBJ -replace "\\","/")" $Command "$($MEMC -replace "\\","/")"
+Log-Write -Msg "WCC: $($WCC_OUT -join '`n')" -Color Yellow
+
+# Compile 32-bit files
+$GCC_OUT = & $GCC "-c" $BOOT32C "-o" $BOOT32C_OBJ
+Log-Write -Msg "WCC: $($GCC_OUT -join '`n')" -Color Yellow
+
+# Compile 16-bit .asm
+$NASM_OUT = & $NASM "-f" "obj" $BOOT16A "-o" $BOOT16A_OBJ
+Log-Write -Msg "NASM: $($NASM_OUT)" -Color Yellow
+# Compile 16-bit .asm
+$NASM_OUT = & $NASM "-f" "obj" $BOOT32A "-o" $BOOT32A_OBJ
 Log-Write -Msg "NASM: $($NASM_OUT)" -Color Yellow
 
 # build args safely
@@ -124,7 +146,9 @@ ORDER
 # $args_ = @("@$(Join-Path $Objdir 'wlink.lnk')")
 $args_ = @(
 	"NAME" , "$($ST2_BIN)", 
-	"FILE", "$($BOOTA_OBJ)", "FILE", "$($BOOTC_OBJ)", "FILE", "$($STRINGC_OBJ)", "FILE", "$($MEMC_OBJ)", 
+	"FILE", "$($BOOT16A_OBJ)", "FILE", "$($BOOT32A_OBJ)",
+	"FILE", "$($BOOT16C_OBJ)", "FILE", "$($BOOT32C_OBJ)", 
+	"FILE", "$($STRINGC_OBJ)", "FILE", "$($MEMC_OBJ)", 
 	"OPTION", "MAP=$(Join-Path $Build "wlink.map")", "@$(Join-Path $Objdir 'wlink.lnk')"
 )
 Log-Write -Msg "`n`nwlink $($args_ -join ' ')`n`n" -Color Yellow

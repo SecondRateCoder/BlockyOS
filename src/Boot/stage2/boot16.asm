@@ -191,7 +191,129 @@ __I8LS:
     pop  bp
     ret
 
+global _int16disable
+;	void int16disable(void)
+_int16disable:
+	cli
+	push ax
+	in al, 0x70
+	or al, 80h
+	out  0x70, al
+	pop ax
+    ret
+global _int16enable
+;	void int16enable(void)
+_int16enable:
+	sti
+	push ax
+	in   al, 0x70
+	and  al, 7Fh
+	out  0x70, al
+	pop ax
+    ret
 
+
+global _switch16_32
+;   void switch16_32(GDTdesc __far *, IDTdesc __far*, void(__far __cdecl *func)(void))
+_switch16_32:
+    [bits 16]
+    ; Save registers
+    push bp
+    mov bp, sp
+    push ax
+
+
+    call _int16disable
+.TestA20:
+	; Test for Memory Wrap-around
+    mov ax, 0x0500
+    mov ds, ax
+    mov word [0], 0xBEEF
+
+    ; Read from 0x100500 (wraps to 0x0500 if A20 is disabled)
+    mov ax, 0x1005
+    mov ds, ax
+    cmp word [0], 0xBEEF
+	; Memory Wrap-around failed, 0xBEEF and [edx] are not the same
+	jnz .LoadGDT
+	; Memory Wrap-around worked, 0xBEEF and [edx] are the same
+.EnableA20:
+    ; Disable Keyboard
+    call .A20WaitIn16
+    mov al, KbdCtrlDisable
+    out KbdCtrlCmdPort, al
+    ; Read Controller Out Port
+    call .A20WaitIn16
+    mov al, KbdCtrlReadOutPort
+    out KbdCtrlCmdPort, al
+    
+    call .A20WaitOut16
+    in al, KbdCtrlDataPort
+    push eax
+
+    ; Write Controller out port
+    call .A20WaitIn16
+    mov al, KbdCtrlWriteOutPort
+    out KbdCtrlCmdPort, al
+
+	; Enable A20 Gate bit
+    call .A20WaitIn16
+    pop eax
+    or al, 2		; Bit 2 is the A20 flag bit
+	out KbdCtrlDataPort, al
+
+	; Re-enable Keyboard
+	call .A20WaitIn16
+	mov al, KbdCtrlEnable
+	out KbdCtrlCmdPort, al
+.LoadGDT:
+	push es
+	mov es, [bp + 6]		; Segment
+	push bx
+	mov bx, [bp + 8]		; Offset
+	lgdt [es:bx]
+	pop bx
+	pop es
+.LoadIDT:
+	push es
+	mov es, [bp + 10]		; Segment
+	push bx
+	mov bx, [bp + 12]		; Offset
+	lidt [es:bx]
+	pop bx
+	pop es
+	jmp .finish
+.A20WaitIn16:
+	; Wait till bit 2 is 0
+	in al, KbdCtrlCmdPort
+	test al, 2
+	jnz .A20WaitIn16
+	ret
+.A20WaitOut16:
+	; Wait until Bit 1 is not 0
+	in al, KbdCtrlCmdPort
+	test al, 1
+	jz .A20WaitOut16
+	ret
+
+.finish:
+	; Setup to jmp to func
+	mov es, [bp + 14]
+	mov bx, [bp + 16]
+    leave
+	mov eax, cr0
+	or eax, 1
+	mov cr0, eax
+    jmp dword [es:bx]
+
+KbdCtrlDataPort             	equ 0x60
+KbdCtrlCmdPort              	equ 0x64
+
+KbdCtrlDisable              	equ 0xAE
+KbdCtrlEnable             		equ 0xAD
+
+KbdCtrlReadOutPort             equ 0xAE
+KbdCtrlWriteOutPort            equ 0xAD
 
 msg_bt2: db 'This is Boot2', ENDL, 0
 buffer:

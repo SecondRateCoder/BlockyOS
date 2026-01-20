@@ -1,12 +1,5 @@
 #include "kernel/public/public/public.h"
 
-// #define __far
-// #define __cdecl
-
-#define PF_DSTEP_WORD 1
-#define PF_DSTEP_LONG 2
-#define PF_DSTEP_LONG_LONG 4
-
 //* Assembly Functions
 #define putc(c) put_vidteletype((c), 00)
 #define puts(ptr) puts_vidteletype(00, (char __far *)(ptr))
@@ -18,20 +11,17 @@ extern void __cdecl bochs_breakpoint(void);
 extern void __cdecl put_vidteletype(uint16_t c, uint16_t page);
 extern void __cdecl puts_vidteletype(char page, char __far *ptr);
 // Division helpers
-#define div64_32(dividend, divisor, result, remainder) div64_32_((uint64_t)(dividend), (uinl32_t)(divisor), (uint64_t __far *)(result), (uint32_t __far *)(remainder))
-extern void __cdecl div64_32_(uint64_t dividend, uinl32_t divisor, uint64_t __far *result, uint32_t __far *remainder);
+#define div64_32(dividend, divisor, result, remainder) div64_32_((uint64_t)(dividend), (uinl32_t)(divisor), (uint64_t __far *)(result), (uinl32_t __far *)(remainder))
+extern void __cdecl div64_32_(uint64_t dividend, uinl32_t divisor, uint64_t __far *result, uinl32_t __far *remainder);
 extern unsigned short __cdecl __U8LS(unsigned char dividend, unsigned char divisor);
 extern short __cdecl __I8LS(signed char value, unsigned char shift);
 
-#define ENDL "\r\n\0"
+// Helpers
+extern void int16disable(void);
+extern void int16enable(void);
+extern void switch16_32(gdtDESC_t __far * gdt, void __far * idt, void(__far __cdecl *func)(void));
 
-// C Types
-char g_hexes[];
-// C Functions
-void main16(uint16_t header_ptr);
-void printf16(char *str, ...);
-// Returns char[32]
-char *printarg16(uint16_t *argp, uint8_t words, bool sign, uint8_t radix, bool printin, bool attach_sign);
+#define ENDL "\r\n\0"
 
 #pragma pack(push, 1)
 typedef struct drive_header{
@@ -46,13 +36,13 @@ typedef struct drive_header{
     uint16_t 	sectors_per_fat,
 				sectors_per_track,
 				heads;
-    uint32_t 	hidden_sectors,
+    uinl32_t 	hidden_sectors,
 				large_sector_count;
     // Extended boot record.
     uint8_t 	drive_number,
 				signature;
 union{
-    uint32_t 	volume_id;
+    uinl32_t 	volume_id;
     uint8_t     volume_id_bytes[4];
 };
     uint8_t 	volume_label[11];
@@ -60,6 +50,27 @@ union{
 	// Custom boot record
 	uint8_t segment_clusters;
 } drive_header;
+
+typedef struct gdtENTRY_t{
+    union{
+        struct{
+            uint16_t limit;
+            uint16_t base_upper;      uint8_t base_lower;
+            uint8_t access_flags;
+            uint8_t gran_limit;
+            uint8_t base_high;
+        };
+        size_t ENTRY[2];
+    };
+}gdtENTRY_t;
+
+typedef struct gdtDESC_t{
+    // Byte size of GDT table
+    uint16_t limit;
+
+    // Address of GDT table
+    gdtENTRY_t __far *address;
+}gdtDESC_t;
 #pragma pack(pop)
 
 extern drive_header bt1_drive_header;

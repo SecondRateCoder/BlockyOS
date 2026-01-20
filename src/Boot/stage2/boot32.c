@@ -1,16 +1,19 @@
 #include "boot.h"
 
-char g_hexes[] = "0123456789ABCDEF";
+#define PF_DSTEP_WORD 2
+#define PF_DSTEP_LONG 2
+#define PF_DSTEP_LONG_LONG 4
 
-void main16(uint16_t header_ptr){
-    char *temp = "Hi, this is a test from Boot 2..." ENDL;
-    puts(temp);
-    bochs_breakpoint();
-    printf16((char *)("Freaky Signed: %%, %dl, %di, %da, %c%c, 0x%uxh, %dz, %s." ENDL), -7l, (int)-6, (int8_t)-5, 'H', 'I', (signed short)-16, (signed long long)-8854ll, (char __far *)"Freaking monkey yolo");
-    printf16((char *)("Freaky Unsigned: %udl, 0x%uxi, %uba, %c, %ubh, 0x%uxz." ENDL), 749ul, (unsigned int)76, true, 'h', (unsigned short)4u, 885430ull);
-    65535ull;
-    0x82BF;
-    halt();
+char g_hexes32[];
+// C Functions
+void main32(uint16_t header_ptr);
+void printf32(char *str, ...);
+// Returns char[32]
+char *printarg32(uint16_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool printin, bool attach_sign);
+char g_hexes32[] = "0123456789ABCDEF";
+
+void __far _cdecl main32(void){
+
 }
 
 // Follow with flags, 
@@ -29,11 +32,11 @@ void main16(uint16_t header_ptr){
 // %i: integer
 // %z: long long    //! A bit dodgy, dont even know why asw
 // %s: string
-void printf16(char *fmt, ...){
+void printf32(char *fmt, ...){
     bool sign = true;
     uint8_t radix = 10;
-    uint16_t *argp = (uint16_t *)(&fmt + 1);
-    uint32_t words = 0;
+    uinl32_t *argp = (uint16_t *)(&fmt + 1);
+    uinl32_t doubles = 0;
     while(*fmt){
         if(*fmt == '%'){
             fmt++;
@@ -62,16 +65,16 @@ void printf16(char *fmt, ...){
             switch(*fmt){
                 case 's': {	// string
                     // bochs_breakpoint();
-                    uint16_t ofs = argp[words];
-                    uint16_t seg = argp[words + 1];
-                    char __far *fp = (char __far *)(((uint32_t)seg << 16) | ofs);
+                    uint16_t ofs = argp[doubles];
+                    uint16_t seg = argp[doubles + 1];
+                    char __far *fp = (char __far *)(((uinl32_t)seg << 16) | ofs);
                     puts(fp);   // Try both
-                    words += 2;
+                    doubles += 2;
                     break;
                 }
                 case 'z': {	// long long
-                    printarg16(argp + words, 4, sign, radix, true, (radix == 16? false: true));
-                    words += 4;
+                    printarg32(argp + doubles, 4, sign, radix, true, (radix == 16? false: true));
+                    doubles += 4;
                     break;
                 }
                 case '%': {
@@ -79,19 +82,23 @@ void printf16(char *fmt, ...){
                     break;
                 }
                 case 'c': {	// char
-                    putc(*(argp + words));
-                    words++;
+                    putc(*(argp + doubles));
+                    doubles++;
                     break;
                 }
-                case 'i':	// integer
+                case 'i': {	// integer
+                    printarg32(argp + doubles, 2, sign, radix, true, (radix == 16? false: true));
+                    doubles+=2;
+                    break;
+                }
                 case 'h': 	// short
                 case 'a':	// byte
-                    printarg16(argp + words, 1, sign, radix, true, (radix == 16? false: true));
-                    words++;
+                    printarg32(argp + doubles, 1, sign, radix, true, (radix == 16? false: true));
+                    doubles++;
                     break;
                 case 'l':	// long
-                    printarg16(argp + words, 2, sign, radix, true, (radix == 16? false: true));
-                    words += 2;
+                    printarg32(argp + doubles, 2, sign, radix, true, (radix == 16? false: true));
+                    doubles += 2;
                     break;
             }
         }else{putc(*fmt);}
@@ -99,14 +106,15 @@ void printf16(char *fmt, ...){
     }
 }
 
-char *printarg16(uint16_t *argp, uint8_t words, bool sign, uint8_t radix, bool printin, bool attach_sign){
+char *printarg32(uint16_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool printin, bool attach_sign){
     static char out[32];
-    uint64_t num = 0;uint32_t rem;
+    uint64_t num = 0;
+    uinl32_t rem;
     int8_t num_sign = 1;
     int8_t pos = 0;
-    switch(words){
+    switch(doubles){
         case PF_DSTEP_WORD: {
-            num = (unsigned char)(*argp);
+            num = (unsigned long)(*argp);
             if(sign){
                 signed char n = (signed char)(*argp);
                 if(n < 0){n = -n;   num_sign = -1;}
@@ -114,17 +122,17 @@ char *printarg16(uint16_t *argp, uint8_t words, bool sign, uint8_t radix, bool p
             }
             break;
         }
-        case PF_DSTEP_LONG: {
-            int16_t low = *argp;
-            int16_t high = *(argp + 1);
-            num = (uinl32_t)(((uinl32_t)high << 16) | low);
-            if(sign){
-                long sval = (long)(((long)high << 16) | low);
-                if(low < 0 || high < 0){sval = -sval;      num_sign = -1;}
-                num = (unsigned long)sval;
-            }
-            break;
-        }
+        // case PF_DSTEP_LONG: {
+        //     int16_t low = *argp;
+        //     int16_t high = *(argp + 1);
+        //     num = (uinl32_t)(((uinl32_t)high << 16) | low);
+        //     if(sign){
+        //         long sval = (long)(((long)high << 16) | low);
+        //         if(low < 0 || high < 0){sval = -sval;      num_sign = -1;}
+        //         num = (unsigned long)sval;
+        //     }
+        //     break;
+        // }
         case PF_DSTEP_LONG_LONG: {
             num = ((unsigned long long)argp[3] << 48) | ((unsigned long long)argp[2] << 32) |
                   ((unsigned long long)argp[1] << 16) | (unsigned long long)argp[0];
@@ -142,7 +150,7 @@ char *printarg16(uint16_t *argp, uint8_t words, bool sign, uint8_t radix, bool p
         // uint32_t rem = num % radix;
 		// num /= radix;
         div64_32(num, radix, &num, &rem);
-        out[pos++] = g_hexes[rem];
+        out[pos++] = g_hexes32[rem];
     }while(num);
     if(sign && num_sign < 0 && attach_sign){out[pos++] = '-';}
     if(printin){while(--pos >= 0){putc(out[pos]);}}

@@ -1,0 +1,14 @@
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c(53): Warning! W138: No newline at end of file
+WCC: Open Watcom C x86 16-bit Optimizing Compiler`nVersion 2.0 beta Dec 15 2025 03:01:27 (64-bit)`nCopyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved.`nPortions Copyright (c) 1984-2002 Sybase, Inc. All Rights Reserved.`nSource code is available under the Sybase Open Watcom Public License.`nSee https://github.com/open-watcom/open-watcom-v2#readme for details.`nC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.c: 54 lines, included 270, 1 warnings, 0 errors
+WCC: 
+NASM: 
+NASM: 
+
+
+wlink NAME C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-20-58\objs\boot2.bin FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-20-58\objs\boot16_a2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-20-58\objs\boot32_a2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-20-58\objs\boot16_c2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-20-58\objs\boot32_c2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-20-58\objs\string_c2.obj FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-20-58\objs\memory_c2.obj OPTION MAP=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-20-58\wlink.map @C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-20-58\objs\wlink.lnk
+
+
+
+
+
+wlink failed
