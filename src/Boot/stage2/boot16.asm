@@ -4,7 +4,7 @@ section _ENTRY class=CODE
 db 103
 
 global bt1_drive_header_
-extern main16_
+extern main32_
 
 bt1_drive_header_: times 58 db 0
 jmp short _start
@@ -25,7 +25,11 @@ _start:
 	sti
 
     ; Jump to boot2's .c file
-	call main16_
+	push word gdtDesc
+	push word idtDesc
+	push cs
+	push word main32
+	call _switch16_32
 ; void halt16(void)
 halt16:
     [bits 16]
@@ -202,6 +206,7 @@ __I8LS:
 global _int16disable
 ;	void int16disable(void)
 _int16disable:
+	[bits 16]
 	cli
 	push ax
 	in al, 0x70
@@ -212,6 +217,7 @@ _int16disable:
 global _int16enable
 ;	void int16enable(void)
 _int16enable:
+	[bits 16]
 	sti
 	push ax
 	in   al, 0x70
@@ -229,7 +235,6 @@ _switch16_32:
     push bp
     mov bp, sp
     push ax
-
 
     call _int16disable
 .TestA20:
