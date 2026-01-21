@@ -1,8 +1,7 @@
 #include "boot.h"
 
-#define PF_DSTEP_WORD 2
-#define PF_DSTEP_LONG 2
-#define PF_DSTEP_LONG_LONG 4
+#define PF_DSTEP_LONG 		1
+#define PF_DSTEP_LONG_LONG 	4
 
 char g_hexes32[];
 // C Functions
@@ -12,8 +11,11 @@ void printf32(char *str, ...);
 char *printarg32(uint16_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool printin, bool attach_sign);
 char g_hexes32[] = "0123456789ABCDEF";
 
-void __far _cdecl main32(void){
-
+void __far main32(void){
+	printf(
+		"Formatted 32-bit string: %a, %c, %h, %l, %i, %z, %s",
+		(u8_t)99u, 'H', (short)88u, 66ul, (int)98u, 3334848348ull, "Look, it's a Negro"
+	);
 }
 
 // Follow with flags, 
@@ -64,17 +66,17 @@ void printf32(char *fmt, ...){
             fmt += offs_;
             switch(*fmt){
                 case 's': {	// string
-                    // bochs_breakpoint();
-                    uint16_t ofs = argp[doubles];
-                    uint16_t seg = argp[doubles + 1];
-                    char __far *fp = (char __far *)(((uinl32_t)seg << 16) | ofs);
+                    // https://board.flatassembler.net/topic.php?t=19467
+                    uinl32_t ofs = argp[doubles];
+                    uinl32_t seg = argp[doubles + 1];
+                    char *fp = (char *)(((uinl64_t)seg << 32) | ofs);
                     puts(fp);   // Try both
                     doubles += 2;
                     break;
                 }
                 case 'z': {	// long long
                     printarg32(argp + doubles, 4, sign, radix, true, (radix == 16? false: true));
-                    doubles += 4;
+                    doubles += 2;
                     break;
                 }
                 case '%': {
@@ -88,7 +90,7 @@ void printf32(char *fmt, ...){
                 }
                 case 'i': {	// integer
                     printarg32(argp + doubles, 2, sign, radix, true, (radix == 16? false: true));
-                    doubles+=2;
+                    doubles++;
                     break;
                 }
                 case 'h': 	// short
@@ -98,7 +100,7 @@ void printf32(char *fmt, ...){
                     break;
                 case 'l':	// long
                     printarg32(argp + doubles, 2, sign, radix, true, (radix == 16? false: true));
-                    doubles += 2;
+                    doubles ++;
                     break;
             }
         }else{putc(*fmt);}
@@ -113,26 +115,15 @@ char *printarg32(uint16_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool
     int8_t num_sign = 1;
     int8_t pos = 0;
     switch(doubles){
-        case PF_DSTEP_WORD: {
+        case PF_DSTEP_LONG: {
             num = (unsigned long)(*argp);
             if(sign){
-                signed char n = (signed char)(*argp);
+                signed char n = (signed long)(*argp);
                 if(n < 0){n = -n;   num_sign = -1;}
-                num = (unsigned char)n;
+                num = (unsigned long)n;
             }
             break;
         }
-        // case PF_DSTEP_LONG: {
-        //     int16_t low = *argp;
-        //     int16_t high = *(argp + 1);
-        //     num = (uinl32_t)(((uinl32_t)high << 16) | low);
-        //     if(sign){
-        //         long sval = (long)(((long)high << 16) | low);
-        //         if(low < 0 || high < 0){sval = -sval;      num_sign = -1;}
-        //         num = (unsigned long)sval;
-        //     }
-        //     break;
-        // }
         case PF_DSTEP_LONG_LONG: {
             num = ((unsigned long long)argp[3] << 48) | ((unsigned long long)argp[2] << 32) |
                   ((unsigned long long)argp[1] << 16) | (unsigned long long)argp[0];
