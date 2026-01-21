@@ -23,6 +23,7 @@ typedef unsigned long long uint64_t;
 typedef signed long long int64_t;
 #define u64_t uint64_t
 #define size_t uint64_t
+#define uinl64_t uint64_t
 #define i64_t int64_t
 #define ssize_t int64_t
 

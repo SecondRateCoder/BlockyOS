@@ -3,8 +3,10 @@ bits 32
 section _ENTRY class=CODE
 db 103
 
-global bt1_drive_header_
-extern main32_
+global bt1_drive_header
+extern main32
+extern gdtDesc
+extern idtDesc
 
 bt1_drive_header_: times 58 db 0
 jmp short _start
@@ -311,12 +313,14 @@ _switch16_32:
 
 .finish:
 	; Setup to jmp to func
-	mov es, [bp + 14]
-	mov bx, [bp + 16]
+	mov ebx, [bp + 14]
+    mov eax, cr0
+    or eax, 1
+    mov cr0, eax
 	jmp dword 0000h:.pmode
 .pmode:
 	[bits 32]
-	jmpf [es:bx]
+	jmp dword edx
 
 KbdCtrlDataPort             	equ 0x60
 KbdCtrlCmdPort              	equ 0x64

@@ -1,5 +1,5 @@
-#include "../src/kernel/public/public/math/int/_int.h"
-#include "../src/kernel/public/public/math/int/_bool.h"
+#include "_int.h"
+#include "_bool.h"
 
 size_t decode64(const uint8_t *array){
     size_t value = 0;

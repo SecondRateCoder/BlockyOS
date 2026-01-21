@@ -1,4 +1,4 @@
-#include "../public/public.h"
+#include "public.h"
 
 void printf32(char *fmt, ...){
     bool sign = true;
@@ -35,7 +35,7 @@ void printf32(char *fmt, ...){
                     // bochs_breakpoint();
                     uint16_t ofs = argp[words];
                     uint16_t seg = argp[words + 1];
-                    char __far *fp = (char __far *)(((uint32_t)seg << 16) | ofs);
+                    char  *fp = (char  *)(((uint32_t)seg << 16) | ofs);
                     puts(fp);   // Try both
                     words += 2;
                     break;

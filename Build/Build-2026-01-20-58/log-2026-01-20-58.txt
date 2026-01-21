@@ -1,2 +1,0 @@
-NASM: 
-Byte array of size: 512 padded with size: 0, starting at address: 0 and ending at address: 512

@@ -1,6 +1,4 @@
- bits 16
-org 0x7C00
-; 0xf0000:e05b
+bits 16
 
 ; FAT12 Headers:
 jmp short start

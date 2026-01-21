@@ -11,8 +11,7 @@ param(
 $Build = Join-Path (Get-Location) ("Build/Build-" + $Date)
 $Image = Join-Path $Build ("floppy-$($Date).img")
 $Objdir = Join-Path $Build "objs"
-$Log = Join-Path $Build ("log_.txt")
-$Log_st1 = Join-Path $Build ("log_st1.txt")
+$Log = Join-Path $Build ("logST2.txt")
 
 $BOOT16A = (Join-Path (Get-Location) "src/Boot/stage2/boot16.asm")
 $BOOT16AOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT16A)).obj"
@@ -55,49 +54,50 @@ function Img-Push {
 	}finally{$file.Close()}
 }
 
-Start-Transcript -Path $Log_st1 -Append
-
 $COMPILECLI = @(
-	"-nostdlib", "-i", "$(Join-Path (Get-Location) "src/kernel/")",
-	"-fdiagnostics-color=always",
-	2<&1
+	"-nostdlib", "-I", "$(Join-Path (Get-Location) "src/")",
+	"-fdiagnostics-color=always", "-m32",
+	"-std=c99"
 )
 
 # Compile all 32-bit files
 # boot32.c
-$GCC_OUT = & $GCC "-c" $BOOT32C "-o" $BOOT32COBJ $COMPILECLI
-Log-Write -Msg "GCC: $($GCC_OUT -join '`n')" -Color Yellow
+Log-Write -Msg "`n$($GCC) -c $($BOOT32C) -o $($BOOT32COBJ) $($COMPILECLI -join ' ')`n" -Color White
+$GCC_OUT = (& $GCC "-c" $BOOT32C "-o" $BOOT32COBJ $COMPILECLI) 2>&1
+$GCC_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 # string.c
-$GCC_OUT = & $GCC "-c" $STRINGC "-o" $STRINGCOBJ $COMPILECLI
-Log-Write -Msg "GCC: $($GCC_OUT -join '`n')" -Color Yellow
+Log-Write -Msg "`n$($GCC) -c $($STRINGC) -o $($STRINGCOBJ) $($COMPILECLI -join ' ')`n" -Color White
+$GCC_OUT = (& $GCC "-c" $STRINGC "-o" $STRINGCOBJ $COMPILECLI) 2>&1
+$GCC_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 # mem.c
-$GCC_OUT = & $GCC "-c" $MEMC "-o" $MEMCOBJ $COMPILECLI
-Log-Write -Msg "GCC: $($GCC_OUT -join '`n')" -Color Yellow
+Log-Write -Msg "`n$($GCC) -c $($MEMC) -o $($MEMCOBJ) $($COMPILECLI -join ' ')`n" -Color White
+$GCC_OUT = (& $GCC "-c" $MEMC "-o" $MEMCOBJ $COMPILECLI) 2>&1
+$GCC_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 
-# Compile  boot16.asm
-$NASM_OUT = & $NASM "-f" "obj" $BOOT16A "-o" $BOOT16AOBJ
-Log-Write -Msg "NASM: $($NASM_OUT)" -Color Yellow
+# Compile boot16.asm
+Log-Write -Msg "`n$($NASM) -f obj $($BOOT16A) -o $($BOOT16AOBJ)`n" -Color White
+$NASM_OUT = (& $NASM "-f" "obj" $BOOT16A "-o" $BOOT16AOBJ) 2>&1# | grc --colour=on
+$NASM_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 
 # build files
 New-Item -Path $ST2BIN -ItemType File -Force
 
 # gcc link
 $args_ = @(
-	"-c" $BOOT32COBJ, "-c" $STRINGCOBJ, "-c" $MEMCOBJ, 
-	"-flinker-output=exec", "-nodefaultlibs", "-nostartfiles",
-	"-T", "$(Join-Path (Get-Location) "kernel/Boot/stage1/boot.ld")",
-	2<&1
+	$BOOT32COBJ, $STRINGCOBJ, $MEMCOBJ, 
+	"-o", $ST2BIN,
+	"-nodefaultlibs", "-nostartfiles",
+	"-fdiagnostics-color=always",
+	"-T", "$(Join-Path (Get-Location) "/src/Boot/stage2/boot.ld")"
 )
-Log-Write -Msg "`n`nwlink $($args_ -join ' ')`n`n" -Color Yellow
-$GLINK_OUT = & $GCC @args_
-Log-Write -Msg "$($GLINK_OUT -join "`n")" -Color Yellow
+Log-Write -Msg "`n$($GCC) $($args_ -join ' ')`n" -Color White
+$GLINK_OUT = (& $GCC @args_) 2>&1
+$GLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 
 if ($LASTEXITCODE -ne 0) {
-	Log-Write -Msg "wlink failed" -Color Red
+	Log-Write -Msg "GCC link failed" -Color Red
 	throw "Linking failed..."
 }
 Log-Write -Msg "Linked: $($ST2BIN)" -Color Green
 
 Img-Push -data (Get-Content -Path $ST2BIN -Raw -Encoding Byte)
-
-Stop-Transcript

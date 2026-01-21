@@ -22,22 +22,28 @@
                 "-zl",
                 "-zq",
                 "-zastd=c99",
-                "-i=C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\kernel\\public\\"
+                "-i=C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\"
             ]
         },
         {
             "name": "GCC",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}//src//"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "__cdecl="
+                "__cdecl=",
+                "__far="
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/msys64/ucrt64/bin/gcc",
+            "compilerArgs": [
+                "-nostdlib", 
+                "-I", "${workspaceFolder}//src//",
+                "-fdiagnostics-color=always"
+            ],
             "cStandard": "c99"
         }
     ],

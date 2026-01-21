@@ -1,7 +1,9 @@
 #pragma once
 
-#define _BOOL bool
+#ifndef __cplusplus
 
 typedef unsigned char bool;
-#define true 1
+#define true  1
 #define false 0
+
+#endif

@@ -1,0 +1,86 @@
+
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-21-45\objs\boot32.obj -nostdlib -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -fdiagnostics-color=always -m32 -std=c99
+
+In file included from [01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/public.h:5[m[K,
+                 from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.h:2[m[K,
+                 from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:1[m[K:
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.h:5:6:[m[K [01;35m[Kwarning: [m[Kconflicting types for built-in function '[01m[Kmemcpy[m[K'; expected '[01m[Kvoid *(void *, const void *, unsigned int)[m[K' [[01;35m[K-Wbuiltin-declaration-mismatch[m[K]
+    5 | void [01;35m[Kmemcpy[m[K(void *dst, void *src, size_t len);
+      |      [01;35m[K^~~~~~[m[K
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.h:1:1:[m[K [01;36m[Knote: [m[K'[01m[Kmemcpy[m[K' is declared in header '[01m[K<string.h>[m[K'
+  +++ |+[32m[K#include <string.h>[m[K
+    1 | #pragma once
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.h:6:6:[m[K [01;35m[Kwarning: [m[Kconflicting types for built-in function '[01m[Kmemcmp[m[K'; expected '[01m[Kint(const void *, const void *, unsigned int)[m[K' [[01;35m[K-Wbuiltin-declaration-mismatch[m[K]
+    6 | bool [01;35m[Kmemcmp[m[K(void *a, void *b, size_t len);
+      |      [01;35m[K^~~~~~[m[K
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.h:6:6:[m[K [01;36m[Knote: [m[K'[01m[Kmemcmp[m[K' is declared in header '[01m[K<string.h>[m[K'
+In file included from [01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/public.h:6[m[K:
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/string.h:7:8:[m[K [01;35m[Kwarning: [m[Kconflicting types for built-in function '[01m[Kstrlen[m[K'; expected '[01m[Kunsigned int(const char *)[m[K' [[01;35m[K-Wbuiltin-declaration-mismatch[m[K]
+    7 | size_t [01;35m[Kstrlen[m[K(char *str);
+      |        [01;35m[K^~~~~~[m[K
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/string.h:1:1:[m[K [01;36m[Knote: [m[K'[01m[Kstrlen[m[K' is declared in header '[01m[K<string.h>[m[K'
+  +++ |+[32m[K#include <string.h>[m[K
+    1 | #pragma once
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:31:16:[m[K [01;35m[Kwarning: [m[Kinitialization discards '[01m[Kconst[m[K' qualifier from pointer target type [[01;35m[K-Wdiscarded-qualifiers[m[K]
+   31 |     .address = [01;35m[KgdtTABLE16[m[K,
+      |                [01;35m[K^~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:[m[K In function '[01m[Kprintf32[m[K':
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:95:32:[m[K [01;35m[Kwarning: [m[Kcast to pointer from integer of different size [[01;35m[K-Wint-to-pointer-cast[m[K]
+   95 |                     char *fp = [01;35m[K([m[Kchar *)(((uinl64_t)seg << 32) | ofs);
+      |                                [01;35m[K^[m[K
+
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\string.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-21-45\objs\string.obj -nostdlib -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -fdiagnostics-color=always -m32 -std=c99
+
+In file included from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\string.h:3[m[K,
+                 from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\string.c:1[m[K:
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.h:5:6:[m[K [01;35m[Kwarning: [m[Kconflicting types for built-in function '[01m[Kmemcpy[m[K'; expected '[01m[Kvoid *(void *, const void *, unsigned int)[m[K' [[01;35m[K-Wbuiltin-declaration-mismatch[m[K]
+    5 | void [01;35m[Kmemcpy[m[K(void *dst, void *src, size_t len);
+      |      [01;35m[K^~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.h:4:1:[m[K [01;36m[Knote: [m[K'[01m[Kmemcpy[m[K' is declared in header '[01m[K<string.h>[m[K'
+    3 | #include "./kernel/public/public/public.h"
+  +++ |+[32m[K#include <string.h>[m[K
+    4 | 
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.h:6:6:[m[K [01;35m[Kwarning: [m[Kconflicting types for built-in function '[01m[Kmemcmp[m[K'; expected '[01m[Kint(const void *, const void *, unsigned int)[m[K' [[01;35m[K-Wbuiltin-declaration-mismatch[m[K]
+    6 | bool [01;35m[Kmemcmp[m[K(void *a, void *b, size_t len);
+      |      [01;35m[K^~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.h:6:6:[m[K [01;36m[Knote: [m[K'[01m[Kmemcmp[m[K' is declared in header '[01m[K<string.h>[m[K'
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\string.h:7:8:[m[K [01;35m[Kwarning: [m[Kconflicting types for built-in function '[01m[Kstrlen[m[K'; expected '[01m[Kunsigned int(const char *)[m[K' [[01;35m[K-Wbuiltin-declaration-mismatch[m[K]
+    7 | size_t [01;35m[Kstrlen[m[K(char *str);
+      |        [01;35m[K^~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\string.h:4:1:[m[K [01;36m[Knote: [m[K'[01m[Kstrlen[m[K' is declared in header '[01m[K<string.h>[m[K'
+    3 | #include "memory.h"
+  +++ |+[32m[K#include <string.h>[m[K
+    4 | 
+
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-21-45\objs\memory.obj -nostdlib -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -fdiagnostics-color=always -m32 -std=c99
+
+In file included from [01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/public.h:5[m[K,
+                 from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c:1[m[K:
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.h:5:6:[m[K [01;35m[Kwarning: [m[Kconflicting types for built-in function '[01m[Kmemcpy[m[K'; expected '[01m[Kvoid *(void *, const void *, unsigned int)[m[K' [[01;35m[K-Wbuiltin-declaration-mismatch[m[K]
+    5 | void [01;35m[Kmemcpy[m[K(void *dst, void *src, size_t len);
+      |      [01;35m[K^~~~~~[m[K
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.h:1:1:[m[K [01;36m[Knote: [m[K'[01m[Kmemcpy[m[K' is declared in header '[01m[K<string.h>[m[K'
+  +++ |+[32m[K#include <string.h>[m[K
+    1 | #pragma once
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.h:6:6:[m[K [01;35m[Kwarning: [m[Kconflicting types for built-in function '[01m[Kmemcmp[m[K'; expected '[01m[Kint(const void *, const void *, unsigned int)[m[K' [[01;35m[K-Wbuiltin-declaration-mismatch[m[K]
+    6 | bool [01;35m[Kmemcmp[m[K(void *a, void *b, size_t len);
+      |      [01;35m[K^~~~~~[m[K
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/memory.h:6:6:[m[K [01;36m[Knote: [m[K'[01m[Kmemcmp[m[K' is declared in header '[01m[K<string.h>[m[K'
+In file included from [01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/public.h:6[m[K:
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/string.h:7:8:[m[K [01;35m[Kwarning: [m[Kconflicting types for built-in function '[01m[Kstrlen[m[K'; expected '[01m[Kunsigned int(const char *)[m[K' [[01;35m[K-Wbuiltin-declaration-mismatch[m[K]
+    7 | size_t [01;35m[Kstrlen[m[K(char *str);
+      |        [01;35m[K^~~~~~[m[K
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/public/memory/string.h:1:1:[m[K [01;36m[Knote: [m[K'[01m[Kstrlen[m[K' is declared in header '[01m[K<string.h>[m[K'
+  +++ |+[32m[K#include <string.h>[m[K
+    1 | #pragma once
+
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot16.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-21-45\objs\boot16.obj
+
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot16.asm:39: warning: label alone on a line without a colon might be in error [-w+label-orphan]
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot16.asm:48: warning: label alone on a line without a colon might be in error [-w+label-orphan]
+
+gcc C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-21-45\objs\boot32.obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-21-45\objs\string.obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-21-45\objs\memory.obj -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-21-45\objs\boot2.bin -nodefaultlibs -nostartfiles -fdiagnostics-color=always -T C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.ld
+
+C:/msys64/ucrt64/bin/ld.exe: cannot open linker script file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.ld: Invalid argument
+collect2.exe: error: ld returned 1 exit status
+GCC link failed

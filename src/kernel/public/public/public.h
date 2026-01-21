@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../public/math/int/_int.h"
-#include "../public/math/int/_bool.h"
-#include "../public/memory/memory.h"
-#include "../public/memory/string.h"
+#include "./kernel/public/public/math/int/_int.h"
+#include "./kernel/public/public/math/int/_bool.h"
+#include "./kernel/public/public/memory/memory.h"
+#include "./kernel/public/public/memory/string.h"
 
 #ifndef PUBLIC_H
 #define PUBLIC_H

@@ -1,4 +1,4 @@
-#include "../src/kernel/public/public/public.h"
+#include ".//kernel/public/public/public.h"
 
 bool memcmp(void *a, void *b, size_t len){
     for(size_t cc =0; cc < len; ++cc){

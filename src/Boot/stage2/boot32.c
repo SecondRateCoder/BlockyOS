@@ -3,16 +3,39 @@
 #define PF_DSTEP_LONG 		1
 #define PF_DSTEP_LONG_LONG 	4
 
-char g_hexes32[];
-// C Functions
-void main32(uint16_t header_ptr);
-void printf32(char *str, ...);
-// Returns char[32]
-char *printarg32(uint16_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool printin, bool attach_sign);
+#pragma pack(push, 1)
+const gdtENTRY_t gdtTABLE16[] = {
+    /* Null descriptor */
+    { .limit = 0x0000, .base_low = 0x0000, .base_mid = 0x00,
+      .access = 0x00, .granularity = 0x00, .base_high = 0x00 },
+
+    /* 32-bit Code segment: limit=0xFFFF, base=0x00000000, access=0x9A, gran=0xCF */
+    { .limit = 0xFFFF, .base_low = 0x0000, .base_mid = 0x00,
+      .access = 0x9A, .granularity = 0xCF, .base_high = 0x00 },
+
+    /* 32-bit Data segment: limit=0xFFFF, base=0x00000000, access=0x92, gran=0xCF */
+    { .limit = 0xFFFF, .base_low = 0x0000, .base_mid = 0x00,
+      .access = 0x92, .granularity = 0xCF, .base_high = 0x00 },
+
+    /* 16-bit Code segment: limit=0x0000, base=0x00000000, access=0x9A, gran=0x0F */
+    { .limit = 0x0000, .base_low = 0x0000, .base_mid = 0x00,
+      .access = 0x9A, .granularity = 0x0F, .base_high = 0x00 },
+
+    /* 16-bit Data segment: limit=0xFFFF, base=0x00000000, access=0x92, gran=0x0F */
+    { .limit = 0xFFFF, .base_low = 0x0000, .base_mid = 0x00,
+      .access = 0x92, .granularity = 0x0F, .base_high = 0x00 }
+};
+#pragma pack(pop)
+
+const gdtDESC_t desc16 = {
+    .address = gdtTABLE16,
+    .limit = (uint16_t)(sizeof(gdtTABLE16) - 1)
+};
+
 char g_hexes32[] = "0123456789ABCDEF";
 
-void __far main32(void){
-	printf(
+void main32(void){
+	printf32(
 		"Formatted 32-bit string: %a, %c, %h, %l, %i, %z, %s",
 		(u8_t)99u, 'H', (short)88u, 66ul, (int)98u, 3334848348ull, "Look, it's a Negro"
 	);
@@ -37,7 +60,7 @@ void __far main32(void){
 void printf32(char *fmt, ...){
     bool sign = true;
     uint8_t radix = 10;
-    uinl32_t *argp = (uint16_t *)(&fmt + 1);
+    uinl32_t *argp = (uinl32_t *)(&fmt + 1);
     uinl32_t doubles = 0;
     while(*fmt){
         if(*fmt == '%'){
@@ -108,7 +131,7 @@ void printf32(char *fmt, ...){
     }
 }
 
-char *printarg32(uint16_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool printin, bool attach_sign){
+char *printarg32(uinl32_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool printin, bool attach_sign){
     static char out[32];
     uint64_t num = 0;
     uinl32_t rem;

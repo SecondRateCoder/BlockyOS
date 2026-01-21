@@ -16,7 +16,7 @@ param(
     [Parameter(Mandatory=$false)]
     [int]$Hidden
 )
-
+$GCC = "gcc"
 $NASM = "C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe"
 $LD = "ld"
 $QEMU = "C:\msys64\ucrt64\bin\qemu-system-x86_64.exe"
@@ -180,8 +180,8 @@ function Compile-Watcom{
 
 if($clear -eq $true){Remove-Item (Join-Path (Get-Location) "Build") -Force -Recurse}
 (Prepare)
-(. $ST1 -Date $Date -NASM $NASM)
-(. $ST2 -Date $Date -NASM $NASM -WCC $WCC -WLINK $WLINK -GCC $GCC)
+(. $ST1 -Date $Date -NASM $NASM -GCC $GCC)
+(. $ST2 -Date $Date -NASM $NASM -GCC $GCC)
 
 $cc = 0;
 Handle-PadToken -token "\x$($Reserved.ToString())"
