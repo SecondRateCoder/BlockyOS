@@ -3,7 +3,8 @@
 #define PF_DSTEP_LONG 		1
 #define PF_DSTEP_LONG_LONG 	4
 
-#pragma pack(push, 1)
+// https://www.youtube.com/watch?v=db_5skZaneg&list=PLFjM7v6KGMpiH2G-kT781ByCNC_0pKpPN&index=9
+
 const gdtENTRY_t gdtTABLE16[] = {
     /* Null descriptor */
     { .limit = 0x0000, .base_low = 0x0000, .base_mid = 0x00,
@@ -25,14 +26,63 @@ const gdtENTRY_t gdtTABLE16[] = {
     { .limit = 0xFFFF, .base_low = 0x0000, .base_mid = 0x00,
       .access = 0x92, .granularity = 0x0F, .base_high = 0x00 }
 };
-#pragma pack(pop)
 
 const gdtDESC_t desc16 = {
     .address = gdtTABLE16,
     .limit = (uint16_t)(sizeof(gdtTABLE16) - 1)
 };
 
+uint16_t *VGA = (uint16_t *)0x000B8000
+uinl32_t VGAX, VGAY;
+#define VGAINDEX ((VGAY * VGA_MAXY) + VGAX)
+const uinl32_t VGA_MAXX = 80, VGA_MAXY = 25;
+#defie TABSIZE (TABSIZE >> 1)
+uint8_t TABSIZE_ = 4;
+
 char g_hexes32[] = "0123456789ABCDEF";
+// -freestanding
+void putc(char c, uint8_t color){
+	switch(c){
+		case '\n': {VGAY++;}
+		case '\r': {VGAX = 0;}
+		case '\t': {VGAX += TABSIZE;}
+		default: {
+			VGA[VGAIDEX] = ((uint16_t)c << 8) | color;
+			VGAX++;
+		}
+	}
+	updateCursor();
+}
+
+void updateCursor(){
+	if(VGAX >= VGA_MAXX){
+		VGAX = 0;
+		VGAY++;
+	}
+	if(VGAY >= VGA_MAXY){scrollCursor(VGAY - VGA_MAXY);}
+	asm_updateCursor();
+}
+
+static inline void scrollCursor(uint8_t lines){
+	if(lines < VGAY){
+		// Copy back
+		memcpy(
+			VGA + ((lines * VGA_MAXX) + VGAX), 						// SRC
+			VGA,													// Destination
+			(((VGA - lines) * VGA_MAXX) + VGAX) * sizeof(uint16_t)	// Size
+		);
+		memset(
+			VGA + VGAINDEX,											// SRC
+			(VGA_MAXX * VGA_MAXY) - VGAINDEX,						// SIZE
+			0														// VALUE
+		);
+	}
+}
+
+void puts(char *str){
+	do{putc(*str);
+	}while(str++);
+}
 
 void main32(void){
 	printf32(
