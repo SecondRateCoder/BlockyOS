@@ -13,19 +13,22 @@ $Image = Join-Path $Build ("floppy-$($Date).img")
 $Objdir = Join-Path $Build "objs"
 $Log = Join-Path $Build ("logST2.txt")
 
-$BOOT16A = (Join-Path (Get-Location) "src/Boot/stage2/boot16.asm")
-$BOOT16AOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT16A)).obj"
+$BOOT16A = (Join-Path (Get-Location) "src/Boot/stage2/boot.asm")
+$BOOT16AOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT16A)).o"
 
 $BOOT32C = (Join-Path (Get-Location) "src/Boot/stage2/boot32.c")
-$BOOT32COBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT32C)).obj"
+$BOOT32COBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT32C)).o"
 
 $STRINGC = (Join-Path (Get-Location) "src/kernel/public/public/memory/string.c")
-$STRINGCOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($STRINGC)).obj"
+$STRINGCOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($STRINGC)).o"
 
 $MEMC = (Join-Path (Get-Location) "src/kernel/public/public/memory/memory.c")
-$MEMCOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($MEMC)).obj"
+$MEMCOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($MEMC)).o"
 
+$ST2ELF = Join-Path -Path $Objdir "boot2.elf"
 $ST2BIN = Join-Path -Path $Objdir "boot2.bin"
+
+$MAPFILE = Join-Path -Path $Build "gcc.map"
 
 function Log-Write{
 	param(
@@ -56,7 +59,7 @@ function Img-Push {
 
 $COMPILECLI = @(
 	"-nostdlib", "-I", "$(Join-Path (Get-Location) "src/")",
-	"-fdiagnostics-color=always", "-m32",
+	"-fdiagnostics-color=always", "-m32", "-ffreestanding",
 	"-std=c99"
 )
 
@@ -81,18 +84,55 @@ $NASM_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 
 # build files
 New-Item -Path $ST2BIN -ItemType File -Force
+New-Item -Path $MAPFILE -ItemType File -Force
 
 # gcc link
+# $args_ = @(
+# 	$BOOT32COBJ, $STRINGCOBJ, $MEMCOBJ, 
+# 	"-o", $ST2BIN,
+# 	"-nodefaultlibs", "-nostartfiles", "-ffreestanding",
+# 	"-fdiagnostics-color=always",
+# 	"-T", "$(Join-Path (Get-Location) "/src/Boot/stage2/boot.ld")", 
+# 	"-Wl,-Map,$($MAPFILE),-m,elf_i386"
+# )
+# Log-Write -Msg "`n$($GCC) $($args_ -join ' ')`n" -Color White
+# $GLINK_OUT = (& $GCC @args_) 2>&1
+# $GLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+# objcopy -O binary $ST2ELF $ST2BIN
+
+#wcc link
+$LNK = "
+FORMAT RAW BIN
+OPTION QUIET,
+		NODEFAULTLIBS,
+		START=_start,
+		VERBOSE,
+		OFFSET=0x8200,
+		STACK=0x200
+ORDER
+	CLNAME CODE
+		SEGMENT _ENTRY
+		SEGMENT TEXT
+	CLNAME DATA
+"
+# file $($BOOTA_OBJ)
+# $LNK | Out-File -FilePath (Join-Path $Objdir 'wlink.lnk') -Encoding ASCII -Force
+[System.IO.File]::WriteAllLines((Join-Path $Objdir 'wlink.lnk'), $LNK, [System.Text.Encoding]::ASCII)
+
+# New-Item -Path (Join-Path $Objdir 'wlink.lnk') -ItemType File -Force
+# Add-Content -Path (Join-Path $Objdir 'wlink.lnk') -Value $LNK
+
+# call wlink
+# $args_ = @("@$(Join-Path $Objdir 'wlink.lnk')")
 $args_ = @(
-	$BOOT32COBJ, $STRINGCOBJ, $MEMCOBJ, 
-	"-o", $ST2BIN,
-	"-nodefaultlibs", "-nostartfiles",
-	"-fdiagnostics-color=always",
-	"-T", "$(Join-Path (Get-Location) "/src/Boot/stage2/boot.ld")"
+	"NAME" , "$($ST2BIN)", 
+	"FILE", "$($BOOT16AOBJ)", "FILE", "$($BOOT32COBJ)",
+	"FILE", "$($STRINGCOBJ)", "FILE", "$($MEMCOBJ)", 
+	"OPTION", "MAP=$(Join-Path $Build "wlink.map")", "@$(Join-Path $Objdir 'wlink.lnk')"
 )
-Log-Write -Msg "`n$($GCC) $($args_ -join ' ')`n" -Color White
-$GLINK_OUT = (& $GCC @args_) 2>&1
-$GLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+Log-Write -Msg "`n`nwlink $($args_ -join ' ')`n`n" -Color Yellow
+$WLINK_OUT = (& $WLINK @args_) 2>&1
+$WLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 
 if ($LASTEXITCODE -ne 0) {
 	Log-Write -Msg "GCC link failed" -Color Red

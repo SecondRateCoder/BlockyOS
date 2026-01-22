@@ -4,6 +4,7 @@
 
 void memcpy(void *dst, void *src, size_t len);
 bool memcmp(void *a, void *b, size_t len);
+void memset(void *buffer, size_t len, uint8_t val);
 
 bool memcheckb(void *a, size_t len, u8_t byte);
 bool memcheckh(void *a, size_t len, u16_t byte);

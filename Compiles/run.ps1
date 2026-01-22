@@ -181,7 +181,7 @@ function Compile-Watcom{
 if($clear -eq $true){Remove-Item (Join-Path (Get-Location) "Build") -Force -Recurse}
 (Prepare)
 (. $ST1 -Date $Date -NASM $NASM -GCC $GCC)
-(. $ST2 -Date $Date -NASM $NASM -GCC $GCC)
+(. $ST2 -Date $Date -NASM $NASM -GCC $GCC -WLINK $WLINK)
 
 $cc = 0;
 Handle-PadToken -token "\x$($Reserved.ToString())"

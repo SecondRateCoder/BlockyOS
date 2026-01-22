@@ -1,5 +1,9 @@
 #include ".//kernel/public/public/public.h"
 
+void memset(void *buffer, size_t len, uint8_t val){
+    for(size_t cc = 0; cc < len; ++cc){((uint8_t *)buffer)[cc] = val;}
+}
+
 bool memcmp(void *a, void *b, size_t len){
     for(size_t cc =0; cc < len; ++cc){
         if(((uint8_t *)a)[cc] != ((uint8_t *)b)[cc]){

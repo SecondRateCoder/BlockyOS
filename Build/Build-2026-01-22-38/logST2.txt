@@ -1,0 +1,45 @@
+
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\boot32.o -nostdlib -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -fdiagnostics-color=always -m32 -ffreestanding -std=c99
+
+In file included from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:1[m[K:
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.h:17:7:[m[K [01;31m[Kerror: [m[Kunknown type name '[01m[KgdtDESC_t[m[K'
+   17 | const [01;31m[KgdtDESC_t[m[K desc16;
+      |       [01;31m[K^~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.h:18:7:[m[K [01;31m[Kerror: [m[Kunknown type name '[01m[KgdtENTRY_t[m[K'
+   18 | const [01;31m[KgdtENTRY_t[m[K gdtTABLE16[];
+      |       [01;31m[K^~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.h:19:8:[m[K [01;31m[Kerror: [m[Kunknown type name '[01m[Kdrive_header[m[K'
+   19 | extern [01;31m[Kdrive_header[m[K bt1_drive_header;
+      |        [01;31m[K^~~~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:8:18:[m[K [01;31m[Kerror: [m[Kconflicting types for '[01m[KgdtTABLE16[m[K'; have '[01m[Kconst gdtENTRY_t[][m[K'
+    8 | const gdtENTRY_t [01;31m[KgdtTABLE16[m[K[] = {
+      |                  [01;31m[K^~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.h:18:18:[m[K [01;36m[Knote: [m[Kprevious declaration of '[01m[KgdtTABLE16[m[K' with type '[01m[Kconst int[][m[K'
+   18 | const gdtENTRY_t [01;36m[KgdtTABLE16[m[K[];
+      |                  [01;36m[K^~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:30:17:[m[K [01;31m[Kerror: [m[Kconflicting types for '[01m[Kdesc16[m[K'; have '[01m[KgdtDESC_t[m[K'
+   30 | const gdtDESC_t [01;31m[Kdesc16[m[K = {
+      |                 [01;31m[K^~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.h:17:17:[m[K [01;36m[Knote: [m[Kprevious declaration of '[01m[Kdesc16[m[K' with type '[01m[Kint[m[K'
+   17 | const gdtDESC_t [01;36m[Kdesc16[m[K;
+      |                 [01;36m[K^~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:[m[K In function '[01m[Kprintf32[m[K':
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:153:26:[m[K [01;35m[Kwarning: [m[Kcast to pointer from integer of different size [[01;35m[K-Wint-to-pointer-cast[m[K]
+  153 |                     puts([01;35m[K([m[Kchar *)(((size_t)argp[dwords] << 32)  | argp[dwords]));
+      |                          [01;35m[K^[m[K
+
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\string.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\string.o -nostdlib -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -fdiagnostics-color=always -m32 -ffreestanding -std=c99
+
+
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\memory.o -nostdlib -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -fdiagnostics-color=always -m32 -ffreestanding -std=c99
+
+
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\boot.o
+
+
+
+wlink NAME C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\boot2.bin FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\boot.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\boot32.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\string.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\memory.o OPTION MAP=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\wlink.map @C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\wlink.lnk
+
+
+Error! E2008: cannot open C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-22-38\objs\boot32.o : No such file or directory
+GCC link failed

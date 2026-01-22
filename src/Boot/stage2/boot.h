@@ -1,28 +1,26 @@
 #pragma once
 #include "./kernel/public/public/public.h"
 
-//* Assembly Functions
-#define putc(c) put_vidteletype((c), 00)
-#define puts(ptr) puts_vidteletype(00, (char  *)(ptr))
 // Halt and restart
-extern void __cdecl start(void);
-extern void __cdecl halt(void);
-extern void __cdecl bochs_breakpoint(void);
-// Print functions
-extern void __cdecl put_vidteletype(uint16_t c, uint16_t page);
-extern void __cdecl puts_vidteletype(char page, char  *ptr);
+extern void __attribute__((cdecl)) start(void);
+extern void __attribute__((cdecl)) halt(void);
+extern void __attribute__((cdecl)) bochs_breakpoint(void);
+extern void __attribute__((cdecl)) asm_updateCursor32(uinl32_t x, uinl32_t y);
 // Division helpers
 #define div64_32(dividend, divisor, result, remainder) div64_32_((uint64_t)(dividend), (uinl32_t)(divisor), (uint64_t  *)(result), (uinl32_t  *)(remainder))
-extern void __cdecl div64_32_(uint64_t dividend, uinl32_t divisor, uint64_t  *result, uinl32_t  *remainder);
-extern unsigned short __cdecl __U8LS(unsigned char dividend, unsigned char divisor);
-extern short __cdecl __I8LS(signed char value, unsigned char shift);
+extern void __attribute__((cdecl)) div64_32_(uint64_t dividend, uinl32_t divisor, uint64_t  *result, uinl32_t  *remainder);
+extern unsigned short __attribute__((cdecl)) __U8LS(unsigned char dividend, unsigned char divisor);
+extern short __attribute__((cdecl)) __I8LS(signed char value, unsigned char shift);
 
 // C Types
 char g_hexes32[];
+extern drive_header bt1_drive_header;
 // C Functions
 void main32(void);
+
+void updateCursor();
 void printf32(char *str, ...);
-// Returns char[32]
+static inline void scrollCursor32(uint8_t lines);
 char *printarg32(uinl32_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool printin, bool attach_sign);
 
 #define ENDL "\r\n\0"
@@ -54,32 +52,6 @@ union{
 	uint8_t segment_clusters;
 }__attribute__((packed)) drive_header;
 
-typedef struct gdtENTRY_t{
-    union{
-        struct{
-            uint16_t limit;
-            uint16_t base_low;
-            uint8_t  base_mid;
-            uint8_t  access;
-            uint8_t  granularity;
-            uint8_t  base_high;
-        };
-        size_t ENTRY;
-    };
-}__attribute__((packed)) gdtENTRY_t;
-
-typedef struct gdtDESC_t{
-    // Byte size of GDT table
-    uint16_t limit;
-
-    // Address of GDT table
-    gdtENTRY_t  *address;
-}__attribute__((packed)) gdtDESC_t;
-
-extern const gdtDESC_t desc16;
-extern const gdtENTRY_t gdtTABLE16[];
-extern drive_header bt1_drive_header;
-
 extern void int32disable(void);
 extern void int32enable(void);
-extern void switch16_32(gdtDESC_t *gdt, void *idt, void( __cdecl *func)(void));
+extern void switch16_32(void *gdt, void *idt, void( __attribute__((cdecl)) *func)(void));

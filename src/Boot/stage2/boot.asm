@@ -1,12 +1,12 @@
 bits 32
 ; org 0x8200
-section _ENTRY class=CODE
+section entry class=CODE
 db 103
 
 global bt1_drive_header
-extern main32
-extern gdtDesc
-extern idtDesc
+extern _main32
+extern _gdtDesc
+extern _idtDesc
 
 bt1_drive_header_: times 58 db 0
 jmp short _start
@@ -27,16 +27,16 @@ _start:
 	sti
 
     ; Jump to boot2's .c file
-	push word gdtDesc
-	push word idtDesc
+	push word _gdtDesc
+	push word _idtDesc
 	push cs
-	push word main32
+	push word _main32
 	call _switch16_32
 ; void halt16(void)
 halt16:
     [bits 16]
     cli
-.halt_
+.halt_:
     nop
     jmp .halt_
 
@@ -45,7 +45,7 @@ global _halt
 _halt:
     [bits 32]
     cli
-._halt_
+._halt_:
     nop
     jmp ._halt_
 
@@ -55,65 +55,6 @@ _bochs_breakpoint:
 	[bits 32]
     xchg bx, bx
     nop
-    ret
-
-global _puts_vidteletype
-; void puts_vidteletype(char page, char __far *ptr)
-_puts_vidteletype:
-    [bits 32]
-    push bp
-    mov bp, sp
-
-    ; push bx
-    push ax
-    push si
-    push ds
-    push bx
-
-    ; Load page number
-    mov bx, [bp + 4]
-    ; Load far pointer from stack
-    mov ax, [bp + 6]     ; segment
-    mov si, [bp + 8]     ; offset
-    mov ds, ax         ; DS:SI -> string
-.loop:
-    lodsb               ; AL = [DS:SI], SI++
-    or al, al
-    jz .done
-
-    mov ah, 0Eh
-    int 10h
-    jmp .loop
-
-.done:
-    pop bx
-    pop ds
-    pop si
-    pop ax
-    mov sp, bp
-    pop bp
-    ret
-
-global _put_vidteletype
-; void put_vidteletype(uint16_t c, uint16_t page)
-;   Pushed right arg 1st, starting from [bp + 4]
-_put_vidteletype:
-    [bits 32]
-    push bp
-    mov bp, sp
-
-    push bx
-    mov bh, [bp + 4]     ; page number
-    mov ax, [bp + 6]     ; character
-    test al, al
-    jz .finish
-    
-    mov ah, 0Eh
-    int 10h
-.finish:
-    pop bx
-    mov sp, bp
-    pop bp
     ret
 
 global _div64_32_
@@ -334,17 +275,6 @@ _switch16_32:
 	[bits 32]
 	call _int32enable
 	jmp dword edx
-
-
-global _asm_updateCursor
-;	void asm_UpdateCursor(uinl32_t, uinl32_t)
-	[bits 32]
-	push bp
-	mov bp, sp
-	push eax
-	
-
-
 
 KbdCtrlDataPort             	equ 0x60
 KbdCtrlCmdPort              	equ 0x64

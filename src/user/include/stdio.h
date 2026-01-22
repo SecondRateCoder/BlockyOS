@@ -1,5 +1,5 @@
 #include "public.h"
 
 
-extern inline void __cdecl putc(char c);
-extern inline void __cdecl puts(char *str);
+extern inline void __attribute__((cdecl)) putc(char c);
+extern inline void __attribute__((cdecl)) puts32(char *str);
