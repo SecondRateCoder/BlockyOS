@@ -80,6 +80,6 @@ extern const gdtDESC_t desc16;
 extern const gdtENTRY_t gdtTABLE16[];
 extern drive_header bt1_drive_header;
 
-extern void int16disable(void);
-extern void int16enable(void);
+extern void int32disable(void);
+extern void int32enable(void);
 extern void switch16_32(gdtDESC_t *gdt, void *idt, void( __cdecl *func)(void));
