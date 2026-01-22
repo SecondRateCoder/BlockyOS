@@ -43,9 +43,20 @@ char g_hexes32[] = "0123456789ABCDEF";
 // -freestanding
 void putc(char c, uint8_t color){
 	switch(c){
-		case '\n': {VGAY++;}
-		case '\r': {VGAX = 0;}
-		case '\t': {VGAX += TABSIZE;}
+		case '\0': {					// Backspace
+			VGAX--;
+			if(VGAX < 0){
+				VGAX = VGA_MAXX;
+				VGAY--;
+			}
+			putc(' ', color);
+		}
+		case '\n': {VGAY++;}			// New-line, No Carriage-Return
+		case '\r': {VGAX = 0;}			// Carriage-Return
+		case '\t': {					// Tab
+			for(uint8_t cc =0; cc < TABSIZE; ++cc){putc(' ', color);}
+			VGAX += TABSIZE;
+		}
 		default: {
 			VGA[VGAIDEX] = ((uint16_t)c << 8) | color;
 			VGAX++;
