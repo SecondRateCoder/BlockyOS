@@ -335,6 +335,17 @@ _switch16_32:
 	call _int32enable
 	jmp dword edx
 
+
+global _asm_updateCursor
+;	void asm_UpdateCursor(uinl32_t, uinl32_t)
+	[bits 32]
+	push bp
+	mov bp, sp
+	push eax
+	
+
+
+
 KbdCtrlDataPort             	equ 0x60
 KbdCtrlCmdPort              	equ 0x64
 
