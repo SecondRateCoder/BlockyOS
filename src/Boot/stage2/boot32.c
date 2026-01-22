@@ -110,8 +110,8 @@ void main32(void){
 void printf32(char *fmt, ...){
     bool sign = true;
     uint8_t radix = 10;
-    uinl32_t *argp = (uinl32_t *)(&fmt + 1);
-    uinl32_t doubles = 0;
+    uinl32_t *argp = (uint8_t *)(&fmt + 1);
+    uinl32_t dwords = 0;
     while(*fmt){
         if(*fmt == '%'){
             fmt++;
@@ -139,17 +139,14 @@ void printf32(char *fmt, ...){
             fmt += offs_;
             switch(*fmt){
                 case 's': {	// string
-                    // https://board.flatassembler.net/topic.php?t=19467
-                    uinl32_t ofs = argp[doubles];
-                    uinl32_t seg = argp[doubles + 1];
-                    char *fp = (char *)(((uinl64_t)seg << 32) | ofs);
-                    puts(fp);   // Try both
-                    doubles += 2;
+					// Reconstruct
+                    puts((char *)(((size_t)argp[dwords] << 32)  | argp[dwords]));
+                    dwords += 2;
                     break;
                 }
                 case 'z': {	// long long
-                    printarg32(argp + doubles, 4, sign, radix, true, (radix == 16? false: true));
-                    doubles += 2;
+                    printarg32(argp + dwords, 2, sign, radix, true, (radix == 16? false: true));
+                    dwords += 2;
                     break;
                 }
                 case '%': {
@@ -157,23 +154,17 @@ void printf32(char *fmt, ...){
                     break;
                 }
                 case 'c': {	// char
-                    putc(*(argp + doubles));
-                    doubles++;
+                    putc(*(argp + dwords));
+                    dwords++;
                     break;
                 }
-                case 'i': {	// integer
-                    printarg32(argp + doubles, 2, sign, radix, true, (radix == 16? false: true));
-                    doubles++;
-                    break;
-                }
+				// All promoted to same size
+                case 'i': 	// integer
                 case 'h': 	// short
-                case 'a':	// byte
-                    printarg32(argp + doubles, 1, sign, radix, true, (radix == 16? false: true));
-                    doubles++;
-                    break;
                 case 'l':	// long
-                    printarg32(argp + doubles, 2, sign, radix, true, (radix == 16? false: true));
-                    doubles ++;
+                case 'a':	// byte
+                    printarg32(argp + dwords, 1, sign, radix, true, (radix == 16? false: true));
+                    dwords++;
                     break;
             }
         }else{putc(*fmt);}
@@ -181,14 +172,14 @@ void printf32(char *fmt, ...){
     }
 }
 
-char *printarg32(uinl32_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool printin, bool attach_sign){
+char *printarg32(uinl32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool printin, bool attach_sign){
     static char out[32];
     uint64_t num = 0;
     uinl32_t rem;
     int8_t num_sign = 1;
     int8_t pos = 0;
-    switch(doubles){
-        case PF_DSTEP_LONG: {
+    switch(dwords){
+        case PF_DSTEP_LONG: {	// 4 bytes, double word
             num = (unsigned long)(*argp);
             if(sign){
                 signed char n = (signed long)(*argp);
@@ -197,9 +188,8 @@ char *printarg32(uinl32_t *argp, uint8_t doubles, bool sign, uint8_t radix, bool
             }
             break;
         }
-        case PF_DSTEP_LONG_LONG: {
-            num = ((unsigned long long)argp[3] << 48) | ((unsigned long long)argp[2] << 32) |
-                  ((unsigned long long)argp[1] << 16) | (unsigned long long)argp[0];
+        case PF_DSTEP_LONG_LONG: {	// 8 bytes quadruple word
+            num = ((size_t)argp[1] << 32) | (size_t)argp[0];
             if(sign){
                 long long sll = (long long)(
                     ((long long)argp[3] << 48) | ((long long)argp[2] << 32) |
