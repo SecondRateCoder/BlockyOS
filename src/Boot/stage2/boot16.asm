@@ -228,15 +228,35 @@ _int16enable:
 	pop ax
     ret
 
+global _int32disable
+;	void int32disable(void)
+_int32disable:
+	[bits 32]
+	cli
+	push ax
+	in al, 0x70
+	or al, 80h
+	out  0x70, al
+	pop ax
+    ret
+global _int32enable
+;	void int32enable(void)
+_int32enable:
+	[bits 32]
+	sti
+	push ax
+	in   al, 0x70
+	and  al, 7Fh
+	out  0x70, al
+	pop ax
+    ret
+
 
 global _switch16_32
 ;   void switch16_32(GDTdesc __far *, IDTdesc __far*, void(__far __cdecl *func)(void))
 _switch16_32:
     [bits 16]
-    ; Save registers
-    push bp
-    mov bp, sp
-    push ax
+    ; Nothing needs to be saved as since, the switcher does NtT revert
 
     call _int16disable
 .TestA20:
@@ -282,21 +302,13 @@ _switch16_32:
 	mov al, KbdCtrlEnable
 	out KbdCtrlCmdPort, al
 .LoadGDT:
-	push es
 	mov es, [bp + 6]		; Segment
-	push bx
 	mov bx, [bp + 8]		; Offset
 	lgdt [es:bx]
-	pop bx
-	pop es
 .LoadIDT:
-	push es
 	mov es, [bp + 10]		; Segment
-	push bx
 	mov bx, [bp + 12]		; Offset
 	lidt [es:bx]
-	pop bx
-	pop es
 	jmp .finish
 .A20WaitIn16:
 	; Wait till bit 2 is 0
@@ -313,13 +325,14 @@ _switch16_32:
 
 .finish:
 	; Setup to jmp to func
-	mov ebx, [bp + 14]
+	mov edx, [ebp + 14]
     mov eax, cr0
     or eax, 1
     mov cr0, eax
 	jmp dword 0000h:.pmode
 .pmode:
 	[bits 32]
+	call _int32enable
 	jmp dword edx
 
 KbdCtrlDataPort             	equ 0x60
