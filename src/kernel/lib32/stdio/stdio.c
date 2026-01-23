@@ -1,5 +1,6 @@
 #include "stdio.h"
 
+uint8_t g_color = 0;
 char g_hexes32[] = "0123456789ABCDEF";
 
 uint16_t *VGA = (uint16_t *)0x000B8000;
@@ -8,7 +9,7 @@ uinl32_t VGAX, VGAY;
 const uinl32_t VGA_MAXX = 80, VGA_MAXY = 25;
 uint8_t TABSIZE = 4;
 
-void putc32(char c, uint8_t color){
+void putc32(char c){
 	switch(c){
 		case '\0': {					// Backspace
 			VGAX--;
@@ -16,21 +17,23 @@ void putc32(char c, uint8_t color){
 				VGAX = VGA_MAXX;
 				VGAY--;
 			}
-			VGA[VGAINDEX] = ((uint16_t)c << 8) | color;
+			VGA[VGAINDEX] = ((uint16_t)c << 8) | g_color;
 		}
 		case '\n': {VGAY++;}			// New-line, No Carriage-Return
 		case '\r': {VGAX = 0;}			// Carriage-Return
 		case '\t': {					// Tab
-			for(uint8_t cc =0; cc < TABSIZE; ++cc){putc(' ', color);}
+			for(uint8_t cc =0; cc < TABSIZE; ++cc){putc(' ', g_color);}
 			VGAX += TABSIZE;
 		}
 		default: {
-			VGA[VGAINDEX] = ((uint16_t)c << 8) | color;
+			VGA[VGAINDEX] = ((uint16_t)c << 8) | g_color;
 			VGAX++;
 		}
 	}
 	updateCursor32();
 }
+
+static inline void setColor(uint8_t color){g_color = color;}
 
 void updateCursor32(){
 	if(VGAX >= VGA_MAXX){
