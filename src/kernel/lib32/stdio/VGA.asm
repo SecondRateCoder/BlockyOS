@@ -8,16 +8,16 @@ _asm_TestVGA:						; Test that VGA is active, otherwise emulate.
 	; Implement at sometime
 	ret
 
-global _asm_disableCursor
-;	void asm_disableCursor(void)
-_asm_disableCursor:
+global _asm_disableCursor32
+;	void asm_disableCursor32(void)
+_asm_disableCursor32:
 	outb 0x3D4, 0x0A
 	outb 0x3D5, 0x20
 	ret
 
-global _asm_getCursor:
-;	uint16_t asm_getCursor
-_asm_getCursor:
+global _asm_getCursor32:
+;	uint16_t asm_getCursor32(void)
+_asm_getCursor32:
 	push eax
 	mov eax, dword 0
 	outb 0x3D4, 0x0F
@@ -28,9 +28,9 @@ _asm_getCursor:
 	ret
 	
 
-global _asm_enableCursor
-;	void asm_enableCursor(uinl32_t, uinl32_t)
-_asm_enableCursor:
+global _asm_enableCursor32
+;	void asm_enableCursor32(uinl32_t, uinl32_t)
+_asm_enableCursor32:
 	; Save Regs
 	push eax
 	outb 0x3D4, 0x0A				; Setup for Cursor End
