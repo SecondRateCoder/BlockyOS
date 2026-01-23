@@ -15,15 +15,14 @@ $Log = Join-Path $Build ("logst2.txt")
 
 $EXCLUDE = @()
 
-$BOOT16A = (Join-Path (Get-Location) "src/Boot/stage2/boot.asm")
-$BOOT16AOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT16A)).o"
-
 $BOOT2CFILES = @(
 	(Join-Path (Get-Location) "src/Boot/stage2/boot32.c"),
 	(Join-Path (Get-Location) "src/kernel/public/public/memory/string.c"),
 	(Join-Path (Get-Location) "src/kernel/public/public/memory/memory.c")
 )
+$BOOT2ASMFILES = @((Join-Path (Get-Location) "src/Boot/stage2/boot.asm"), Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Name "*.c" -Recusre -Force)
 $BOOT2OFILES = @(
+	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2ASMFILES[0])).o",
 	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[0])).o",
 	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[1])).o",
 	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[2])).o",
@@ -50,7 +49,11 @@ function Img-Push {
 	do{
 		$padding = [math]::Abs($padding - 512)
 	}while($padding -ge 512)
-	Log-Write -color Yellow -Msg ("Byte array of size: $($data.Length) padded with size: $($padding), starting at address: $((Get-Item -Path $Image).Length) and ending at address: $((Get-Item -Path $Image).Length + $padding + $data.Length)")
+	Log-Write -color Yellow -Msg (
+		"Byte array of size: $($data.Length),
+			padded with size: $($padding), 
+			starting at address: $((Get-Item -Path $Image).Length) and 
+			ending at address: $((Get-Item -Path $Image).Length + $padding + $data.Length)")
 	try{
 		if($data){$file.Write($data, 0, $data.Length)}
 		if($padding -gt 0){
@@ -70,21 +73,27 @@ $COMPILECLI = @(
 )
 
 # Get all lib32 C files.
-$BOOT2CFILES += (Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/*.c") -Recurse -Force
+$BOOT2CFILES += (Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Name "*.c" -Recurse -Force
 # Compile all 32-bit files
 $BOOT2CFILES|ForEach-Object{
 	if($_ -notin $EXCLUDE){
-		Log-Write -Msg "$($GCC "-c" $_ ($COMPILECLI -join ' '))" -color Yellow
+		Log-Write -Msg "$GCC -c $($_) -o $([System.IO.Path]::GetFileNameWithoutExtension($_)).o $($COMPILECLI -join ' ')" -color Yellow
 		$BOOT2OFILES += (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_).o"),
-		$COMPILEOUT = (& $GCC "-c" $_ $COMPILECLI) 2>&1
+		$COMPILEOUT = (& $GCC "-c" $_ "-o" (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o" $COMPILECLI) 2>&1
 		$COMPILEOUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 	}
 }
 
-# Compile boot16.asm
-Log-Write -Msg "`n$($NASM) -f obj $($BOOT16A) -o $($BOOT16AOBJ)`n" -Color White
-$NASM_OUT = (& $NASM "-f" "obj" $BOOT16A "-o" $BOOT16AOBJ) 2>&1# | grc --colour=on
-$NASM_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+# Compile .asm files
+$BOOT2ASMFILES|ForEach-Object{
+	if($_ -notin $EXCLUDE){
+		$args_ = @("-f", "obj", $_, "-o", "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o")
+		Log-Write -Msg "$($NASM ($args_ -join ' '))" -color Yellow
+		$BOOT2OFILES += (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o"),
+		$COMPILEOUT = (& $NASM $args_) 2>&1
+		$COMPILEOUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+	}
+}
 
 # build files
 New-Item -Path $ST2BIN -ItemType File -Force
