@@ -41,7 +41,13 @@ void updateCursor32(){
 	asm_updateCursor32(VGAX, VGAY);
 }
 
-static inline void scrollCursor32(uint8_t lines){
+inline void getCursor32(uinl32_t *X, uinl32_t *Y){
+	uint16_t pos = asm_getCursor32(void);
+	*X = pos % VGA_MAXX;
+	*Y = pos / VGA_MAXX;
+}
+
+inline void scrollCursor32(uint8_t lines){
 	if(lines < VGAY){
 		// Copy back
 		memcpy(
