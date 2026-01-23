@@ -187,9 +187,20 @@ typedef struct FrATsector{
 	};
 }__attribute__((packed)) FrATsector;
 
-#ifdef _WIN32
-void enable_ansi(void);
-#endif
+typedef struct ENVIROMENT{
+	drive_header drive;
+	FILE files[10];
+	FAT_e FAT[32];
+	uinl32_t loadedFATs;
+}ENVIROMENT;
+
+typedef struct FILE{
+	FrATBASEsector file;
+	char *name;
+	FrATsector sector;
+	size_t progress;
+}FILE;
+
 void IMG_Setup(char *disk_path);
 
 bool closeFile(char *name);
