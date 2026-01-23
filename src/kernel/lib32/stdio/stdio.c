@@ -172,9 +172,8 @@ char *printarg32(uinl32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool 
         }
     }
     do{
-        // uint32_t rem = num % radix;
-		// num /= radix;
-        div64_32(num, radix, &num, &rem);
+        rem = num % radix;
+		num /= radix;
         out[pos++] = g_hexes32[rem];
     }while(num);
     if(sign && num_sign < 0 && attach_sign){out[pos++] = '-';}
