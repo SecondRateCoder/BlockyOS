@@ -17,4 +17,7 @@ void puts32(char *str);
 void putc32(char c, uint8_t color);
 static inline void scrollCursor32(uint8_t lines);
 
-extern void asm_updateCursor32(uinl32_t x, uinl32_t y);
+extern void __attribute__((cdecl)) asm_enableCursor32(void);
+extern void __attribute__((cdecl)) asm_disdableCursor32(void);
+extern uint16_t __attribute__((cdecl)) asm_getCursor32();
+extern void __attribute__((cdecl)) asm_updateCursor32(uinl32_t x, uinl32_t y);
