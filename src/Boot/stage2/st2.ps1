@@ -11,21 +11,25 @@ param(
 $Build = Join-Path (Get-Location) ("Build/Build-" + $Date)
 $Image = Join-Path $Build ("floppy-$($Date).img")
 $Objdir = Join-Path $Build "objs"
-$Log = Join-Path $Build ("logST2.txt")
+$Log = Join-Path $Build ("logst2.txt")
+
+$EXCLUDE = @()
 
 $BOOT16A = (Join-Path (Get-Location) "src/Boot/stage2/boot.asm")
 $BOOT16AOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT16A)).o"
 
-$BOOT32C = (Join-Path (Get-Location) "src/Boot/stage2/boot32.c")
-$BOOT32COBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT32C)).o"
+$BOOT2CFILES = @(
+	(Join-Path (Get-Location) "src/Boot/stage2/boot32.c"),
+	(Join-Path (Get-Location) "src/kernel/public/public/memory/string.c"),
+	(Join-Path (Get-Location) "src/kernel/public/public/memory/memory.c")
+)
+$BOOT2OFILES = @(
+	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[0])).o",
+	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[1])).o",
+	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[2])).o",
+)
 
-$STRINGC = (Join-Path (Get-Location) "src/kernel/public/public/memory/string.c")
-$STRINGCOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($STRINGC)).o"
-
-$MEMC = (Join-Path (Get-Location) "src/kernel/public/public/memory/memory.c")
-$MEMCOBJ = Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($MEMC)).o"
-
-$ST2ELF = Join-Path -Path $Objdir "boot2.elf"
+# $ST2ELF = Join-Path -Path $Objdir "boot2.elf"
 $ST2BIN = Join-Path -Path $Objdir "boot2.bin"
 
 $MAPFILE = Join-Path -Path $Build "gcc.map"
@@ -58,24 +62,24 @@ function Img-Push {
 }
 
 $COMPILECLI = @(
-	"-nostdlib", "-I", "$(Join-Path (Get-Location) "src/")",
-	"-fdiagnostics-color=always", "-m32", "-ffreestanding",
+	"-nostdlib", "-ffreestanding", "-m32", 
+	"-fdiagnostics-color=always", 
+	"-I", "$(Join-Path (Get-Location) "src/")", 
+	"-I", "$(Join-Path (Get-Location) "src/kernel/lib32/")",
 	"-std=c99"
 )
 
+# Get all lib32 C files.
+$BOOT2CFILES += (Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/*.c") -Recurse -Force
 # Compile all 32-bit files
-# boot32.c
-Log-Write -Msg "`n$($GCC) -c $($BOOT32C) -o $($BOOT32COBJ) $($COMPILECLI -join ' ')`n" -Color White
-$GCC_OUT = (& $GCC "-c" $BOOT32C "-o" $BOOT32COBJ $COMPILECLI) 2>&1
-$GCC_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
-# string.c
-Log-Write -Msg "`n$($GCC) -c $($STRINGC) -o $($STRINGCOBJ) $($COMPILECLI -join ' ')`n" -Color White
-$GCC_OUT = (& $GCC "-c" $STRINGC "-o" $STRINGCOBJ $COMPILECLI) 2>&1
-$GCC_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
-# mem.c
-Log-Write -Msg "`n$($GCC) -c $($MEMC) -o $($MEMCOBJ) $($COMPILECLI -join ' ')`n" -Color White
-$GCC_OUT = (& $GCC "-c" $MEMC "-o" $MEMCOBJ $COMPILECLI) 2>&1
-$GCC_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+$BOOT2CFILES|ForEach-Object{
+	if($_ -notin $EXCLUDE){
+		Log-Write -Msg "$($GCC "-c" $_ ($COMPILECLI -join ' '))" -color Yellow
+		$BOOT2OFILES += (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_).o"),
+		$COMPILEOUT = (& $GCC "-c" $_ $COMPILECLI) 2>&1
+		$COMPILEOUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+	}
+}
 
 # Compile boot16.asm
 Log-Write -Msg "`n$($NASM) -f obj $($BOOT16A) -o $($BOOT16AOBJ)`n" -Color White
@@ -124,12 +128,10 @@ ORDER
 
 # call wlink
 # $args_ = @("@$(Join-Path $Objdir 'wlink.lnk')")
-$args_ = @(
-	"NAME" , "$($ST2BIN)", 
-	"FILE", "$($BOOT16AOBJ)", "FILE", "$($BOOT32COBJ)",
-	"FILE", "$($STRINGCOBJ)", "FILE", "$($MEMCOBJ)", 
-	"OPTION", "MAP=$(Join-Path $Build "wlink.map")", "@$(Join-Path $Objdir 'wlink.lnk')"
-)
+$args_ = @("NAME" , "$($ST2BIN)")
+$BOOT2OFILES|ForEach-Object{if($_){$args_ += @("FILE", $_)}}
+$args_ += @("OPTION", "MAP=$(Join-Path $Build "wlink.map")", "@$(Join-Path $Objdir 'wlink.lnk')")
+
 Log-Write -Msg "`n`nwlink $($args_ -join ' ')`n`n" -Color Yellow
 $WLINK_OUT = (& $WLINK @args_) 2>&1
 $WLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
