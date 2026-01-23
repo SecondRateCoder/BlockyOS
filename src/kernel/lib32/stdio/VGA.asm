@@ -21,10 +21,10 @@ _asm_getCursor32:
 	push eax
 	mov eax, dword 0
 	outb 0x3D4, 0x0F
-	inb 0x3D5, al
+	inb al, 0x3D5
 
 	outb 0x3D4, 0x0E
-	inb 0x3D5, ah
+	inb ah, 0x3D5
 	ret
 	
 
@@ -34,13 +34,13 @@ _asm_enableCursor32:
 	; Save Regs
 	push eax
 	outb 0x3D4, 0x0A				; Setup for Cursor End
-	inb 0x3D5, al
+	inb al, 0x3D5
 	and eax, 0xC0
 	or eax, [ebp + 12]
 	outb 0x3D5, al					; Write Cursor End
 
 	outb 0x3D4, 0x0B				; Setup for Cursor Start
-	inb 0x3D5, al
+	inb al, 0x3D5
 	and eax, 0xE0
 	or eax, [ebp + 16]
 	outb 0x3D5, al					; Write Cursor End
