@@ -11,6 +11,8 @@ char g_hexes32[];
 void printf32(char *fmt, ...);
 #define printarg
 char *printarg32(uinl32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool printin, bool attach_sign);
+#define clear32 memset(VGA, VGA_MAXX * VGA_MAXY, 0);
+
 
 // Function Prototypes
 void updateCursor32();
