@@ -1,34 +1,7 @@
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <ctype.h>
-#include <math.h>
-#include <time.h>
-#include <inttypes.h>
+#include "stdfile.h"
 
 #define FATl_t uint32_t
 #define MASK_GEN(BITS) (1 << (BITS - 1))
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_BLUE    "\x1b[34m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_CYAN    "\x1b[36m"
-#define ANSI_COLOR_LBLUE "\x1b[94m"
-
-#define ANSI_COLOR_RESET   "\x1b[0m"
-
-#define ANSI_RED(TEXT) "\n" ANSI_COLOR_RED TEXT ANSI_COLOR_RESET
-#define ANSI_GREEN(TEXT) "\n" ANSI_COLOR_GREEN TEXT ANSI_COLOR_RESET
-#define ANSI_YELLOW(TEXT) "\n" ANSI_COLOR_YELLOW TEXT ANSI_COLOR_RESET
-#define ANSI_BLUE(TEXT) "\n" ANSI_COLOR_BLUE TEXT ANSI_COLOR_RESET
-#define ANSI_MAGENTA(TEXT) "\n" ANSI_COLOR_MAGENTA TEXT ANSI_COLOR_RESET
-#define ANSI_CYAN(TEXT) "\n" ANSI_COLOR_CYAN TEXT ANSI_COLOR_RESET
-#define ANSI_LBLUE(TEXT) "\n" ANSI_COLOR_LBLUE TEXT ANSI_COLOR_RESET
 
 #define FAT_LBA (((drive.reserved_sectors + 1) * drive.bytes_per_sector * drive.sectors_per_cluster))
 #define BASEMAP_LBA (FAT_LBA + (drive.fat_count * drive.sectors_per_fat * drive.bytes_per_sector))
