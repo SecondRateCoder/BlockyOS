@@ -7,6 +7,8 @@
 #define PF_DSTEP_LONG_LONG 	4
 
 char g_hexes32[];
+uint8_t g_color;
+
 #define printf printf32
 void printf32(char *fmt, ...);
 #define printarg
@@ -17,7 +19,8 @@ char *printarg32(uinl32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool 
 // Function Prototypes
 void updateCursor32();
 void puts32(char *str);
-void putc32(char c, uint8_t color);
+void putc32(char c);
+static inline void setColor(uint8_t color);
 
 // Wrapper prototypes
 static inline getCursor32(uinl32_t *X, uinl32_t *Y);
