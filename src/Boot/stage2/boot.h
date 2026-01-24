@@ -3,6 +3,9 @@
 #include "./kernel/public/public/public.h"
 #include "./kernel/lib32/stdfile/stdfile.h"
 
+#define i868GDT_SEGCODE 0x08
+#define i868GDT_DATASEG 0x10
+
 // Halt and restart
 extern void __attribute__((cdecl)) start(void);
 extern void __attribute__((cdecl)) halt(void);

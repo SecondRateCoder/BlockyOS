@@ -5,12 +5,13 @@
 #include "./kernel/public/public/memory/memory.h"
 #include "./kernel/public/public/memory/string.h"
 
-#ifndef PUBLIC_H
-#define PUBLIC_H
+#define LOW64(_64) ((_64) & 0xFFFFFFFF)
+#define LOW32(_32) ((_32) & 0xFFFF)
+#define LOW16(_16) ((_16) & 0x00FF)
+
 #define NULL (void *)0
-#define min(A, B) A < B? A: B
-#define max(A, B) A > B? A: B
-#endif
+#define min(A, B) (A) < (B)? (A): (B)
+#define max(A, B) (A) > (B)? (A): (B)
 
 size_t decode64(const uint8_t *array);
 int decode32(const uint8_t *array);

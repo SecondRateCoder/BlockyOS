@@ -1,0 +1,100 @@
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o -nostdlib -ffreestanding -m32 -fdiagnostics-color=always -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\ -std=c99
+In file included from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot32.c:1[m[K:
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.h:18:6:[m[K [01;35m[Kwarning: [m[Karray '[01m[Kg_hexes32[m[K' assumed to have one element
+   18 | char [01;35m[Kg_hexes32[m[K[];
+      |      [01;35m[K^~~~~~~~~[m[K
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\string.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\string.o -nostdlib -ffreestanding -m32 -fdiagnostics-color=always -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\ -std=c99
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o -nostdlib -ffreestanding -m32 -fdiagnostics-color=always -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\ -std=c99
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c:[m[K In function '[01m[Kmemwithin[m[K':
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c:4:13:[m[K [01;35m[Kwarning: [m[Kcast from pointer to integer of different size [[01;35m[K-Wpointer-to-int-cast[m[K]
+    4 |     return ([01;35m[K([m[Ksize_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + size);
+      |             [01;35m[K^[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c:4:33:[m[K [01;35m[Kwarning: [m[Kcast from pointer to integer of different size [[01;35m[K-Wpointer-to-int-cast[m[K]
+    4 |     return ((size_t)address) > ([01;35m[K([m[Ksize_t)buffer) && ((size_t)address) < ((size_t)buffer + size);
+      |                                 [01;35m[K^[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c:4:53:[m[K [01;35m[Kwarning: [m[Kcast from pointer to integer of different size [[01;35m[K-Wpointer-to-int-cast[m[K]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ([01;35m[K([m[Ksize_t)address) < ((size_t)buffer + size);
+      |                                                     [01;35m[K^[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\public\public\memory\memory.c:4:73:[m[K [01;35m[Kwarning: [m[Kcast from pointer to integer of different size [[01;35m[K-Wpointer-to-int-cast[m[K]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ([01;35m[K([m[Ksize_t)buffer + size);
+      |                                                                         [01;35m[K^[m[K
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdfile\stdfile.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdfile.o -nostdlib -ffreestanding -m32 -fdiagnostics-color=always -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\ -std=c99
+In file included from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdfile\f-rat.h:5[m[K,
+                 from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdfile\stdfile.h:4[m[K,
+                 from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdfile\stdfile.c:1[m[K:
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdio/stdio.h:22:6:[m[K [01;35m[Kwarning: [m[Karray '[01m[Kg_hexes32[m[K' assumed to have one element
+   22 | char [01;35m[Kg_hexes32[m[K[];
+      |      [01;35m[K^~~~~~~~~[m[K
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o -nostdlib -ffreestanding -m32 -fdiagnostics-color=always -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\ -std=c99
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:[m[K In function '[01m[Kprintf32[m[K':
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:123:28:[m[K [01;35m[Kwarning: [m[Kcast to pointer from integer of different size [[01;35m[K-Wint-to-pointer-cast[m[K]
+  123 |                     puts32([01;35m[K([m[Kchar *)(((size_t)argp[dwords] << 32)  | argp[dwords]));
+      |                            [01;35m[K^[m[K
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdlib.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdlib.o -nostdlib -ffreestanding -m32 -fdiagnostics-color=always -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\ -std=c99
+In file included from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT.h:3[m[K,
+                 from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdlib.c:2[m[K:
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/kernpublic.h:15:9:[m[K [01;35m[Kwarning: [m[K'[01m[K__cdecl[m[K' redefined
+   15 | #define [01;35m[K__cdecl[m[K __attribute__((cdecl))
+      |         [01;35m[K^~~~~~~[m[K
+[01m[K<built-in>:[m[K [01;36m[Knote: [m[Kthis is the location of the previous definition
+In file included from [01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/f-rat.h:5[m[K,
+                 from [01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:4[m[K,
+                 from [01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/public/kernpublic.h:8[m[K:
+[01m[KC:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdio/stdio.h:22:6:[m[K [01;35m[Kwarning: [m[Karray '[01m[Kg_hexes32[m[K' assumed to have one element
+   22 | char [01;35m[Kg_hexes32[m[K[];
+      |      [01;35m[K^~~~~~~~~[m[K
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdprogram.o -nostdlib -ffreestanding -m32 -fdiagnostics-color=always -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\ -std=c99
+In file included from [01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c:1[m[K:
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.h:6:10:[m[K [01;31m[Kfatal error: [m[K./kernel/lib32/stdkernel/GDTHelper.h: No such file or directory
+    6 | #include [01;31m[K"./kernel/lib32/stdkernel/GDTHelper.h"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdfile\stdfile.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdfile.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\IO.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\IO.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\VGA.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\VGA.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\GDT.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\IntHelper.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\IntHelper.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdlib.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdlib.o
+
+
+wlink NAME C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot2.bin FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\string.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\string.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdfile.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdlib.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdprogram.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdfile.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\IO.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\VGA.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\GDT.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\IntHelper.o FILE C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdlib.o OPTION MAP=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\wlink.map @C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\wlink.lnk
+
+
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o): redefinition of _main32 ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o): redefinition of _VGAX ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o): redefinition of _VGAY ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o): redefinition of _g_hexes32 ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o): redefinition of _g_color ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o): redefinition of _sectorpointer ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o): redefinition of _sectorhandles ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot32.o): redefinition of _writeptr ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\string.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\string.o): redefinition of _strlen ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\string.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\string.o): redefinition of _strcheck ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o): redefinition of _memwithin ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o): redefinition of _memset ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o): redefinition of _memcmp ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o): redefinition of _memcpy ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o): redefinition of _memcheckb ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o): redefinition of _memcheckh ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o): redefinition of _memcheckl ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\memory.o): redefinition of _memcheckll ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o): redefinition of _VGAX ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o): redefinition of _VGAY ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o): redefinition of _g_hexes32 ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdio.o): redefinition of _g_color ignored
+Error! E2008: cannot open C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdprogram.o : No such file or directory
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of _start ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of _halt ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of _bochs_breakpoint ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of _div64_32_ ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of __U8LS ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of __I8LS ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of _int16disable ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of _int16enable ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of _int32disable ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of _int32enable ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\boot.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.asm): redefinition of _switch16_32 ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdfile.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdfile\stdfile.asm): redefinition of __x86DISKREAD ignored
+Warning! W1027: file C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-24-11\objs\stdfile.o(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdfile\stdfile.asm): redefinition of __x86DISKWRITE ignored
+GCC link failed

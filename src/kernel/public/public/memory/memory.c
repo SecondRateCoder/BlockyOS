@@ -1,5 +1,9 @@
 #include ".//kernel/public/public/public.h"
 
+bool memwithin(void *buffer, size_t size, void *address){
+    return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + size);
+}
+
 void memset(void *buffer, size_t len, uint8_t val){
     for(size_t cc = 0; cc < len; ++cc){((uint8_t *)buffer)[cc] = val;}
 }

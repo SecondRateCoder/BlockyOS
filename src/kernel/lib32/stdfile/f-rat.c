@@ -4,49 +4,6 @@
 sectorbuff openFileNames[MAX_FHANDLES];
 static stdfileENVIROMENT env;
 
-int main(uint32_t argc, char **argv){
-	enableAnsi();
-	IMG_Setup(*(argv + 1));
-	createFile(0, 100, "The 1st File", "rw0");
-	openFile("The 1st File");
-	ptrStep(10, 0);
-	closeFile("The 1st File");
-	return 1;
-}
-
-// void IMG_Setup(char *disk_path){
-// 	for(uint8_t cc =0; cc < 10; ++cc){openFiles[cc] = NULL;}
-// 	if(!(disk = fopen(disk_path, "rb+"))){
-// 		setColor(ANSI_RED);
-// 		printf("Cannot open file: %s, reading failed, exiting...", disk_path);
-// 		exit(1);
-// 	}
-// 	fseek(disk, 0, SEEK_SET);
-//     if(fread(&drive, sizeof(drive_header), 1, disk) != 1){
-// 		setColor(ANSI_RED);
-// 		printf("Drive reading failed, exiting...");
-// 		exit(1);
-// 	}
-//     if(drive.bytes_per_sector == 0){
-// 		setColor(ANSI_RED);
-// 		printf("Floppy image was NOT valid...");
-// 		exit(1);
-// 	}
-// 	FAT = malloc(drive.sectors_per_fat * drive.bytes_per_sector);
-// 	memset(FAT, 0, (size_t)(drive.sectors_per_fat * drive.bytes_per_sector));
-// 	fseek(disk, FAT_LBA, SEEK_SET);
-// 	setColor(ANSI_YELLOW);
-// 	printf("File ptr: %d, 0x%x", ftell(disk), ftell(disk));
-
-// 	if(fread(FAT, 1, (drive.sectors_per_fat * drive.bytes_per_sector), disk) != (drive.sectors_per_fat * drive.bytes_per_sector)){
-// 		setColor(ANSI_RED);
-// 		printf("Failed to read %d bytes.", drive.sectors_per_fat * drive.bytes_per_sector);
-// 		exit(1);
-// 	}
-// 	loadedFATs = 0;
-// 	while(loadedFATs < (drive.sectors_per_fat * drive.bytes_per_sector) && FATused(FAT[loadedFATs].LBA)){(loadedFATs++);}
-// }
-
 void createFile(uint8_t dir, size_t size, char *name, char *mode){
 	FAT_e save = MallocSectorSMAP(default_max);
 	fseek(disk, BASEMAP_LBA + LBAget(save.LBA), SEEK_SET);

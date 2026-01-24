@@ -1,5 +1,5 @@
-#include "../src/kernel/ram/ram.h"
-#include "../src/kernel/public/kernpublic.h"
+#include "ram.h"
+#include "./kernel/public/kernpublic.h"
 
 char *RAM;
 volatile RAMH_TYPE num_headers;

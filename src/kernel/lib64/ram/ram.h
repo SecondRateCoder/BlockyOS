@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../src/kernel/public/kernpublic.h"
+#include "./kernel/public/kernpublic.h"
 
 #ifndef RAM_H
 #define RAM_H

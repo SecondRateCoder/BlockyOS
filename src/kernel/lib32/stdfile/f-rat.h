@@ -4,6 +4,8 @@
 #include "./kernel/public/public/math/int/_bool.h"
 #include "./kernel/lib32/stdio/stdio.h"
 
+#define default_max 2000
+
 #define FATl_t uint32_t
 #define MASK_GEN(BITS) (1 << (BITS - 1))
 

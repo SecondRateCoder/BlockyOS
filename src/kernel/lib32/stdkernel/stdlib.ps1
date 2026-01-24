@@ -1,5 +1,5 @@
 
-$INTERRUTASM = Join-Path (Get-Location) "src/kernel/lib32/stdlib/Interrupt.asm"
+$INTERRUTASM = Join-Path (Get-Location) "src/kernel/lib32/stdlib/InterruptRoutines.asm"
 
 $ERRORINTERRUPTS = @()
 

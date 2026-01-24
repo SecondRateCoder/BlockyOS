@@ -1,12 +1,12 @@
 #include "stdfile.h"
 
-size_t sectorpointer;
-sectorbuff sectorhandles[MAX_FHANDLES];        // 10 sectors max read.
-uint8_t writeptr;
+FILE *getFILE(FILEhandle *Fh){
+    get
+}
 
 stdfileENVIROMENT envPREPARE(){
     static stdfileENVIROMENT out;
-    sectorSeek(0);
+    sectorSeek(-sectorpointer);
     void *temp = sectorRead_(sizeof(drive_header));
     memcpy(&(out.drive), temp, sizeof(drive_header));
     sectorSeek(FAT_LBA(out.drive));
@@ -16,8 +16,14 @@ stdfileENVIROMENT envPREPARE(){
     return out;
 }
 
-void sectorSeek(ssize_t offset){
-    if(-offset < sectorpointer){sectorpointer += offset;}
+bool sectorSeek_(FILEhandle *file, long offset, bool update){
+    if(-offset < sectorpointer){
+        if(x86DISKUPDATE(sectorpointer + offset, true)){
+            sectorpointer += offset;
+            return true;
+        }
+    }
+    return false;
 }
 
 size_t sectorTell(){return sectorpointer;}
@@ -32,11 +38,12 @@ void *sectorRead_(unsigned long bytes){
         return NULL;
     }
     for(uint8_t cc =0; cc < reads; ++cc){
-        x86DISKREAD(sectorpointer, (uint8_t *)(sectorhandles + writeptr));
+        x86DISKREAD((uint8_t *)(sectorhandles + writeptr));
+        if(sectorSeek_(128, false)){
+        }
         writeptr++;
         if(writeptr > 10){writeptr = 0;}
     }
-    sectorpointer += bytes;
     return (sectorhandles + last_write);
 }
 
@@ -54,7 +61,7 @@ void sectorWrite(void *buffer, size_t buffsize){
         uint8_t packetsize = (buffsize - offset) > 128? 128: (buffsize - offset);
         offset += packetsize;
         static uint8_t buffer_[128];
-        x86DISKWRITE(sectorpointer, buffer_);
+        x86DISKWRITE(buffer_);
         memcpy(buffer + offset, buffer_, packetsize);
     }
 }

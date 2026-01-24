@@ -5,6 +5,10 @@
 
 #define MAX_FHANDLES 10
 
+#define kB (1024)
+#define mB (1024 * 1024)
+#define gB (mB * 1024)
+
 typedef uint8_t sectorbuff[128];
 size_t sectorpointer;
 sectorbuff sectorhandles[MAX_FHANDLES];
@@ -54,16 +58,19 @@ typedef struct stdfileENVIROMENT{
 	uinl32_t loadedFATs;
 }stdfileENVIROMENT;
 
-// Read a Sector to the address
-extern void __attribute__((cdecl)) x86DISKREAD(size_t offs, uint8_t *address);
+// Read a 128 byte Sector to the address
+extern void __attribute__((cdecl)) x86DISKREAD(uint8_t *address);
+// Write a 128 byte Sector to the address
+extern void __attribute__((cdecl)) x86DISKWRITE(uint8_t *address);
 
-// Write a Sector to the address
-extern void __attribute__((cdecl)) x86DISKWRITE(size_t offs, uint8_t *address);
+extern bool __attribute__((cdecl)) x86DISKUPDATE(size_t new_addr, bool update);
 
 stdfileENVIROMENT envPREPARE();
 
 size_t sectorTell();
-void sectorSeek(ssize_t offset);
+
+#define sectorSeek(offset) sectorSeek_(offset, true)
+bool sectorSeek_(long offset, bool update);
 void *sectorRead_(unsigned long bytes);
 void sectorWrite(void *buffer, size_t buffsize);
 void sectorRead(void *buffer, size_t buffsize, size_t bytes);
