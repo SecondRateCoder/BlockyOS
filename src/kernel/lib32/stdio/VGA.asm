@@ -1,7 +1,6 @@
 bits 32
 
-extern VGA_MAXX
-extern VGA_MAXY
+extern VGA_MAXX, VGA_MAXY
 
 
 _asm_TestVGA:						; Test that VGA is active, otherwise emulate.
@@ -11,56 +10,78 @@ _asm_TestVGA:						; Test that VGA is active, otherwise emulate.
 global _asm_disableCursor32
 ;	void asm_disableCursor32(void)
 _asm_disableCursor32:
-	outb 0x3D4, 0x0A
-	outb 0x3D5, 0x20
+	mov dx, 0x3D4
+	mov al, 0x0A
+	out dx, al
+	inc dx
+	mov al, 0x20
+	out dx, al
 	ret
 
 global _asm_getCursor32:
 ;	uint16_t asm_getCursor32(void)
 _asm_getCursor32:
-	push eax
-	mov eax, dword 0
-	outb 0x3D4, 0x0F
-	inb al, 0x3D5
+	mov dx, 0x3D4
+	mov al, 0x0F
+	out dx, al
 
-	outb 0x3D4, 0x0E
-	inb ah, 0x3D5
+	inc dx
+	in al, dx
+
+	in al, dx
+	shl ax, 8
+
+	dec dx
+	mov al, 0x0E
+	out dx, al
 	ret
 	
 
 global _asm_enableCursor32
 ;	void asm_enableCursor32(uinl32_t, uinl32_t)
 _asm_enableCursor32:
-	; Save Regs
-	push eax
-	outb 0x3D4, 0x0A				; Setup for Cursor End
-	inb al, 0x3D5
+	mov dx, 0x3D4
+	mov al, 0x0A
+	out dx, al				; Setup for Cursor End
+
+	inc dx
+	in al, dx
 	and eax, 0xC0
 	or eax, [ebp + 12]
-	outb 0x3D5, al					; Write Cursor End
+	out dx, al					; Write Cursor End
 
-	outb 0x3D4, 0x0B				; Setup for Cursor Start
-	inb al, 0x3D5
+	dec dx
+	mov al, 0x0B
+	out dx, al				; Setup for Cursor Start
+
+	inc dx
+	in al, dx
 	and eax, 0xE0
 	or eax, [ebp + 16]
-	outb 0x3D5, al					; Write Cursor End
-	; Restore Regs
-    pop eax
+	out dx, al					; Write Cursor End
+
     ret
 
 global _asm_updateCursor32
 ;	void asm_UpdateCursor32(uinl32_t, uinl32_t)
 _asm_updateCursor32:
-	; Save Regs
-	push eax
 	mov eax, [ebp + 16]				; Load Y
 	mul word [VGA_MAXX]				; Multiply by MAX rows
 	add eax, [ebp + 12]				; Add X
 	shr eax, 8						; Get high byte
-	outb 0x3D4, 0x0F				; Setup for writing low byte
-	outb 0x3D5, al					; Write low byte
-	outb 0x3D4, 0x0E				; Setup for writing High byte
-	outb 0x3D5, al					; Write high byte
-	; Restore Regs
-    pop eax
+
+	mov dx, 0x3D4
+	mov al, 0x0F
+	out dx, al				; Setup for writing low byte
+
+	inc dx
+	out dx, al					; Write low byte
+
+	dec dx
+	mov al , 0x0E
+	out dx, al				; Setup for writing High byte
+
+	inc dx
+	out dx, al					; Write high byte
+
     ret

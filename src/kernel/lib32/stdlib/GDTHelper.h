@@ -1,6 +1,6 @@
-#include "./kernel/public/public/math/math.h"
+#pragma once
 
-extern void __attribute__((cdecl)) LoadGDT(gdtDESC_t *);
+#include "./kernel/public/public/math/math.h"
 
 typedef struct gdtENTRY_t{
     union{
@@ -24,5 +24,7 @@ typedef struct gdtDESC_t{
     gdtENTRY_t  *address;
 }__attribute__((packed)) gdtDESC_t;
 
-gdtDESC_t desc16;
+gdtDESC_t GDTdesc;
 gdtENTRY_t gdtTABLE16[];
+
+extern void __attribute__((cdecl)) LoadGDT(gdtDESC_t *);

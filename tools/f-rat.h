@@ -1,15 +1,38 @@
-#pragma once
-
-#include "stdfile.h"
-#include "./kernel/public/public/math/int/_bool.h"
-#include "./kernel/lib32/stdio/stdio.h"
+#include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <ctype.h>
+#include <math.h>
+#include <time.h>
+#include <inttypes.h>
 
 #define FATl_t uint32_t
 #define MASK_GEN(BITS) (1 << (BITS - 1))
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_LBLUE "\x1b[94m"
 
-#define FAT_LBA(drive) ((((drive).reserved_sectors + 1) * (drive).bytes_per_sector * (drive).sectors_per_cluster))
-#define BASEMAP_LBA(drive) (FAT_LBA(drive) + ((drive).fat_count * (drive).sectors_per_fat * (drive).bytes_per_sector))
-#define DDATA_LBA(drive) (BASEMAP_LBA(drive) + (20 * (drive).bytes_per_sector))
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
+#define ANSI_RED(TEXT) "\n" ANSI_COLOR_RED TEXT ANSI_COLOR_RESET
+#define ANSI_GREEN(TEXT) "\n" ANSI_COLOR_GREEN TEXT ANSI_COLOR_RESET
+#define ANSI_YELLOW(TEXT) "\n" ANSI_COLOR_YELLOW TEXT ANSI_COLOR_RESET
+#define ANSI_BLUE(TEXT) "\n" ANSI_COLOR_BLUE TEXT ANSI_COLOR_RESET
+#define ANSI_MAGENTA(TEXT) "\n" ANSI_COLOR_MAGENTA TEXT ANSI_COLOR_RESET
+#define ANSI_CYAN(TEXT) "\n" ANSI_COLOR_CYAN TEXT ANSI_COLOR_RESET
+#define ANSI_LBLUE(TEXT) "\n" ANSI_COLOR_LBLUE TEXT ANSI_COLOR_RESET
+
+#define FAT_LBA (((drive.reserved_sectors + 1) * drive.bytes_per_sector * drive.sectors_per_cluster))
+#define BASEMAP_LBA (FAT_LBA + (drive.fat_count * drive.sectors_per_fat * drive.bytes_per_sector))
+#define DDATA_LBA (BASEMAP_LBA + (20 * drive.bytes_per_sector))
 
 #define USED_FAT (FAT[0].segment)
 
@@ -24,6 +47,30 @@
 //*		List all the items in a Directory
 
 #define bytes_per_sector_ 128
+typedef struct drive_header{
+    uint8_t 	BOOT_Instruction[3],
+				OEM_ID[8];
+    uint16_t 	bytes_per_sector;
+    uint16_t 	sectors_per_cluster;
+	uint8_t		reserved_sectors,
+				fat_count;
+    uint16_t 	dir_entries_count,
+				total_sectors;
+    uint8_t 	media_descriptor_type;
+    uint16_t 	sectors_per_fat,
+				sectors_per_track,
+				heads;
+    uint32_t 	hidden_sectors,
+				large_sector_count;
+    // Extended boot record.
+    uint8_t 	drive_number,
+				signature;
+    uint8_t 	volume_id[4];
+    uint8_t 	volume_label[11];
+    uint8_t 	sys_id[8];
+	// Custom boot record
+	uint8_t sectormap_entries;
+}__attribute__((packed)) drive_header;
 
 #define LBAget(ull) (((unsigned long long)(ull)) & 0x7FFFFFFFFFFFFFFF)
 #define FATused(ull) (((unsigned long long)(ull)) & 0x1000000000000000)
@@ -140,21 +187,27 @@ typedef struct FrATsector{
 	};
 }__attribute__((packed)) FrATsector;
 
-// bool closeFile(char *name);
-// int8_t openFile(char *name);
-// FAT_e MallocSectorSMAP(uint32_t max);
-// FAT_e MallocSectorDDATA(uint32_t max);
-// bool ptrStep(int8_t ptr, uint8_t file);
-// bool FreeSector(uint8_t file, uint32_t ptr);
-// void createFile(uint8_t dir, size_t size, char *name, char *mode);
-// bool createSector(uint8_t file, char *mode, uint8_t data[Fsector_entries]);
-// bool openSectorRecurse(uint8_t progress, uint8_t ext_item, uint8_t file, uint8_t true_depth);
+#ifdef _WIN32
+void enable_ansi(void);
+#endif
+void IMG_Setup(char *disk_path);
+
+bool closeFile(char *name);
+int8_t openFile(char *name);
+FAT_e MallocSectorSMAP(uint32_t max);
+FAT_e MallocSectorDDATA(uint32_t max);
+bool ptrStep(int8_t ptr, uint8_t file);
+bool FreeSector(uint8_t file, uint32_t ptr);
+void createFile(uint8_t dir, size_t size, char *name, char *mode);
+bool createSector(uint8_t file, char *mode, uint8_t data[Fsector_entries]);
+bool openSectorRecurse(uint8_t progress, uint8_t ext_item, uint8_t file, uint8_t true_depth);
 
 
-// uint8_t strcheck(char *str, const char c);
-// extern const char DIGITS[];
-// void byte_to_base(uint8_t value, uint32_t base, char out[8]);
+uint16_t pack_time(struct tm *t);
+uint8_t strcheck(char *str, const char c);
+extern const char DIGITS[];
+void byte_to_base(uint8_t value, uint32_t base, char out[8]);
 
-// //! Written by AI
-// static inline void FrATbs_ResolveAttributes(uint32_t size, uint8_t *depth, uint16_t *extension_addresses);
-// void fnv1a_120(const void *data, size_t len, uint8_t out[15]);
+//! Written by AI
+static inline void FrATbs_ResolveAttributes(uint32_t size, uint8_t *depth, uint16_t *extension_addresses);
+void fnv1a_120(const void *data, size_t len, uint8_t out[15]);

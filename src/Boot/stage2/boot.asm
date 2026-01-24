@@ -5,7 +5,7 @@ db 103
 
 global bt1_drive_header
 extern _main32
-extern _gdtDesc
+extern GDTdesc
 extern _idtDesc
 
 bt1_drive_header_: times 58 db 0
@@ -27,7 +27,7 @@ _start:
 	sti
 
     ; Jump to boot2's .c file
-	push word _gdtDesc
+	push word GDTdesc
 	push word _idtDesc
 	push cs
 	push word _main32

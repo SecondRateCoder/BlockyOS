@@ -20,12 +20,18 @@ $BOOT2CFILES = @(
 	(Join-Path (Get-Location) "src/kernel/public/public/memory/string.c"),
 	(Join-Path (Get-Location) "src/kernel/public/public/memory/memory.c")
 )
-$BOOT2ASMFILES = @((Join-Path (Get-Location) "src/Boot/stage2/boot.asm"), Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Name "*.c" -Recusre -Force)
+$BOOT2ASMFILES = @(
+	(Join-Path (Get-Location) "src/Boot/stage2/boot.asm")
+)
+(Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Name "*.asm" -Recurse -Force -File)|ForEach-Object{
+	$BOOT2ASMFILES += Join-Path (Get-Location) "src/kernel/lib32/$($_)"
+}
+
 $BOOT2OFILES = @(
-	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2ASMFILES[0])).o",
-	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[0])).o",
-	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[1])).o",
-	Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[2])).o",
+	(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2ASMFILES[0])).o"),
+	(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[0])).o"),
+	(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[1])).o"),
+	(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[2])).o")
 )
 
 # $ST2ELF = Join-Path -Path $Objdir "boot2.elf"
@@ -39,7 +45,7 @@ function Log-Write{
 		[System.ConsoleColor]$color
 		)
 	Write-Host $Msg -ForegroundColor $color
-	Add-Content -Path $Log -Value $Msg
+	Add-Content -Path $Log -Value ($Msg -replace "`e\[[0-9;]*[A-Za-z]", "")
 }
 
 function Img-Push {
@@ -73,25 +79,33 @@ $COMPILECLI = @(
 )
 
 # Get all lib32 C files.
-$BOOT2CFILES += (Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Name "*.c" -Recurse -Force
+(Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Name "*.c" -Recurse -Force)|ForEach-Object{
+	$BOOT2CFILES += Join-Path (Get-Location) "src/kernel/lib32/$($_)"
+}
 # Compile all 32-bit files
 $BOOT2CFILES|ForEach-Object{
 	if($_ -notin $EXCLUDE){
-		Log-Write -Msg "$GCC -c $($_) -o $([System.IO.Path]::GetFileNameWithoutExtension($_)).o $($COMPILECLI -join ' ')" -color Yellow
-		$BOOT2OFILES += (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_).o"),
-		$COMPILEOUT = (& $GCC "-c" $_ "-o" (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o" $COMPILECLI) 2>&1
-		$COMPILEOUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+		Log-Write -Msg "$GCC -c $($_) -o $(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o") $($COMPILECLI -join ' ')" -color Yellow
+		$BOOT2OFILES += (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o")
+		$COMPILEOUT = (& $GCC "-c" $_ "-o" (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o") $COMPILECLI) 2>&1
+		$COMPILEOUT|ForEach-Object{
+			if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
+			else{Log-Write -Msg $_ -color Yellow}
+		}
 	}
 }
 
 # Compile .asm files
 $BOOT2ASMFILES|ForEach-Object{
 	if($_ -notin $EXCLUDE){
-		$args_ = @("-f", "obj", $_, "-o", "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o")
-		Log-Write -Msg "$($NASM ($args_ -join ' '))" -color Yellow
-		$BOOT2OFILES += (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o"),
+		$args_ = @("-f", "obj", $_, "-o", "$(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o")")
+		Log-Write -Msg "$($NASM) $($args_ -join ' ')" -color Yellow
+		$BOOT2OFILES += "$(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o")"
 		$COMPILEOUT = (& $NASM $args_) 2>&1
-		$COMPILEOUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+		$COMPILEOUT|ForEach-Object{
+			if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
+			else{Log-Write -Msg $_ -color Yellow}
+		}
 	}
 }
 
@@ -143,7 +157,10 @@ $args_ += @("OPTION", "MAP=$(Join-Path $Build "wlink.map")", "@$(Join-Path $Objd
 
 Log-Write -Msg "`n`nwlink $($args_ -join ' ')`n`n" -Color Yellow
 $WLINK_OUT = (& $WLINK @args_) 2>&1
-$WLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+$WLINK_OUT|ForEach-Object{
+	if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
+	else{Log-Write -Msg $_ -color Yellow}
+}
 
 if ($LASTEXITCODE -ne 0) {
 	Log-Write -Msg "GCC link failed" -Color Red

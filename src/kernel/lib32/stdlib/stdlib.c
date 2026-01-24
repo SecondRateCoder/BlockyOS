@@ -1,5 +1,5 @@
-#include "IDT.h"
-#include "GDT.h"
+#include "IntHelper.h"
+#include "GDTHelper.h"
 
 gdtENTRY_t gdtTABLE16[] = {
     /* Null descriptor */
@@ -23,7 +23,9 @@ gdtENTRY_t gdtTABLE16[] = {
       .access = 0x92, .granularity = 0x0F, .base_high = 0x00 }
 };
 
-gdtDESC_t desc16 = {
+gdtDESC_t GDTdesc = {
     .address = gdtTABLE16,
     .limit = (uint16_t)(sizeof(gdtTABLE16))
 };
+
+void __attribute__((cdecl)) isr_handlerC(){return;}

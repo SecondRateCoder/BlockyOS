@@ -20,45 +20,55 @@ uint64_t progress[10];
 
 bool Virt_active = false;
 
+#ifdef _WIN32
+#include <windows.h>
+#include <consoleapi.h>
+void enable_ansi(void){
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+	Virt_active = true;
+}
+#else
+	void enable_ansi(){return;}
+#endif
+
 int main(uint32_t argc, char **argv){
 	default_max = 2000;
-	enableAnsi();
+	enable_ansi();
 	IMG_Setup(*(argv + 1));
 	createFile(0, 100, "The 1st File", "rw0");
 	openFile("The 1st File");
 	ptrStep(10, 0);
 	closeFile("The 1st File");
-	return EXIT_SUCCESS;
+	return 1;
 }
 
 void IMG_Setup(char *disk_path){
 	for(uint8_t cc =0; cc < 10; ++cc){openFiles[cc] = NULL;}
 	if(!(disk = fopen(disk_path, "rb+"))){
-		setColor(ANSI_RED);
-		printf("Cannot open file: %s, reading failed, exiting...", disk_path);
-		exit(EXIT_FAILURE);
+		printf(ANSI_RED("Cannot open file: %s, reading failed, exiting..."), disk_path);
+		exit(1);
 	}
 	fseek(disk, 0, SEEK_SET);
     if(fread(&drive, sizeof(drive_header), 1, disk) != 1){
-		setColor(ANSI_RED);
-		printf("Drive reading failed, exiting...");
-		exit(EXIT_FAILURE);
+		printf(ANSI_RED("Drive reading failed, exiting..."));
+		exit(1);
 	}
     if(drive.bytes_per_sector == 0){
-		setColor(ANSI_RED);
-		printf("Floppy image was NOT valid...");
-		exit(EXIT_FAILURE);
+		printf(ANSI_RED("Floppy image was NOT valid..."));
+		exit(1);
 	}
 	FAT = malloc(drive.sectors_per_fat * drive.bytes_per_sector);
 	memset(FAT, 0, (size_t)(drive.sectors_per_fat * drive.bytes_per_sector));
 	fseek(disk, FAT_LBA, SEEK_SET);
-	setColor(ANSI_YELLOW);
-	printf("File ptr: %d, 0x%x", ftell(disk), ftell(disk));
+	printf(ANSI_YELLOW("File ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
 	if(fread(FAT, 1, (drive.sectors_per_fat * drive.bytes_per_sector), disk) != (drive.sectors_per_fat * drive.bytes_per_sector)){
-		setColor(ANSI_RED);
-		printf("Failed to read %d bytes.", drive.sectors_per_fat * drive.bytes_per_sector);
-		exit(EXIT_FAILURE);
+		printf(ANSI_RED("Failed to read %d bytes."), drive.sectors_per_fat * drive.bytes_per_sector);
+		exit(1);
 	}
 	loadedFATs = 0;
 	while(loadedFATs < (drive.sectors_per_fat * drive.bytes_per_sector) && FATused(FAT[loadedFATs].LBA)){(loadedFATs++);}
@@ -104,18 +114,16 @@ void createFile(uint8_t dir, size_t size, char *name, char *mode){
 	createSector(0, "n", name);
 	openFiles[0] = temp;
 
-	setColor(ANSI_YELLOW);
-	printf("Create File ptr: %d, 0x%x", ftell(disk), ftell(disk));
+	printf(ANSI_YELLOW("Create File ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 	if(fwrite(&bs, sizeof(FrATBASEsector), 1, disk) == 1){
 		fflush(disk);
-	}else{setColor(ANSI_RED);		printf("Failed to save new sector.");}
+	}else{printf(ANSI_RED("Failed to save new sector."));}
 }
 
 FAT_e MallocSectorDDATA(uint32_t max){
 	FrATsector temp;
 	fseek(disk, DDATA_LBA, SEEK_SET);
-	setColor(ANSI_YELLOW);
-	printf("Sector DDATA Malloc ptr: %d, 0x%x", ftell(disk), ftell(disk));
+	printf(ANSI_YELLOW("Sector DDATA Malloc ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
 	for(uint64_t cc =0; cc < max; ++cc){
 		fread(&temp, sizeof(FrATsector), 1, disk);
@@ -132,8 +140,7 @@ FAT_e MallocSectorDDATA(uint32_t max){
 FAT_e MallocSectorSMAP(uint32_t max){
 	FrATsector temp;
 	fseek(disk, BASEMAP_LBA, SEEK_SET);
-	setColor(ANSI_YELLOW);
-	printf("Sector SMAP Malloc ptr: %d, 0x%x", ftell(disk), ftell(disk));
+	printf(ANSI_YELLOW("Sector SMAP Malloc ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
 	for(uint64_t cc =0; cc < max; ++cc){
 		fread(&temp, sizeof(FrATsector), 1, disk);
@@ -145,8 +152,7 @@ FAT_e MallocSectorSMAP(uint32_t max){
 bool FreeSector(uint8_t file, uint32_t ptr){
 	if(file < 10 && ptr < FBsector_entries && openFiles[file]){
 		fseek(disk, DDATA_LBA + LBAget(openFiles[file]->entries[ptr].LBA), SEEK_SET);
-		setColor(ANSI_YELLOW);
-		printf("Sector Free ptr: %d, 0x%x", ftell(disk), ftell(disk));
+		printf(ANSI_YELLOW("Sector Free ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
 		uint8_t s[sizeof(FrATsector)] = {0};
 		fwrite(&s, 1, sizeof(FrATsector), disk);
@@ -180,8 +186,7 @@ bool createSector(uint8_t file, char *mode, uint8_t data[Fsector_entries]){
 			return false;
 		}else{
 			fseek(disk, DDATA_LBA + LBAget(openFiles[file]->entries[progress[file]].LBA), SEEK_SET);
-			setColor(ANSI_YELLOW);
-			printf("Sector Create ptr: %d, 0x%x", ftell(disk), ftell(disk));
+			printf(ANSI_YELLOW("Sector Create ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
 			fwrite(&s, sizeof(FrATsector), 1, disk);
 			fflush(disk);
@@ -195,8 +200,7 @@ bool closeFile(char *name){
 		if(openFileNames[cc]){
 			if(!strncmp(openFileNames[cc], name, strlen(name))){
 				fseek(disk, DDATA_LBA + LBAget(FAT[openFiles[cc]->FATindex].LBA), SEEK_SET);
-				setColor(ANSI_YELLOW);
-				printf("File Close ptr: %d, 0x%x", ftell(disk), ftell(disk));
+				printf(ANSI_YELLOW("File Close ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
 				fwrite(openFiles[cc], sizeof(FrATBASEsector), 1, disk);
 				free(openFiles[cc]);
@@ -233,8 +237,7 @@ bool openSector(uint8_t file){
 bool openSectorRecurse(uint8_t progress, uint8_t ext_item, uint8_t file, uint8_t true_depth){
 	if(ext_item > openFiles[file]->Num_extensionaddresses){return false;}
 	fseek(disk, DDATA_LBA + LBAget(openSectors[file].entries[ext_item].LBA), SEEK_SET);
-	setColor(ANSI_YELLOW);
-	printf("File Step ptr: %d, 0x%x", ftell(disk), ftell(disk));
+	printf(ANSI_YELLOW("File Step ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 	
 	if(fread(openSectors + file, sizeof(FrATsector), 1, disk) == 1){
 		if(openSectors[file].depth == true_depth){return true;}
@@ -256,15 +259,13 @@ int8_t openFile(char *name){
 	if(!ptr){return -1;}
 	for(uint32_t cc = 0; cc < loadedFATs; ++cc){
 		fseek(disk, BASEMAP_LBA + LBAget(FAT[cc].LBA), SEEK_SET);
-		setColor(ANSI_YELLOW);
-		printf("File Open ptr: %d, 0x%x", ftell(disk), ftell(disk));
+		printf(ANSI_YELLOW("File Open ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 		if(fread(ptr, sizeof(FrATBASEsector), 1, disk) == 1){
 			FrATsector *sector = malloc(sizeof(FrATsector));
 			for(uint8_t cc_ = ptr->Num_extensionaddresses + 1; cc_ < (drive.bytes_per_sector - sizeof(FrATBASEsector) / sizeof(FAT_e)); ++cc_){
 				if(FATused(ptr->entries[cc_].LBA)){continue;}
 				fseek(disk, DDATA_LBA + LBAget(ptr->entries[cc_].LBA), SEEK_SET);
-				setColor(ANSI_YELLOW);
-				printf("File Open ptr: %d, 0x%x", ftell(disk), ftell(disk));
+				printf(ANSI_YELLOW("File Open ptr: %d, 0x%x"), ftell(disk), ftell(disk));
 
 				if(fread(sector, sizeof(FrATsector), 1, disk) == 1){
 					if(FrATs_NAME(sector->flags)){
@@ -278,8 +279,7 @@ int8_t openFile(char *name){
 				}
 			}
 			free(sector);
-			setColor(ANSI_RED);
-			printf("Failed to read file: %s", name);
+			printf(ANSI_RED("Failed to read file: %s"), name);
 		}
 	}
 	openFiles[out] = NULL;

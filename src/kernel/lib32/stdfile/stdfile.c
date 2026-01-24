@@ -1,19 +1,28 @@
 #include "stdfile.h"
-typedef uint8_t sectorbuff[128];  // Enough for 1 sector.
+
 size_t sectorpointer;
-sectorbuff sectorhandles[10];        // 10 sectors max read.
+sectorbuff sectorhandles[MAX_FHANDLES];        // 10 sectors max read.
 uint8_t writeptr;
 
-void sectorseek(ssize_t offset){
-    if(-offset < sectorpointer){
-        sectorpointer += offset;
-        x86UPDATEDISKPTR(sectorpointer);
-    }
+stdfileENVIROMENT envPREPARE(){
+    static stdfileENVIROMENT out;
+    sectorSeek(0);
+    void *temp = sectorRead_(sizeof(drive_header));
+    memcpy(&(out.drive), temp, sizeof(drive_header));
+    sectorSeek(FAT_LBA(out.drive));
+    memset(out.FAT, sizeof(out.FAT), 0);
+    memset(out.files, sizeof(out.files), 0);
+    out.loadedFATs = 0;
+    return out;
 }
 
-size_t sectortell(){return sectorpointer;}
+void sectorSeek(ssize_t offset){
+    if(-offset < sectorpointer){sectorpointer += offset;}
+}
 
-void *sectorread_(unsigned long bytes){
+size_t sectorTell(){return sectorpointer;}
+
+void *sectorRead_(unsigned long bytes){
     uint8_t last_write = writeptr;
     uint8_t reads = bytes / 128 + 
         ((bytes % 128)? 1: 0);
@@ -23,7 +32,7 @@ void *sectorread_(unsigned long bytes){
         return NULL;
     }
     for(uint8_t cc =0; cc < reads; ++cc){
-        x86DISKREAD(sectorpointer, sectorhandles + writeptr);
+        x86DISKREAD(sectorpointer, (uint8_t *)(sectorhandles + writeptr));
         writeptr++;
         if(writeptr > 10){writeptr = 0;}
     }
@@ -31,21 +40,21 @@ void *sectorread_(unsigned long bytes){
     return (sectorhandles + last_write);
 }
 
-void sectorread(void *buffer, size_t buffsize, size_t bytes){
-    void *buffer_ = sectorread_(bytes);
-    memcpy(buffer_, buffer, buffsize);
+void sectorRead(void *buffer, size_t buffsize, size_t bytes){
+    void *buffer_ = sectorRead_(bytes);
+    memcpy(buffer, buffer_, buffsize);
     return;
 }
 
-void sectorwrite(void *buffer, size_t buffsize){
+void sectorWrite(void *buffer, size_t buffsize){
     uint8_t writes = buffsize / 128 + 
         ((buffsize % 128)? 1: 0);
     size_t offset = 0;
-    for(uint8_t cc =0; cc < write; ++cc){
+    for(uint8_t cc =0; cc < writes; ++cc){
         uint8_t packetsize = (buffsize - offset) > 128? 128: (buffsize - offset);
         offset += packetsize;
         static uint8_t buffer_[128];
         x86DISKWRITE(sectorpointer, buffer_);
-        memcpy(buffer_, buffer + offset, packetsize);
+        memcpy(buffer + offset, buffer_, packetsize);
     }
 }

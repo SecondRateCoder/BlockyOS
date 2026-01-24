@@ -7,7 +7,7 @@ param(
 $Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
 $Image = Join-Path $Build ("floppy-" + $Date + ".img")
 $Objdir = Join-Path $Build "\objs\"
-$Log = Join-Path $Build ("log-" + $Date + ".txt")
+$Log = Join-Path $Build ("logst1.txt")
 
 function Log-Write{
     param(

@@ -22,7 +22,7 @@ void putc32(char c){
 		case '\n': {VGAY++;}			// New-line, No Carriage-Return
 		case '\r': {VGAX = 0;}			// Carriage-Return
 		case '\t': {					// Tab
-			for(uint8_t cc =0; cc < TABSIZE; ++cc){putc(' ', g_color);}
+			for(uint8_t cc =0; cc < TABSIZE; ++cc){putc(' ');}
 			VGAX += TABSIZE;
 		}
 		default: {
@@ -45,7 +45,7 @@ void updateCursor32(){
 }
 
 inline void getCursor32(uinl32_t *X, uinl32_t *Y){
-	uint16_t pos = asm_getCursor32(void);
+	uint16_t pos = asm_getCursor32();
 	*X = pos % VGA_MAXX;
 	*Y = pos / VGA_MAXX;
 }
@@ -54,8 +54,8 @@ inline void scrollCursor32(uint8_t lines){
 	if(lines < VGAY){
 		// Copy back
 		memcpy(
-			VGA + ((lines * VGA_MAXX) + VGAX), 						// SRC
 			VGA,													// Destination
+			VGA + ((lines * VGA_MAXX) + VGAX), 						// SRC
 			(((VGAY - lines) * VGA_MAXX) + VGAX) * sizeof(uint16_t)	// Size
 		);
 		memset(
@@ -67,7 +67,7 @@ inline void scrollCursor32(uint8_t lines){
 }
 
 void puts32(char *str){
-	do{putc(*str, 0);
+	do{putc(*str);
 	}while(str++);
 }
 
@@ -130,11 +130,11 @@ void printf32(char *fmt, ...){
                     break;
                 }
                 case '%': {
-                    putc('%', 0);
+                    putc('%');
                     break;
                 }
                 case 'c': {	// char
-                    putc(*(argp + dwords), 0);
+                    putc(*(argp + dwords));
                     dwords++;
                     break;
                 }
@@ -147,7 +147,7 @@ void printf32(char *fmt, ...){
                     dwords++;
                     break;
             }
-        }else{putc(*fmt, 0);}
+        }else{putc(*fmt);}
 		fmt++;
     }
 }
@@ -186,6 +186,6 @@ char *printarg32(uinl32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool 
         out[pos++] = g_hexes32[rem];
     }while(num);
     if(sign && num_sign < 0 && attach_sign){out[pos++] = '-';}
-    if(printin){while(--pos >= 0){putc(out[pos], 0);}}
+    if(printin){while(--pos >= 0){putc(out[pos]);}}
     return out;
 }

@@ -24,9 +24,10 @@ $BOCHS = "C:\Users\olusa\Bochs-3.0\bochs.exe"
 $WCC = "wcc"
 $WLINK = "wlink"
 # $ST1 = Join-Path (Get-Location) "Boot\stage1\st1.ps1"
-$ST1 = "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage1\st1.ps1"
+$STDLIB = Join-Path (Get-Location) "\src\kernel\lib32\stdlib\stdlib.ps1"
+$ST1 = Join-Path (Get-Location) "src\Boot\stage1\st1.ps1"
 # $ST2 = Join-Path (Get-Location) "Boot\stage2\st2.ps1"
-$ST2 = "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\st2.ps1"
+$ST2 = Join-Path (Get-Location) "src\Boot\stage2\st2.ps1"
 
 $Date = (Get-Date -Format "yyyy-MM-dd-ss")
 $Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
@@ -80,7 +81,7 @@ function Prepare {
     if(-not(Test-Path $Build)){New-Item -Path $Build -ItemType Directory -Force}
     if($broadimage){
         if(-not(Test-Path $BroadImageFile)){
-            Remove-Item -Path $BroadImageFile -Force
+            Remove-Item -Path $BroadImageFile -Force -ErrorAction SilentlyContinue
             New-Item -Path $BroadImageFile -ItemType File -Force
         }
         if(Test-Path $BroadImageFile) {Remove-Item -Path $BroadImageFile -Force -ErrorAction SilentlyContinue
@@ -91,7 +92,7 @@ function Prepare {
     }
     if(-not(Test-Path $Objdir)){New-Item -Path $Objdir -ItemType Directory -Force}
     if(-not(Test-Path $Log)){New-Item -Path $Log -ItemType File -Force}
-    if(-not(Test-Path $Image)){New-Item -Path $Build -ItemType File -Force}
+    if(-not(Test-Path $Image)){New-Item -Path $Build -ItemType File -Force -ErrorAction SilentlyContinue}
     
     if(-not(Test-Path $NASM)){
         Log-Write -color Red -Msg "NASM not found at $NASM. Please install NASM."
@@ -108,6 +109,7 @@ function Prepare {
             Add-Content -Path $BOCHSRC -Value ($LINEUP + $Image + $LINEDWN + $BOCHSLOG)
         }finally{}
     }
+    (. $STDLIB)
 }
 
 function Parse-Number {

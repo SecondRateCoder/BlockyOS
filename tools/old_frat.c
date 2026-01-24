@@ -334,7 +334,7 @@ void IMG_setup(){
 	// header = malloc(sizeof(drive_header));
 	if(_fread(&header, sizeof(drive_header), 1) != 1){
 		printf(ANSI_RED("Drive header reading failed, exiting..."));
-		exit(EXIT_FAILURE);
+		exit(1);
 	}
 	if(header.bytes_per_sector == 0){
 		printf(ANSI_RED("Floppy image was NOT valid..."));
@@ -1149,7 +1149,7 @@ text_attmpt:
 							continue;
 						case 14:	// exit
 							no_func = true;
-							exit(EXIT_SUCCESS);
+							exit(1);
 						case 15:	// flist
 							no_func = true;
 							for(FATl_t cc_ = 0; cc_ < FAT_num; ++cc_){
@@ -1314,7 +1314,7 @@ int main(uint32_t arg_cc, char **arg_vector){
 		buffer[strlen(buffer) - 1] = 0;	// Remove new-line terminator.
 		cmd_handle(buffer);
 	}while(RUN);
-	return EXIT_SUCCESS;
+	return 1;
 }
 
 void sighandle(int sig){
