@@ -9,16 +9,20 @@ bits 32
 
 extern isr_handlerC
 
-KERNEL_ISRSEG                   equ 0x0000
-
-%macro INT_NOERROR 1
+%macro INTNOERROR 1
     push dword 0
     push dword %1
+	push esp
+	pushad
+	push esp
     jmp isr_inthandle
 %endmacro
 
-%macro INT_ERROR 1
+%macro INTERROR 1
     push dword %1
+	push esp
+	pushad
+	push esp
     jmp isr_inthandle
 %endmacro
 
@@ -35,7 +39,10 @@ isr_inthandle:
 	popa
 	iret
 
-global _interruptTable:
+global _interruptTableEnd
+global _interruptTableLength
+_interruptTableLength:	dd (_interruptTableEnd - _interruptTable)
+global _interruptTable
 _interruptTable:
 "
 if(Test-Path $INTERRUTASM){Remove-Item -Path $INTERRUTASM -Force}
@@ -43,6 +50,8 @@ Add-Content -Path $INTERRUTASM -Value $HEADER
 
 for ($i = 0; $i -lt 255; $i++){
 	if($i -in $ERRORINTERRUPTS){
-		Add-Content -Path $INTERRUTASM -Value "INT_ERROR $($i)"
-	}else{Add-Content -Path $INTERRUTASM -Value "INT_NOERROR $($i)"}
+		Add-Content -Path $INTERRUTASM -Value "INTERROR $($i)"
+	}else{Add-Content -Path $INTERRUTASM -Value "INTNOERROR $($i)"}
 }
+
+Add-Content -Path $INTERRUPTASM -Value "_interruptTableEnd:	db 0
