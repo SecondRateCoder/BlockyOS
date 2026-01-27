@@ -1,7 +1,7 @@
 
 $INTERRUTASM = Join-Path (Get-Location) "src/kernel/lib32/stdlib/InterruptRoutines.asm"
 
-$ERRORINTERRUPTS = @()
+$ERRORINTERRUPTS = @(8, 10, 11, 12, 13, 14, 17, 21, 29, 30)
 
 $HEADER = "
 bits 32
