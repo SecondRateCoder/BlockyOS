@@ -34,8 +34,8 @@ typedef enum IDTFLAGS{
     IDTFLAGS_RING1 =     (1 << 5),
     IDTFLAGS_RING2 =     (2 << 5),
     IDTFLAGS_RING3 =     (3 << 5),
-IDTFLAGS_PRESENT
     
+    IDTFLAGS_PRESENT = 0x80
 }IDTFLAGS;
 
 typedef struct InterruptFrame{
