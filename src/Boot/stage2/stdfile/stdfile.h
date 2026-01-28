@@ -3,7 +3,13 @@
 #include "./kernel/public/public/public.h"
 #include "f-rat.h"
 
+#define CHECK_ENV(env)					\
+	if(!env.drive.bytes_per_sector){	\
+		envPREPARE();}
+
 #define MAX_FHANDLES 10
+#define MAX_FATHANDLES 16
+#define MAX_READBYTES 1280
 
 #define kB (1024)
 #define mB (1024 * 1024)
@@ -38,15 +44,15 @@ union{
     uint8_t 	volume_label[11];
     uint8_t 	sys_id[8];
 	// Custom boot record
-	uint8_t segment_clusters;
+	uint8_t sectormap_entries;
 }__attribute__((packed)) drive_header;
 
 typedef uint8_t FILEhandle;
 
 typedef struct FILE{
 	FrATBASEsector file;
-	char *name;
-	FrATsector sector;
+	char name[128];
+	FrATsector loadedSector;
 	size_t progress;
     FILEhandle handle;
 }FILE;
@@ -54,23 +60,26 @@ typedef struct FILE{
 typedef struct stdfileENVIROMENT{
 	drive_header drive;
 	FILE files[MAX_FHANDLES];
-	FAT_e FAT[32];
+	bool loadedFiles[MAX_FHANDLES];
+	uint32_t FATchunks;
+	FAT_e FAT[MAX_FATHANDLES];
 	uinl32_t loadedFATs;
 }stdfileENVIROMENT;
 
 // Read a 128 byte Sector to the address
 extern void __attribute__((cdecl)) x86DISKREAD(uint8_t *address);
-// Write a 128 byte Sector to the address
+// Write a 128 byte Sector from the address to the Disk LBA
 extern void __attribute__((cdecl)) x86DISKWRITE(uint8_t *address);
 
 extern bool __attribute__((cdecl)) x86DISKUPDATE(size_t new_addr, bool update);
 
-stdfileENVIROMENT envPREPARE();
+void envPREPARE();
 
 size_t sectorTell();
 
-#define sectorSeek(handle, offset) sectorSeek_(handle, offset, true)
-bool sectorSeek_(FILEhandle *, long offset, bool update);
+#define sectorSeek(offset) sectorSeek_(offset, true)
+bool sectorSeekSet(size_t addr);
+bool sectorSeek_(long offset, bool update);
 void *sectorRead_(unsigned long bytes);
 void sectorWrite(void *buffer, size_t buffsize);
-void sectorRead(void *buffer, size_t buffsize, size_t bytes);
+void sectorRead(void *buffer, size_t buffsize);

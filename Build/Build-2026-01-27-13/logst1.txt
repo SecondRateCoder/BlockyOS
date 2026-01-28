@@ -1,0 +1,2 @@
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage1\boot.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-27-13\objs\boot1.bin
+Byte array of size: 512 padded with size: 0, starting at address: 0 and ending at address: 512

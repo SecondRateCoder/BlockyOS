@@ -1,5 +1,5 @@
 #include "boot.h"
-#include "./kernel/lib32/stdkernel/GDT.h"
+#include "./kernel/lib32/stdkernel/GDT/GDT.h"
 
 static gdtENTRY_t GDT[] = {
     // NULL entry
@@ -27,7 +27,10 @@ gdtDESC_t GDTdesc = {
 	.limit = sizeof(GDT) - 1
 };
 
+uint16_t gbootDrive = 0;
+
 void main32(uint16_t bootDrive){
+	gbootDrive = bootDrive;
 	LoadGDT(&GDTdesc, i868GDT_SEGCODE, i868GDT_DATASEG);
 	printf32(
 		"Formatted 32-bit string: %a, %c, %h, %l, %i, %z, %s",

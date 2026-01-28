@@ -13,26 +13,41 @@ $Image = Join-Path $Build ("floppy-$($Date).img")
 $Objdir = Join-Path $Build "objs"
 $Log = Join-Path $Build ("logst2.txt")
 
-$EXCLUDE = @()
+$LINKERSCRIPT = Join-Path (Get-Location) "/src/Boot/stage2/boot.ld"
 
-$BOOT2CFILES = @(
-	(Join-Path (Get-Location) "src/Boot/stage2/boot32.c"),
-	(Join-Path (Get-Location) "src/kernel/public/public/memory/string.c"),
-	(Join-Path (Get-Location) "src/kernel/public/public/memory/memory.c")
+$EXCLUDE = @(
+	"stdfile", "f-rat"
 )
-$BOOT2ASMFILES = @(
-	(Join-Path (Get-Location) "src/Boot/stage2/boot.asm")
-)
-(Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Name "*.asm" -Recurse -Force -File)|ForEach-Object{
-	$BOOT2ASMFILES += Join-Path (Get-Location) "src/kernel/lib32/$($_)"
+
+$BOOT2CFILES = @()
+$BOOT2ASMFILES = @()
+$BOOT2OFILES = @()
+
+
+(Get-ChildItem -Path (Join-Path (Get-Location) "src/boot/stage2/") -Filter "*.c" -Recurse -Force -File)|ForEach-Object{
+	$BOOT2CFILES += $_.FullName
+	$BOOT2OFILES += Join-Path $Objdir "$($_.BaseName).o"
+}
+(Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Filter "*.c" -Recurse -Force -File)|ForEach-Object{
+	if($_.BaseName -notin $EXCLUDE){
+		Log-Write -Msg $_ -color Blue
+		$BOOT2CFILES += $_.FullName
+		$BOOT2OFILES += Join-Path $Objdir "$($_.BaseName).o"
+	}
 }
 
-$BOOT2OFILES = @(
-	(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2ASMFILES[0])).o"),
-	(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[0])).o"),
-	(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[1])).o"),
-	(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($BOOT2CFILES[2])).o")
-)
+(Get-ChildItem -Path (Join-Path (Get-Location) "src/boot/stage2/") -Filter "*.asm" -Recurse -Force -File)|ForEach-Object{
+	$BOOT2ASMFILES += $_.FullName
+	$BOOT2OFILES += Join-Path $Objdir "$($_.BaseName).o"
+}
+(Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Filter "*.asm" -Recurse -Force -File)|ForEach-Object{
+	if($_.BaseName -notin $EXCLUDE){
+		Log-Write -Msg $_ -color Blue
+		$BOOT2ASMFILES += $_.FullName
+		$BOOT2OFILES += Join-Path $Objdir "$($_.BaseName).o"
+	}
+}
+
 
 # $ST2ELF = Join-Path -Path $Objdir "boot2.elf"
 $ST2BIN = Join-Path -Path $Objdir "boot2.bin"
@@ -71,42 +86,35 @@ function Img-Push {
 }
 
 $COMPILECLI = @(
-	"-nostdlib", "-ffreestanding", "-m32", 
-	"-fdiagnostics-color=always", 
+	"-nostdlib", "-m32", 
+	"-fdiagnostics-color=always",  "-fno-leading-underscore", , "-ffreestanding",
 	"-I", "$(Join-Path (Get-Location) "src/")", 
 	"-I", "$(Join-Path (Get-Location) "src/kernel/lib32/")",
 	"-std=c99"
 )
 
-# Get all lib32 C files.
-(Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Name "*.c" -Recurse -Force)|ForEach-Object{
-	$BOOT2CFILES += Join-Path (Get-Location) "src/kernel/lib32/$($_)"
-}
 # Compile all 32-bit files
+$cc = 0
 $BOOT2CFILES|ForEach-Object{
-	if($_ -notin $EXCLUDE){
-		Log-Write -Msg "$GCC -c $($_) -o $(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o") $($COMPILECLI -join ' ')" -color Yellow
-		$BOOT2OFILES += (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o")
-		$COMPILEOUT = (& $GCC "-c" $_ "-o" (Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o") $COMPILECLI) 2>&1
-		$COMPILEOUT|ForEach-Object{
-			if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
-			else{Log-Write -Msg $_ -color Yellow}
-		}
+	Log-Write -Msg "$($GCC) -c $($_) -o $($BOOT2OFILES[$cc]) $($COMPILECLI -join ' ')" -color Yellow
+	$COMPILEOUT = (& $GCC "-c" $_ "-o" $BOOT2OFILES[$cc] $COMPILECLI) 2>&1
+	$COMPILEOUT|ForEach-Object{
+		if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
+		else{Log-Write -Msg $_ -color Yellow}
 	}
+	$cc++
 }
 
 # Compile .asm files
 $BOOT2ASMFILES|ForEach-Object{
-	if($_ -notin $EXCLUDE){
-		$args_ = @("-f", "obj", $_, "-o", "$(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o")")
-		Log-Write -Msg "$($NASM) $($args_ -join ' ')" -color Yellow
-		$BOOT2OFILES += "$(Join-Path -Path $Objdir -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($_)).o")"
-		$COMPILEOUT = (& $NASM $args_) 2>&1
-		$COMPILEOUT|ForEach-Object{
-			if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
-			else{Log-Write -Msg $_ -color Yellow}
-		}
+	$args_ = @("-f", "elf32", $_, "-o", "$($BOOT2OFILES[$cc])")
+	Log-Write -Msg "$($NASM) $($args_ -join ' ')" -color Yellow
+	$COMPILEOUT = (& $NASM $args_) 2>&1
+	$COMPILEOUT|ForEach-Object{
+		if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
+		else{Log-Write -Msg $_ -color Yellow}
 	}
+	$cc++
 }
 
 # build files
@@ -114,53 +122,59 @@ New-Item -Path $ST2BIN -ItemType File -Force
 New-Item -Path $MAPFILE -ItemType File -Force
 
 # gcc link
-# $args_ = @(
-# 	$BOOT32COBJ, $STRINGCOBJ, $MEMCOBJ, 
-# 	"-o", $ST2BIN,
-# 	"-nodefaultlibs", "-nostartfiles", "-ffreestanding",
-# 	"-fdiagnostics-color=always",
-# 	"-T", "$(Join-Path (Get-Location) "/src/Boot/stage2/boot.ld")", 
-# 	"-Wl,-Map,$($MAPFILE),-m,elf_i386"
-# )
-# Log-Write -Msg "`n$($GCC) $($args_ -join ' ')`n" -Color White
-# $GLINK_OUT = (& $GCC @args_) 2>&1
-# $GLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
-# objcopy -O binary $ST2ELF $ST2BIN
+$ST2ELF = Join-Path -Path $Objdir "boot2.elf"
+$args_ = @()
+$BOOT2OFILES|ForEach-Object{$args_ += $_}
+@("-o", $ST2ELF,
+	"-z", "nostartfiles",
+	"-ffreestanding", "-fdiagnostics-color=always",
+	"-T", "$($LINKERSCRIPT)", 
+	"-Map", "$($MAPFILE)", "-m", "elf_i386"
+)|ForEach-Object{$args_ += $_}
 
-#wcc link
-$LNK = "
-FORMAT RAW BIN
-OPTION QUIET,
-		NODEFAULTLIBS,
-		START=_start,
-		VERBOSE,
-		OFFSET=0x8200,
-		STACK=0x200
-ORDER
-	CLNAME CODE
-		SEGMENT _ENTRY
-		SEGMENT TEXT
-	CLNAME DATA
-"
-# file $($BOOTA_OBJ)
-# $LNK | Out-File -FilePath (Join-Path $Objdir 'wlink.lnk') -Encoding ASCII -Force
-[System.IO.File]::WriteAllLines((Join-Path $Objdir 'wlink.lnk'), $LNK, [System.Text.Encoding]::ASCII)
+$GLINK = "C:\msys64\elf-mysys32\i686-elf\bin\ld.exe"
+Log-Write -Msg "`n$($GLINK) $($args_ -join ' ')`n" -Color White
 
-# New-Item -Path (Join-Path $Objdir 'wlink.lnk') -ItemType File -Force
-# Add-Content -Path (Join-Path $Objdir 'wlink.lnk') -Value $LNK
+$GLINK_OUT = (& $GLINK @args_) 2>&1
+$GLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 
-# call wlink
-# $args_ = @("@$(Join-Path $Objdir 'wlink.lnk')")
-$args_ = @("NAME" , "$($ST2BIN)")
-$BOOT2OFILES|ForEach-Object{if($_){$args_ += @("FILE", $_)}}
-$args_ += @("OPTION", "MAP=$(Join-Path $Build "wlink.map")", "@$(Join-Path $Objdir 'wlink.lnk')")
+$ST2GCCBIN = Join-Path -Path $Objdir "boot2gcc.bin"
+objcopy -O binary $ST2ELF $ST2GCCBIN
 
-Log-Write -Msg "`n`nwlink $($args_ -join ' ')`n`n" -Color Yellow
-$WLINK_OUT = (& $WLINK @args_) 2>&1
-$WLINK_OUT|ForEach-Object{
-	if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
-	else{Log-Write -Msg $_ -color Yellow}
-}
+# #wcc link
+# $LNK = "
+# FORMAT RAW BIN
+# OPTION QUIET,
+# 		NODEFAULTLIBS,
+# 		START=_start,
+# 		VERBOSE,
+# 		OFFSET=0x8200,
+# 		STACK=0x200
+# ORDER
+# 	CLNAME CODE
+# 		SEGMENT _ENTRY
+# 		SEGMENT TEXT
+# 	CLNAME DATA
+# "
+# # file $($BOOTA_OBJ)
+# # $LNK | Out-File -FilePath (Join-Path $Objdir 'wlink.lnk') -Encoding ASCII -Force
+# [System.IO.File]::WriteAllLines((Join-Path $Objdir 'wlink.lnk'), $LNK, [System.Text.Encoding]::ASCII)
+
+# # New-Item -Path (Join-Path $Objdir 'wlink.lnk') -ItemType File -Force
+# # Add-Content -Path (Join-Path $Objdir 'wlink.lnk') -Value $LNK
+
+# # call wlink
+# # $args_ = @("@$(Join-Path $Objdir 'wlink.lnk')")
+# $args_ = @("NAME" , "$($ST2BIN)")
+# $BOOT2OFILES|ForEach-Object{if($_){$args_ += @("FILE", $_)}}
+# $args_ += @("OPTION", "MAP=$(Join-Path $Build "wlink.map")", "@$(Join-Path $Objdir 'wlink.lnk')")
+
+# Log-Write -Msg "`n`nwlink $($args_ -join ' ')`n`n" -Color Yellow
+# $WLINK_OUT = (& $WLINK @args_) 2>&1
+# $WLINK_OUT|ForEach-Object{
+# 	if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
+# 	else{Log-Write -Msg $_ -color Yellow}
+# }
 
 if ($LASTEXITCODE -ne 0) {
 	Log-Write -Msg "GCC link failed" -Color Red

@@ -1,18 +1,15 @@
 #pragma once
 
-#include "./kernel/public/public/math/math.h"
+#include "./kernel/public/kernpublic.h"
 
-// Should be at address NULL, 0x00
-IDTentry IDTtable[256] = 0x00;
-
-typedef void __attribute__((interrupt)) (*interruptEntry)(void);
+typedef void __attribute__((cdecl)) (*interruptEntry)(void);
 extern interruptEntry interruptTable[256];
 extern __attribute__((packed)) uint8_t interruptTableEnd;
 extern uint32_t interruptTableLength;
 
 typedef struct IDTentry{
     uint16_t baseLow;
-    uint16_t segment;
+    uint16_t segDesc;
     uint8_t reserved;
     uint8_t flags;
     uint16_t baseHigh;
@@ -22,6 +19,9 @@ typedef struct IDTDesc{
     uint16_t size;
     uint32_t table;
 }__attribute__((packed)) IDTDesc;
+
+// Should be at address NULL, 0x00
+IDTentry IDT[256];
 
 typedef enum IDTFLAGS{
     IDTFLAGS_TSKGATE = 0x5,
@@ -39,29 +39,18 @@ typedef enum IDTFLAGS{
 }IDTFLAGS;
 
 typedef struct InterruptFrame{
-    uint32_t eip;
-    uint16_t cs;
-    uint32_t flags;
-    uint32_t sp,
-    uint16_t ss;
+    uint32_t ds, es;
+    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    uint32_t interrupt, error_code;
+    uint32_t eip, cs, eflags, cpu_esp, ss;
 }__attribute__((packed)) InterruptFrame;
 
-typedef struct RegisterFrame{
-    uint32_t eax,
-             ecx,
-             edx,
-             ebx,
-             esp,
-             ebp,
-             esi,
-             edi;
-}__attribute__((packed)) RegisterFrame;
-
-extern void __attribute__((cdecl)) LoadIDT(IDTdesc *ptr);
-void __attribute__((cdecl)) isr_handlerC(InterruptFrame *IFrame, RegisterFrame *RFrame);
-void __attribute__((cdecl)) SetInterrupt(uint32_t interrupt, 
+extern void __attribute__((cdecl)) LoadIDT(IDTDesc *ptr);
+void __attribute__((cdecl)) isr_handlerC(InterruptFrame *IFrame);
+void __attribute__((cdecl)) InitInterrupt(
+    uint32_t interrupt, 
     bool present,
     void *base,
-    uint216_t segDesc,
+    uint16_t segDesc,
     uint8_t flags
 );

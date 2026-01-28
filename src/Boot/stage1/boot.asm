@@ -81,6 +81,7 @@ start:
     rep movsb
 
 .ld_s:
+	push word [ebr_drive_number]
 	push es
 	mov bx, sectormap_entries
 	sub bx, bdb_oem

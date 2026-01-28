@@ -3,11 +3,12 @@
 #include "./kernel/lib32/stdfile/stdfile.h"
 #include "./kernel/lib32/stdfile/f-rat.h"
 #include "./kernel/lib32/stdio/stdio.h"
-#include "./kernel/lib32/stdkernel/GDT.h"
-#include "./kernel/lib32/stdkernel/Interrupt.h"
+#include "./kernel/lib32/stdkernel/GDT/GDT.h"
+#include "./kernel/lib32/stdkernel/IDT/Interrupt.h"
 #include "./kernel/public/kernpublic.h"
 
 typedef struct standardHeader{
+    uint8_t ID[10];
     FILE *program;
     void *CODE;
     uint8_t loadedCODEPages;

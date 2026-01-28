@@ -197,6 +197,8 @@ global _switch16_32
 ;   void switch16_32(GDTdesc __far *, IDTdesc __far*, void(__far __cdecl *func)(void))
 _switch16_32:
     [bits 16]
+    push bp
+    mov bp, sp
     ; Nothing needs to be saved as since, the switcher does NtT revert
 
     call _int16disable
@@ -262,6 +264,7 @@ _switch16_32:
 	in al, KbdCtrlCmdPort
 	test al, 1
 	jz .A20WaitOut16
+    leave
 	ret
 
 .finish:

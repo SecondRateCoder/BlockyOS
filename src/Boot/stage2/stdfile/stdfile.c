@@ -1,22 +1,14 @@
 #include "stdfile.h"
 
-FILE *getFILE(FILEhandle *Fh){
-    
+bool sectorSeekSet(size_t addr){
+    if(x86DISKUPDATE(addr, false)){
+        x86DISKUPDATE(addr, true);
+        return true;
+    }
+    return false;
 }
 
-stdfileENVIROMENT envPREPARE(){
-    static stdfileENVIROMENT out;
-    sectorSeek(NULL, -sectorpointer);
-    void *temp = sectorRead_(sizeof(drive_header));
-    memcpy(&(out.drive), temp, sizeof(drive_header));
-    sectorSeek(NULL, FAT_LBA(out.drive));
-    memset(out.FAT, sizeof(out.FAT), 0);
-    memset(out.files, sizeof(out.files), 0);
-    out.loadedFATs = 0;
-    return out;
-}
-
-bool sectorSeek_(FILEhandle *file, long offset, bool update){
+bool sectorSeek_(long offset, bool update){
     if(-offset < sectorpointer){
         if(x86DISKUPDATE(sectorpointer + offset, true)){
             sectorpointer += offset;
@@ -47,9 +39,11 @@ void *sectorRead_(unsigned long bytes){
     return (sectorhandles + last_write);
 }
 
-void sectorRead(void *buffer, size_t buffsize, size_t bytes){
-    void *buffer_ = sectorRead_(bytes);
-    memcpy(buffer, buffer_, buffsize);
+void sectorRead(void *buffer, size_t buffsize){
+    if(buffsize < MAX_READBYTES){
+        void *buffer_ = sectorRead_(buffsize);
+        memcpy(buffer, buffer_, buffsize);
+    }
     return;
 }
 
