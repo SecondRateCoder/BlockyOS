@@ -1,8 +1,8 @@
 #include "stdfile.h"
 
 bool sectorSeekSet(size_t addr){
-    if(x86DISKUPDATE(addr, false)){
-        x86DISKUPDATE(addr, true);
+    if(_x86DISKUPDATE(addr, false)){
+        _x86DISKUPDATE(addr, true);
         return true;
     }
     return false;
@@ -10,7 +10,7 @@ bool sectorSeekSet(size_t addr){
 
 bool sectorSeek_(long offset, bool update){
     if(-offset < sectorpointer){
-        if(x86DISKUPDATE(sectorpointer + offset, true)){
+        if(_x86DISKUPDATE(sectorpointer + offset, true)){
             sectorpointer += offset;
             return true;
         }
@@ -30,7 +30,7 @@ void *sectorRead_(unsigned long bytes){
         return NULL;
     }
     for(uint8_t cc =0; cc < reads; ++cc){
-        x86DISKREAD((uint8_t *)(sectorhandles + writeptr));
+        _x86DISKREAD((uint8_t *)(sectorhandles + writeptr));
         if(sectorSeek_(128, false)){
         }
         writeptr++;
@@ -55,7 +55,7 @@ void sectorWrite(void *buffer, size_t buffsize){
         uint8_t packetsize = (buffsize - offset) > 128? 128: (buffsize - offset);
         offset += packetsize;
         static uint8_t buffer_[128];
-        x86DISKWRITE(buffer_);
+        _x86DISKWRITE(buffer_);
         memcpy(buffer + offset, buffer_, packetsize);
     }
 }

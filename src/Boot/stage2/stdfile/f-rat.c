@@ -58,9 +58,9 @@ FILEhandle *createFILE(char *name, char *mode, size_t size){
 			if(strcheck(mode, '1')){FrATBASEsector_RingSet(f->file, 1);}else		// Ring #1
 			if(strcheck(mode, '2')){FrATBASEsector_RingSet(f->file, 2);}else		// Ring #2
 			if(strcheck(mode, '3')){FrATBASEsector_RingSet(f->file, 3);}			// Ring #3
-			if(x86DISKUPDATE(LBAget((MallocSectorSMAP(default_max)).LBA), false)){
-				x86DISKUPDATE(LBAget((MallocSectorSMAP(default_max)).LBA), true);
-				x86DISKWRITE((void *)&f->file);
+			if(_x86DISKUPDATE(LBAget((MallocSectorSMAP(default_max)).LBA), false)){
+				_x86DISKUPDATE(LBAget((MallocSectorSMAP(default_max)).LBA), true);
+				_x86DISKWRITE((void *)&f->file);
 			}else{
 				setColor(ANSI_RED);
 				printf("Failed to Create File");
@@ -77,7 +77,7 @@ FAT_e MallocSectorDDATA(uint32_t max){
 	FAT_e out;
 	sectorSeekSet(DDATA_LBA(env.drive));
 	for(size_t cc =0; cc < max; ++cc){
-		x86DISKREAD((uint8_t *)&temp);
+		_x86DISKREAD((uint8_t *)&temp);
 		if(!temp.FATindex){
 			for(uint32_t cc_ =0; cc_ < max; ++cc_){
 				for(uint8_t cc__ = 0; cc__ < MAX_FATHANDLES; ++cc__){
@@ -100,7 +100,7 @@ FAT_e MallocSectorSMAP(uint32_t max){
 	FAT_e out;
 	sectorSeekSet(DDATA_LBA(env.drive));
 	for(size_t cc =0; cc < max; ++cc){
-		x86DISKREAD((uint8_t *)&temp);
+		_x86DISKREAD((uint8_t *)&temp);
 		if(!temp.FATindex){
 			for(uint32_t cc_ =0; cc_ < max; ++cc_){
 				for(uint8_t cc__ = 0; cc__ < MAX_FATHANDLES; ++cc__){

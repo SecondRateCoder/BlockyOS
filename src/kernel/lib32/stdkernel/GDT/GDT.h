@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./kernel/public/kernpublic.h"
+#include "./kernel/lib32/public/kernpublic.h"
 
 typedef struct gdtENTRY_t{
 	uint16_t limitLow;
@@ -62,4 +62,4 @@ typedef enum GDTFLAGS{
 	GDT_BASEHIGH((base))							\
 }													\
 
-extern void __attribute__((cdecl)) LoadGDT(gdtDESC_t *, uint16_t Code, uint16_t Data);
+extern void ASMCALL LoadGDT(gdtDESC_t *, uint16_t Code, uint16_t Data);

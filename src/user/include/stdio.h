@@ -1,3 +1,3 @@
 #include "public.h"
 
-extern inline void __attribute__((cdecl)) puts32(char *str);
+extern inline void ASMCALL puts32(char *str);

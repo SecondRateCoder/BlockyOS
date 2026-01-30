@@ -1,0 +1,230 @@
+bits 32
+; org 0x8200
+section entry class=CODE
+db 103
+
+global bt1_drive_header
+extern _setup32
+extern GDTdesc
+extern _idtDesc
+
+bt1_drive_header_: times 58 db 0
+jmp short _start
+
+; Number of sectors to load into RAM, should be the full size of Boot2
+%define ENDL 0x0A, 0x0D, 0x00
+
+global _start
+; void start(void)
+_start:
+    [bits 16]
+    xchg bx, bx
+    ; Setup stack
+	cli
+	mov ax, ds
+	mov ss, ax
+	mov sp, 512
+	sti
+
+    ; Jump to boot2's .c file
+	push word GDTdesc
+	push word _idtDesc
+	push cs
+	push word _main32
+	call _switch16_32
+; void halt16(void)
+.halt16:
+    [bits 16]
+    cli
+.halt_:
+    nop
+    jmp .halt_
+
+global _halt
+; void halt(void)
+_halt:
+    [bits 32]
+    cli
+._halt_:
+    nop
+    jmp ._halt_
+
+global _bochs_breakpoint
+; void _bochs_breakpoint(void)
+_bochs_breakpoint:
+	[bits 32]
+    xchg bx, bx
+    nop
+    ret
+
+global _div64_32_
+;   void _div64_32(uint64_t dividend, uinl32_t divisor, uint64_t __far *result, uinl32_t __far *remainder)
+_div64_32_:
+    [bits 32]
+
+    ; Generate new call frame.
+    push bp
+    mov bp, sp
+
+    ; Save modified registers
+    push bx
+    push es
+
+    mov es, [bp + 20]   ; Grab segment
+    mov bx, [bp + 18]   ; Grab offset
+    mov eax, [bp + 6]   ; eax: dividend upper 32 bits
+    mov ecx, [bp + 14]  ; ecx: divisor
+
+    xor edx, edx
+    ; Divide upper 32-bits of dividend
+    div ecx             ; eax: result, edx: rem, ecx: divisor
+
+    ; Store lower 32 bits of quotient
+    mov [bx], eax
+
+    ; Divide upper 32 bits of quotient
+    mov eax, [bp + 10]   ; Grab lower 32-bits
+    add eax, edx
+
+    ; Divide lower 32 bits of quotient
+    xor edx, edx
+    div ecx             ; edx contains remainder
+
+    ; Store lower 32-bit result
+    ; bx still unmodified so no need to change/re-assign it
+    mov [bx + 4], eax
+
+    ; Store remainder
+    mov bx, [bp + 22]
+    mov es, [bp + 24]
+    mov [bx], edx
+
+    ; Restore modified registers
+    pop es
+    pop bx
+
+    ; Restore old call frame.
+    leave
+    ret
+
+global _int16disable
+;	void int16disable(void)
+_int16disable:
+	[bits 16]
+	cli
+	push ax
+	in al, 0x70
+	or al, 80h
+	out  0x70, al
+	pop ax
+    ret
+global _int16enable
+;	void int16enable(void)
+_int16enable:
+	[bits 16]
+	sti
+	push ax
+	in   al, 0x70
+	and  al, 7Fh
+	out  0x70, al
+	pop ax
+    ret
+
+
+global _switch16_32
+;   void switch16_32(GDTdesc __far *, IDTdesc __far*, void(__far __cdecl *func)(void))
+_switch16_32:
+    [bits 16]
+    push bp
+    mov bp, sp
+    ; Nothing needs to be saved as since, the switcher does NtT revert
+
+    call _int16disable
+.TestA20:
+	; Test for Memory Wrap-around
+    mov ax, 0x0500
+    mov ds, ax
+    mov word [0], 0xBEEF
+
+    ; Read from 0x100500 (wraps to 0x0500 if A20 is disabled)
+    mov ax, 0x1005
+    mov ds, ax
+    cmp word [0], 0xBEEF
+	; Memory Wrap-around failed, 0xBEEF and [edx] are not the same
+	jnz .LoadGDT
+	; Memory Wrap-around worked, 0xBEEF and [edx] are the same
+.EnableA20:
+    ; Disable Keyboard
+    call .A20WaitIn16
+    mov al, KbdCtrlDisable
+    out KbdCtrlCmdPort, al
+    ; Read Controller Out Port
+    call .A20WaitIn16
+    mov al, KbdCtrlReadOutPort
+    out KbdCtrlCmdPort, al
+    
+    call .A20WaitOut16
+    in al, KbdCtrlDataPort
+    push eax
+
+    ; Write Controller out port
+    call .A20WaitIn16
+    mov al, KbdCtrlWriteOutPort
+    out KbdCtrlCmdPort, al
+
+	; Enable A20 Gate bit
+    call .A20WaitIn16
+    pop eax
+    or al, 2		; Bit 2 is the A20 flag bit
+	out KbdCtrlDataPort, al
+
+	; Re-enable Keyboard
+	call .A20WaitIn16
+	mov al, KbdCtrlEnable
+	out KbdCtrlCmdPort, al
+.LoadGDT:
+	mov es, [bp + 6]		; Segment
+	mov bx, [bp + 8]		; Offset
+	lgdt [es:bx]
+.LoadIDT:
+	mov es, [bp + 10]		; Segment
+	mov bx, [bp + 12]		; Offset
+	lidt [es:bx]
+	jmp .finish
+.A20WaitIn16:
+	; Wait till bit 2 is 0
+	in al, KbdCtrlCmdPort
+	test al, 2
+	jnz .A20WaitIn16
+	ret
+.A20WaitOut16:
+	; Wait until Bit 1 is not 0
+	in al, KbdCtrlCmdPort
+	test al, 1
+	jz .A20WaitOut16
+    leave
+	ret
+
+.finish:
+	; Setup to jmp to func
+	mov edx, [ebp + 14]
+    mov eax, cr0
+    or eax, 1
+    mov cr0, eax
+	jmp dword 0000h:.pmode
+.pmode:
+	[bits 32]
+	call _int32enable
+	jmp dword edx
+
+KbdCtrlDataPort             	equ 0x60
+KbdCtrlCmdPort              	equ 0x64
+
+KbdCtrlDisable              	equ 0xAE
+KbdCtrlEnable             		equ 0xAD
+
+KbdCtrlReadOutPort             equ 0xAE
+KbdCtrlWriteOutPort            equ 0xAD
+
+msg_bt2: db 'This is Boot2', ENDL, 0
+buffer:

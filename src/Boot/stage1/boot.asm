@@ -1,39 +1,41 @@
 bits 16
+org 0x7C00
 
-; FAT12 Headers:
+section .fsjmp
 jmp short start
 nop
 
-bdb_oem:                   	db 'MSWIN4.1'
-bdb_bytes_per_sector:       dw 128
-bdb_sectors_per_cluster:    dw 2
-bdb_reserved_sectors:       db 20
-bdb_fat_count:              db 2
-bdb_dir_entries_count:      dw 0F0h
-bdb_total_sectors:			dw 2868
-bdb_media_desciptor_type:	db 0F0h
-bdb_sectors_per_fat:		dw 9
-bdb_sectors_per_track:		dw 18
-bdb_heads:					dw 2
-bdb_hidden_sectors:			dd 0
-bdb_large_sector_count:		dd 0
+section .BOOTDRIVE,KEEP
+drive_header:
+	bdb_oem:                   	db 'MSWIN4.1'
+	bdb_bytes_per_sector:       dw 128
+	bdb_sectors_per_cluster:    dw 2
+	bdb_reserved_sectors:       db 20
+	bdb_fat_count:              db 2
+	bdb_dir_entries_count:      dw 0F0h
+	bdb_total_sectors:			dw 2868
+	bdb_media_desciptor_type:	db 0F0h
+	bdb_sectors_per_fat:		dw 9
+	bdb_sectors_per_track:		dw 18
+	bdb_heads:					dw 2
+	bdb_hidden_sectors:			dd 0
+	bdb_large_sector_count:		dd 0
 
-; extended boot record:
-ebr_drive_number:			db 0
-ebr_signature:				db 29h
-ebr_volume_id:				db 12h, 99h, 40h, 22h
-ebr_volume_label:			db 'BLOCKY OS  '
-ebr_system_id:				db 'FAT12   '	; 25 bytes
-; custom_boot_record
-sectormap_entries:			db 128			; 26 bytes
-global start
+	; extended boot record:
+	ebr_drive_number:			db 0
+	ebr_signature:				db 29h
+	ebr_volume_id:				db 12h, 99h, 40h, 22h
+	ebr_volume_label:			db 'BLOCKY OS  '
+	ebr_system_id:				db 'FAT12   '	; 25 bytes
+	; custom_boot_record
+	sectormap_entries:			db 128			; 26 bytes
+drive_end:
 
 %define ENDL 0x0A, 0x0D, 0x00
 
 ; This file will simply load Boot2, Boot2 will be the main booting file
 
-; Push decrements sp
-; Pop increments sp
+section .text
 start:
 	; xchg bx, bx
 
@@ -75,7 +77,7 @@ start:
     mov di, buffer    ; e.g. 1025
 	add di, 1025
 	; Calculate bytes
-    mov cx, sectormap_entries - bdb_oem + 1   ; 58 bytes total
+    mov cx, drive_header - drive_end + 1   ; 58 bytes total
 	; Perform move
     cld
     rep movsb
@@ -272,12 +274,14 @@ halt:
     cli ; Disable interrupts
     hlt
 
+section .data
 msg_hlt: db 'Halt', ENDL
 msg_disks: db 'Read Success', ENDL
 msg_diskf: db 'Read Fail, Code: '
 msg_diskf_err_code: db '0', ENDL
 msg_bt2s: db 'Boot2 found', ENDL
 msg_bt2f: db 'Boot2 not found', ENDL
+
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
 dw 0xAA55              	; The final 2 bytes will be the boot signature.
 buffer:

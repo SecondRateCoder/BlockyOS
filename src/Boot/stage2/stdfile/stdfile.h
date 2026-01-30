@@ -67,11 +67,11 @@ typedef struct stdfileENVIROMENT{
 }stdfileENVIROMENT;
 
 // Read a 128 byte Sector to the address
-extern void __attribute__((cdecl)) x86DISKREAD(uint8_t *address);
+extern void ASMCALL _x86DISKREAD(uint8_t *address);
 // Write a 128 byte Sector from the address to the Disk LBA
-extern void __attribute__((cdecl)) x86DISKWRITE(uint8_t *address);
+extern void ASMCALL _x86DISKWRITE(uint8_t *address);
 
-extern bool __attribute__((cdecl)) x86DISKUPDATE(size_t new_addr, bool update);
+extern bool ASMCALL _x86DISKUPDATE(size_t new_addr, bool update);
 
 void envPREPARE();
 

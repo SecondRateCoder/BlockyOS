@@ -16,9 +16,8 @@ param(
     [Parameter(Mandatory=$false)]
     [int]$Hidden
 )
-$GCC = "gcc"
+$GCC = "./compile/toolchain/prebuild/gcc.ps1"
 $NASM = "C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe"
-$LD = "ld"
 $QEMU = "C:\msys64\ucrt64\bin\qemu-system-x86_64.exe"
 $BOCHS = "C:\Users\olusa\Bochs-3.0\bochs.exe"
 $WCC = "wcc"
@@ -96,11 +95,6 @@ function Prepare {
     
     if(-not(Test-Path $NASM)){
         Log-Write -color Red -Msg "NASM not found at $NASM. Please install NASM."
-        exit 1
-    }
-    
-    if(-not(Get-Command $LD -ErrorAction SilentlyContinue)){
-        Log-Write -color Red "GNU Linker not found in PATH. Please install GNU Linker."
         exit 1
     }
     if(-not(Test-Path $BOCHSRC)){

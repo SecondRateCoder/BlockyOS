@@ -41,6 +41,7 @@
             "compilerArgs": [
                 "-nostdlib", 
                 "-I", "${workspaceFolder}//src//",
+                "-I", "${workspaceFolder}//src//kernel//lib32//",
                 "-fdiagnostics-color=always"
             ],
             "cStandard": "c99"

@@ -1,7 +1,7 @@
 bits 32
 
 global _LoadGDT
-;   void LoadGDT(gdtDESC_t *, uint16_t Code, uint16_t Data)
+;   void LoadGDT(gdtDESC_t *, uint16_t, uint16_t)
 ;   Dont bother making Call Frame
 _LoadGDT:
     push ebp
@@ -15,7 +15,7 @@ _LoadGDT:
     push .reload_cs
     retf
 .reload_cs:
-    ; Reload Data Segments
+    ; Reload All-Data Segments
     mov eax, [ebp + 16]
     mov ds, ax
     mov es, ax

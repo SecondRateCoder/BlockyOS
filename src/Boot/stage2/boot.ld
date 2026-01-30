@@ -3,22 +3,16 @@ OUTPUT_FORMAT("binary")
 phys = 0x803B;                  /* BIOS (or MBR) puts us at 0x7C00 */
 
 SECTIONS{
-    . = phys;
-    /*Entry Point*/
-    .entry    : {
-        *(.entry)
-      }
-    .text    : {
-        *(.text)
-    }
+    . = 0x0
+    .IDT    		: {*(.IDT)}
+    . = 0x7C00;
+	.DRIVEHEADER 	: {*(.DRIVEHEADER)}
+	. = phys
+    .entry  		: {*(.entry)}
 
-    /* Modifiable data */
-    .data    : {
-        *(.data)
-    }
+    .text   		: {*(.text)}
 
-    /* Read-only data */
-    .rodata    : {
-        *(.rodata)
-    }
+    .data			: {*(.data)}
+
+    .FILES 			: {*(.FILES)}
 }

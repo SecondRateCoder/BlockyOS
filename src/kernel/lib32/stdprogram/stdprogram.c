@@ -18,3 +18,15 @@ standardHeader getDATABase(void *DATA){
         }
     }
 }
+
+char *getEnv(char alias[aliasLen]){return NULL;}
+
+/// @brief Load a flat Executable Binary with no headers, the Binary should only feature the executableBinary header and format.
+/// @param Binary The Path to the Binary.
+/// @param Parallel Should the Binary be loaded in a seperate Thread to the caller?
+/// @param Extra arguments.
+void loadBinary(char *Binary, bool Parallel, ...){return;}
+
+void loadProgram(char *Image, uint8_t childThreads){
+    loadBinary(getEnv("stdLd"), true, Image, childThreads);
+}

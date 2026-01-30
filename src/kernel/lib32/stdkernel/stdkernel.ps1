@@ -1,15 +1,29 @@
 
-$INTERRUPTASM = Join-Path (Get-Location) "src/kernel/lib32/stdkernel/IDT/InterruptRoutines.asm"
-$INTERRUPTH = Join-Path (Get-Location) "src/kernel/lib32/stdkernel/IDT/InterruptRoutines.h"
+$INTERRUPTASM = Join-Path (Get-Location) "src/kernel/lib32/stdkernel/Interrupt/InterruptRoutines.asm"
+$INTERRUPTH = Join-Path (Get-Location) "src/kernel/lib32/stdkernel/Interrupt/InterruptRoutines.h"
+$INTERRUPTC = Join-Path (Get-Location) "src/kernel/lib32/stdkernel/Interrupt/InterruptRoutines.c"
 $ERRORINTERRUPTS = @(8, 10, 11, 12, 13, 14, 17, 21, 29, 30)
+$EXCLUDE = @()
+for($i = 0; $i -lt 16; ++$i){$EXCLUDE += ($i + 32)}
+$OK = $true
+$ErrorActionPreference = "Ignore"
 
+$HEADERC = 
+"//		**AUTO-GENERATED SCRIPT**
+#include `"interrupt.h`"
+
+void InitIDT(IDTentry *IDT, uint16_t CodeSegment){
+	LoadIDT(IDT);
+	IRQInit(IDT);
+"
 
 $HEADERH = 
-"#include `"interrupt.h`"
+"//		**AUTO-GENERATED SCRIPT**
+#include `"interrupt.h`"
 "
 $HEADERASM = 
 "bits 32
-;		**AUTO-GENERATED FILE**
+;		**AUTO-GENERATED SCRIPT**
 
 extern isr_handlerC
 
@@ -39,16 +53,57 @@ global _interruptTable
 _interruptTable:
 "
 if(Test-Path $INTERRUPTASM){Remove-Item -Path $INTERRUPTASM -Force}
-Add-Content -Path $INTERRUPTASM -Value $HEADERASM
+do{
+	$OK = $true
+	try{Add-Content -Path $INTERRUPTASM -Value $HEADERASM
+	}catch{$OK = $false}
+}while($OK -eq $false)
 
 if(Test-Path $INTERRUPTH){Remove-Item -Path $INTERRUPTH -Force}
-Add-Content -Path $INTERRUPTH -Value $HEADERH
+do{
+	$OK = $true
+	try{Add-Content -Path $INTERRUPTH -Value $HEADERH
+	}catch{$OK = $false}
+}while($OK -eq $false)
+
+if(Test-Path $INTERRUPTC){Remove-Item -Path $INTERRUPTC -Force}
+do{
+	$OK = $true
+	try{Add-Content -Path $INTERRUPTC -Value $HEADERC
+	}catch{$OK = $false}
+}while($OK -eq $false)
 
 for ($i = 0; $i -lt 256; $i++){
-	if($i -in $ERRORINTERRUPTS){
-		Add-Content -Path $INTERRUPTASM -Value "INTERROR $($i)"
-	}else{Add-Content -Path $INTERRUPTASM -Value "INTNOERROR $($i)"}
-	Add-Content -Path $INTERRUPTH -Value "void __attribute__((cdecl)) ISR_INTERRUPT$($i)(void);"
+	if($i -notin $EXCLUDE){
+		if($i -in $ERRORINTERRUPTS){
+			do{
+				$OK = $true
+				try{Add-Content -Path $INTERRUPTASM -Value "INTERROR $($i)"
+				}catch{$OK = $false}
+			}while($OK -eq $false)
+		}else{
+			do{
+				$OK = $true
+				try{Add-Content -Path $INTERRUPTASM -Value "INTNOERROR $($i)"
+				}catch{$OK = $false}
+			}while($OK -eq $false)
+		}
+		do{
+			$OK = $true
+			try{Add-Content -Path $INTERRUPTH -Value "extern void ASMCALL ISR_INTERRUPT$($i)(void);"
+			}catch{$OK = $false}
+		}while($OK -eq $false)
+		do{
+			$OK = $true
+			try{Add-Content -Path $INTERRUPTC -Value "`tInitInterrupt(
+					IDT, $($i), true, ISR_INTERRUPT$($i), CodeSegment, 
+					IDTFLAGS_RING0 | IDTFLAGS32B_INTRGATE | IDTFLAGS_PRESENT);"
+			}catch{$OK = $false}
+		}while($OK -eq $false)
+		
+	}
 }
 
 Add-Content -Path $INTERRUPTASM -Value "_interruptTableEnd:	db 0"
+
+Add-Content -Path $INTERRUPTC -Value "}"

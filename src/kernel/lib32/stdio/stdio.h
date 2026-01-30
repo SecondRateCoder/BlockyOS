@@ -1,8 +1,8 @@
 #pragma once
 
-#include "./kernel/public/public/memory/memory.h"
-#include "./kernel/public/public/memory/string.h"
-#include "./kernel/public/public/math/int/_int.h"
+#include "./kernel/lib32/public/public/memory/memory.h"
+#include "./kernel/lib32/public/public/memory/string.h"
+#include "./kernel/lib32/public/public/math/int/_int.h"
 
 #define ANSI_COLOR(R, G, B)
 
@@ -43,11 +43,7 @@ static inline void getCursor32(uinl32_t *X, uinl32_t *Y);
 static inline void scrollCursor32(uint8_t lines);
 
 // VGA prototypes
-extern void __attribute__((cdecl)) asm_enableCursor32(void);
-extern void __attribute__((cdecl)) asm_disdableCursor32(void);
-extern uint16_t __attribute__((cdecl)) asm_getCursor32();
-extern void __attribute__((cdecl)) asm_updateCursor32(uinl32_t x, uinl32_t y);
-
-// IO.asm prototypes
-extern void __attribute__((cdecl)) outb(uint16_t port, uint8_t value);
-extern uint8_t __attribute__((cdecl)) inb(uint16_t port);
+extern void ASMCALL asm_enableCursor32(void);
+extern void ASMCALL asm_disdableCursor32(void);
+extern uint16_t ASMCALL asm_getCursor32();
+extern void ASMCALL asm_updateCursor32(uinl32_t x, uinl32_t y);

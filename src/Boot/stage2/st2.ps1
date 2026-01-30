@@ -12,17 +12,21 @@ $Build = Join-Path (Get-Location) ("Build/Build-" + $Date)
 $Image = Join-Path $Build ("floppy-$($Date).img")
 $Objdir = Join-Path $Build "objs"
 $Log = Join-Path $Build ("logst2.txt")
+$ST2ELF = Join-Path -Path $Objdir "boot2.elf"
+$ST2BIN = Join-Path -Path $Objdir "boot2.bin"
+$MAPFILE = Join-Path -Path $Build "gcc.map"
 
 $LINKERSCRIPT = Join-Path (Get-Location) "/src/Boot/stage2/boot.ld"
 
 $EXCLUDE = @(
-	"stdfile", "f-rat"
+	"stdfile", "f-rat", "stdprogram"
 )
 
 $BOOT2CFILES = @()
 $BOOT2ASMFILES = @()
 $BOOT2OFILES = @()
 
+New-Item -Path $Log -ItemType File -Force
 
 (Get-ChildItem -Path (Join-Path (Get-Location) "src/boot/stage2/") -Filter "*.c" -Recurse -Force -File)|ForEach-Object{
 	$BOOT2CFILES += $_.FullName
@@ -47,12 +51,6 @@ $BOOT2OFILES = @()
 		$BOOT2OFILES += Join-Path $Objdir "$($_.BaseName).o"
 	}
 }
-
-
-# $ST2ELF = Join-Path -Path $Objdir "boot2.elf"
-$ST2BIN = Join-Path -Path $Objdir "boot2.bin"
-
-$MAPFILE = Join-Path -Path $Build "gcc.map"
 
 function Log-Write{
 	param(
@@ -87,9 +85,9 @@ function Img-Push {
 
 $COMPILECLI = @(
 	"-nostdlib", "-m32", 
-	"-fdiagnostics-color=always",  "-fno-leading-underscore", , "-ffreestanding",
+	"-fdiagnostics-color=always",  "-fno-leading-underscore", "-ffreestanding",
 	"-I", "$(Join-Path (Get-Location) "src/")", 
-	"-I", "$(Join-Path (Get-Location) "src/kernel/lib32/")",
+	# "-I", "$(Join-Path (Get-Location) "src/kernel/lib32/")",
 	"-std=c99"
 )
 
@@ -97,7 +95,7 @@ $COMPILECLI = @(
 $cc = 0
 $BOOT2CFILES|ForEach-Object{
 	Log-Write -Msg "$($GCC) -c $($_) -o $($BOOT2OFILES[$cc]) $($COMPILECLI -join ' ')" -color Yellow
-	$COMPILEOUT = (& $GCC "-c" $_ "-o" $BOOT2OFILES[$cc] $COMPILECLI) 2>&1
+	$COMPILEOUT = (& $GCC -Params @("-c", $_, "-o", $BOOT2OFILES[$cc], $COMPILECLI)) 2>&1
 	$COMPILEOUT|ForEach-Object{
 		if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
 		else{Log-Write -Msg $_ -color Yellow}
@@ -132,10 +130,9 @@ $BOOT2OFILES|ForEach-Object{$args_ += $_}
 	"-Map", "$($MAPFILE)", "-m", "elf_i386"
 )|ForEach-Object{$args_ += $_}
 
-$GLINK = "C:\msys64\elf-mysys32\i686-elf\bin\ld.exe"
-Log-Write -Msg "`n$($GLINK) $($args_ -join ' ')`n" -Color White
+Log-Write -Msg "`n$($GCC) $($args_ -join ' ')`n" -Color White
 
-$GLINK_OUT = (& $GLINK @args_) 2>&1
+$GLINK_OUT = (& $GCC -Image "ld" -Params $args_) 2>&1
 $GLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 
 $ST2GCCBIN = Join-Path -Path $Objdir "boot2gcc.bin"
