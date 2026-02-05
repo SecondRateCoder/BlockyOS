@@ -51,13 +51,13 @@ vga: extension=vbe
 magic_break: enabled=1
 log: "
 
-function Log-Write {
+function Log-Write{
     param(
         [string]$Msg,
         [System.ConsoleColor]$color
         )
     Write-Host $Msg -ForegroundColor $color
-    Add-Content -Path $Log -Value $Msg
+    Add-Content -Path $Log -Value ($Msg -replace "`e\[[0-9;]*[A-Za-z]","")
 }
 
 function Img-Push {

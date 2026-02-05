@@ -27,22 +27,22 @@
         },
         {
             "name": "GCC",
-            "includePath": [
-                "${workspaceFolder}//src//"
-            ],
+            "intelliSenseMode": "windows-clang-x86",
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE",
-                "__far="
+                "_UNICODE"
             ],
-            "windowsSdkVersion": "10.0.26100.0",
-            "compilerPath": "C:/msys64/ucrt64/bin/gcc",
+            "compilerPath": "${workspaceFolder}\\compile\\toolchain/prebuild\\i686-elf\\bin\\i686-elf-gcc-15.2.0.exe",
             "compilerArgs": [
-                "-nostdlib", 
-                "-I", "${workspaceFolder}//src//",
-                "-I", "${workspaceFolder}//src//kernel//lib32//",
-                "-fdiagnostics-color=always"
+                "-nostdlib",
+                "-m32",
+                "-std=c99",
+                "-fno-leading-underscore",
+                "-ffreestanding",
+                "-fdiagnostics-color=always",
+                "-I",
+                "${workspaceFolder}\\src\\"
             ],
             "cStandard": "c99"
         }

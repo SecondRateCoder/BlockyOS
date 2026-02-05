@@ -40,7 +40,7 @@ bool Virt_active;
 #define ANSI_LBLUE(TEXT) ANSI_COLOR_LBLUE TEXT ANSI_COLOR_RESET
 
 
-typedef struct drive_header{
+typedef struct driveHeader{
     uint8_t BOOT_Instruction[3],
 	OEM_ID[8];
     uint16_t bytes_per_sector;
@@ -61,7 +61,7 @@ typedef struct drive_header{
     uint32_t volume_id[4];
     uint8_t volume_label[11];
     uint8_t sys_id[8];
-}__attribute__((packed)) drive_header;
+}__attribute__((packed)) driveHeader;
 
 typedef struct FAT_entry{
 	uint8_t name_fmt;
@@ -139,9 +139,9 @@ typedef struct directory_entry{
 typedef size_t uint128_t[2], uint256_t[4], uint512_t[8];
 
 /// @brief The header of the open foppy drive.
-drive_header header;
-#define FDATA_START (sizeof(drive_header) + (((header.sectors_per_fat * header.fat_count) + header.reserved_sectors + header.hidden_sectors) * header.bytes_per_sector))	// 72 + (((9 * 2) + 2 + 0) * 512) = 10312 bytes
-#define FAT_START (sizeof(drive_header) + ((header.reserved_sectors + header.hidden_sectors) * header.bytes_per_sector))
+driveHeader header;
+#define FDATA_START (sizeof(driveHeader) + (((header.sectors_per_fat * header.fat_count) + header.reserved_sectors + header.hidden_sectors) * header.bytes_per_sector))	// 72 + (((9 * 2) + 2 + 0) * 512) = 10312 bytes
+#define FAT_START (sizeof(driveHeader) + ((header.reserved_sectors + header.hidden_sectors) * header.bytes_per_sector))
 #define HF_SIZE(FORMAT) ((sizeof(size_t) * pow(2, FORMAT)))
 #define FATe_SIZE(e) (*(e->name) != 0? (sizeof(FAT_entry) + strlen(e->name)): 0)
 #define FILE_SIZE(e) (e->size + e->name_len)
@@ -332,7 +332,7 @@ void IMG_setup(){
 	buffer_num = 0;
 	fseek(disk, 0, SEEK_SET);
 	// header = malloc(sizeof(drive_header));
-	if(_fread(&header, sizeof(drive_header), 1) != 1){
+	if(_fread(&header, sizeof(driveHeader), 1) != 1){
 		printf(ANSI_RED("Drive header reading failed, exiting..."));
 		exit(1);
 	}

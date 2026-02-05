@@ -4,9 +4,9 @@ uint8_t g_color = 0;
 char g_hexes32[] = "0123456789ABCDEF";
 
 uint16_t *VGA = (uint16_t *)0x000B8000;
-uinl32_t VGAX, VGAY;
+uint32_t VGAX, VGAY;
 #define VGAINDEX ((VGAY * VGA_MAXY) + VGAX)
-const uinl32_t VGA_MAXX = 80, VGA_MAXY = 25;
+const uint32_t VGA_MAXX = 80, VGA_MAXY = 25;
 uint8_t TABSIZE = 4;
 
 void putc32(char c){
@@ -44,7 +44,7 @@ void updateCursor32(){
 	asm_updateCursor32(VGAX, VGAY);
 }
 
-inline void getCursor32(uinl32_t *X, uinl32_t *Y){
+inline void getCursor32(uint32_t *X, uint32_t *Y){
 	uint16_t pos = asm_getCursor32();
 	*X = pos % VGA_MAXX;
 	*Y = pos / VGA_MAXX;
@@ -87,11 +87,11 @@ void puts32(char *str){
 // %i: integer
 // %z: long long    //! A bit dodgy, dont even know why asw
 // %s: string
-void printf32(char *fmt, ...){
+void ASMCALL printf32(char *fmt, ...){
     bool sign = true;
     uint8_t radix = 10;
-    uinl32_t *argp = (uinl32_t *)(&fmt + 1);
-    uinl32_t dwords = 0;
+    uint32_t *argp = (uint32_t *)(&fmt + 1);
+    uint32_t dwords = 0;
     while(*fmt){
         if(*fmt == '%'){
             fmt++;
@@ -152,10 +152,10 @@ void printf32(char *fmt, ...){
     }
 }
 
-char *printarg32(uinl32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool printin, bool attach_sign){
+char * ASMCALL printarg32(uint32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool printin, bool attach_sign){
     static char out[32];
     uint64_t num = 0;
-    uinl32_t rem;
+    uint32_t rem;
     int8_t num_sign = 1;
     int8_t pos = 0;
     switch(dwords){

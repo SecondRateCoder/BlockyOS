@@ -38,7 +38,7 @@ _asm_getCursor32:
 	
 
 global _asm_enableCursor32
-;	void asm_enableCursor32(uinl32_t, uinl32_t)
+;	void asm_enableCursor32(uint32_t, uint32_t)
 _asm_enableCursor32:
 	mov dx, 0x3D4
 	mov al, 0x0A
@@ -63,7 +63,7 @@ _asm_enableCursor32:
     ret
 
 global _asm_updateCursor32
-;	void asm_UpdateCursor32(uinl32_t, uinl32_t)
+;	void asm_UpdateCursor32(uint32_t, uint32_t)
 _asm_updateCursor32:
 	mov eax, [ebp + 16]				; Load Y
 	mul word [VGA_MAXX]				; Multiply by MAX rows

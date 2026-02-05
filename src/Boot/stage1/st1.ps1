@@ -45,7 +45,7 @@ $OUTBIN = Join-Path $Objdir "$([System.IO.Path]::GetFileNameWithoutExtension($FI
 Log-Write -Msg "$($NASM) -f obj $($FILE) -o $($OUTBIN)" -color Yellow
 
 $NASMOUT = (& $NASM "-f" "bin" $FILE "-o" $OUTBIN) 2>&1
-$NASMOUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+$NASMOUT|ForEach-Object{Log-Write -Msg $_ -color Blue}
 
 # $ARGS = @("-o", $OUTBIN,
 # 	"-z", "nostartfiles",

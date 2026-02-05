@@ -1,6 +1,6 @@
 #include "interrupt.h"
 
-char *ERRORS[] = {
+char *ERRORS[22] = {
     "Div Error",
     "Debug Break",
     "Non-Maskable Interrupt",

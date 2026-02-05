@@ -1,12 +1,11 @@
 #pragma once
 
-#include "./kernel/lib32/public/public/memory/memory.h"
-#include "./kernel/lib32/public/public/memory/string.h"
-#include "./kernel/lib32/public/public/math/int/_int.h"
+#include "./kernel/lib32/generic/standard.h"
 
 #define ANSI_COLOR(R, G, B)
+#define ENDL "\n\r\0"
 
-uinl32_t VGAX, VGAY;
+uint32_t VGAX, VGAY;
 
 #define ANSI_RED 4
 #define ANSI_GREEN 2
@@ -29,7 +28,7 @@ uint8_t g_color;
 #define puts puts32
 
 void printf32(char *fmt, ...);
-char *printarg32(uinl32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool printin, bool attach_sign);
+char *printarg32(uint32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool printin, bool attach_sign);
 
 
 // Function Prototypes
@@ -39,11 +38,11 @@ void putc32(char c);
 static inline void setColor(uint8_t color);
 
 // Wrapper prototypes
-static inline void getCursor32(uinl32_t *X, uinl32_t *Y);
+static inline void getCursor32(uint32_t *X, uint32_t *Y);
 static inline void scrollCursor32(uint8_t lines);
 
 // VGA prototypes
 extern void ASMCALL asm_enableCursor32(void);
 extern void ASMCALL asm_disdableCursor32(void);
 extern uint16_t ASMCALL asm_getCursor32();
-extern void ASMCALL asm_updateCursor32(uinl32_t x, uinl32_t y);
+extern void ASMCALL asm_updateCursor32(uint32_t x, uint32_t y);

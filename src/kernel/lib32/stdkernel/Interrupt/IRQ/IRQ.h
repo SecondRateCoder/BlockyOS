@@ -1,4 +1,6 @@
-#include "./kernel/lib32/public/kernpublic.h"
+#pragma once
+
+#include "./kernel/lib32/generic/standard.h"
 #include "./kernel/lib32/stdkernel/Interrupt/interrupt.h"
 
 #define PICM_PORTCMD        0x20

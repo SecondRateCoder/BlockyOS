@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <ctype.h>
 
-typedef struct drive_header{
+typedef struct driveHeader{
     uint8_t BOOT_Instruction[3];
     uint8_t OEM_ID[8];
     uint16_t bytes_per_sector;
@@ -29,7 +29,7 @@ typedef struct drive_header{
     uint32_t volume_id[4];
     uint8_t volume_label[11];
     uint8_t sys_id[8];
-}__attribute__((packed)) drive_header;
+}__attribute__((packed)) driveHeader;
 
 
 typedef struct file_entry{
@@ -53,7 +53,7 @@ typedef struct file_entry{
 typedef struct ptr_item{void *ptr; uint32_t size;}ptr_item;
 
 //! Global variables
-drive_header header;
+driveHeader header;
 
 // FAT table, Metadata table
 char *FAT;
@@ -137,7 +137,7 @@ int main(int argc, char **argv){
 
 bool bs_read(const FILE *bootfile){
 	fseek(bootfile, 0, SEEK_SET);
-	return fread(&header, sizeof(drive_header), 1, bootfile);
+	return fread(&header, sizeof(driveHeader), 1, bootfile);
 }
 
 bool sectors_read(const FILE *disk, uint32_t lba, uint32_t count, void *out){

@@ -19,7 +19,7 @@ $MAPFILE = Join-Path -Path $Build "gcc.map"
 $LINKERSCRIPT = Join-Path (Get-Location) "/src/Boot/stage2/boot.ld"
 
 $EXCLUDE = @(
-	"stdfile", "f-rat", "stdprogram"
+	"stdfile", "f-rat", "stdprogram", "Device", "USB", "PCI", "DeviceInterrupt"
 )
 
 $BOOT2CFILES = @()
@@ -52,14 +52,19 @@ New-Item -Path $Log -ItemType File -Force
 	}
 }
 
-function Log-Write{
-	param(
-		[string]$Msg,
-		[System.ConsoleColor]$color
-		)
-	Write-Host $Msg -ForegroundColor $color
-	Add-Content -Path $Log -Value ($Msg -replace "`e\[[0-9;]*[A-Za-z]", "")
+function Log-Write {
+    param(
+        [string]$Msg,
+        [System.ConsoleColor]$color
+    )
+
+    Write-Host $Msg -ForegroundColor $color
+    $esc=[char]27
+    $clean = $Msg -replace "$esc(?:\[[0-9;?]*[ -/]*[@-~]|][^\a]*\a|P.*?$esc\\|X.*?$esc\\|\^.*?$esc\\|_.*?$esc\\|[@-Z\\-_])",""
+
+    Add-Content -Path $Log -Value $clean
 }
+
 
 function Img-Push {
 	param([byte[]]$data)
@@ -85,16 +90,15 @@ function Img-Push {
 
 $COMPILECLI = @(
 	"-nostdlib", "-m32", 
-	"-fdiagnostics-color=always",  "-fno-leading-underscore", "-ffreestanding",
+	"-fdiagnostics-color=always",  "-fno-leading-underscore", "-ffreestanding", "-fno-stack-protector"
 	"-I", "$(Join-Path (Get-Location) "src/")", 
-	# "-I", "$(Join-Path (Get-Location) "src/kernel/lib32/")",
 	"-std=c99"
 )
 
 # Compile all 32-bit files
 $cc = 0
 $BOOT2CFILES|ForEach-Object{
-	Log-Write -Msg "$($GCC) -c $($_) -o $($BOOT2OFILES[$cc]) $($COMPILECLI -join ' ')" -color Yellow
+	Log-Write -Msg "$($GCC) -c $($_) -o $($BOOT2OFILES[$cc]) $($COMPILECLI -join ' ')" -color Blue
 	$COMPILEOUT = (& $GCC -Params @("-c", $_, "-o", $BOOT2OFILES[$cc], $COMPILECLI)) 2>&1
 	$COMPILEOUT|ForEach-Object{
 		if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
@@ -106,10 +110,10 @@ $BOOT2CFILES|ForEach-Object{
 # Compile .asm files
 $BOOT2ASMFILES|ForEach-Object{
 	$args_ = @("-f", "elf32", $_, "-o", "$($BOOT2OFILES[$cc])")
-	Log-Write -Msg "$($NASM) $($args_ -join ' ')" -color Yellow
+	Log-Write -Msg "$($NASM) $($args_ -join ' ')" -color Blue
 	$COMPILEOUT = (& $NASM $args_) 2>&1
 	$COMPILEOUT|ForEach-Object{
-		if($_ -like "*error*"){Log-Write -Msg $_ -color Red}
+		if($_ -match 'error'){Log-Write -Msg $_ -color Red}
 		else{Log-Write -Msg $_ -color Yellow}
 	}
 	$cc++
@@ -122,21 +126,20 @@ New-Item -Path $MAPFILE -ItemType File -Force
 # gcc link
 $ST2ELF = Join-Path -Path $Objdir "boot2.elf"
 $args_ = @()
+$BOOT2OFILES = ($BOOT2OFILES | Sort-Object -Unique)
 $BOOT2OFILES|ForEach-Object{$args_ += $_}
 @("-o", $ST2ELF,
 	"-z", "nostartfiles",
-	"-ffreestanding", "-fdiagnostics-color=always",
+	"--sysroot=",
 	"-T", "$($LINKERSCRIPT)", 
 	"-Map", "$($MAPFILE)", "-m", "elf_i386"
 )|ForEach-Object{$args_ += $_}
 
-Log-Write -Msg "`n$($GCC) $($args_ -join ' ')`n" -Color White
-
-$GLINK_OUT = (& $GCC -Image "ld" -Params $args_) 2>&1
+Log-Write -Msg "$($GCC) $($args_ -join ' ')" -color Blue
+$GLINK_OUT = (& $GCC -Image "ld" -Params $args_) 2>&1 | Out-String
 $GLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 
-$ST2GCCBIN = Join-Path -Path $Objdir "boot2gcc.bin"
-objcopy -O binary $ST2ELF $ST2GCCBIN
+# objcopy -O binary $ST2ELF $ST2GCCBIN
 
 # #wcc link
 # $LNK = "

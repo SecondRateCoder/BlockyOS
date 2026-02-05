@@ -1,33 +1,31 @@
 bits 32
-;		**AUTO-GENERATED SCRIPT**
-
-extern isr_handlerC
+;       **AUTO-GENERATED SCRIPT**
 
 %macro INTNOERROR 1
 global ISR_INTERRUPT%1
 ISR_INTERRUPT%1:
-    push dword 0	; Push dummy error
-    push dword %1	; Push Interrupt Code
-	push esp
+    push dword 0    ; Push dummy error
+    push dword %1   ; Push Interrupt Code
+    push esp
     jmp isr_inthandle
 %endmacro
 
 %macro INTERROR 1
 global ISR_INTERRUPT%1
 ISR_INTERRUPT%1:
-    push dword %1	; Push Interrupt Code
-	push esp
+    push dword %1   ; Push Interrupt Code
+    push esp
     jmp isr_inthandle
 %endmacro
 
 extern isr_inthandle
+extern isr_handlerC
 
 global _interruptTableEnd
 global _interruptTableLength
-_interruptTableLength:	dd (_interruptTableEnd - _interruptTable)
+_interruptTableLength:  dd (_interruptTableEnd - _interruptTable)
 global _interruptTable
 _interruptTable:
-
 INTNOERROR 0
 INTNOERROR 1
 INTNOERROR 2
@@ -60,6 +58,22 @@ INTNOERROR 28
 INTERROR 29
 INTERROR 30
 INTNOERROR 31
+INTNOERROR 32
+INTNOERROR 33
+INTNOERROR 34
+INTNOERROR 35
+INTNOERROR 36
+INTNOERROR 37
+INTNOERROR 38
+INTNOERROR 39
+INTNOERROR 40
+INTNOERROR 41
+INTNOERROR 42
+INTNOERROR 43
+INTNOERROR 44
+INTNOERROR 45
+INTNOERROR 46
+INTNOERROR 47
 INTNOERROR 48
 INTNOERROR 49
 INTNOERROR 50
@@ -268,4 +282,4 @@ INTNOERROR 252
 INTNOERROR 253
 INTNOERROR 254
 INTNOERROR 255
-_interruptTableEnd:	db 0
+_interruptTableEnd:

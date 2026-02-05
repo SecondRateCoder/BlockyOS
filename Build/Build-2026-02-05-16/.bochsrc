@@ -1,0 +1,11 @@
+megs: 32
+romimage: file=C:\Users\olusa\Bochs-3.0\BIOS-bochs-latest
+vgaromimage: file=C:\Users\olusa\Bochs-3.0\VGABIOS-lgpl-latest.bin
+boot: floppy
+floppya: 1_44=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\floppy-2026-02-05-16.img, status=inserted
+display_library: win32, options="gui_debug"
+pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
+config_interface: win32config
+vga: extension=vbe
+magic_break: enabled=1
+log: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\bochs.log

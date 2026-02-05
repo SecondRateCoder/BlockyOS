@@ -1,4 +1,7 @@
+#pragma once
+
 #include "Interrupt/interrupt.h"
+#include "Interrupt/IRQ/IRQ.h"
 #include "GDT/GDT.h"
 #include "IO/IO.h"
 

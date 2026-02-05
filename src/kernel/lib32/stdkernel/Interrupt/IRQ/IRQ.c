@@ -1,4 +1,5 @@
 #include "IRQ.h"
+#include "./kernel/lib32/stdio/stdio.h"
 #include "./kernel/lib32/stdkernel/IO/IO.h"
 #include "./kernel/lib32/stdkernel/stdkernel.h"
 

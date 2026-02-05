@@ -1,67 +1,184 @@
 #include "stdfile.h"
 
-FILE *getFILE(FILEhandle *Fh){
-    
+void envInit(stdfileENVIROMENT *env){
+    getDrive(&env->drive);
+    env->FATCHUNKS = 0;
+    _x86DISKREAD(FATLBA(env->drive), env->FAT);
+    memset(env->files, sizeof(env->files), 0);
 }
 
-stdfileENVIROMENT envPREPARE(){
-    static stdfileENVIROMENT out;
-    sectorSeek(NULL, -sectorpointer);
-    void *temp = sectorRead_(sizeof(drive_header));
-    memcpy(&(out.drive), temp, sizeof(drive_header));
-    sectorSeek(NULL, FAT_LBA(out.drive));
-    memset(out.FAT, sizeof(out.FAT), 0);
-    memset(out.files, sizeof(out.files), 0);
-    out.loadedFATs = 0;
-    return out;
+stdfileENVIROMENT *getEnv(){
+    void *EIP = getEIP();
+    standardHeader *header = getCODEBase(EIP);
+    if(header){
+        return &header->standardChildren.stdfile;
+    }
+    return NULL;
 }
 
-bool sectorSeek_(FILEhandle *file, long offset, bool update){
-    if(-offset < sectorpointer){
-        if(_x86DISKUPDATE(sectorpointer + offset, true)){
-            sectorpointer += offset;
-            return true;
+void FrATstepDown(undefinedSector *in, uint8_t parallel, undefinedSector *out){
+    if(FLAGCHECK(in->header.flags, FrATFLAGS_BASE)){
+        if(parallel < baseLBAentries){
+            FrATBASE *base = (FrATBASE *)in;
+            _x86DISKREAD(getLBA(base->Addresses[parallel]), out);
         }
-    }
-    return false;
-}
-
-size_t sectorTell(){return sectorpointer;}
-
-void *sectorRead_(unsigned long bytes){
-    uint8_t last_write = writeptr;
-    uint8_t reads = bytes / 128 + 
-        ((bytes % 128)? 1: 0);
-    if(reads > 10){
-        // setColor(ANSI_RED);
-        // printf("Cannot read more than 1280 bytes");
-        return NULL;
-    }
-    for(uint8_t cc =0; cc < reads; ++cc){
-        _x86DISKREAD((uint8_t *)(sectorhandles + writeptr));
-        if(sectorSeek_(128, false)){
+    }else if(FLAGCHECK(in->header.flags, FrATFLAGS_CHILD)){
+        if(parallel < childLBAentries){
+            FrATCHILD *child = (FrATCHILD *)in;
+            _x86DISKREAD(getLBA(child->Addresses[parallel]), out);
         }
-        writeptr++;
-        if(writeptr > 10){writeptr = 0;}
-    }
-    return (sectorhandles + last_write);
+    }else{return;}
 }
 
-void sectorRead(void *buffer, size_t buffsize, size_t bytes){
-    void *buffer_ = sectorRead_(bytes);
-    memcpy(buffer, buffer_, buffsize);
+void FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out){
+	// Step down recursively, calling FrATstep and passing the step down as the base, when depth or offset reached? return
+	signed long *tempoffset = offset;
+	uint8_t parallel = 0;
+	if(FLAGCHECK(in->header.flags, FrATFLAGS_BASE)){
+		FrATBASE *base = (FrATBASE *)in;
+		for(; parallel < base->header.Bounds.parallels; ++parallel){
+			undefinedSector temp;
+			_x86DISKREAD(getLBA(base->Addresses[parallel]), &temp);
+			for(; tempoffset > 0; tempoffset -= sectorBytes){
+				*out = base->Addresses[parallel];
+				if(FLAGCHECK(base->Addresses[parallel].flags, LBAFLAGS_DEFINED)|| FLAGCHECK(base->Addresses[parallel].flags, LBAFLAGS_USED)){
+					FrATstep((undefinedSector *)(&temp), &tempoffset, out);
+				}else{
+					*out = base->Addresses[parallel];
+					return;
+				}
+				if(!(*offset) || (*tempoffset) < 0){
+					return;
+				}else{continue;}
+			}
+		}
+    }else if(FLAGCHECK(in->header.flags, FrATFLAGS_CHILD)){
+		FrATCHILD *child = (FrATBASE *)in;
+		for(; parallel < child->header.location.parallels; ++parallel){
+			undefinedSector temp;
+			_x86DISKREAD(getLBA(child->Addresses[parallel]), &temp);
+			for(; tempoffset > 0; tempoffset -= sectorBytes){
+				*out = child->Addresses[parallel];
+				if(FLAGCHECK(child->Addresses[parallel].flags, LBAFLAGS_DEFINED)|| FLAGCHECK(child->Addresses[parallel].flags, LBAFLAGS_USED)){
+					FrATstep((undefinedSector *)(&temp), &tempoffset, out);
+				}else{
+					*out = child->Addresses[parallel];
+					return;
+				}
+				if(!(*offset) || (*tempoffset) < 0){
+					return;
+				}else{continue;}
+			}
+		}
+    }else{return;}
+}
+
+/// @brief Read off sectors.
+/// @param FILE The Handle of the associated File.
+/// @param bytes The bytes to read.
+/// @remark Can ONLY read up to 10 sectors.
+/// @return A buffer of 10 sectors, with unused bytes set to 0.
+void *readSectors(FILEhandle *file, uint32_t bytes, bool useFrATstep){
+    static SECTOR reads[maxSingleRead];
+    FILE *f = getFile(file);
+    uint8_t reads = (bytes / sectorBytes) + (bytes % sectorBytes? 1: 0);
+    int16_t minus = (bytes % sectorBytes);
+    if(reads > maxSingleRead){return NULL;}
+    if(f && reads != 0){
+        uint8_t cc = 0;
+        for(; cc < maxSingleRead; ++cc){
+			if(useFrATstep){
+				packedLBA address;
+				unsigned long temp = sectorBytes;
+				FrATstep(&f->file, &temp, &address);
+				_x86DISKREAD(getLBA(address), reads + cc);
+			}else{
+				_x86DISKREAD(getLBA(f->Progress), reads + cc);
+				storeLBA(f->Progress, getLBA(f->Progress) + sectorBytes);
+			}
+        }
+        memset(reads[cc] + minus, sectorBytes - minus, 0);
+        return reads;
+    }
+    return NULL;
+}
+
+void writeSectors(FILEhandle *file, void *buffer, uint32_t bytes, bool useFrATstep){
+    static SECTOR extraWrite;
+    bool extraWrite_ = (bytes % sectorBytes? true: false);
+    FILE *f = getFile(file);
+    memset(extraWrite, sizeof(SECTOR), 0);
+    uint8_t writes = (bytes / sectorBytes);
+    memcpy(extraWrite, buffer + (writes * sectorBytes), (bytes % sectorBytes));
+    if(f && writes != 0){
+        uint8_t cc = 0;
+        for(; cc < writes; ++cc){
+			if(useFrATstep){
+				packedLBA address;
+				unsigned long temp = sectorBytes;
+				FrATstep(&f->file, &temp, &address);
+				_x86DISKWRITE(getLBA(address), buffer + (cc * sectorBytes));
+			}else{
+				_x86DISKWRITE(getLBA(f->Progress), buffer + (cc * sectorBytes));
+            	storeLBA(f->Progress, getLBA(f->Progress) + sectorBytes);
+			}
+        }
+        _x86DISKWRITE(getLBA(f->Progress), writes + cc);
+        storeLBA(f->Progress, getLBA(f->Progress) + sectorBytes);
+        return;
+    }
     return;
 }
 
-void sectorWrite(void *buffer, size_t buffsize){
-    uint8_t writes = buffsize / 128 + 
-        ((buffsize % 128)? 1: 0);
-    size_t offset = 0;
-    for(uint8_t cc =0; cc < writes; ++cc){
-        uint8_t packetsize = (buffsize - offset) > 128? 128: (buffsize - offset);
-        offset += packetsize;
-        static uint8_t buffer_[128];
-        _x86DISKWRITE(buffer_);
-        memcpy(buffer + offset, buffer_, packetsize);
+/// @brief Read off a flat buffer of sectors.
+/// @param LBA The Address to read from.
+/// @param sectors The number of sectors to read.
+/// @return A buffer of a max size of 10 sectors.
+void *flatRead(uint32_t LBA, uint8_t sectors){
+	static SECTOR out[10] = {0};
+	if(sectors <= 10){
+		uint8_t cc =0;
+		while(cc < sectors){
+			_x86DISKREAD(LBA, out + cc);
+			cc++;
+		}
+		return out;
+	}
+	return NULL;
+}
+
+void ASMCALL getDrive(driveHeader *out){
+    SECTOR s;
+    _x86DISKREAD(0, &s);
+    memcpy(out, s, sizeof(driveHeader));
+}
+
+FILE *getFile(FILEhandle *handle){
+    stdfileENVIROMENT *env;
+    if((env = getEnv())){
+        for(uint8_t cc = 0; cc < MAX_FHANDLES; ++cc){
+            if(&env->files[cc].handle == handle && env->files[cc].handle == *handle){
+                return env->files + cc;
+            }
+        }
     }
+}
+
+void closeFile(uint8_t file){
+	if(file < MAX_FHANDLES){
+		stdfileENVIROMENT *env;
+		if((env = getEnv())){
+			env->usedFiles[file] = false;
+		}
+	}
+}
+
+FILE *getUsable(){
+	stdfileENVIROMENT *env;
+	if((env = getEnv())){
+		for(uint8_t cc =0; cc < MAX_FHANDLES; ++cc){
+			if(env->usedFiles[cc] == false){return (env->files + cc);}
+		}
+	}
+	return NULL;
 }

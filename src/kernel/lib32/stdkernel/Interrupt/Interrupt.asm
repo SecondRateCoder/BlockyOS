@@ -9,8 +9,7 @@ isr_inthandle:
     mov ax, ds
     push eax
 
-    mov ax, 0x10               ; kernel data segment
-
+    mov ax, 0x10               ; kernel data segments
     mov ds, ax
     mov es, ax
     mov fs, ax

@@ -47,7 +47,7 @@
 //*		List all the items in a Directory
 
 #define bytes_per_sector_ 128
-typedef struct drive_header{
+typedef struct driveHeader{
     uint8_t 	BOOT_Instruction[3],
 				OEM_ID[8];
     uint16_t 	bytes_per_sector;
@@ -70,7 +70,7 @@ typedef struct drive_header{
     uint8_t 	sys_id[8];
 	// Custom boot record
 	uint8_t sectormap_entries;
-}__attribute__((packed)) drive_header;
+}__attribute__((packed)) driveHeader;
 
 #define LBAget(ull) (((unsigned long long)(ull)) & 0x7FFFFFFFFFFFFFFF)
 #define FATused(ull) (((unsigned long long)(ull)) & 0x1000000000000000)

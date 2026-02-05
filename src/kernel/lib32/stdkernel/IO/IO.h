@@ -1,5 +1,6 @@
-#include "./kernel/lib32/public/public/public.h"
+#pragma once
 
+#include "./kernel/lib32/generic/standard.h"
 
 void iowait(void);
 

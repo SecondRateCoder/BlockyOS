@@ -8,27 +8,26 @@ nop
 section .BOOTDRIVE,KEEP
 drive_header:
 	bdb_oem:                   	db 'MSWIN4.1'
-	bdb_bytes_per_sector:       dw 128
-	bdb_sectors_per_cluster:    dw 2
-	bdb_reserved_sectors:       db 20
-	bdb_fat_count:              db 2
-	bdb_dir_entries_count:      dw 0F0h
-	bdb_total_sectors:			dw 2868
-	bdb_media_desciptor_type:	db 0F0h
-	bdb_sectors_per_fat:		dw 9
-	bdb_sectors_per_track:		dw 18
-	bdb_heads:					dw 2
-	bdb_hidden_sectors:			dd 0
-	bdb_large_sector_count:		dd 0
-
+	bdb_bytes_per_sector:       dw 512						; +1
+	bdb_sectors_per_cluster:    dw 2						; +3
+	bdb_reserved_sectors:       db 20						; +5
+	bdb_fat_count:              db 2						; +6
+	bdb_dir_entries_count:      dw 0F0h						; +7
+	bdb_total_sectors:			dw 2868						; +9
+	bdb_media_desciptor_type:	db 0F0h						; +11
+	bdb_sectors_per_fat:		dw 9						; +12
+	bdb_sectors_per_track:		dw 18						; +14
+	bdb_heads:					dw 2						; +16
+	bdb_hidden_sectors:			dd 0						; +18
+	bdb_large_sector_count:		dd 0						; +22
 	; extended boot record:
-	ebr_drive_number:			db 0
-	ebr_signature:				db 29h
-	ebr_volume_id:				db 12h, 99h, 40h, 22h
-	ebr_volume_label:			db 'BLOCKY OS  '
-	ebr_system_id:				db 'FAT12   '	; 25 bytes
+	ebr_drive_number:			db 0						; +26
+	ebr_signature:				db 29h						; +28
+	ebr_volume_id:				db 12h, 99h, 40h, 22h		; +30
+	ebr_volume_label:			db 'BLOCKY OS  '			; +46
+	ebr_system_id:				db 'FAT12   '				; +57
 	; custom_boot_record
-	sectormap_entries:			db 128			; 26 bytes
+	sectormap_entries:			db 128						; +65
 drive_end:
 
 %define ENDL 0x0A, 0x0D, 0x00
@@ -46,7 +45,7 @@ start:
 	mov ds, ax
 	mov ax, buffer
 	mov ss, ax
-	add ax, 512
+	mov ax, 512
     mov sp, ax
 	; stack pointer is not 512 bytes above ss, which is buffer
 	push es
@@ -60,7 +59,7 @@ start:
 	add bx, 1024
 
 	; Sectors to be Read.
-	mov di, [bdb_reserved_sectors]
+	mov di, 1
 
 	; LBA Adress
 	mov ax, 1
@@ -188,7 +187,6 @@ lbatochs:
 										; ...
 	inc dx								; dx: (LBA % bdb_sectors_per_track) + 1: Sector number
 	mov cx, dx							; cx: Sector number
-	dec dx								; dx: LBA % bdb_sectors_per_track
 	xor dx, dx							; ...
 	div word [bdb_heads]				; dx: (LBA / bdb_sectors_per_track) % db_heads: Head number
 										; ax: (LBA / bdb_sectors_per_track) / db_heads:	Cylinder number
@@ -285,3 +283,4 @@ msg_bt2f: db 'Boot2 not found', ENDL
 times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
 dw 0xAA55              	; The final 2 bytes will be the boot signature.
 buffer:
+; 512 byte stack

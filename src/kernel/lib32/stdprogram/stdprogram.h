@@ -1,6 +1,11 @@
 #pragma once
 
-#include "./kernel/lib32/public/kernpublic.h"
+#include "./kernel/lib32/generic/standard.h"
+#ifdef LOCALSTANDARDFILE
+#include "./Boot/stage2/localfile/stdfile.h"
+#else
+#include "./kernel/lib32/stdfile/stdfile.h"
+#endif
 
 #define KERNEL_ID (0x4446788592ull)
 #define staticInterruptTableSize 5
@@ -10,33 +15,9 @@
 #define maxTranslationTables 10
 #define maxLoadCMDSIZE 128
 
-typedef struct executableBinary{
-	struct FAT{
-		stubFAT BINARY;
-		stubFAT REALLOCMASK;
-	}FAT;
-	// The address where the address of in parameters should be stored.
-	size_t BINARYIN;
-	// The adress where the address of the output should be stored.
-	size_t BINARYOUT;
-}executableBinary;
-
 /// @brief [0]: Byte Offset, [1]: Size
 typedef size_t stubFAT[2];
 typedef uint8_t versionArtifacts[10];
-typedef struct executableImage{
-	versionArtifacts versionArtifacts;
-	programLoadHeader header;
-	char loaderAlias[aliasLen];
-	struct FAT{
-		stubFAT DATABINARY;
-		stubFAT REALLOCMASK;
-		stubFAT RESOURCES;
-		stubFAT IMPORT;
-		stubFAT EXPORT;
-		stubFAT INTERNALDATA;
-	}FAT;
-}executableImage;
 
 typedef struct programLoadHeader{
 	char ploadCommand[maxLoadCMDSIZE];
@@ -46,6 +27,34 @@ typedef struct programLoadHeader{
 	}COMPONENTMAP;
 }programLoadHeader;
 
+typedef struct executableBinary{
+	struct exeBFAT{
+		stubFAT BINARY;
+		stubFAT REALLOCMASK;
+	}exeB_FAT;
+	// The address where the address of in parameters should be stored.
+	size_t BINARYIN;
+	// The adress where the address of the output should be stored.
+	size_t BINARYOUT;
+}executableBinary;
+
+typedef struct executableImage{
+	versionArtifacts versionArtifacts;
+	programLoadHeader header;
+	char loaderAlias[aliasLen];
+	struct exeIFAT{
+		stubFAT DATABINARY;
+		stubFAT REALLOCMASK;
+		stubFAT RESOURCES;
+		stubFAT IMPORT;
+		stubFAT EXPORT;
+		stubFAT INTERNALDATA;
+	}exeIFAT;
+}executableImage;
+
+
+
+//* Program Headers
 typedef struct standardTranslationTable{
 	union{
 		uint32_t type, flags;
@@ -70,6 +79,29 @@ typedef struct standardInterruptEntry{
     uint8_t flags;
 }standardInterruptEntry;
 
+typedef struct standardChildHeader{
+    uint8_t ParentID[standardHeaderIDSize], ID[standardHeaderIDSize];
+	void *CODE;
+    uint8_t loadedCODEPages;
+    void *DATA;
+	uint8_t loadedDATAPages;
+}standardChildHeader;
+
+typedef struct standardHeader{
+    uint8_t ID[standardHeaderIDSize];
+    char program[PATHMAX];
+    struct PAGES{
+        void *CODE;
+        uint8_t loadedCODEPages;
+        void *DATA;
+        uint8_t loadedDATAPages;
+    }PAGES;
+    struct standardChildren{
+        stdfileENVIROMENT stdfile;
+		standardChildHeader threads[standardThreadMax];
+    }standardChildren;
+}standardHeader;
+
 typedef struct standardKernelHeader{
     standardHeader Child;
 	struct standardTables{
@@ -79,29 +111,11 @@ typedef struct standardKernelHeader{
 	}standardTables;
 }standardKernelHeader;
 
-typedef struct standardChildHeader{
-    uint8_t ParentID[standardHeaderIDSize], ID[standardHeaderIDSize];
-	void *CODE;
-    uint8_t loadedCODEPages;
-    void *myDATA;
-	uint32_t DATAbytes;
-}standardChildHeader;
-
-typedef struct standardHeader{
-    uint8_t ID[standardHeaderIDSize];
-    FILE *program;
-    void *CODE;
-    uint8_t loadedCODEPages;
-    void *DATA;
-    uint8_t loadedDATAPages;
-    struct standardChildren{
-        stdfileENVIROMENT stdfile;
-		standardChildHeader threads[standardThreadMax];
-    }standardChildren;
-}standardHeader;
-
 uint32_t loadedPrograms;
-standardHeader **Programs;
+standardHeader *LINKERSECTION("PROGRAMBUFFER") Programs[16];
 
-standardHeader getCODEBase(void *CODE);
-standardHeader getDATABase(void *DATA);
+extern standardHeader * ASMCALL getStandardHeader32(void *CODE, void *DATA);
+extern void * ASMCALL getEIP();
+
+standardHeader * ASMCALL getCODEBase(void *CODE);
+standardHeader * ASMCALL getDATABase(void *DATA);

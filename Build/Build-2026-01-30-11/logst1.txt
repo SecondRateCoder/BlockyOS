@@ -1,3 +1,0 @@
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f obj C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage1\boot.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-30-11\objs\boot1.bin
-Byte array of size: 888 padded with size: 376, starting at address: 0 and ending at address: 1264
-Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-01-30-11\floppy-2026-01-30-11.img with 376 bytes.

@@ -1,0 +1,724 @@
+stdio.c
+stdkernel.c
+interrupt.c
+InterruptRoutines.c
+IRQ.c
+math.c
+_int.c
+stdmem.c
+memory.c
+string.c
+VGA.asm
+GDT.asm
+Interrupt.asm
+InterruptRoutines.asm
+IRQ.asm
+IO.asm
+stdmem.asm
+stdout.asm
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot32.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdprogram/stdprogram.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot32.c:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/stdkernel.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot.h:6,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot32.c:4:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/Interrupt/interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdio/stdio.h:38:20: warning: 'setColor' used but never defined
+   38 | static inline void setColor(uint8_t color);
+      |                    ^~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot.h:23:6: warning: array 'g_hexes32' assumed to have one element
+   23 | char g_hexes32[];
+      |      ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdfile.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:4,
+                 from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdprogram/stdprogram.h:7,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:2:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/Interrupt/interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:34:14: error: redeclaration of 'enum LBAFLAGS'
+   34 | typedef enum LBAFLAGS{
+      |              ^~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:33:14: note: originally defined here
+   33 | typedef enum LBAFLAGS{
+      |              ^~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:35:5: error: redeclaration of enumerator 'LBAFLAGS_POSITIVE'
+   35 |     LBAFLAGS_POSITIVE = 0x0,
+      |     ^~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:34:5: note: previous definition of 'LBAFLAGS_POSITIVE' with type 'enum LBAFLAGS'
+   34 |     LBAFLAGS_POSITIVE = 0x0,
+      |     ^~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:36:5: error: redeclaration of enumerator 'LBAFLAGS_unDEFINED'
+   36 |     LBAFLAGS_unDEFINED = 0x0,
+      |     ^~~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:35:5: note: previous definition of 'LBAFLAGS_unDEFINED' with type 'enum LBAFLAGS'
+   35 |     LBAFLAGS_unDEFINED = 0x0,
+      |     ^~~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:37:5: error: redeclaration of enumerator 'LBAFLAGS_NEGATIVE'
+   37 |     LBAFLAGS_NEGATIVE = 0x1,
+      |     ^~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:36:5: note: previous definition of 'LBAFLAGS_NEGATIVE' with type 'enum LBAFLAGS'
+   36 |     LBAFLAGS_NEGATIVE = 0x1,
+      |     ^~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:38:5: error: redeclaration of enumerator 'LBAFLAGS_DEFINED'
+   38 |     LBAFLAGS_DEFINED = 0x2,
+      |     ^~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:37:5: note: previous definition of 'LBAFLAGS_DEFINED' with type 'enum LBAFLAGS'
+   37 |     LBAFLAGS_DEFINED = 0x2,
+      |     ^~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:39:5: error: redeclaration of enumerator 'LBAFLAGS_USED'
+   39 |     LBAFLAGS_USED = 0x2,
+      |     ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:38:5: note: previous definition of 'LBAFLAGS_USED' with type 'enum LBAFLAGS'
+   38 |     LBAFLAGS_USED = 0x2,
+      |     ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:41:16: error: redefinition of 'struct CHS'
+   41 | typedef struct CHS{
+      |                ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:41:16: note: originally defined here
+   41 | typedef struct CHS{
+      |                ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:45:15: error: conflicting types for 'CHS'; have 'struct CHS'
+   45 | }PACKEDSTRUCT CHS;
+      |               ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:45:15: note: previous declaration of 'CHS' with type 'CHS'
+   45 | }PACKEDSTRUCT CHS;
+      |               ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:54:16: error: redefinition of 'struct packedLBA'
+   54 | typedef struct packedLBA{
+      |                ^~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:58:16: note: originally defined here
+   58 | typedef struct packedLBA{
+      |                ^~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:63:15: error: conflicting types for 'packedLBA'; have 'struct packedLBA'
+   63 | }PACKEDSTRUCT packedLBA;
+      |               ^~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:67:15: note: previous declaration of 'packedLBA' with type 'packedLBA'
+   67 | }PACKEDSTRUCT packedLBA;
+      |               ^~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:64:16: error: redefinition of 'struct DepthWidth_t'
+   64 | typedef struct DepthWidth_t{
+      |                ^~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:68:16: note: originally defined here
+   68 | typedef struct DepthWidth_t{
+      |                ^~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:72:2: error: conflicting types for 'DepthWidth_t'; have 'struct DepthWidth_t'
+   72 | }DepthWidth_t;
+      |  ^~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:76:2: note: previous declaration of 'DepthWidth_t' with type 'DepthWidth_t'
+   76 | }DepthWidth_t;
+      |  ^~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:74:16: error: redefinition of 'struct undefinedSectorHeader'
+   74 | typedef struct undefinedSectorHeader{
+      |                ^~~~~~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:78:16: note: originally defined here
+   78 | typedef struct undefinedSectorHeader{
+      |                ^~~~~~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:83:15: error: conflicting types for 'undefinedSectorHeader'; have 'struct undefinedSectorHeader'
+   83 | }PACKEDSTRUCT undefinedSectorHeader;
+      |               ^~~~~~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:87:15: note: previous declaration of 'undefinedSectorHeader' with type 'undefinedSectorHeader'
+   87 | }PACKEDSTRUCT undefinedSectorHeader;
+      |               ^~~~~~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:84:16: error: redefinition of 'struct undefinedSector'
+   84 | typedef struct undefinedSector{
+      |                ^~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:88:16: note: originally defined here
+   88 | typedef struct undefinedSector{
+      |                ^~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:90:15: error: conflicting types for 'undefinedSector'; have 'struct undefinedSector'
+   90 | }PACKEDSTRUCT undefinedSector;
+      |               ^~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:94:15: note: previous declaration of 'undefinedSector' with type 'undefinedSector'
+   94 | }PACKEDSTRUCT undefinedSector;
+      |               ^~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:92:16: error: redefinition of 'struct FILE'
+   92 | typedef struct FILE{
+      |                ^~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:96:16: note: originally defined here
+   96 | typedef struct FILE{
+      |                ^~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:97:2: error: conflicting types for 'FILE'; have 'struct FILE'
+   97 | }FILE;
+      |  ^~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:101:2: note: previous declaration of 'FILE' with type 'FILE'
+  101 | }FILE;
+      |  ^~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:99:16: error: redefinition of 'struct driveHeader'
+   99 | typedef struct driveHeader{
+      |                ^~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:103:16: note: originally defined here
+  103 | typedef struct driveHeader{
+      |                ^~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:125:15: error: conflicting types for 'driveHeader'; have 'struct driveHeader'
+  125 | }PACKEDSTRUCT driveHeader;
+      |               ^~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:129:15: note: previous declaration of 'driveHeader' with type 'driveHeader'
+  129 | }PACKEDSTRUCT driveHeader;
+      |               ^~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:130:16: error: redefinition of 'struct stdfileENVIROMENT'
+  130 | typedef struct stdfileENVIROMENT{
+      |                ^~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:131:16: note: originally defined here
+  131 | typedef struct stdfileENVIROMENT{
+      |                ^~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:136:2: error: conflicting types for 'stdfileENVIROMENT'; have 'struct stdfileENVIROMENT'
+  136 | }stdfileENVIROMENT;
+      |  ^~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:137:2: note: previous declaration of 'stdfileENVIROMENT' with type 'stdfileENVIROMENT'
+  137 | }stdfileENVIROMENT;
+      |  ^~~~~~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:143:6: error: conflicting types for 'envInit'; have 'void(stdfileENVIROMENT *)'
+  143 | void envInit(stdfileENVIROMENT *env);
+      |      ^~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:144:6: note: previous declaration of 'envInit' with type 'void(stdfileENVIROMENT *)'
+  144 | void envInit(stdfileENVIROMENT *env);
+      |      ^~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:144:6: error: conflicting types for 'getDrive'; have 'void(driveHeader *)'
+  144 | void getDrive(driveHeader *out);
+      |      ^~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:145:6: note: previous declaration of 'getDrive' with type 'void(driveHeader *)'
+  145 | void getDrive(driveHeader *out);
+      |      ^~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:145:7: error: conflicting types for 'getFile'; have 'FILE *(FILEhandle *)' {aka 'FILE *(unsigned char *)'}
+  145 | FILE *getFile(FILEhandle *handle);
+      |       ^~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:146:7: note: previous declaration of 'getFile' with type 'FILE *(FILEhandle *)' {aka 'FILE *(unsigned char *)'}
+  146 | FILE *getFile(FILEhandle *handle);
+      |       ^~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdfile/stdfile.h:146:7: error: conflicting types for 'getUsable'; have 'FILE *()'
+  146 | FILE *getUsable();
+      |       ^~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:147:7: note: previous declaration of 'getUsable' with type 'FILE *()'
+  147 | FILE *getUsable();
+      |       ^~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:4:6: error: conflicting types for 'envInit'; have 'void(stdfileENVIROMENT *)'
+    4 | void envInit(stdfileENVIROMENT *env){
+      |      ^~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:144:6: note: previous declaration of 'envInit' with type 'void(stdfileENVIROMENT *)'
+  144 | void envInit(stdfileENVIROMENT *env);
+      |      ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c: In function 'readSectors':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:35:42: error: passing argument 1 of 'FrATstep' from incompatible pointer type [-Wincompatible-pointer-types]
+   35 |                                 FrATstep((undefinedSector *)(&(f->file)), &temp, (packedLBA *)&(address));
+      |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                          |
+      |                                          undefinedSector *
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:155:46: note: expected 'undefinedSector *' but argument is of type 'undefinedSector *'
+  155 | void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out);
+      |                             ~~~~~~~~~~~~~~~~~^~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:35:82: error: passing argument 3 of 'FrATstep' from incompatible pointer type [-Wincompatible-pointer-types]
+   35 |                                 FrATstep((undefinedSector *)(&(f->file)), &temp, (packedLBA *)&(address));
+      |                                                                                  ^~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                  |
+      |                                                                                  packedLBA *
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:155:84: note: expected 'packedLBA *' but argument is of type 'packedLBA *'
+  155 | void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out);
+      |                                                                         ~~~~~~~~~~~^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c: In function 'writeSectors':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:61:42: error: passing argument 1 of 'FrATstep' from incompatible pointer type [-Wincompatible-pointer-types]
+   61 |                                 FrATstep((undefinedSector *)&(f->file), &temp, (packedLBA *)&(address));
+      |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                          |
+      |                                          undefinedSector *
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:155:46: note: expected 'undefinedSector *' but argument is of type 'undefinedSector *'
+  155 | void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out);
+      |                             ~~~~~~~~~~~~~~~~~^~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:61:80: error: passing argument 3 of 'FrATstep' from incompatible pointer type [-Wincompatible-pointer-types]
+   61 |                                 FrATstep((undefinedSector *)&(f->file), &temp, (packedLBA *)&(address));
+      |                                                                                ^~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                |
+      |                                                                                packedLBA *
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:155:84: note: expected 'packedLBA *' but argument is of type 'packedLBA *'
+  155 | void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out);
+      |                                                                         ~~~~~~~~~~~^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c: At top level:
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:92:6: error: conflicting types for 'getDrive'; have 'void(driveHeader *)'
+   92 | void getDrive(driveHeader *out){
+      |      ^~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:145:6: note: previous declaration of 'getDrive' with type 'void(driveHeader *)'
+  145 | void getDrive(driveHeader *out);
+      |      ^~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:98:7: error: conflicting types for 'getFile'; have 'FILE *(FILEhandle *)' {aka 'FILE *(unsigned char *)'}
+   98 | FILE *getFile(FILEhandle *handle){
+      |       ^~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:146:7: note: previous declaration of 'getFile' with type 'FILE *(FILEhandle *)' {aka 'FILE *(unsigned char *)'}
+  146 | FILE *getFile(FILEhandle *handle);
+      |       ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:118:7: error: conflicting types for 'getUsable'; have 'FILE *()'
+  118 | FILE *getUsable(){
+      |       ^~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:147:7: note: previous declaration of 'getUsable' with type 'FILE *()'
+  147 | FILE *getUsable();
+      |       ^~~~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/Interrupt/interrupt.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdio/stdio.h:21:6: warning: array 'g_hexes32' assumed to have one element
+   21 | char g_hexes32[];
+      |      ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\f-rat.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.h:4:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/Interrupt/interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c: In function 'FrATstep':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:25:54: error: passing argument 1 of 'absl' makes integer from pointer without a cast [-Wint-conversion]
+   25 |                     unsigned long utempoffset = absl(tempoffset);
+      |                                                      ^~~~~~~~~~
+      |                                                      |
+      |                                                      long int *
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:25:54: note: possible fix: dereference with '*'
+   25 |                     unsigned long utempoffset = absl(tempoffset);
+      |                                                      ^~~~~~~~~~
+      |                                                      *
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:33:25: note: expected 'long int' but argument is of type 'long int *'
+   33 | unsigned long absl(long l);
+      |                    ~~~~~^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:44:54: error: passing argument 1 of 'absl' makes integer from pointer without a cast [-Wint-conversion]
+   44 |                     unsigned long utempoffset = absl(tempoffset);
+      |                                                      ^~~~~~~~~~
+      |                                                      |
+      |                                                      long int *
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:44:54: note: possible fix: dereference with '*'
+   44 |                     unsigned long utempoffset = absl(tempoffset);
+      |                                                      ^~~~~~~~~~
+      |                                                      *
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:33:25: note: expected 'long int' but argument is of type 'long int *'
+   33 | unsigned long absl(long l);
+      |                    ~~~~~^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c: At top level:
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:183:20: error: redefinition of 'FrATstep'
+  183 | void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out){
+      |                    ^~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:13:20: note: previous definition of 'FrATstep' with type 'void(undefinedSector *, long unsigned int *, packedLBA *)'
+   13 | void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out){
+      |                    ^~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c: In function 'FrATstep':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:191:73: error: passing argument 2 of '_x86DISKREAD' from incompatible pointer type [-Wincompatible-pointer-types]
+  191 |                         _x86DISKREAD(getLBA(base->Addresses[parallel]), &temp);
+      |                                                                         ^~~~~
+      |                                                                         |
+      |                                                                         undefinedSector *
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:140:56: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'undefinedSector *'
+  140 | extern void ASMCALL _x86DISKREAD(LBA address, uint8_t *out);
+      |                                               ~~~~~~~~~^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:195:78: error: passing argument 2 of 'FrATstep' from incompatible pointer type [-Wincompatible-pointer-types]
+  195 |                                         FrATstep((undefinedSector *)(&temp), &tempoffset, out);
+      |                                                                              ^~~~~~~~~~~
+      |                                                                              |
+      |                                                                              long int **
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:183:65: note: expected 'long unsigned int *' but argument is of type 'long int **'
+  183 | void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out){
+      |                                                  ~~~~~~~~~~~~~~~^~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:206:36: error: initialization of 'FrATCHILD *' from incompatible pointer type 'FrATBASE *' [-Wincompatible-pointer-types]
+  206 |                 FrATCHILD *child = (FrATBASE *)in;
+      |                                    ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:209:74: error: passing argument 2 of '_x86DISKREAD' from incompatible pointer type [-Wincompatible-pointer-types]
+  209 |                         _x86DISKREAD(getLBA(child->Addresses[parallel]), &temp);
+      |                                                                          ^~~~~
+      |                                                                          |
+      |                                                                          undefinedSector *
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:140:56: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'undefinedSector *'
+  140 | extern void ASMCALL _x86DISKREAD(LBA address, uint8_t *out);
+      |                                               ~~~~~~~~~^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:213:78: error: passing argument 2 of 'FrATstep' from incompatible pointer type [-Wincompatible-pointer-types]
+  213 |                                         FrATstep((undefinedSector *)(&temp), &tempoffset, out);
+      |                                                                              ^~~~~~~~~~~
+      |                                                                              |
+      |                                                                              long int **
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:183:65: note: expected 'long unsigned int *' but argument is of type 'long int **'
+  183 | void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out){
+      |                                                  ~~~~~~~~~~~~~~~^~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h: At top level:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/Interrupt/interrupt.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdio/stdio.h:21:6: warning: array 'g_hexes32' assumed to have one element
+   21 | char g_hexes32[];
+      |      ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdio.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c: In function 'printf32':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:123:28: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  123 |                     puts32((char *)(((size_t)argp[dwords] << 32)  | argp[dwords]));
+      |                            ^
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h: At top level:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt/interrupt.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt/interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt/interrupt.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdio/stdio.h:21:6: warning: array 'g_hexes32' assumed to have one element
+   21 | char g_hexes32[];
+      |      ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\interrupt.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdio/stdio.h:21:6: warning: array 'g_hexes32' assumed to have one element
+   21 | char g_hexes32[];
+      |      ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\InterruptRoutines.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c:2:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdio/stdio.h:21:6: warning: array 'g_hexes32' assumed to have one element
+   21 | char g_hexes32[];
+      |      ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\IRQ.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.h:4:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/Interrupt/interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/Interrupt/interrupt.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdio/stdio.h:21:6: warning: array 'g_hexes32' assumed to have one element
+   21 | char g_hexes32[];
+      |      ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\math.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\math.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\int\_int.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\_int.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32bit\stdmem.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdmem.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32bit\stdmem.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32bit\stdmem.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\memory.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:30:9: warning: 'min' redefined
+   30 | #define min(A, B) (A) < (B)? (A): (B)
+      |         ^~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:3:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:37:9: note: this is the location of the previous definition
+   37 | #define min(a, b) (a < b? a: b)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:31:9: warning: 'max' redefined
+   31 | #define max(A, B) (A) > (B)? (A): (B)
+      |         ^~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
+   36 | #define max(a, b) (a > b? a: b)
+      |         ^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c: In function 'memwithin':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:4:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + size);
+      |             ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:4:33: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + size);
+      |                                 ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:4:53: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + size);
+      |                                                     ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:4:73: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + size);
+      |                                                                         ^
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h: At top level:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:26:15: warning: inline function 'tobytecomplex' declared but never defined
+   26 | inline int8_t tobytecomplex(char c);
+      |               ^~~~~~~~~~~~~
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:22:13: warning: inline function 'ischarint' declared but never defined
+   22 | inline bool ischarint(char c);
+      |             ^~~~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\string.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\string.o -nostdlib -m32 -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdfile.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\f-rat.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\VGA.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\VGA.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT\GDT.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\GDT.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\Interrupt.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\Interrupt.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\InterruptRoutines.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\IRQ.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\IO\IO.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\IO.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16bit\stdmem.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdmem.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16bit\stdout.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdout.o
+./compile/toolchain/prebuild/gcc.ps1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\_int.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\f-rat.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\GDT.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\Interrupt.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\InterruptRoutines.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\IO.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\IRQ.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\math.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\memory.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdfile.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdio.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdmem.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdout.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\string.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\VGA.o -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot2.elf -z nostartfiles --sysroot= -T C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.ld -Map C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\gcc.map -m elf_i386
+i686-elf-ld.exe : C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: warning: -z nostartfiles ignored
+At C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\gcc.ps1:30 char:1
++ & "i686-elf-$($Image).exe" @TrueParams 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\olusa\...rtfiles ignored:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdio.o:(.bss+0x0): multiple definition of `VGAX'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0x4): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdio.o:(.bss+0x4): multiple definition of `VGAY'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0x8): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdio.o:(.data+0x0): multiple definition of `g_hexes32'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0xc): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdio.o:(.bss+0x8): multiple definition of `g_color'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0xd): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o:(.bss+0x0): multiple definition of `VGAX'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0x4): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o:(.bss+0x4): multiple definition of `VGAY'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0x8): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o:(.bss+0x8): multiple definition of `g_hexes32'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0xc): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o:(.bss+0x9): multiple definition of `g_color'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0xd): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o:(.bss+0x20): multiple definition of `ERRORS'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0x20): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o:(.bss+0x78): multiple definition of `PIC_ICW1'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0x78): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o:(.bss+0x7c): multiple definition of `PIC_ICW4'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0x7c): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdkernel.o:(.bss+0x80): multiple definition of `PIC_CMD'; 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o:(.bss+0x80): first defined here
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot.o: in 
+function `_start.done':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot.asm:(.entry+0x9d): undefined reference to `_main32'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o: in 
+function `timerPrint':
+boot32.c:(.text+0xc): undefined reference to `setColor'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\boot32.o: in 
+function `setup32':
+boot32.c:(.text+0xc5): undefined reference to `InitIDT'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: boot32.c:(.text+0xdb): undefined reference to `RegIRQHandler'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\f-rat.o: in 
+function `FRATINTERRUPT':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.asm:(.text+0x2b): undefined reference to `FRATHANDLER'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\Interrupt.o: 
+in function `isr_inthandle':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\Interrupt.asm:(.text+0x1a): undefined reference to `isr_handlerC'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\InterruptRoutines.o: in function `_interruptTable':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm:(.text+0xa): undefined reference to `isr_inthandle'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\InterruptRoutines.o: in function `ISR_INTERRUPT1':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm:(.text+0x14): undefined reference to `isr_inthandle'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\InterruptRoutines.o: in function `ISR_INTERRUPT2':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm:(.text+0x1e): undefined reference to `isr_inthandle'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\InterruptRoutines.o: in function `ISR_INTERRUPT3':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm:(.text+0x28): undefined reference to `isr_inthandle'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: 
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\InterruptRoutines.o: in function `ISR_INTERRUPT4':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm:(.text+0x32): undefined reference to `isr_inthandle'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\InterruptRoutin
+es.o:C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm:(.text+0x3c): more undefined references to `isr_inthandle' follow
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdfile.o: in 
+function `LBA2CHS':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.asm:(.text+0x12): undefined reference to `getDrive'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdio.o: in 
+function `updateCursor32':
+stdio.c:(.text+0x18b): undefined reference to `asm_updateCursor32'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\stdio.o: in 
+function `printarg32':
+stdio.c:(.text+0x710): undefined reference to `__umoddi3'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: stdio.c:(.text+0x72c): undefined reference to `__udivdi3'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\string.o: in 
+function `toword':
+string.c:(.text+0x1b9): undefined reference to `ischarint'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\string.o: in 
+function `tolong':
+string.c:(.text+0x287): undefined reference to `ischarint'
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-05-16\objs\string.o: in 
+function `tolonglong':
+string.c:(.text+0x354): undefined reference to `ischarint'
+
+GCC link failed

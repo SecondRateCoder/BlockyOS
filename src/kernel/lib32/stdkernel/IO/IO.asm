@@ -55,7 +55,7 @@ _inl:
     ret
 
 global _iowait
-UNUSED_PORT			0x80
+UNUSED_PORT			equ 0x80
 ;   void iowait(void)
 _iowait:
     push dword UNUSED_PORT

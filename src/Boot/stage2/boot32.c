@@ -1,12 +1,27 @@
+
+#define LOCALSTANDARDFILE
+#include "./kernel/lib32/stdprogram/stdprogram.h"
 #include "boot.h"
 
-static drive_header LINKERSECTION("DRIVEHEADER") drive;
+LINKERSECTION("PROGHEADER") standardHeader boot2 = {
+    .PAGES.CODE = &__CODEADDR,
+    .PAGES.DATA = &__DATAADDR,
+    .ID = {0},
+    .program = NULLSTR,
+    .standardChildren = {
+        .stdfile = {
+            .usedFiles = {0},
+            .FAT = {0},
+            .FATCHUNKS = 0,
+            .files = {0},
+        },
+        .threads[0] = {0}
+    }
+};
 
-static IDTentry LINKERSECTION("IDT") IDT[256];
+IDTentry LINKERSECTION("_IDT") IDT[256];
 
-static stdfileENVIROMENT LINKERSECTION("FILES") fileENVIROMENT;
-
-static gdtENTRY_t LINKERSECTION("GDT") GDT[16] = {
+gdtENTRY_t LINKERSECTION("_GDT") GDT[16] = {
     // NULL entry
     GDTENTRY(0, 0, 0, 0),
 	// 32-bit Code Segment
@@ -32,11 +47,6 @@ static gdtENTRY_t LINKERSECTION("GDT") GDT[16] = {
 	GDTENTRY(0, 0, 0, 0)
 };
 
-gdtDESC_t GDTdesc = {
-	.address = GDT,
-	.limit = sizeof(GDT) - 1
-};
-
 size_t timer = 0;
 void timerPrint(InterruptFrame *IFrame){
 	setColor(ANSI_RED);
@@ -44,8 +54,17 @@ void timerPrint(InterruptFrame *IFrame){
 	printf("Timer: %udz", timer);
 }
 
-void setup32(){
-	LoadGDT(&GDTdesc, i868GDT_SEGCODE, i868GDT_SEGDATA);
+gdtDESC_t GDTdesc = {.table = GDT, .limit = sizeof(GDT) - 1};
+idtDESC_t IDTdesc = {.table = IDT, .limit = sizeof(IDT) - 1};
+
+void ASMCALL setup32(BootIn in){
+    // Setup standard Program header
+    boot2.PAGES.loadedCODEPages = (&__TRUECODEADDR - &__CODEEND) / (4*kB);
+    boot2.PAGES.loadedCODEPages = (&__DATAADDR - &__DATAEND) / (4*kB);
+    memcpy(&boot2.standardChildren.stdfile.drive, (void *)0x7C00, sizeof(driveHeader));
+    Programs[0] = &boot2;
+    loadedPrograms = 1;
+
 	InitIDT(IDT, i868GDT_SEGCODE);
 	RegIRQHandler(IDT, 0, 0, timerPrint);
 	printf32(

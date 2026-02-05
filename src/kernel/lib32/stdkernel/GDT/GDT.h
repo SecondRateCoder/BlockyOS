@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./kernel/lib32/public/kernpublic.h"
+#include "./kernel/lib32/generic/standard.h"
 
 typedef struct gdtENTRY_t{
 	uint16_t limitLow;
@@ -16,7 +16,7 @@ typedef struct gdtDESC_t{
 	uint16_t limit;
 
 	// Address of GDT table
-	gdtENTRY_t  *address;
+	gdtENTRY_t  *table;
 }__attribute__((packed)) gdtDESC_t;
 
 typedef enum GDTACCESS{

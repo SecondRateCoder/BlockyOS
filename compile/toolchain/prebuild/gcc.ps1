@@ -12,6 +12,8 @@ $ROOT = @(
 )
 
 $env:PATH = "$($ROOT -join ';');$($env:PATH)"
+$env:COMPILER_PATH = $ROOT[0]
+# $env:AS = "i686-elf-as"
 # Write-Host -Message "`n$($env:PATH -replace ';',"`n")" -ForegroundColor Yellow
 
 $TrueParams = @()
@@ -23,5 +25,6 @@ $Params | ForEach-Object{
     }
 }
 
-Write-Host ("i686-elf-$($Image).exe $($TrueParams -join ' ')") -ForegroundColor Yellow
-& "i686-elf-$($Image).exe" "-fdiagnostics-color=always" @TrueParams 2>&1
+Write-Host ("i686-elf-$($Image).exe $($TrueParams -join ' ')") -ForegroundColor Blue
+
+& "i686-elf-$($Image).exe" @TrueParams 2>&1
