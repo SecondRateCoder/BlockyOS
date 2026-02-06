@@ -1,6 +1,3 @@
-
-#define LOCALSTANDARDFILE
-#include "./kernel/lib32/stdprogram/stdprogram.h"
 #include "boot.h"
 
 LINKERSECTION("PROGHEADER") standardHeader boot2 = {
