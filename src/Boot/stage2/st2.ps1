@@ -92,7 +92,8 @@ $COMPILECLI = @(
 	"-nostdlib", "-m32", 
 	"-fdiagnostics-color=always",  "-fno-leading-underscore", "-ffreestanding", "-fno-stack-protector"
 	"-I", "$(Join-Path (Get-Location) "src/")", 
-	"-std=c99"
+	"-std=c99", 
+	"-D", "LOCALSTANDARDFILE", "-D", "LOCALFILE"
 )
 
 # Compile all 32-bit files
