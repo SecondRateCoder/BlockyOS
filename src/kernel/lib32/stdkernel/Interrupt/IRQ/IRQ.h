@@ -60,7 +60,6 @@ enum PIC_CMD{
 	PIC_CMD_READISR = 				0x0B,
 	PIC_CMD_READIRR = 				0x0A,
 }PIC_CMD;
-#define PIC_SPECEOI(irq) (PIC_CMD_SPEC_EOI | ((irq) & 0x7))
 
 void PICInit(uint8_t offsetPIC1, uint8_t offsetPIC2);
 void IRQHandlerFunc(InterruptFrame *IFrame);
