@@ -7,8 +7,6 @@
 #include "./kernel/lib32/stdmem/32bit/stdmem.h"
 #include "localfile/f-rat/f-rat.h"
 #include "./kernel/lib32/stdmath/int/_int.h"
-
-#define LOCALSTANDARDFILE
 #include "./kernel/lib32/stdprogram/stdprogram.h"
 
 extern uint8_t __TRUECODEADDR, __CODEADDR, __CODEEND, __DATAADDR, __DATAEND, __kernel_end, __kernel_start;
