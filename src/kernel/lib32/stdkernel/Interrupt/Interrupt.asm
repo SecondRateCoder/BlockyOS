@@ -1,9 +1,10 @@
 bits 32
 
-extern isr_handlerC
+extern isr_inthandleC
+global isr_inthandle
 
 isr_inthandle:
-    call _int32disable
+    call int32disable
     pusha                       ; save general-purpose registers
     xor eax, eax
     mov ax, ds
@@ -16,7 +17,7 @@ isr_inthandle:
     mov gs, ax
     push esp
 
-	call isr_handlerC
+	call isr_inthandleC
 	pop eax
     mov ds, ax
     mov es, ax
@@ -24,24 +25,24 @@ isr_inthandle:
     mov gs, ax
     add esp, 8                  ; Pop interrupt vector and error code
 	popa
-    call _int32enable
+    call int32enable
 	iret
 
-global _LoadIDT
+global LoadIDT
 ;   void LoadIDT(idtDESC_t *)
-_LoadIDT:
-    call _int32disable
+LoadIDT:
+    call int32disable
     push ebp
     mov ebp, esp
     mov eax, [ebp + 8]   ; Not sure if correct
     lidt [eax]
     leave
-     call _int32enable
+     call int32enable
     ret
 
-global _int32disable
+global int32disable
 ;	void int32disable(void)
-_int32disable:
+int32disable:
 	[bits 32]
 	cli
 	push eax
@@ -50,9 +51,9 @@ _int32disable:
 	out  0x70, al
 	pop eax
     ret
-global _int32enable
+global int32enable
 ;	void int32enable(void)
-_int32enable:
+int32enable:
 	[bits 32]
 	sti
 	push eax

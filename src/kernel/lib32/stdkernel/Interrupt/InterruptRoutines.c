@@ -1,12 +1,9 @@
 //      **AUTO-GENERATED SCRIPT**
-#include "interrupt.h"
 #include "InterruptRoutines.h"
-#include "IRQ/IRQ.h"
 
-void InitIDT(IDTentry *IDT, uint16_t CodeSegment){
-    idtDESC_t temp = {.table = IDT, .limit = 256};
+void InitIDT(idtENTRY_t *IDT, uint16_t CodeSegment){
+    idtDESC_t temp = {.table = (uint32_t)IDT, .limit = 256};
     LoadIDT(&temp);
-    IRQInit(IDT);
 	InitInterrupt(
             IDT, 0, true, ISR_INTERRUPT0, CodeSegment, 
             IDTFLAGS_RING0 | IDTFLAGS32B_INTRGATE | IDTFLAGS_PRESENT);

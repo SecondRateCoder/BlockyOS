@@ -3,15 +3,15 @@ OUTPUT_FORMAT("binary")
 phys = 0x7C00;
 
 SECTIONS{
-	. = phys
-	
-	.fsjmp		: {*(.fsjmp)}
+	. = phys;
 
-	.BOOTDRIVE	: {*(.BOOTDRIVE)}
+	.text		: {
+        *(.fsjmp)
+        *(.BOOTDRIVE)
+        *(.text)
+    }
 
-	.text		: {*(.text)}
-
-	.data		: {*(.data)}
-
-	.bss		: {*(.bss)}
+	.data		: {
+        *(.data)
+    }
 }

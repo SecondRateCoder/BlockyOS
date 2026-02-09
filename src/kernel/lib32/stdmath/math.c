@@ -151,6 +151,6 @@ uint32_t isqrt(uint32_t n){
 }
 
 float absf(float f){return (f < 0? -f: f);}
-unsigned int absi(int i){return (i < 0? -i: i);}
-unsigned long absl(long l){return (l < 0? -l: l);}
+unsigned int absi(signed int i){return (i < 0? -i: i);}
+unsigned long absl(signed long l){return (l < 0? -l: l);}
 size_t absll(ssize_t z){return (z < 0? -z: z);}

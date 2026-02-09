@@ -27,6 +27,7 @@ $ProgressPreference = 'SilentlyContinue'
 $asmLines = @()
 $asmLines += "bits 32
 ;       **AUTO-GENERATED SCRIPT**
+extern isr_inthandle
 
 %macro INTNOERROR 1
 global ISR_INTERRUPT%1
@@ -45,8 +46,6 @@ ISR_INTERRUPT%1:
     jmp isr_inthandle
 %endmacro
 
-extern isr_inthandle
-extern isr_handlerC
 
 global _interruptTableEnd
 global _interruptTableLength
@@ -75,14 +74,11 @@ for($i = 0; $i -lt 256; $i++){
 
 $cLines = @()
 $cLines += "//      **AUTO-GENERATED SCRIPT**
-#include `"interrupt.h`"
 #include `"InterruptRoutines.h`"
-#include `"IRQ/IRQ.h`"
 
-void InitIDT(IDTentry *IDT, uint16_t CodeSegment){
-    idtDESC_t temp = {.table = IDT, .limit = $(256 - $EXCLUDE.Count)};
+void InitIDT(idtENTRY_t *IDT, uint16_t CodeSegment){
+    idtDESC_t temp = {.table = (uint32_t)IDT, .limit = $(256 - $EXCLUDE.Count)};
     LoadIDT(&temp);
-    IRQInit(IDT);
 ".TrimEnd()
 
 for($i = 0; $i -lt 256; $i++){

@@ -2,6 +2,7 @@
 
 #include "./kernel/lib32/stdmath/int/_int.h"
 
+#define NULL ((void *)0)
 
 void memcpy(void *dst, void *src, size_t len);
 bool memcmp(void *a, void *b, size_t len);

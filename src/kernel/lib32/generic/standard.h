@@ -9,6 +9,9 @@
 #define aliasLen 10
 #define PATHMAX 256
 
+#define FORCE_SYMBOLEXPOSURE EXTERNALISESYMBOL EMITTABLESYMBOL
+#define EXTERNALISESYMBOL __attribute__((extermally_visible))
+#define EMITTABLESYMBOL __attribute__((used))
 #define PACKEDSTRUCT __attribute__((packed))
 #define ASMCALL __attribute__((cdecl))
 #define LINKERSECTION(SECTION) __attribute__((section(SECTION)))

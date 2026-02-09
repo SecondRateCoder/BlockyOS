@@ -17,7 +17,7 @@
 
 /// @brief [0]: Byte Offset, [1]: Size
 typedef size_t stubFAT[2];
-typedef uint8_t versionArtifacts[10];
+typedef uint8_t versionArtifacts[6];
 
 typedef struct programLoadHeader{
 	char ploadCommand[maxLoadCMDSIZE];
@@ -51,8 +51,6 @@ typedef struct executableImage{
 		stubFAT INTERNALDATA;
 	}exeIFAT;
 }executableImage;
-
-
 
 //* Program Headers
 typedef struct standardTranslationTable{
@@ -102,6 +100,9 @@ typedef struct standardHeader{
     }standardChildren;
 }standardHeader;
 
+standardHeader * ASMCALL getCODEBase(void *CODE);
+standardHeader * ASMCALL getDATABase(void *DATA);
+
 typedef struct standardKernelHeader{
     standardHeader Child;
 	struct standardTables{
@@ -111,11 +112,13 @@ typedef struct standardKernelHeader{
 	}standardTables;
 }standardKernelHeader;
 
-uint32_t loadedPrograms;
-standardHeader *LINKERSECTION("PROGRAMBUFFER") Programs[16];
-
 extern standardHeader * ASMCALL getStandardHeader32(void *CODE, void *DATA);
 extern void * ASMCALL getEIP();
 
-standardHeader * ASMCALL getCODEBase(void *CODE);
-standardHeader * ASMCALL getDATABase(void *DATA);
+typedef struct systemProgramEnviroment{
+    uint8_t loaded;
+    standardHeader *Programs[32];
+}systemProgramEnviroment;
+extern systemProgramEnviroment systemState;
+
+char *getEnv(char alias[aliasLen]);

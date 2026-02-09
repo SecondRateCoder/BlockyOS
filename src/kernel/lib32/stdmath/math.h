@@ -29,8 +29,8 @@ uint32_t isqrt(uint32_t n);
 
 #define abs absf
 float absf(float f);
-unsigned int absi(int i);
-unsigned long absl(long l);
+unsigned int absi(signed int i);
+unsigned long absl(signed long l);
 size_t absll(ssize_t z);
 
 #define max(a, b) (a > b? a: b)

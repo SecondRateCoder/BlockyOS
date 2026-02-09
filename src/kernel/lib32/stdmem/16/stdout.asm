@@ -7,11 +7,11 @@ VGA:
 .VGASEG:    dw 0x000B
 .VGAOFF:    dw 0x8000
 
-global printf
+global printf16
 
 ; printf implementation for 16-bit VGA output
 ; Input: SI = format string pointer, AL = String Color, stack contains arguments(right to left)
-printf:
+printf16:
     push bp
     mov bp, sp
     pusha

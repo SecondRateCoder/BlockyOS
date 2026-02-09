@@ -12,24 +12,24 @@
 
 */
 
-char *ERRORS[22];
+extern const char *ERRORS[22];
 
 typedef void ASMCALL (*interruptEntry)();
 extern interruptEntry interruptTable[256];
 extern PACKEDSTRUCT uint8_t interruptTableEnd;
 extern uint32_t interruptTableLength;
 
-typedef struct IDTentry{
+typedef struct idtENTRY_t{
     uint16_t baseLow;
     uint16_t segDesc;
     uint8_t reserved;
     uint8_t flags;
     uint16_t baseHigh;
-}PACKEDSTRUCT IDTentry;
+}PACKEDSTRUCT idtENTRY_t;
 
 typedef struct idtDESC_t{
     uint16_t limit;
-    IDTentry *table;
+    uint32_t table;
 }PACKEDSTRUCT idtDESC_t;
 
 typedef enum IDTFLAGS{
@@ -55,17 +55,16 @@ typedef struct InterruptFrame{
     uint32_t stack[];
 }PACKEDSTRUCT InterruptFrame;
 
-void InitIDT(IDTentry *IDT, uint16_t CodeSegment);
+void InitIDT(idtENTRY_t *IDT, uint16_t CodeSegment);
 void ASMCALL int32enable(void);
 void ASMCALL int32disable(void);
 
-
 extern void ASMCALL LoadIDT(idtDESC_t *ptr);
-void ASMCALL isr_handlerC(InterruptFrame *IFrame);
+void ASMCALL isr_inthandleC(InterruptFrame *IFrame);
 
-void ToggleInterrupt(IDTentry *IDT, uint8_t interrupt, bool present);
+void ToggleInterrupt(idtENTRY_t *IDT, uint8_t interrupt, bool present);
 void InitInterrupt(
-    IDTentry *IDT, 
+    idtENTRY_t *IDT, 
     uint32_t interrupt, 
     bool present,
     void *base,

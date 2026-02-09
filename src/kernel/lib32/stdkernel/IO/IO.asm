@@ -1,8 +1,8 @@
 bits 32
 
-global _outb
+global outb
 ;    void outb(uint16_t port, uint8_t value)
-_outb:
+outb:
     push ebp
     mov ebp, esp
     mov dx, [ebp + 8]
@@ -10,17 +10,17 @@ _outb:
     out dx, al
     ret
 
-global _inb
+global inb
 ;    void inb(uint16_t port)
-_inb:
+inb:
     mov dx, [esp + 4]
     xor eax, eax
     in al, dx
     ret
 
-global _outw
+global outw
 ;    void outw(uint16_t port, uint16_t value)
-_outw:
+outw:
     push ebp
     mov ebp, esp
     mov dx, [ebp + 8]
@@ -28,17 +28,17 @@ _outw:
     out dx, al
     ret
 
-global _inw
+global inw
 ;    uint16_t inw(uint16_t port)
-_inw:
+inw:
     mov dx, [esp + 4]
     xor eax, eax
     in al, dx
     ret
 
-global _outl
+global outl
 ;    void outl(uint16_t port, uint32_t value)
-_outl:
+outl:
     push ebp
     mov ebp, esp
     mov dx, [ebp + 8]
@@ -46,19 +46,23 @@ _outl:
     out dx, eax
     ret
 
-global _inl
+global inl
 ;    uint32_t inl(uint16_t port)
-_inl:
+inl:
     mov dx, [esp + 4]
     xor eax, eax
     in eax, dx
     ret
 
-global _iowait
+global iowait
 UNUSED_PORT			equ 0x80
 ;   void iowait(void)
-_iowait:
-    push dword UNUSED_PORT
-	push dword 0
-	call _outb
+iowait:
+    push dx
+    push ax
+    xor ax, ax
+    mov dx, UNUSED_PORT
+    out dx, ax
+    pop ax
+    pop dx
 	ret

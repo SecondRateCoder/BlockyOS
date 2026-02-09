@@ -1,7 +1,6 @@
 #include "stdio.h"
 
 uint8_t g_color = 0;
-char g_hexes32[] = "0123456789ABCDEF";
 
 uint16_t *VGA = (uint16_t *)0x000B8000;
 uint32_t VGAX, VGAY;
@@ -33,7 +32,7 @@ void putc32(char c){
 	updateCursor32();
 }
 
-static inline void setColor(uint8_t color){g_color = color;}
+void setColor(uint8_t color){g_color = color;}
 
 void updateCursor32(){
 	if(VGAX >= VGA_MAXX){
@@ -72,6 +71,7 @@ void puts32(char *str){
 }
 
 // Follow with flags, 
+// %j.: Set Color; Set the color to the following value.
 // %u.: unsigned:
 //      e.g &ul: unsigned long.
 // %b.: Use binary radix:
@@ -118,6 +118,15 @@ void ASMCALL printf32(char *fmt, ...){
             }else if(*(fmt + 3) == 'x'){offs_ = 4;    radix = 16;}
             fmt += offs_;
             switch(*fmt){
+                case 'j': {
+                    char temp[3];
+                    memcpy(temp, fmt, 3 * sizeof(char));
+                    if(isdigit(temp[0]) && isdigit(temp[1]) && isdigit(temp[2])){
+                        int8_t num = tobyte(temp);
+                        fui convert = {.i = num};
+                        setColor(convert.u);
+                    }
+                }
                 case 's': {	// string
 					// Reconstruct
                     puts32((char *)(((size_t)argp[dwords] << 32)  | argp[dwords]));
@@ -183,7 +192,7 @@ char * ASMCALL printarg32(uint32_t *argp, uint8_t dwords, bool sign, uint8_t rad
     do{
         rem = num % radix;
 		num /= radix;
-        out[pos++] = g_hexes32[rem];
+        out[pos++] = '0' + rem;
     }while(num);
     if(sign && num_sign < 0 && attach_sign){out[pos++] = '-';}
     if(printin){while(--pos >= 0){putc(out[pos]);}}

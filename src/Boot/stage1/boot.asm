@@ -1,11 +1,10 @@
 bits 16
 org 0x7C00
-
-section .fsjmp
+%define BOOT2ID 0x67
+%define BOOT2ADDR 0x0D00
 jmp short start
 nop
 
-section .BOOTDRIVE,KEEP
 drive_header:
 	bdb_oem:                   	db 'MSWIN4.1'
 	bdb_bytes_per_sector:       dw 512						; +1
@@ -34,12 +33,10 @@ drive_end:
 
 ; This file will simply load Boot2, Boot2 will be the main booting file
 
-section .text
+global start
 start:
-	; xchg bx, bx
-
-	db 0x66
-	xor ax, ax
+	xchg bx, bx
+	xor eax, eax
 	mov ax, 0
 	mov es, ax
 	mov ds, ax
@@ -48,15 +45,13 @@ start:
 	mov ax, 512
     mov sp, ax
 	; stack pointer is not 512 bytes above ss, which is buffer
-	push es
-	push word .after
+	push dword .after
 	retf
 .after:
 	call diskm_read
 
 	; Address to be loaded at
-	mov bx, buffer
-	add bx, 1024
+	mov bx, BOOT2ADDR
 
 	; Sectors to be Read.
 	mov di, 1
@@ -69,25 +64,19 @@ start:
 	call bt2_srch
 	test di, di
 	jz .no_ld
-
 	; Load Drive header into Stage 2's space
-	mov si, bdb_oem
+	mov si, drive_header
     ; ES:DI = destination
-    mov di, buffer    ; e.g. 1025
-	add di, 1025
+    mov di, (BOOT2ADDR + 1)
 	; Calculate bytes
-    mov cx, drive_header - drive_end + 1   ; 58 bytes total
+    mov cx, (drive_end - drive_header)
 	; Perform move
     cld
     rep movsb
-
 .ld_s:
 	push word [ebr_drive_number]
 	push es
-	mov bx, sectormap_entries
-	sub bx, bdb_oem
-	add bx, buffer
-	add bx, 1024
+	mov bx, (BOOT2ADDR + 1 + (drive_end - drive_header))
 	push word bx
 	retf
 .no_ld:
@@ -125,13 +114,10 @@ write:
 ;	di: FALSE(0) if bt2 was not found
 bt2_srch:
 	push bx
-	mov bx, buffer
-	add bx, 1024
-	mov di, 512
+	mov bx, BOOT2ADDR
 .srch_begin:
-	sub [bx], byte 103
+	cmp [bx], byte 103
 	jz .ld_s
-	add [bx], byte 103
 	add bx, 1
 	sub di, 1
 	test di, di
@@ -142,7 +128,6 @@ bt2_srch:
 	mov di, 0
 	jmp .rett
 .ld_s:
-	add [bx], byte 103
 	mov si, msg_bt2s
 	mov di, 1
 	call write
@@ -216,9 +201,6 @@ lbatochs:
 ;	[es:bx]: Buffer address
 ;	di: Number of sectors
 disk_read:
-	; push bx
-	; xchg bx, bx
-	; pop bx
 	call lbatochs
 	mov ax, di
 	mov di, 11
@@ -242,7 +224,7 @@ disk_read:
 	pop di
 	jz .done
 	mov si, msg_diskf
-	inc ah
+	add ah, '0'
 	mov [msg_diskf_err_code], ah
 	call write
 	jmp .begin_retry
@@ -272,7 +254,6 @@ halt:
     cli ; Disable interrupts
     hlt
 
-section .data
 msg_hlt: db 'Halt', ENDL
 msg_disks: db 'Read Success', ENDL
 msg_diskf: db 'Read Fail, Code: '
@@ -280,7 +261,7 @@ msg_diskf_err_code: db '0', ENDL
 msg_bt2s: db 'Boot2 found', ENDL
 msg_bt2f: db 'Boot2 not found', ENDL
 
-times 510 - ($ - $$) db 0 ;Repeat so the Program can be 512 bytes large.
+times (510 - ($ - $$)) db 0 ;Repeat so the Program can be 512 bytes large.
 dw 0xAA55              	; The final 2 bytes will be the boot signature.
 buffer:
 ; 512 byte stack

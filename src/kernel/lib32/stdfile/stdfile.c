@@ -30,7 +30,7 @@ void FrATstepDown(undefinedSector *in, uint8_t parallel, undefinedSector *out){
     }else{return;}
 }
 
-void FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out){
+void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out){
 	// Step down recursively, calling FrATstep and passing the step down as the base, when depth or offset reached? return
 	signed long *tempoffset = offset;
 	uint8_t parallel = 0;

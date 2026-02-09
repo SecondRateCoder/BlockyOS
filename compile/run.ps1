@@ -47,7 +47,7 @@ $LINEDWN = ", status=inserted
 display_library: win32, options=`"`gui_debug`"`
 pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
 config_interface: win32config
-vga: extension=vbe
+vga: extension=vesa, update_freq=60
 magic_break: enabled=1
 log: "
 
@@ -210,10 +210,13 @@ if(-not ($padding -eq (Get-Item $Image).Length)){
 
 if($broadimage){Copy-Item -Path $Image -Destination $BroadImageFile}
 if($run){
-    Log-Write -color Yellow "Command:  $($QEMU) -fda $($Image)"
+    Log-Write -color Yellow "Command:  $($QEMU) -fda $($Image) -vga std"
     $args_qemu = @("-fda", "$($Image)",  "-vga", "std")
+    # -vga std -m 128 -drive format=raw,file=disk.img
     & $QEMU @args_qemu
 }elseif($runbochs){
+    Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $Build "bx_enh_dbg.ini")
     & $BOCHS "-f" $BOCHSRC "-debugger" "-q"
+    Copy-Item -Path (Join-Path $Build "bx_enh_dbg.ini") -Destination (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini")
 }
 

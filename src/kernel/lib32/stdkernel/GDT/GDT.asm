@@ -1,9 +1,9 @@
 bits 32
 
-global _LoadGDT
+global LoadGDT
 ;   void LoadGDT(gdtDESC_t *, uint16_t, uint16_t)
 ;   Dont bother making Call Frame
-_LoadGDT:
+LoadGDT:
     push ebp
     mov ebp, esp
 

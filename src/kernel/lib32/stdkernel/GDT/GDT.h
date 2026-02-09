@@ -9,15 +9,15 @@ typedef struct gdtENTRY_t{
 	uint8_t  access;
 	uint8_t  FlagLimit;
 	uint8_t  baseHigh;
-}__attribute__((packed)) gdtENTRY_t;
+}PACKEDSTRUCT gdtENTRY_t;
 
 typedef struct gdtDESC_t{
 	// Byte size of GDT table - 1
 	uint16_t limit;
 
 	// Address of GDT table
-	gdtENTRY_t  *table;
-}__attribute__((packed)) gdtDESC_t;
+	uint32_t table;
+}PACKEDSTRUCT gdtDESC_t;
 
 typedef enum GDTACCESS{
 	GDTACCESS_SEGCODE 				= 0x18,

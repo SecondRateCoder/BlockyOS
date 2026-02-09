@@ -1,7 +1,6 @@
 #pragma once
 
 #include "./kernel/lib32/generic/standard.h"
-#include "./kernel/lib32/stdkernel/Interrupt/interrupt.h"
 #include "./kernel/lib32/stdprogram/stdprogram.h"
 
 // The LBA where the FAT Tables starts
@@ -141,7 +140,7 @@ extern void ASMCALL _x86DISKREAD(LBA address, uint8_t *out);
 extern void ASMCALL _x86DISKWRITE(LBA address, uint8_t *in);
 
 void envInit(stdfileENVIROMENT *env);
-void getDrive(driveHeader *out);
+void ASMCALL getDrive(driveHeader *out);
 FILE *getFile(FILEhandle *handle);
 FILE *getUsable();
 void closeFile(uint8_t file);

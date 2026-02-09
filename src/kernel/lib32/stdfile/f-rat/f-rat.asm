@@ -1,6 +1,7 @@
 bits 32
 
 %define FRATINTERRUPTVECTOR (0x20 + 0)
+extern FRATHANDLER
 
 global FRATINTERRUPT
 FRATINTERRUPT:
@@ -8,7 +9,7 @@ FRATINTERRUPT:
     push dword FRATINTERRUPTVECTOR 	; Push Interrupt Code
 	push esp
 
-    call _int32disable
+    call int32disable
     pusha                       ; save general-purpose registers
     xor eax, eax
 
@@ -42,7 +43,7 @@ FRATINTERRUPT:
 
     add esp, 8                  ; Pop interrupt vector and error code
 	popa
-    call _int32enable
+    call int32enable
 	iret
 
 global g_fcreate

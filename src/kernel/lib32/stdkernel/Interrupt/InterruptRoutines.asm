@@ -1,5 +1,6 @@
 bits 32
 ;       **AUTO-GENERATED SCRIPT**
+extern isr_inthandle
 
 %macro INTNOERROR 1
 global ISR_INTERRUPT%1
@@ -18,8 +19,6 @@ ISR_INTERRUPT%1:
     jmp isr_inthandle
 %endmacro
 
-extern isr_inthandle
-extern isr_handlerC
 
 global _interruptTableEnd
 global _interruptTableLength

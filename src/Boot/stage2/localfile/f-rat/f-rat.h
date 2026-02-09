@@ -1,7 +1,6 @@
 #pragma once
 
 #include "./Boot/stage2/localfile/stdfile.h"
-#include "./kernel/lib32/stdkernel/Interrupt/interrupt.h"
 
 #define LOCALFILE
 
@@ -21,7 +20,7 @@
 //*		Write from a drive file into the open file,
 //*		List all the items in a Directory
 
-enum FrATFLAGS{
+typedef enum FrATFLAGS{
     FrATFLAGS_unDEFINED = 						0x0000,
 	FrATFLAGS_BASE = 							0x1000,
 	FrATFLAGS_CHILD = 							0x2000,
@@ -91,6 +90,3 @@ uint32_t *getFree(uint32_t start, uint8_t number, uint16_t maxsearch, IDCODE inC
 void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out);
 
 uint8_t fcreate(char *name, char *mode);
-
-void InitFrATInterrupt(IDTentry *IDT, uint16_t codeSegment);
-extern void ASMCALL g_fcreate(char *name, char *mode);

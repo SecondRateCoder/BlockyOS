@@ -37,11 +37,11 @@ section .text
     mov %3, %1 & 0xF
 %endmacro
 
-extern printf
+extern printf16
 
-global _E280GetNextMemBlock16
+global E280GetNextMemBlock16
 ;   int(eax) E280GetNextMemBlock16(E820MemBlock __far *Block, uint32_t __far *continuationID)
-_E280GetNextMemBlock16:
+E280GetNextMemBlock16:
 	push bp
 	mov bp, sp
 	push si
@@ -90,9 +90,9 @@ _E280GetNextMemBlock16:
 	leave
 	ret
 
-global _MemDetect16
+global MemDetect16
 ;   void MemDetect16(MemInfo *out)
-_MemDetect16:
+MemDetect16:
 	push bp
 	mov bp, sp
 	push di					; Counter
@@ -115,7 +115,7 @@ _MemDetect16:
 	push ds
 	push ax
 	; Call
-    call _E280GetNextMemBlock16
+    call E280GetNextMemBlock16
 	add sp, 8					; Pop far pointers
 	add di, 24
 .print:
@@ -145,7 +145,7 @@ _MemDetect16:
 	push dword [si + E820MemBlock.ACPI]
 	mov si, E820MemBlock
     mov al, 0x00
-	call printf
+	call printf16
 	add sp, 26
 	pop dx
 	pop si

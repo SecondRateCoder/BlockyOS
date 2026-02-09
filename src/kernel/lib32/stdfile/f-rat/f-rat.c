@@ -99,7 +99,7 @@ uint8_t fcreate(char *name, char *mode){
     uint8_t parallels = 0, depth = 0;
     FLAGSET(file.header.flags, FrATFLAGS_BASE);
     if(strcheck(mode, 'R')){
-        int8_t num = tobyte(mode[strcmpc(mode, "R")]);
+        int8_t num = tobit(mode[strcmpc(mode, "R")]);
         if(num >= 0 && num <= 3){FLAGSET(file.header.flags, FrATBASEFLAGS_RING0 + num);}
     }
     if(strchecks(mode, "size=")){
@@ -140,7 +140,7 @@ uint8_t fcreate(char *name, char *mode){
     return flagout;
 }
 
-void FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out){
+void STACKLESSCALL FrATstep(undefinedSector *in, unsigned long *offset, packedLBA *out){
 	// Step down recursively, calling FrATstep and passing the step down as the base, when depth or offset reached? return
 	signed long *tempoffset = offset;
 	uint8_t parallel = 0;

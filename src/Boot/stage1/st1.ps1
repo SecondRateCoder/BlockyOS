@@ -8,6 +8,11 @@ $Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
 $Image = Join-Path $Build ("floppy-" + $Date + ".img")
 $Objdir = Join-Path $Build "\objs\"
 $Log = Join-Path $Build ("logst1.txt")
+# $ST1OBJ = Join-Path -Path $Objdir "boot1.o"
+$ST1BIN = Join-Path -Path $Objdir "boot1.bin"
+# $LINKERSCRIPT = Join-Path (Get-Location) "src/Boot/stage1/boot.ld"
+# $MAPFILE = Join-Path -Path $Build "gcc_boot1.map"
+$FILE = Join-Path -Path (Get-Location) "src\boot\stage1\boot.asm"
 
 function Log-Write{
     param(
@@ -18,7 +23,7 @@ function Log-Write{
     Add-Content -Path $Log -Value $Msg
 }
 
-function Img-Push {
+function Img-Push{
     param([byte[]]$data)
     $file = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
     $padding = $data.Length
@@ -36,25 +41,14 @@ function Img-Push {
     }finally{$file.Close()}
 }
 
-$FILE = Join-Path -Path (Get-Location) "src\boot\stage1\boot.asm"
 # $LINKERSCRIPT = Join-Path -Path (Get-Location) "src\boot\stage1\boot.ld"
 # $OUTOBJ = Join-Path $Objdir "$([System.IO.Path]::GetFileNameWithoutExtension($FILE))1.o"
-$OUTBIN = Join-Path $Objdir "$([System.IO.Path]::GetFileNameWithoutExtension($FILE))1.bin"
+# $OUTBIN = Join-Path $Objdir "$([System.IO.Path]::GetFileNameWithoutExtension($FILE))1.bin"
 # $MAPFILE = Join-Path $Build "stage1.map"
 
-Log-Write -Msg "$($NASM) -f obj $($FILE) -o $($OUTBIN)" -color Yellow
+Log-Write -Msg "$($NASM) -f bin $($FILE) -o $($ST1BIN)" -color Blue
 
-$NASMOUT = (& $NASM "-f" "bin" $FILE "-o" $OUTBIN) 2>&1
+$NASMOUT = (& $NASM "-f" "bin" $FILE "-o" $ST1BIN) 2>&1
 $NASMOUT|ForEach-Object{Log-Write -Msg $_ -color Blue}
 
-# $ARGS = @("-o", $OUTBIN,
-# 	"-z", "nostartfiles",
-# 	"-ffreestanding", "-fdiagnostics-color=always",
-# 	"-T", "$($LINKERSCRIPT)", 
-# 	"-Map", "$($MAPFILE)"
-# )
-
-# $GCCOUT = (& $GCC -Image "ld" -Params @($OUTOBJ, "-o", $OUTBIN, $ARGS))
-# $GCCOUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
-
-Img-Push -data (Get-Content -Path $OUTBIN -Raw -Encoding Byte)
+Img-Push -data (Get-Content -Path $ST1BIN -Raw -Encoding Byte)

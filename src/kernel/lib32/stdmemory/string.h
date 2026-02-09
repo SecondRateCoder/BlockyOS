@@ -13,17 +13,19 @@
 
 #define strcheck(str, c) memcheckb((str), strlen(str), (c))
 
-#define tobyte(c) ((c) - '0')
+#define tobit(c) ((c) - '0')
 
 typedef char *string;
 
 #define NULLSTR {0}
 
-inline bool ischarint(char c);
+bool isdigit(char c);
 size_t strlen(char *str);
 bool strchecks(char *str, char *snippet);
 size_t strcmpc(char *a, char *b);
-inline int8_t tobytecomplex(char c);
+
+int8_t tobitcomplex(char c);
+int8_t tobyte(char *str);
 int16_t toword(char *str);
 signed long tolong(char *str);
 ssize_t tolonglong(char *str);

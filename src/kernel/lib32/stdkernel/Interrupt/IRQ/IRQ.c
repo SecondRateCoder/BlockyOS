@@ -3,7 +3,7 @@
 #include "./kernel/lib32/stdkernel/IO/IO.h"
 #include "./kernel/lib32/stdkernel/stdkernel.h"
 
-void ASMCALL RegIRQHandler(IDTentry *IDT, uint32_t irq, uint8_t ring, IRQHandler handler){
+void ASMCALL RegIRQHandler(idtENTRY_t *IDT, uint32_t irq, uint8_t ring, IRQHandler handler){
     if(irq > 0 && irq <= PIC_MAXIRQ){
         InitInterrupt(IDT, irq + PICB_REMAPOFFSET, true, handler, i868GDT_SEGCODE, 
         (ring == 0? IDTFLAGS_RING0: (ring == 1? IDTFLAGS_RING1: (ring == 2? IDTFLAGS_RING2: IDTFLAGS_RING3))) 
@@ -11,28 +11,17 @@ void ASMCALL RegIRQHandler(IDTentry *IDT, uint32_t irq, uint8_t ring, IRQHandler
     }
 }
 
-void IRQInit(IDTentry *IDT){
+void IRQDefaultAction(InterruptFrame *in){return;}
+
+void IRQInit(idtENTRY_t *IDT){
     int32disable();
     PICInit(PICM_REMAPOFFSET, PICS_REMAPOFFSET);
 
     for(uint8_t cc =0; cc < PIC_MAXIRQ; ++cc){
-        RegIRQHandler(IDT, PICB_REMAPOFFSET + cc, 0, IRQHandlerFunc);
+        RegIRQHandler(IDT, PICB_REMAPOFFSET + cc, 0, IRQDefaultAction);
         PICMask(cc, true);
     }
     int32enable();
-}
-
-void IRQHandlerFunc(InterruptFrame *IFrame){
-    printf("\nInterrupt: %i, Error Code:\t%s", IFrame->interrupt, IFrame->error_code < 32? ERRORS[IFrame->error_code]: "");
-    printf(
-        "\nInterrupt Frame:"
-        "\nds: %i, es: %i,"
-        "\nedi: %i, esi: %i, ebp: %i, esp: %i"
-        "\nebx: %i, edx: %i, ecx: %i, eax: %i"
-        "\neip: %i, cs: %i, eflags: %i, Pre-Call esp: %i, ss: %i",
-        *IFrame
-    );
-    return;
 }
 
 void PICInit(uint8_t offsetPIC1, uint8_t offsetPIC2){

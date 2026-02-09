@@ -5,7 +5,7 @@
 #define ANSI_COLOR(R, G, B)
 #define ENDL "\n\r\0"
 
-uint32_t VGAX, VGAY;
+extern uint32_t VGAX, VGAY;
 
 #define ANSI_RED 4
 #define ANSI_GREEN 2
@@ -18,8 +18,7 @@ uint32_t VGAX, VGAY;
 #define PF_DSTEP_LONG 		1
 #define PF_DSTEP_LONG_LONG 	4
 
-char g_hexes32[];
-uint8_t g_color;
+extern uint8_t g_color;
 
 #define printf printf32
 #define printarg printarg32
@@ -35,7 +34,7 @@ char *printarg32(uint32_t *argp, uint8_t dwords, bool sign, uint8_t radix, bool 
 void updateCursor32();
 void puts32(char *str);
 void putc32(char c);
-static inline void setColor(uint8_t color);
+void setColor(uint8_t color);
 
 // Wrapper prototypes
 static inline void getCursor32(uint32_t *X, uint32_t *Y);

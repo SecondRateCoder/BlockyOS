@@ -3,13 +3,13 @@ bits 32
 extern VGA_MAXX, VGA_MAXY
 
 
-_asm_TestVGA:						; Test that VGA is active, otherwise emulate.
+asm_TestVGA32:						; Test that VGA is active, otherwise emulate.
 	; Implement at sometime
 	ret
 
-global _asm_disableCursor32
+global asm_disableCursor32
 ;	void asm_disableCursor32(void)
-_asm_disableCursor32:
+asm_disableCursor32:
 	mov dx, 0x3D4
 	mov al, 0x0A
 	out dx, al
@@ -18,9 +18,9 @@ _asm_disableCursor32:
 	out dx, al
 	ret
 
-global _asm_getCursor32:
+global asm_getCursor32:
 ;	uint16_t asm_getCursor32(void)
-_asm_getCursor32:
+asm_getCursor32:
 	mov dx, 0x3D4
 	mov al, 0x0F
 	out dx, al
@@ -37,9 +37,9 @@ _asm_getCursor32:
 	ret
 	
 
-global _asm_enableCursor32
+global asm_enableCursor32
 ;	void asm_enableCursor32(uint32_t, uint32_t)
-_asm_enableCursor32:
+asm_enableCursor32:
 	mov dx, 0x3D4
 	mov al, 0x0A
 	out dx, al				; Setup for Cursor End
@@ -62,9 +62,9 @@ _asm_enableCursor32:
 
     ret
 
-global _asm_updateCursor32
+global asm_updateCursor32
 ;	void asm_UpdateCursor32(uint32_t, uint32_t)
-_asm_updateCursor32:
+asm_updateCursor32:
 	mov eax, [ebp + 16]				; Load Y
 	mul word [VGA_MAXX]				; Multiply by MAX rows
 	add eax, [ebp + 12]				; Add X

@@ -1,20 +1,19 @@
 #include "stdprogram.h"
 
-uint32_t loadedPrograms;
-standardHeader **Programs;
+systemProgramEnviroment LINKERSECTION("PROGRAMBUFFER") systemState;
 
 standardHeader *ASMCALL getCODEBase(void *CODE){
-    for(uint32_t cc =0; cc < loadedPrograms; ++cc){
-        if(memwithin(Programs[cc]->CODE, Programs[cc]->loadedCODEPages * (kB * 4), CODE)){
-            return Programs[cc];
+    for(uint32_t cc =0; cc < systemState.loaded; ++cc){
+        if(memwithin(systemState.Programs[cc]->PAGES.CODE, systemState.Programs[cc]->PAGES.loadedCODEPages * (kB * 4), CODE)){
+            return systemState.Programs[cc];
         }
     }
 }
 
 standardHeader *ASMCALL getDATABase(void *DATA){
-    for(uint32_t cc =0; cc < loadedPrograms; ++cc){
-        if(memwithin(Programs[cc]->DATA, Programs[cc]->loadedDATAPages * (kB * 4), DATA)){
-            return Programs[cc];
+    for(uint32_t cc =0; cc < systemState.loaded; ++cc){
+        if(memwithin(systemState.Programs[cc]->PAGES.DATA, systemState.Programs[cc]->PAGES.loadedDATAPages * (kB * 4), DATA)){
+            return systemState.Programs[cc];
         }
     }
 }

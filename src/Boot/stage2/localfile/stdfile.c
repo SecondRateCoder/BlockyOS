@@ -4,11 +4,11 @@
 void envInit(stdfileENVIROMENT *env){
     getDrive(&env->drive);
     env->FATCHUNKS = 0;
-    _x86DISKREAD(FATLBA(env->drive), (void *)env->FAT);
+    x86DISKREAD(FATLBA(env->drive), (void *)env->FAT);
     memset(env->files, sizeof(env->files), 0);
 }
 
-stdfileENVIROMENT *getEnv(){
+stdfileENVIROMENT *getstdfileEnv(){
     void *EIP = getEIP();
     standardHeader *header = getCODEBase(EIP);
     if(header){return (stdfileENVIROMENT *)&(header->standardChildren.stdfile);}
@@ -33,9 +33,9 @@ void *readSectors(FILEhandle *file, uint32_t bytes, bool useFrATstep){
 				packedLBA address;
 				unsigned long temp = sectorBytes;
 				FrATstep((undefinedSector *)(&(f->file)), &temp, (packedLBA *)&(address));
-				_x86DISKREAD(getLBA(address), (void *)(reads + cc));
+				x86DISKREAD(getLBA(address), (void *)(reads + cc));
 			}else{
-				_x86DISKREAD(getLBA(f->Progress), (void *)(reads + cc));
+				x86DISKREAD(getLBA(f->Progress), (void *)(reads + cc));
 				storeLBA(f->Progress, getLBA(f->Progress) + sectorBytes);
 			}
         }
@@ -59,13 +59,13 @@ void writeSectors(FILEhandle *file, void *buffer, uint32_t bytes, bool useFrATst
 				packedLBA address;
 				unsigned long temp = sectorBytes;
 				FrATstep((undefinedSector *)&(f->file), &temp, (packedLBA *)&(address));
-				_x86DISKWRITE(getLBA(address), buffer + (cc * sectorBytes));
+				x86DISKWRITE(getLBA(address), buffer + (cc * sectorBytes));
 			}else{
-				_x86DISKWRITE(getLBA(f->Progress), buffer + (cc * sectorBytes));
+				x86DISKWRITE(getLBA(f->Progress), buffer + (cc * sectorBytes));
             	storeLBA(f->Progress, getLBA(f->Progress) + sectorBytes);
 			}
         }
-        _x86DISKWRITE(getLBA(f->Progress), (void *)(writes + cc));
+        x86DISKWRITE(getLBA(f->Progress), (void *)(writes + cc));
         storeLBA(f->Progress, getLBA(f->Progress) + sectorBytes);
         return;
     }
@@ -81,7 +81,7 @@ void *flatRead(uint32_t LBA, uint8_t sectors){
 	if(sectors <= 10){
 		uint8_t cc =0;
 		while(cc < sectors){
-			_x86DISKREAD(LBA, (void *)(out + cc));
+			x86DISKREAD(LBA, (void *)(out + cc));
 			cc++;
 		}
 		return out;
@@ -89,15 +89,15 @@ void *flatRead(uint32_t LBA, uint8_t sectors){
 	return NULL;
 }
 
-void getDrive(driveHeader *out){
+void ASMCALL getDrive(driveHeader *out){
     SECTOR s;
-    _x86DISKREAD(0, (void *)&s);
+    x86DISKREAD(0, (void *)&s);
     memcpy(out, s, sizeof(driveHeader));
 }
 
 FILE *getFile(FILEhandle *handle){
     stdfileENVIROMENT *env;
-    if((env = getEnv())){
+    if((env = getstdfileEnv())){
         for(uint8_t cc = 0; cc < MAX_FHANDLES; ++cc){
             if(&env->files[cc].handle == handle && env->files[cc].handle == *handle){
                 return env->files + cc;
@@ -109,7 +109,7 @@ FILE *getFile(FILEhandle *handle){
 void closeFile(uint8_t file){
 	if(file < MAX_FHANDLES){
 		stdfileENVIROMENT *env;
-		if((env = getEnv())){
+		if((env = getstdfileEnv())){
 			env->usedFiles[file] = false;
 		}
 	}
@@ -117,7 +117,7 @@ void closeFile(uint8_t file){
 
 FILE *getUsable(){
 	stdfileENVIROMENT *env;
-	if((env = getEnv())){
+	if((env = getstdfileEnv())){
 		for(uint8_t cc =0; cc < MAX_FHANDLES; ++cc){
 			if(env->usedFiles[cc] == false){return (env->files + cc);}
 		}

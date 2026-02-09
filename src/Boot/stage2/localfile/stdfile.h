@@ -137,12 +137,12 @@ typedef struct stdfileENVIROMENT{
 }stdfileENVIROMENT;
 
 // Read a Sector-size chunk to the address.
-extern void ASMCALL _x86DISKREAD(LBA address, uint8_t *out);
+extern void ASMCALL x86DISKREAD(LBA address, uint8_t *out);
 // Write a Sector-sized chunk to the disk from the address.
-extern void ASMCALL _x86DISKWRITE(LBA address, uint8_t *in);
+extern void ASMCALL x86DISKWRITE(LBA address, uint8_t *in);
 
 void envInit(stdfileENVIROMENT *env);
-void getDrive(driveHeader *out);
+void ASMCALL getDrive(driveHeader *out);
 FILE *getFile(FILEhandle *handle);
 FILE *getUsable();
 void closeFile(uint8_t file);

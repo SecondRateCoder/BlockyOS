@@ -27,4 +27,4 @@ $Params | ForEach-Object{
 
 Write-Host ("i686-elf-$($Image).exe $($TrueParams -join ' ')") -ForegroundColor Blue
 
-& "i686-elf-$($Image).exe" @TrueParams 2>&1
+return (& "i686-elf-$($Image).exe" @TrueParams 2>&1)

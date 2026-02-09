@@ -1,6 +1,6 @@
 #include "interrupt.h"
 
-char *ERRORS[22] = {
+const char *ERRORS[22] = {
     "Div Error",
     "Debug Break",
     "Non-Maskable Interrupt",
@@ -25,7 +25,7 @@ char *ERRORS[22] = {
     "Control Protection Exception Error",
 };
 
-void ASMCALL isr_inthandle(InterruptFrame *IFrame){
+void ASMCALL isr_inthandleC(InterruptFrame *IFrame){
     printf("\nInterrupt: %i, Error Code:\t%s", IFrame->interrupt, IFrame->error_code < 32? ERRORS[IFrame->error_code]: "");
     printf(
         "\nInterrupt Frame:"
@@ -38,9 +38,9 @@ void ASMCALL isr_inthandle(InterruptFrame *IFrame){
     return;
 }
 
-void InitInterrupt(IDTentry *IDT, uint32_t interrupt, bool present, void *base, uint16_t segDesc, uint8_t flags){
+void InitInterrupt(idtENTRY_t *IDT, uint32_t interrupt, bool present, void *base, uint16_t segDesc, uint8_t flags){
     if(interrupt > 0 && interrupt < 256){
-        IDT[interrupt] = (IDTentry){
+        IDT[interrupt] = (idtENTRY_t){
             .baseLow = (uint32_t)base & 0xFFFF,
             .segDesc = segDesc,
             .reserved = 0,
@@ -50,7 +50,7 @@ void InitInterrupt(IDTentry *IDT, uint32_t interrupt, bool present, void *base, 
     }
 }
 
-void ToggleInterrupt(IDTentry *IDT, uint8_t interrupt, bool present){
+void ToggleInterrupt(idtENTRY_t *IDT, uint8_t interrupt, bool present){
     if(interrupt > 0 && interrupt < 256){
         if(present){IDT[interrupt].flags |= IDTFLAGS_PRESENT;}
         else{IDT[interrupt].flags &= ~IDTFLAGS_PRESENT;}

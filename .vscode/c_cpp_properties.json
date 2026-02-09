@@ -45,6 +45,20 @@
                 "${workspaceFolder}\\src\\"
             ],
             "cStandard": "c99"
+        },
+        {
+            "name": "GCC(Default)",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.26100.0",
+            "compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
+            "cStandard": "c99"
         }
     ],
     "version": 4

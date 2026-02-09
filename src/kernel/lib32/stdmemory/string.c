@@ -23,9 +23,19 @@ size_t strcmpc(char *a, char *b){
     return cc;
 }
 
-inline bool ischarint(char c){return (c > '0') && (c < '9');}
+bool isdigit(char c){return (c > '0') && (c < '9');}
 
-inline int8_t tobytecomplex(char c){
+int8_t tobyte(char *str){
+    unsigned len = strlen(str);
+    int8_t out = 0;
+    while(*str){
+        out += (tobit(*str));
+        str++;
+    }
+    return out;
+}
+
+int8_t tobitcomplex(char c){
     if(c > '0' && c < '9'){return c - '0';}
     return -1;
 }
@@ -36,8 +46,8 @@ int16_t toword(char *str){
     uint8_t _10 = 0;
     if(*str == '-'){negative = true;    str++;}
     while(*str){
-        if(!ischarint(*str)){break;}
-        out += (tobyte(*str) * powll(10, _10));
+        if(!isdigit(*str)){break;}
+        out += (tobit(*str) * powll(10, _10));
         str++;_10++;
     }
     return (negative? -out: out);
@@ -49,8 +59,8 @@ signed long tolong(char *str){
     uint8_t _10 = 0;
     if(*str == '-'){negative = true;    str++;}
     while(*str){
-        if(!ischarint(*str)){break;}
-        out += (tobyte(*str) * powll(10, _10));
+        if(!isdigit(*str)){break;}
+        out += (tobit(*str) * powll(10, _10));
         str++;_10++;
     }
     return (negative? -out: out);
@@ -62,8 +72,8 @@ ssize_t tolonglong(char *str){
     uint8_t _10 = 0;
     if(*str == '-'){negative = true;    str++;}
     while(*str != 0){
-        if(!ischarint(*str)){break;}
-        out += (tobyte(*str) * powll(10, _10));
+        if(!isdigit(*str)){break;}
+        out += (tobit(*str) * powll(10, _10));
         str++;_10++;
     }
     return (negative? -out: out);
