@@ -18,7 +18,7 @@ extern gdtENTRY_t GDT[];
 extern idtENTRY_t IDT[];
 
 
-extern uint8_t __TRUECODEADDR, __CODEADDR, __CODEEND, __DATAADDR, __DATAEND, __kernel_end, __kernel_start;
+extern uint8_t __kernel_start, __CODEADDR, __CODEEND, __DATAADDR, __DATAEND, __kernel_end, __kernel_start;
 
 // Halt and restart
 extern void ASMCALL start(void);

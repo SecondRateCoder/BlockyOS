@@ -49,6 +49,9 @@ function Img-Push{
 Log-Write -Msg "$($NASM) -f bin $($FILE) -o $($ST1BIN)" -color Blue
 
 $NASMOUT = (& $NASM "-f" "bin" $FILE "-o" $ST1BIN) 2>&1
-$NASMOUT|ForEach-Object{Log-Write -Msg $_ -color Blue}
+$NASMOUT|ForEach-Object{
+    if($_ -match 'error'){Log-Write -Msg $_ -color Red}
+    else{Log-Write -Msg $_ -color Blue}
+}
 
 Img-Push -data (Get-Content -Path $ST1BIN -Raw -Encoding Byte)

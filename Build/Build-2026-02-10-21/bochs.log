@@ -28,7 +28,7 @@
 00000000000i[USBCTL] Pluggable USB devices
 00000000000i[USBCTL]   floppy mouse tablet keypad keyboard hub disk cdrom
 00000000000i[USBCTL]   printer
-00000000000i[MEM0  ] allocated memory at 000001686646B040. after alignment, vector=000001686646C000, block_size = 128K
+00000000000i[MEM0  ] allocated memory at 000002063D9F1040. after alignment, vector=000002063D9F2000, block_size = 128K
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('C:\Users\olusa\Bochs-3.0\BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Mon Feb  9 19:44:11   2026 tz=utc (time0=1770666251)
+00000000000i[CMOS  ] Setting initial clock to: Tue Feb 10 19:49:29   2026 tz=utc (time0=1770752969)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -59,8 +59,7 @@
 00000000000i[MEM0  ] rom at 0xc0000/32768 ('C:\Users\olusa\Bochs-3.0\VGABIOS-lgpl-latest.bin')
 00000000000i[PLUGIN] init_dev of 'floppy' plugin device by virtual method
 00000000000i[DMA   ] channel 2 used by Floppy Drive
-00000000000i[FLOPPY] fd0: 'C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\floppy-2026-02-09-04.img' ro=0, h=2,t=80,spt=18
-00000000000i[FLOPPY] Using boot sequence floppy, none, none
+00000000000i[FLOPPY] Using boot sequence disk, none, none
 00000000000i[FLOPPY] Floppy boot signature check is enabled
 00000000000i[PLUGIN] init_dev of 'acpi' plugin device by virtual method
 00000000000i[DEV   ] ACPI Controller present at device 1, function 3
@@ -73,6 +72,11 @@
 00000000000i[IOAPIC] IOAPIC enabled (base address = 0xfec00000)
 00000000000i[PLUGIN] init_dev of 'keyboard' plugin device by virtual method
 00000000000i[PLUGIN] init_dev of 'harddrv' plugin device by virtual method
+00000000000i[HD    ] HD on ata0-0: 'C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\floppy-2026-02-10-21.img', 'flat' mode
+00000000000i[IMG   ] hd_size: 1024512
+00000000000i[HD    ] ata0-0: autodetect geometry: CHS=1/16/63 (sector size=512)
+00000000000i[HD    ] ata0-0: extra data outside of CHS address range
+00000000000i[HD    ] translation on ata0-0 set to 'none'
 00000000000i[PLUGIN] init_dev of 'pci_ide' plugin device by virtual method
 00000000000i[DEV   ] PIIX3 PCI IDE controller present at device 1, function 1
 00000000000i[PLUGIN] init_dev of 'unmapped' plugin device by virtual method
@@ -261,7 +265,8 @@
 00001518202i[BXVGA ] VBE known Display Interface b0c0
 00001518242i[BXVGA ] VBE known Display Interface b0c5
 00001519663i[VBIOS ] VBE Bios ID: vbe.c 2025-01-08
-00013810525i[BIOS  ] Booting from 0000:7c00
-00013810582i[CPU0  ] [13810582] Stopped on MAGIC BREAKPOINT
-00013872591i[CPU0  ] [13872591] Stopped on MAGIC BREAKPOINT
-00016811098i[CPU0  ] [16811098] Stopped on MAGIC BREAKPOINT
+00001685455i[BIOS  ] ata0-0: PCHS=1/16/63 translation=none LCHS=1/16/63
+00005245214i[BIOS  ] IDE time out
+00017174409i[BIOS  ] Booting from 0000:7c00
+00017174466i[CPU0  ] [17174466] Stopped on MAGIC BREAKPOINT
+00017174690i[CPU0  ] [17174690] Stopped on MAGIC BREAKPOINT

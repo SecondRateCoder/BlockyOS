@@ -17,9 +17,9 @@ param(
     [int]$Hidden
 )
 $GCC = "./compile/toolchain/prebuild/gcc.ps1"
-$NASM = "C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe"
-$QEMU = "C:\msys64\ucrt64\bin\qemu-system-x86_64.exe"
-$BOCHS = "C:\Users\olusa\Bochs-3.0\bochs.exe"
+$NASM = ${env:NASM}
+$QEMU = ${env:qemu-x86_64}
+$BOCHS = ${env:bochs}
 $WCC = "wcc"
 $WLINK = "wlink"
 # $ST1 = Join-Path (Get-Location) "Boot\stage1\st1.ps1"
@@ -38,18 +38,19 @@ $Log = Join-Path $Build ("log-" + $Date + ".txt")
 $BOCHSRC = Join-Path $Build ".bochsrc"
 $BOCHSLOG = Join-Path $Build "bochs.log"
 
-$LINEUP = "megs: 32
-romimage: file=C:\Users\olusa\Bochs-3.0\BIOS-bochs-latest
-vgaromimage: file=C:\Users\olusa\Bochs-3.0\VGABIOS-lgpl-latest.bin
-boot: floppy
-floppya: 1_44="
-$LINEDWN = ", status=inserted
+$bochsPath = $env:bochs
+$bochsDir  = Split-Path $bochsPath
+$BOCHSFILE = "megs: 32
+romimage: file=$(Get-ChildItem -Path $bochsDir -Recurse -Filter 'BIOS-bochs-latest*' | Select-Object -ExpandProperty FullName)
+vgaromimage: file=$(Get-ChildItem -Path $bochsDir -Recurse -Filter 'VGABIOS-lgpl-latest.bin' | Select-Object -ExpandProperty FullName)
+boot: disk
+ata0-master: type=disk, path=`"$($Image)`", mode=flat, status=inserted
 display_library: win32, options=`"`gui_debug`"`
 pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
 config_interface: win32config
 vga: extension=vesa, update_freq=60
 magic_break: enabled=1
-log: "
+log: $($BOCHSLOG)"
 
 function Log-Write{
     param(
@@ -60,14 +61,22 @@ function Log-Write{
     Add-Content -Path $Log -Value ($Msg -replace "`e\[[0-9;]*[A-Za-z]","")
 }
 
-function Img-Push {
+
+function Img-Push{
     param([byte[]]$data)
     $file = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
-    $padding = $data.Length
-    do{$padding = [math]::Abs($padding - 512)}while($padding -ge 512)
-    Log-Write -color Yellow -Msg ("Byte array of size: $($data.Length) padded with size: $($padding), starting at address: $((Get-Item -Path $Image).Length) and ending at address: $((Get-Item -Path $Image).Length + $padding + $data.Length)")
     try{
-        if($data){$file.Write($data, 0, $data.Length)}
+        # Write the data first
+        $file.Write($data, 0, $data.Length)
+        (Img-Pad)
+    }finally{$file.Close()}
+}
+
+function Img-Pad{
+    $file = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
+    $currentSize = (Get-Item $Image).Length
+    $padding = (512 - ($currentSize % 512)) % 512
+    try{
         if($padding -gt 0){
             $padBytes = New-Object byte[] $padding
             $file.Write($padBytes, 0, $padding)
@@ -99,9 +108,7 @@ function Prepare {
     }
     if(-not(Test-Path $BOCHSRC)){
         New-Item -Path $BOCHSRC -ItemType File -Force
-        try{
-            Add-Content -Path $BOCHSRC -Value ($LINEUP + $Image + $LINEDWN + $BOCHSLOG)
-        }finally{}
+        Add-Content -Path $BOCHSRC -Value $BOCHSFILE
     }
     (. $STDLIB)
 }
@@ -127,7 +134,7 @@ function Handle-PadToken {
 
         if($token.StartsWith('\x')){
             $num = Parse-Number $token.Substring(2)
-            if ($num -lt 0) { throw "Negative size not allowed" }
+            if($num -lt 0){throw "Negative size not allowed"}
             $data = New-Object byte[] $num
             Img-Push -data $data
             return
@@ -142,7 +149,7 @@ function Handle-PadToken {
 
             $fileLen = (Get-Item $file).Length
             if($fileLen -gt $num){
-                Log-Write -color Red -Msg "Error: file length ($fileLen) exceeds target ($num)."
+                Log-Write -color Red -Msg "Error: file length ($($fileLen)) exceeds target ($($num))."
                 return
             }
 
@@ -153,7 +160,7 @@ function Handle-PadToken {
             }else{Log-Write -color Yellow -Msg "No padding needed; file length equals target."}
             return
         }
-        Log-Write -color Red -Msg "Token not recognized: $token"
+        Log-Write -color Red -Msg "Token not recognized: $($token)"
     }catch{Log-Write -color Red -Msg "Handle-PadToken error: $($_.Exception.Message)"}
 }
 
@@ -193,30 +200,17 @@ foreach($item in $ExtraFiles){
     $cc++
 }
 
-$targetSize = $SectorNum * 512
-$padding = [math]::Abs($targetSize - (Get-Item $Image).Length)
-Log-Write -color Cyan -Msg "Padding to $($padding) size"
-if(-not ($padding -eq (Get-Item $Image).Length)){
-    # Pad if needed
-    if ($padding -gt 0) {
-        $padBytes = New-Object byte[] $padding
-        $cc = 0;
-        Img-Push -data $padBytes
-        Log-Write -color Yellow "Padded $Image with $padding bytes."
-    } else {
-        Log-Write -color Yellow "$Image is already $((Get-Item $Image).Length) bytes or larger."
-    }
-}
-
+$padding = [Math]::Abs((512 * $SectorNum) - (Get-Item $Image).Length)
+(Img-Push -data (New-Object -TypeName byte[] $padding))
+if(((Get-Item $Image).Length % 512) -ne 0){(Img-Pad)}
 if($broadimage){Copy-Item -Path $Image -Destination $BroadImageFile}
 if($run){
-    Log-Write -color Yellow "Command:  $($QEMU) -fda $($Image) -vga std"
     $args_qemu = @("-fda", "$($Image)",  "-vga", "std")
-    # -vga std -m 128 -drive format=raw,file=disk.img
+    Log-Write -color Yellow "Command:  $($QEMU) $($args_qemu -join ' ')"
     & $QEMU @args_qemu
 }elseif($runbochs){
-    Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $Build "bx_enh_dbg.ini")
+    Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $Build "\bx_enh_dbg.ini")
     & $BOCHS "-f" $BOCHSRC "-debugger" "-q"
-    Copy-Item -Path (Join-Path $Build "bx_enh_dbg.ini") -Destination (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini")
+    Copy-Item -Path (Join-Path $Build "\bx_enh_dbg.ini") -Destination (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini")
 }
 

@@ -70,7 +70,7 @@ void timerPrint(InterruptFrame *IFrame){
 
 void ASMCALL setup32(BootIn in){
     // Setup standard Program header
-    boot2.PAGES.loadedCODEPages = (&__TRUECODEADDR - &__CODEEND) / (4*kB);
+    boot2.PAGES.loadedCODEPages = (&__kernel_start - &__CODEEND) / (4*kB);
     boot2.PAGES.loadedCODEPages = (&__DATAADDR - &__DATAEND) / (4*kB);
     memcpy(&boot2.standardChildren.stdfile.drive, (void *)0x7C00, sizeof(driveHeader));
     systemState.Programs[0] = &boot2;

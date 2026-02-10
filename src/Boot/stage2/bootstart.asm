@@ -1,6 +1,6 @@
 bits 32
 
-extern __kernel_sectors, bootc
+extern __kernel_sectors, __CODEADDR
 extern int32enable
 extern setup32
 extern MemDetect16
@@ -72,12 +72,12 @@ start:
 	mov sp, (0x0500 + 2040)
 	call int16enable
 	; Read address
-	mov eax, dword bootc
+	mov eax, dword __CODEADDR
 	mov ax, bx
 	shr eax, 16
 	mov es, ax
 	; LBA
-	mov eax, dword bootc
+	mov eax, dword __CODEADDR
 	mov bx, ax
 	shr eax, 16
 	mov es, ax
@@ -134,7 +134,7 @@ DISKREAD:
 	pop ds
 	jnc .done
 	cmp di, 0
-	dec di, di
+	dec di
 	jz .done
 	cmp bx, 0xAA55
 	jz .done

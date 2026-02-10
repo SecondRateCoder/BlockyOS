@@ -8,19 +8,19 @@ nop
 drive_header:
 	bdb_oem:                   	db 'MSWIN4.1'
 	bdb_bytes_per_sector:       dw 512						; +1
-	bdb_sectors_per_cluster:    dw 2						; +3
+	bdb_sectors_per_cluster:    dw 4						; +3
 	bdb_reserved_sectors:       db 20						; +5
 	bdb_fat_count:              db 2						; +6
-	bdb_dir_entries_count:      dw 0F0h						; +7
-	bdb_total_sectors:			dw 2868						; +9
-	bdb_media_desciptor_type:	db 0F0h						; +11
-	bdb_sectors_per_fat:		dw 9						; +12
-	bdb_sectors_per_track:		dw 18						; +14
-	bdb_heads:					dw 2						; +16
+	bdb_root_entries:           dw 0						; +7
+	bdb_total_sectors:			dw 0						; +9
+	bdb_media_desciptor_type:	db 0F8h						; +11
+	bdb_sectors_per_fat:		dw 8						; +12
+	bdb_sectors_per_track:		dw 63						; +14
+	bdb_heads:					dw 16						; +16
 	bdb_hidden_sectors:			dd 0						; +18
-	bdb_large_sector_count:		dd 0						; +22
+	bdb_large_sector_count:		dd 2880						; +22
 	; extended boot record:
-	ebr_drive_number:			db 0						; +26
+	ebr_drive_number:			db 80h						; +26
 	ebr_signature:				db 29h						; +28
 	ebr_volume_id:				db 12h, 99h, 40h, 22h		; +30
 	ebr_volume_label:			db 'BLOCKY OS  '			; +46
@@ -35,20 +35,18 @@ drive_end:
 global start
 start:
 	xchg bx, bx
-	xor eax, eax
-	mov ax, 0
+	mov eax, 0
 	mov es, ax
 	mov ds, ax
-	mov ax, buffer
+	mov eax, BOOT2ADDR
 	mov ss, ax
-	mov ax, 512
+	mov ax, 2048
     mov sp, ax
 	; stack pointer is not 512 bytes above ss, which is buffer
 	push dword .after
 	retf
 .after:
 	call diskm_read
-
 	; Address to be loaded at
 	mov bx, BOOT2ADDR
 	; Sectors to be Read.
@@ -58,7 +56,7 @@ start:
 
 	; Disk read
 	call disk_read
-	call bt2_srch
+	call bt2srch
 	test di, di
 	jz .no_ld
 	; Load Drive header into Stage 2's space
@@ -71,24 +69,21 @@ start:
     cld
     rep movsb
 .ld_s:
-	push word [ebr_drive_number]
 	push es
-	mov bx, (BOOT2ADDR + 1 + (drive_end - drive_header))
-	push word bx
+	push word (BOOT2ADDR + 1 + (drive_end - drive_header))
 	retf
 .no_ld:
 	mov si, msg_bt2f
 	call write
-	jmp full_restart
+	mov ah, 0
+    int 16h
+    jmp 0FFFFH:0
 
 ; Params:
 ;	si: Offset of a string ending with the ENDL macro
 write:
-	push bx
     push ax
     push si
-	; xchg bx, bx
-	pop bx
 .loop:
     lodsb
     or al, al
@@ -109,12 +104,12 @@ write:
 ; Returns:
 ;	di: TRUE(1) if bt2 was found
 ;	di: FALSE(0) if bt2 was not found
-bt2_srch:
+bt2srch:
 	push bx
 	mov bx, BOOT2ADDR
 .srch_begin:
 	cmp [bx], byte 103
-	jz .ld_s
+	jz .rett
 	add bx, 1
 	sub di, 1
 	test di, di
@@ -123,11 +118,6 @@ bt2_srch:
 	mov si, msg_bt2f
 	call write
 	mov di, 0
-	jmp .rett
-.ld_s:
-	mov si, msg_bt2s
-	mov di, 1
-	call write
 .rett:
 	pop bx
 	ret
@@ -137,20 +127,12 @@ bt2_srch:
 ; Returns:
 ;	NONE
 diskm_read:
-	push ax
-	push dx
-	push cx
 	mov ah, 8
 	int 13h
 	inc dh
 	mov [bdb_heads], dh
 	and cl, 0x3f
 	mov [bdb_sectors_per_track], cl
-	mov ax, 0
-	mov es, ax
-	pop cx
-	pop dx
-	pop ax
 	ret
 
 ; Params:
@@ -178,14 +160,6 @@ lbatochs:
 	mov ch, al
 	mov dh, dl
 	mov dl, [ebr_drive_number]
-	; cx: Sector number; (ch: cylinder number, cl: Sector number)
-	; dx: Head number; (dh: head number, dl: Drive number)
-;	mov al, ch
-;	shr ch, 2
-;	and ch, 0xC0
-;	or cl, ch
-;	mov ch, al
-;	and ch, 0xff
 	; ch: Cylinder num & 0xff
 	; cl: Sector num | ((cylinder num >> 2) & 0xC0)
 	; dh: Head number
@@ -199,36 +173,87 @@ lbatochs:
 ;	di: Number of sectors
 disk_read:
 	; call lbatochs
-	mov [.sectors], di
-	mov [.lowerLBA], eax
-	mov [.out + 2], bx
-	mov [.out], es
-.begin_retry:
-	mov ah, 0x41
-	mov bx, 0x55AA
-	mov dl, 0x80
-	stc
-	push ds
+    xchg bx, bx
+    xor dx, dx
+    ; Align to 4 bytes
+    push eax
+    mov eax, .LBAreadPackage
+    mov cx, 16
+    div cx
+    mov [.alignment], dl
+    pop eax
+    ; Construct DAP Packet
+    mov si, [.alignment]
+    mov [si + .size], byte 16
+    mov [si + .0], byte 0
+	mov [si + .sectors], di
+	mov [si + .outsegment], es
+	mov [si + .outoffset], bx
+	mov [si + .lowerLBA], dword eax
+    mov di, 16
+.testEDD:
+    xor ax, ax
+    mov ah, 41h
+    mov bx, 55AAh
+    mov dl, [ebr_drive_number]
+    int 13h
+    jc .noEDD
+    cmp bx, 0AA55h
+    jne .noEDD
+.EDD:
+    xor ax, ax
+	mov ah, 0x42
+	mov dl, [ebr_drive_number]
+    mov si, .LBAreadPackage
+    add si, [.alignment]
 	int 13h
-	pop ds
 	jnc .done
 	cmp di, 0
-	dec di, di
 	jz .done
-	cmp bx, 0xAA55
+    jpo .continueEDD
+    call disk_reset
+.continueEDD:
+	dec di
+    call .fail
+	jmp .EDD
+.noEDD:
+    ; Reconstruct params
+    mov si, [.alignment]
+    mov eax, [si + .lowerLBA]
+    mov es, [si + .outsegment]
+    mov bx, [si + .outoffset]
+    call lbatochs
+    mov ah, 02h
+    int 13h
+    jnc .done
+	cmp di, 0
 	jz .done
-	jmp .begin_retry
+    jpo .continue_noEDD
+    call disk_reset
+.continue_noEDD:
+	dec di
+    call .fail
+    jmp .noEDD
 .done:
 	mov si, msg_disks
 	call write
 	ret
+.fail:
+    mov si, msg_diskf
+    add ah, '0'
+    mov [msg_diskf_err_code], ah
+    call write
+    ret
+.alignment: db 0
 .LBAreadPackage:
 .size:		db 0
 .0:			db 0
 .sectors:	dw 0
-.out:		dd 0
+.outsegment:dw 0
+.outoffset:	dw 0
 .lowerLBA:	dd 0
 .upperLBA:	dd 0
+.paddinglow:        times 16 db 0    ; Buffer to allow shifting down 3 bytes
 
 disk_reset:
 	push ax
@@ -239,26 +264,11 @@ disk_reset:
 	pop ax
 	pop dx
 	ret
-	
-full_restart:
-	call disk_reset
-    mov ah, 0
-    int 16h
-    jmp 0FFFFH:0
-halt:
-	mov si, msg_hlt
-	call write
-    cli ; Disable interrupts
-    hlt
 
-msg_hlt: db 'Halt', ENDL
-msg_disks: db 'Read Success', ENDL
-msg_diskf: db 'Read Fail, Code: '
+msg_disks: db 'Read Finish', ENDL
+msg_diskf: db 'Read Fail Code: '
 msg_diskf_err_code: db '0', ENDL
-msg_bt2s: db 'Boot2 found', ENDL
-msg_bt2f: db 'Boot2 not found', ENDL
+msg_bt2f: db 'Boot2 missing', ENDL
 
 times (510 - ($ - $$)) db 0 ;Repeat so the Program can be 512 bytes large.
 dw 0xAA55              	; The final 2 bytes will be the boot signature.
-buffer:
-; 512 byte stack

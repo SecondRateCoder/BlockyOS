@@ -53,10 +53,10 @@ Sorted:
  C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c,
  C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot32.c,
  C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\bootstart.asm,
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\math.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.math.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\int\_int.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c._int.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\string.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.string.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.memory.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\math.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.math.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\int\_int.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c._int.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\string.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.string.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.memory.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:1:
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:32:9: warning: 'NULL' redefined
    32 | #define NULL (void *)0
@@ -91,7 +91,7 @@ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\mem
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:4:73: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
     4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + size);
       |                                                                         ^
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdio.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdio.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:1:
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:32:9: warning: 'NULL' redefined
@@ -118,7 +118,7 @@ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:132:28: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
   132 |                     puts32((char *)(((size_t)argp[dwords] << 32)  | argp[dwords]));
       |                            ^
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.interrupt.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.interrupt.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c:1:
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:32:9: warning: 'NULL' redefined
@@ -144,7 +144,7 @@ C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
    19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
       | ^~~~~~
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdkernel.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdkernel.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt/interrupt.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c:1:
@@ -171,7 +171,7 @@ C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt/interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
    19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
       | ^~~~~~
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.InterruptRoutines.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.InterruptRoutines.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c:2:
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:32:9: warning: 'NULL' redefined
@@ -198,7 +198,7 @@ In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kern
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
    19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
       | ^~~~~~
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.IRQ.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.IRQ.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c:1:
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:32:9: warning: 'NULL' redefined
@@ -225,7 +225,7 @@ In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kern
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/Interrupt/interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
    19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
       | ^~~~~~
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdmem.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdmem.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:1:
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:32:9: warning: 'NULL' redefined
@@ -248,7 +248,7 @@ C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/stand
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
    36 | #define max(a, b) (a > b? a: b)
       |         ^~~
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdfile.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdfile.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.c:1:
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:32:9: warning: 'NULL' redefined
@@ -271,7 +271,7 @@ C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/stand
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmath/math.h:36:9: note: this is the location of the previous definition
    36 | #define max(a, b) (a > b? a: b)
       |         ^~~
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.f-rat.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.f-rat.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/Boot/stage2/localfile/stdfile.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.c:1:
@@ -299,7 +299,7 @@ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-ra
     5 | #define LOCALFILE
       |         ^~~~~~~~~
 <command-line>: note: this is the location of the previous definition
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdprogram.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdprogram.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.h:3,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c:1:
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:32:9: warning: 'NULL' redefined
@@ -330,7 +330,7 @@ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\st
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c:21:7: note: in a call to function 'getEnv'
    21 | char *getEnv(char alias[aliasLen]){return NULL;}
       |       ^~~~~~
-./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot32.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.boot32.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot32.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.boot32.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
 In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot.h:4,
                  from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot32.c:1:
 C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:32:9: warning: 'NULL' redefined
@@ -377,40 +377,39 @@ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot32.c:48:1:
 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\boot32.c:49:1: warning: 'extermally_visible' attribute directive ignored [-Wattributes]
    49 | idtDESC_t FORCE_SYMBOLEXPOSURE IDTdesc = {.table = (uint32_t)IDT, .limit = sizeof(IDT) - 1};
       | ^~~~~~~~~
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\VGA.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.VGA.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\IO\IO.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.IO.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.InterruptRoutines.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\Interrupt.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.Interrupt.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT\GDT.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.GDT.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.IRQ.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16\stdout.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.stdout.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16\stdmem.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.stdmem.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.stdfile.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.f-rat.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.stdprogram.o
-C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\bootstart.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.bootstart.o
-./compile/toolchain/prebuild/gcc.ps1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.bootstart.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.f-rat.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.GDT.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.Interrupt.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.InterruptRoutines.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.IO.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.IRQ.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.stdfile.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.stdmem.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.stdout.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.stdprogram.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\asm.VGA.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c._int.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.boot32.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.f-rat.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.interrupt.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.InterruptRoutines.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.IRQ.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.math.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.memory.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdfile.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdio.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdkernel.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdmem.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.stdprogram.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\c.string.o --strip-all -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\boot2.bin -T C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.ld -Map C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\gcc_boot2.map -m elf_i386 -L C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0 -l gcc
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\VGA.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.VGA.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\IO\IO.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.IO.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.InterruptRoutines.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\Interrupt.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.Interrupt.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT\GDT.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.GDT.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.IRQ.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16\stdout.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.stdout.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16\stdmem.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.stdmem.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\stdfile.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.stdfile.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\localfile\f-rat\f-rat.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.f-rat.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.stdprogram.o
+C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\stage2\bootstart.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.bootstart.o
+./compile/toolchain/prebuild/gcc.ps1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.bootstart.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.f-rat.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.GDT.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.Interrupt.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.InterruptRoutines.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.IO.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.IRQ.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.stdfile.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.stdmem.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.stdout.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.stdprogram.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\asm.VGA.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c._int.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.boot32.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.f-rat.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.interrupt.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.InterruptRoutines.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.IRQ.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.math.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.memory.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdfile.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdio.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdkernel.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdmem.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.stdprogram.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\c.string.o --strip-all -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\boot2.bin -T C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\stage2\boot.ld -Map C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\gcc_boot2.map -m elf_i386 -L C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0 -l gcc
 
-Linked: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\objs\boot2.bin
-Byte array of size: 37828,
-        padded with size: 452, 
+Linked: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\objs\boot2.bin
+Byte array of size: 37796,
+        padded with size: 420, 
         starting at address: 512 
-        and ending at address: 38792
-Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\floppy-2026-02-09-04.img with 452 bytes.
+        and ending at address: 38728
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\floppy-2026-02-10-21.img with 420 bytes.
 Byte array of size: 1,
         padded with size: 511, 
-        starting at address: 38792 
-        and ending at address: 39304
-Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\floppy-2026-02-09-04.img with 511 bytes.
+        starting at address: 38728 
+        and ending at address: 39240
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\floppy-2026-02-10-21.img with 511 bytes.
 Byte array of size: 0,
         padded with size: 0, 
-        starting at address: 39303 
-        and ending at address: 39303
+        starting at address: 39239 
+        and ending at address: 39239
 Token not recognized: a
-Padding to 984697 size
-Byte array of size: 984697,
-        padded with size: 121, 
-        starting at address: 39303 
-        and ending at address: 1024121
-Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\floppy-2026-02-09-04.img with 121 bytes.
-Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-09-04\floppy-2026-02-09-04.img with 984697 bytes.
+Byte array of size: 984761,
+        padded with size: 185, 
+        starting at address: 39239 
+        and ending at address: 1024185
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\floppy-2026-02-10-21.img with 185 bytes.
+Padded C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-10-21\floppy-2026-02-10-21.img with 327 bytes.

@@ -1,15 +1,12 @@
 ENTRY(start)
 OUTPUT_FORMAT("binary")
 boot = (0x00000D00);
-bootc = (0x00000F02);
 
 SECTIONS{
 	. = boot;
-    __kernel_start = .;
-	__TRUECODEADDR = .;
-   	.entry			: {*(.entry)}
-	. = bootc;
     .text   		: {
+	    __kernel_start = .;
+        *(.entry)
         __CODEADDR = .;
         *(.PROGHEADER)
         *(.text)
