@@ -1,6 +1,6 @@
 bits 32
 
-extern __kernel_start, __kernel_end, __kernel_sectors
+extern __kernel_sectors, bootc
 extern int32enable
 extern setup32
 extern MemDetect16
@@ -72,7 +72,10 @@ start:
 	mov sp, (0x0500 + 2040)
 	call int16enable
 	; Read address
-	mov bx, buffer
+	mov eax, dword bootc
+	mov ax, bx
+	shr eax, 16
+	mov es, ax
 	; LBA
     mov ax, 2
     ; LBA2CHS
@@ -348,5 +351,4 @@ BootInfo:
 
 sectorreads: db 16
 
-times (513 - ($ - $$)) db 0
-buffer:
+times (512 - ($ - $$)) db 0
