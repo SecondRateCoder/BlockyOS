@@ -28,7 +28,6 @@ drive_header:
 	; custom_boot_record
 	sectormap_entries:			db 128						; +65
 drive_end:
-
 %define ENDL 0x0A, 0x0D, 0x00
 
 ; This file will simply load Boot2, Boot2 will be the main booting file
@@ -52,10 +51,8 @@ start:
 
 	; Address to be loaded at
 	mov bx, BOOT2ADDR
-
 	; Sectors to be Read.
 	mov di, 1
-
 	; LBA Adress
 	mov ax, 1
 
@@ -197,41 +194,41 @@ lbatochs:
 	ret
 
 ; Params:
-;	ax: LBA address
+;	eax: LBA address
 ;	[es:bx]: Buffer address
 ;	di: Number of sectors
 disk_read:
-	call lbatochs
-	mov ax, di
-	mov di, 11
+	; call lbatochs
+	mov [.sectors], di
+	mov [.lowerLBA], eax
+	mov [.out + 2], bx
+	mov [.out], es
 .begin_retry:
-	dec di
-	mov ah, 2
+	mov ah, 0x41
+	mov bx, 0x55AA
+	mov dl, 0x80
 	stc
 	push ds
 	int 13h
 	pop ds
-	; Reset floppy on every other try.
-	test di, di
-	jpo .cont1
-	call disk_reset
-.cont1:
-	push di
-	; Search for Boot2, jump to finish if so
-	call bt2_srch
-	; In this case, if di == 1(true) then 0 flag is set, otherwise then subtract underflows and sets the carry flag
-	sub di, 1
-	pop di
+	jnc .done
+	cmp di, 0
+	dec di, di
 	jz .done
-	mov si, msg_diskf
-	add ah, '0'
-	mov [msg_diskf_err_code], ah
-	call write
+	cmp bx, 0xAA55
+	jz .done
 	jmp .begin_retry
 .done:
 	mov si, msg_disks
 	call write
 	ret
+.LBAreadPackage:
+.size:		db 0
+.0:			db 0
+.sectors:	dw 0
+.out:		dd 0
+.lowerLBA:	dd 0
+.upperLBA:	dd 0
 
 disk_reset:
 	push ax
