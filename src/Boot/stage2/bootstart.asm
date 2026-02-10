@@ -77,33 +77,13 @@ start:
 	shr eax, 16
 	mov es, ax
 	; LBA
+	mov eax, dword bootc
+	mov bx, ax
+	shr eax, 16
+	mov es, ax
     mov ax, 2
-    ; LBA2CHS
-.LBA2CHS:
-    xor dx, dx
-    div word [bdb_sectors_per_track] 	; ax: LBA / bdb_sectors_per_track
-                                		; dx: LBA % bdb_sectors_per_track
-
-    inc dx                      		; dx: (LBA % bdb_sectors_per_track) + 1: Sector number
-    mov cx, dx							; cx: Sector number
-    xor dx, dx							; dx: (LBA / bdb_sectors_per_track) % db_heads: Head number
-										; ax: (LBA / bdb_sectors_per_track) / db_heads:	Cylinder number
-    div word [bdb_heads]
-	; cx: Sector number; (ch: ?, cl: Sector number)
-	; dx: Head number; (dh: ?, dl: Head number)
-	; ax: Cylinder number; (ah: ?, al: Cylinder number)
-
-    mov ch, al
-    mov dh, dl
-    mov dl, byte [ebr_drive_number]
-	;	ch: Cylinder num    ; & 0xff
-	;	cl: Sector num      ; | ((cylinder num >> 2) & 0xC0)
-	;	dh: Head number
-	;	dl: drive number
-
-	mov ax, __kernel_sectors
+	mov di, __kernel_sectors
 	call DISKREAD
-.done:
     xchg bx, bx
     mov ax, [GDTSize + 2]
     mov [.GDTLimit], ax
@@ -140,68 +120,34 @@ halt16:
 ;   CL = sector
 ;   DL = drive number
 DISKREAD:
-    mov di, ax                ; DI = sectors remaining
-.read_loop:
-	; Determine how many sectors to read safely
-    mov ax, di                ; AX = sectors remaining
-    cmp ax, MAXREADS
-    jbe .use_ax
-    mov ax, MAXREADS
-.use_ax:
-    mov [sectorreads], ax
-    ; BIOS read
-	; Reset Params
-    mov al, [sectorreads]
-	mov ah, 0x02              ; read sectors
-	mov dl, byte [ebr_drive_number]
-    stc
-    int 13h
-    jc halt16
-    ; Advance buffer pointer
-    mov ax, [bdb_bytes_per_sector]
-    mul word [sectorreads]   ; DX:AX = bytes read
-    add bx, ax
-	push ax
-    adc ax, dx
-	pop ax
-	jnc ._advance_chs
-	push ax
-	mov ax, es
-	inc ax
-	mov es, ax
-	pop ax
-    ; Advance CHS
-._advance_chs:
-    mov ax, [sectorreads]
-.advance_chs:
-    dec ax
-    js .chs_done
-
-    inc cl
-    cmp cl, [bdb_sectors_per_track]
-    jbe .advance_chs
-    ; sector rolled over
-    mov cl, 1
-    inc dh
-    cmp dh, [bdb_heads]
-    jb .advance_chs
-    ; head rolled over
-    mov dh, 0
-    inc ch
-    jmp .advance_chs
-.chs_done:
-    ; xchg bx, bx
-    ; Loop until all sectors read
-    push ax
-    xor ax, ax
-    mov al, byte [sectorreads]
-    sub di, ax
-    pop ax
-    jz .finish
-    jc .finish  ; More likely to overflow than to actually reach 0
-    jmp .read_loop
-.finish:
+    mov [.sectors], di
+	mov [.lowerLBA], eax
+	mov [.out + 2], bx
+	mov [.out], es
+.begin_retry:
+	mov ah, 0x41
+	mov bx, 0x55AA
+	mov dl, 0x80
+	stc
+	push ds
+	int 13h
+	pop ds
+	jnc .done
+	cmp di, 0
+	dec di, di
+	jz .done
+	cmp bx, 0xAA55
+	jz .done
+	jmp .begin_retry
+.done:
     ret
+.LBAreadPackage:
+.size:		db 0
+.0:			db 0
+.sectors:	dw 0
+.out:		dd 0
+.lowerLBA:	dd 0
+.upperLBA:	dd 0
 
 global halt32
 ; void halt32(void)
