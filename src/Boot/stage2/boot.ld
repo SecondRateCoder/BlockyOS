@@ -1,7 +1,7 @@
 ENTRY(start)
 OUTPUT_FORMAT("binary")
 boot = (0x00000D00);
-bootc = (0x00000F01);
+bootc = (0x00000F02);
 
 SECTIONS{
 	. = boot;
