@@ -6,8 +6,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#define SYNTAX_TYPEDEF "typedef"
+#define SYNTAK_LINEEND ';'
+#define SYNTAX_ALTERNATELINEEND ','
 #define MAXREAD 512
-#define STANDARDSPLITTER " \"[](){}"
 #define NUMTOKENS 18
 
 #define defToken(type, value, proreq, prereq) {     \
@@ -18,7 +20,7 @@
 }
 
 typedef enum TokenType{
-    TokenType_Undefined,
+    TokenType_Undefined = 0x0,
     TokenType_Error,
 
     TokenType_Terminate,
@@ -27,6 +29,7 @@ typedef enum TokenType{
     TokenType_UndefinedReturn,
     TokenType_NoValueReturn,
     TokenType_ValueReturn,
+    TokenType_Assign,
     TokenType_Add,
     TokenType_Sub,
     TokenType_Mul,
@@ -48,19 +51,28 @@ typedef enum TokenType{
     TokenType_ParamMention,
     TokenType_Value,
     TokenType_Value_Literal,
+
+    TokenType_Null = 0x0,
+    TokenType_Arithmetic,
+    TokenType_Property,
 }TokenType;
 
 typedef struct Symbol{
     TokenType type;
-    char *symbol;
+    char *symbol, *parent;
+    Token *tokens;
 }Symbol;
 
 typedef struct Token{
-    TokenType type;
+    TokenType token;
     char *value;
+}Token;
+
+typedef struct TokenDescriptor{
+    Token token;
     uint8_t pro_requisite;
     uint8_t pre_requisite;
-}Token;
+}TokenDescriptor;
 
 uint32_t setglobal(FILE *in);
 char *getsnip(char *in, char *splitters, char *otherwise, bool forcesame);
