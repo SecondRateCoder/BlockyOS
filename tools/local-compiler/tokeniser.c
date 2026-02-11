@@ -1,7 +1,11 @@
 #include "local.h"
 
-Symbol **custom_symbols;
-uint32_t num_symbols;
+#define UnresolvedToken 1
+
+Symbol *types;
+uint32_t num_types;
+Symbol *names;
+uint32_t num_names;
 
 Token keywords[] = {
     defToken(TokenType_Terminate, "exit", 2, 0),
@@ -14,6 +18,7 @@ Token keywords[] = {
     defToken(TokenType_Sub, "-", 1, 1),
     defToken(TokenType_Mul, "*", 1, 1),
     defToken(TokenType_Div, "+", 1, 1),
+	defToken(TokenType_Assign, "=", 1, 1),
     defToken(TokenType_Mod, "%", 1, 1),
     defToken(TokenType_Equate, "==", 1, 1),
     defToken(TokenType_GreaterThan, ">=", 1, 1),
@@ -22,7 +27,7 @@ Token keywords[] = {
     defToken(TokenType_LessThan, "=<", 1, 1),
     defToken(TokenType_NotEqual, "!=", 1, 1),
     defToken(TokenType_NotEqual, "=!", 1, 1),
-    defToken(TokenType_TypeDef, "typedef", 3, 1),
+    defToken(TokenType_TypeDef, "typedef", 4, 1),
 
     defToken(TokenType_Value_Ptr, "&", 1, 1),
     defToken(TokenType_Value_Deref, "(*)", 1, 1)
@@ -57,80 +62,82 @@ uint32_t setglobal(FILE *in){
     return read;
 }
 
-char *getsnip(char *in, char *splitters, char *otherwise, bool forcesame){
-    char *out = NULL;
-    char same = 0;
-    size_t inlen = strlen(in), counter = 0, snippetlen = 0;
-    while(counter < inlen){
-        if(strcheck(in[counter], splitters) || (otherwise && !strcheck(in[counter], otherwise))){
-            size_t snapshot = counter;
-            same = in[counter];
-            while((counter + forcesame) < inlen){
-                if(forcesame){
-                    if(same == in[counter + forcesame]){
-                        snippetlen = counter - snapshot + 1;
-                        goto finish;
-                    }
-                }else if(strcheck(in[counter + forcesame], splitters) || (otherwise && !strcheck(in[counter + forcesame], otherwise))){
-                    snippetlen = counter - snapshot + 1;
-                    goto finish;
-                }
-                counter++;
-            }
-        }
-        counter++;
-    }
-finish:
-    ptr += snippetlen;
-    out = malloc(snippetlen);
-    memcpy(in + counter, out, snippetlen);
-    return out;
+char **parseBuffer(size_t *count){
+	char **out = NULL;
+	size_t available = 0;
+	(*count) = 0;
+	for(uint32_t cc = 0; cc < strlen(buffer); ++cc){
+		register char c = buffer[cc];
+		if(isalnum(c)){
+			uint32_t cc_ = (cc + 1);
+			while(cc_ < strlen(buffer) && isalnum(buffer[cc_]){++cc_;}
+			if(count == available){
+				availble += 5;
+				if(available = 0){out = malloc(sizeof(char *) * available);}
+				else{out = realloc(out, sizeof(char *) * available);}
+			}
+			out[count] = malloc((cc_ - cc) * sizeof(c));
+			memcpy(out[count], buffer[cc], cc_ - cc);
+			cc += cc_ - cc;
+		}
+	}
 }
 
-Token *consume(){
-    Token *out = malloc(sizeof(Token));
-    out->value = getsnip(buffer + ptr, STANDARDSPLITTER, NULL, true);
-    uint8_t cc =0;
-    out->type = getType(out->value);
-    const size_t snapshot = ptr;
-    if(out->type != TokenType_Error && out->type != TokenType_Undefined){
-        while(ptr < strlen(buffer)){
-            char *temp = getsnip(buffer + ptr, STANDARDSPLITTER, NULL, true);
-            if(temp){
-
-            }
-        }
-    }
-}
-
-TokenType getType(char *token){
-    if(*token != token[strlen(token) - 1]){return TokenType_Error;}
-    for(uint8_t cc =0; cc < NUMTOKENS; ++cc){
-        if(*token == *(keywords[cc].value)){
-            if(strcmp(token, keywords[cc].value)){
-                switch(cc){
-                    case 0: {return TokenType_Terminate;}// Terminate
-                    case 1: {return TokenType_LineEnd;}// Line End
-                    case 2: {return TokenType_InlineFuncCall;}// Inline Func Call
-                    case 3: {return     TokenType_UndefinedReturn,;}// No val return
-                    case 4: {return TokenType_Terminate;}// Terminate
-                    default: {
-                        if(isnum(token)){return TokenType_Value_Literal;}
-                        if(
-                            ((*token == '\"') && (token[strlen(token) - 1] == '\"')) || 
-                            (*token == '&')
-                        ){return TokenType_Value_Ptr;}
-                        for(uint16_t cc = 0; cc < num_symbols; ++cc){
-                            if(*token == *(custom_symbols[cc]->symbol)){
-                                if(strcmp(token, custom_symbols[cc]->symbol)){
-                                    return TokenType_TypeMention;
-                                }
-                            }
-                        }
-                        return TokenType_Undefined;
-                    }
-                }
-            }
-        }
-    }
+Symbol *generateSymbol(char **in, size_t *length){
+	Symbol *out = calloc(1, sizeof(Symbol);
+	out->symbol = strdup(*in);
+	size_t symbolcounter = 0;
+	foreach(size_t cc = 0; cc < *length; ++cc){
+		while(symbolcounter < num_names){
+			if(*(names[symbolcounter].symbol) == *(in[cc])){
+				if(strcmp(names[symbolcounter].symbol, in[cc]){
+					switch(names[cc].type){
+						case TokenType_FuncDef: {out->type = TokenType_FuncMention;	return out;}
+						case TokenType_GlobalVarDef: {out->type = TokenType_GlobalVarMention;	return out;}
+						case TokenType_LocalVarDef: {
+							out->type = TokenType_LocalVarMention;
+							out->parent = names[symbolcounter].parent;
+							return out;
+						}
+					}
+				}
+			}
+			++symbolcounter;
+		}
+		symbolcounter = 0;
+		while(symbolcounter < num_types){if(!strcmp(*in[cc], types[symbolcounter].symbol){
+			out->type = TokenType_TypeMention;
+			symbolcounter++;
+		}}
+		if(out->type == 0){if(cc > 0){if(!strcmp(in[cc], SYNTAX_TYPEDEF)){
+			types = realloc(types, sizeof(Symbol) * (num_types++));
+			types[num_types - 1] = {
+				.symbol = strdup(in[cc]),
+				.parent = strdup(g_Parent),
+				.type = TokenType_TypeDef
+			};
+			// Get Properties as full strings, each string is a token.
+			size_t tempcounter = 0; uint8_t _5s = 0;
+			while(in[cc +  tempcounter] != '}'){
+				if((tempcounter % 5) != 0){_5s++;
+					types[num_types - 1].tokens = realloc(types[num_types - 1].tokens, _5s * 5 * sizeof(Token));
+				}
+				// Get byte size and number of items until end of line.
+				uint8_t items = 0; size_t blocksize = 0, bytecounter = 0;
+				do{items++;		blocksize += strlen(in[items + tempcounter + cc]);
+				}while(!strcheck(in[items + tempcounter + cc], SYNTAK_LINEEND) && !strcheck(in[items + tempcounter + cc], SYNTAX_ALTERNATELINEEND));
+				types[num_types - 1].tokens[tempcounter] = {.value = malloc(blocksize + items/*For spaces*/), .token = TokenType_Property};
+				while(items){
+					types[num_types - 1].tokens[tempcounter].value[bytecounter++] = ' ';
+					uint8_t charcounter = 0;
+					while(in[items + tempcounter + cc][charcounter]){
+						types[num_types - 1].tokens[tempcounter].value[bytecounter++] = in[items + tempcounter + cc][charcounter];
+					}
+					items--;
+				}
+				tempcounter++;
+			}
+		}
+	 }return out;}
+	return out;
 }
