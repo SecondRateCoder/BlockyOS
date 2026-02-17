@@ -13,4 +13,4 @@ bool memcheckh(void *a, size_t len, u16_t byte);
 bool memcheckl(void *a, size_t len, long byte);
 bool memcheckll(void *a, size_t len, size_t byte);
 
-bool memwithin(void *buffer, size_t size, void *address);
+bool memwithin(void *buffer, size_t size, void *address, size_t address_size);

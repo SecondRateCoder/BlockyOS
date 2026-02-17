@@ -62,14 +62,19 @@ typedef enum PIC_CMD{
 }PIC_CMD;
 #define PIC_SPECEOI(irq) (PIC_CMD_SPEC_EOI | ((irq) & 0x7))
 
+typedef struct PICOut{
+    uint8_t PICMOut,
+            PICSOut;
+}PACKEDSTRUCT PICOut;
+
 void PICInit(uint8_t offsetPIC1, uint8_t offsetPIC2);
 void PICMask(uint32_t irq, bool toggle);
-uint16_t PICReadIRQServiceReg();
-uint16_t PICReadInRequestReg();
+PICOut PICReadIRQServiceReg();
+PICOut PICReadInRequestReg();
 void ASMCALL PICSendSEOI(uint32_t irq);
 void PICDisable();
 
-void IRQInit(idtENTRY_t *IDT);
+void IRQInit();
 
 typedef void (*IRQHandler)(InterruptFrame *in);
-void ASMCALL RegIRQHandler(idtENTRY_t *IDT, uint32_t irq, uint8_t ring, IRQHandler handler);
+void RegIRQHandler(uint32_t irq, uint8_t ring, IRQHandler handler);

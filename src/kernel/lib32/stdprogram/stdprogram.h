@@ -65,7 +65,7 @@ typedef struct standardInterruptEntry{
     // The associated Interrupt Vector and Code
     union{
         struct{
-            // The true association of the interrupt, unique within the Table
+            // The true association of the interrupt, unique memwithin the Table
             uint16_t ID;
             // The Real Interrupt Vector associated to the vector
             uint16_t code;

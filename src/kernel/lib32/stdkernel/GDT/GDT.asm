@@ -25,3 +25,15 @@ LoadGDT:
 
     leave
     ret
+
+global getGDTDesc32
+;	void getIDTDesc32(gdtDESC_t *out)
+getGDTDesc32:
+	push bp
+	mov sp, bp
+	push ebx
+	mov ebx, [bp + 8]
+	sgdt [ebx]
+    pop ebx
+	leave
+	ret

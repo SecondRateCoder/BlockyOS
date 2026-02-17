@@ -1,5 +1,3 @@
-# ./Compiles/Run.ps1 -clear -BroadImage -SectorNum 2880 -Reserved 0 -Hidden 0
-
 param(
     [string[]]$Extrafiles,
     # [Parameter(Mandatory=$false)]
@@ -14,7 +12,9 @@ param(
     [Parameter(Mandatory=$false)]
     [int]$Reserved,
     [Parameter(Mandatory=$false)]
-    [int]$Hidden
+    [int]$Hidden,
+    [Parameter(Mandatory=$false)]
+    [int]$SectorSize = 512
 )
 $GCC = "./compile/toolchain/prebuild/gcc.ps1"
 $NASM = ${env:NASM}
@@ -33,24 +33,35 @@ $Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
 $Image = Join-Path $Build ("floppy-" + $Date + ".img")
 $BroadImageFile = Join-Path (Get-Location) "Build\temp\floppy.img"
 $Objdir = Join-Path $Build "objs"
-$Log = Join-Path $Build ("log-" + $Date + ".txt")
 
 $BOCHSRC = Join-Path $Build ".bochsrc"
 $BOCHSLOG = Join-Path $Build "bochs.log"
+$debuglog = Join-Path $Build "debug.log"
+$debuggerlog = Join-Path $Build "debugger.log"
 
 $bochsPath = $env:bochs
 $bochsDir  = Split-Path $bochsPath
-$BOCHSFILE = "megs: 32
-romimage: file=$(Get-ChildItem -Path $bochsDir -Recurse -Filter 'BIOS-bochs-latest*' | Select-Object -ExpandProperty FullName)
-vgaromimage: file=$(Get-ChildItem -Path $bochsDir -Recurse -Filter 'VGABIOS-lgpl-latest.bin' | Select-Object -ExpandProperty FullName)
+$BOCHSFILE = "
+cpu: model=core2_penryn_t9600, count=1, reset_on_triple_fault=1, ips=10000000
 boot: disk
-ata0-master: type=disk, path=`"$($Image)`", mode=flat, status=inserted
-display_library: win32, options=`"`gui_debug`"`
-pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=ne2k, slot3=usb_ohci
+vgaromimage: file=$(Get-ChildItem -Path $bochsDir -Recurse -Filter 'VGABIOS-lgpl-latest-cirrus.bin' | Select-Object -ExpandProperty FullName)
+romimage: file=$(Get-ChildItem -Path $bochsDir -Recurse -Filter 'BIOS-bochs-latest*' | Select-Object -ExpandProperty FullName)
+memory: guest=1024, host=1024
+ata0-master: type=disk, path=`"$($Image)`", mode=flat, status=inserted, translation=lba
+vga: extension=cirrus, update_freq=60
+sound: driver=default
+speaker: enabled=1, mode=sound
+e1000: enabled=1
+usb_ohci: enabled=1
+pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=e1000, slot3=usb_ohci
+display_library: win32, options=`"`gui_debug`"
 config_interface: win32config
-vga: extension=vesa, update_freq=60
 magic_break: enabled=1
-log: $($BOCHSLOG)"
+port_e9_hack: enabled=1, all_rings=1
+debugger_log: $($debuggerlog)
+log: $($BOCHSLOG)
+iodebug: all_rings=1
+"
 
 function Log-Write{
     param(
@@ -58,7 +69,7 @@ function Log-Write{
         [System.ConsoleColor]$color
         )
     Write-Host $Msg -ForegroundColor $color
-    Add-Content -Path $Log -Value ($Msg -replace "`e\[[0-9;]*[A-Za-z]","")
+    Add-Content -Path $debuglog -Value ($Msg -replace "`e\[[0-9;]*[A-Za-z]","")
 }
 
 
@@ -75,7 +86,7 @@ function Img-Push{
 function Img-Pad{
     $file = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
     $currentSize = (Get-Item $Image).Length
-    $padding = (512 - ($currentSize % 512)) % 512
+    $padding = ($SectorSize - ($currentSize % $SectorSize)) % $SectorSize
     try{
         if($padding -gt 0){
             $padBytes = New-Object byte[] $padding
@@ -99,7 +110,7 @@ function Prepare {
         }
     }
     if(-not(Test-Path $Objdir)){New-Item -Path $Objdir -ItemType Directory -Force}
-    if(-not(Test-Path $Log)){New-Item -Path $Log -ItemType File -Force}
+    if(-not(Test-Path $debuglog)){New-Item -Path $debuglog -ItemType File -Force}
     if(-not(Test-Path $Image)){New-Item -Path $Build -ItemType File -Force -ErrorAction SilentlyContinue}
     
     if(-not(Test-Path $NASM)){
@@ -200,17 +211,27 @@ foreach($item in $ExtraFiles){
     $cc++
 }
 
-$padding = [Math]::Abs((512 * $SectorNum) - (Get-Item $Image).Length)
+$padding = [Math]::Abs(($SectorSize * $SectorNum) - (Get-Item $Image).Length)
 (Img-Push -data (New-Object -TypeName byte[] $padding))
-if(((Get-Item $Image).Length % 512) -ne 0){(Img-Pad)}
+if(((Get-Item $Image).Length % $SectorSize) -ne 0){(Img-Pad)}
 if($broadimage){Copy-Item -Path $Image -Destination $BroadImageFile}
 if($run){
-    $args_qemu = @("-fda", "$($Image)",  "-vga", "std")
-    Log-Write -color Yellow "Command:  $($QEMU) $($args_qemu -join ' ')"
+    $args_qemu = @(
+        "-fda", "$($Image)", 
+        "-vga", "cirrus", "-full-screen"
+        "-cpu", "host", "-m", "1024"
+        "-chardev", "file,id=dbg,path=$($debuglog)", 
+        "-dump-vmstate", "$(Join-Path $Build "qemudump.json")"
+        "-device", "isa-debugcon,iobase=0xE9,chardev=dbg", "-usb"
+    )
+    Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ')"
     & $QEMU @args_qemu
 }elseif($runbochs){
+    $env:Path += $Build
     Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $Build "\bx_enh_dbg.ini")
-    & $BOCHS "-f" $BOCHSRC "-debugger" "-q"
+    Log-Write -Msg "$($BOCHS) -f $($BOCHSRC) -dbg -q -dbglog $($debuggerlog)
+    `n$(Get-Content $BOCHSRC)" -color Blue
+    & $BOCHS "-f" $BOCHSRC "-debugger" "-q" "-dbglog" $($debuggerlog)
     Copy-Item -Path (Join-Path $Build "\bx_enh_dbg.ini") -Destination (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini")
 }
 

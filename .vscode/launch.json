@@ -26,14 +26,8 @@
             "name": "(QEMU)Debug Kernel",
             "type": "PowerShell",
             "request": "launch",
-            "script": "${workspaceFolder}\\compile\\run.ps1",
-            "args": [
-                "-extrafiles", "\\a0x2800",
-                "-SectorNum", "2000",
-                "-clear",
-                "-Reserved", "1",
-                "-run"
-            ],
+            "script": "${workspaceFolder}\\compile\\intermid.ps1",
+            "args": ["-run", "qemu"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -46,15 +40,8 @@
             "name": "(bochs)Debug Kernel",
             "type": "PowerShell",
             "request": "launch",
-            "script": "${workspaceFolder}\\compile\\run.ps1",
-            "args": [
-                "-extrafiles", "\\a0x2800",
-                "-BroadImage",
-                "-SectorNum", "2000",
-                "-clear",
-                "-Reserved", "1",
-                "-runbochs"
-            ],
+            "script": "${workspaceFolder}\\compile\\intermid.ps1",
+            "args": ["-run", "bochs"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",

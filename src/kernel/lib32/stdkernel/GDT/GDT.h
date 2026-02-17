@@ -63,3 +63,4 @@ typedef enum GDTFLAGS{
 }													\
 
 extern void ASMCALL LoadGDT(gdtDESC_t *, uint16_t Code, uint16_t Data);
+void ASMCALL getIDTDesc32(gdtDESC_t *out);

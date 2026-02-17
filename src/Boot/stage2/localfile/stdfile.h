@@ -125,7 +125,7 @@ union{
     uint8_t 	volume_label[11];
     uint8_t 	sys_id[8];
 	// Custom boot record
-	uint8_t segment_clusters;
+	uint8_t reservedClusterMapSectors;
 }PACKEDSTRUCT driveHeader;
 #define stdfileFATsize (sectorBytes / sizeof(packedLBA))
 typedef struct stdfileENVIROMENT{

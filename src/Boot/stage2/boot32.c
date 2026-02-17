@@ -16,10 +16,9 @@ LINKERSECTION("PROGHEADER") standardHeader boot2 = {
     }
 };
 
+idtENTRY_t LINKERSECTION("SymbolIDT") IDT[256] = {0};
 
-idtENTRY_t LINKERSECTION("_IDT") IDT[256] = {0};
-
-gdtENTRY_t LINKERSECTION("_GDT") GDT[16] = {
+gdtENTRY_t LINKERSECTION("SymbolGDT") GDT[16] = {
     // NULL entry
     GDTENTRY(0, 0, 0, 0),
 	// 32-bit Code Segment
@@ -38,8 +37,23 @@ gdtENTRY_t LINKERSECTION("_GDT") GDT[16] = {
 		GDTACCESS_RING0   | GDTACCESS_WRITABLE,
 		GDTFLAGS_32B | GDTFLAGS_GRAN4K
 	),
+    GDTENTRY(
+        0,
+		0xFFFFF,
+		GDTACCESS_PRESENT | GDTACCESS_SEGCODE | 
+		GDTACCESS_RING0   | GDTACCESS_READABLE,
+		GDTFLAGS_16B | GDTFLAGS_GRAN4K
+	),
+	// 32-Bit Data segment
+	GDTENTRY(
+        0,
+		0xFFFFF,
+		GDTACCESS_PRESENT | GDTACCESS_SEGDATA | 
+		GDTACCESS_RING0   | GDTACCESS_WRITABLE,
+		GDTFLAGS_16B | GDTFLAGS_GRAN4K
+	),
 	// 13 NULL segments
-	GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0),
+	GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0),
 	GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0),
 	GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0), GDTENTRY(0, 0, 0, 0),
 	GDTENTRY(0, 0, 0, 0)
@@ -75,7 +89,6 @@ void ASMCALL setup32(BootIn in){
     memcpy(&boot2.standardChildren.stdfile.drive, (void *)0x7C00, sizeof(driveHeader));
     systemState.Programs[0] = &boot2;
     systemState.loaded = 1;
-    '2';
 
 	InitIDT(IDT, i868GDT_SEGCODE);
 	RegIRQHandler(IDT, 0, 0, timerPrint);
@@ -84,4 +97,5 @@ void ASMCALL setup32(BootIn in){
 		"Formatted 32-bit string: %a, %c, %h, %l, %i, %z, %s",
 		(u8_t)99u, 'H', (short)88u, 66ul, (int)98u, 3334848348ull, "Look, it's a Negro"
 	);
+    halt32();
 }

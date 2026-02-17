@@ -38,9 +38,11 @@ void ASMCALL isr_inthandleC(InterruptFrame *IFrame){
     return;
 }
 
-void InitInterrupt(idtENTRY_t *IDT, uint32_t interrupt, bool present, void *base, uint16_t segDesc, uint8_t flags){
+void InitInterrupt(uint32_t interrupt, bool present, void *base, uint16_t segDesc, uint8_t flags){
+    idtDESC_t desc;
+    getIDTDesc(&desc);
     if(interrupt > 0 && interrupt < 256){
-        IDT[interrupt] = (idtENTRY_t){
+        ((idtENTRY_t *)(desc.table))[interrupt] = (idtENTRY_t){
             .baseLow = (uint32_t)base & 0xFFFF,
             .segDesc = segDesc,
             .reserved = 0,
@@ -50,9 +52,11 @@ void InitInterrupt(idtENTRY_t *IDT, uint32_t interrupt, bool present, void *base
     }
 }
 
-void ToggleInterrupt(idtENTRY_t *IDT, uint8_t interrupt, bool present){
+void ToggleInterrupt(uint8_t interrupt, bool present){
+    idtDESC_t desc;
+    getIDTDesc(&desc);
     if(interrupt > 0 && interrupt < 256){
-        if(present){IDT[interrupt].flags |= IDTFLAGS_PRESENT;}
-        else{IDT[interrupt].flags &= ~IDTFLAGS_PRESENT;}
+        if(present){((idtENTRY_t *)(desc.table))[interrupt].flags |= IDTFLAGS_PRESENT;}
+        else{((idtENTRY_t *)(desc.table))[interrupt].flags &= ~IDTFLAGS_PRESENT;}
     }
 }

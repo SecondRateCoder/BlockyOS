@@ -1,4 +1,4 @@
-#include "./Boot/stage2/localfile/stdfile.h"
+#include "stdfile.h"
 #include "./kernel/lib32/stdprogram/stdprogram.h"
 
 void envInit(stdfileENVIROMENT *env){

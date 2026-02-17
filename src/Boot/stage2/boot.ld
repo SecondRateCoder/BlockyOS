@@ -4,24 +4,33 @@ boot = (0x00000D00);
 
 SECTIONS{
 	. = boot;
-    .text   		: {
-	    __kernel_start = .;
+    __kernel_start = boot;
+    .all            :{
         *(.entry)
         __CODEADDR = .;
-        *(.PROGHEADER)
+        *(PROGHEADER)
         *(.text)
         __CODEEND = .;
-    }
-    .data			: {
         __DATAADDR = .;
+        *(.rodata)
         *(.data)
-        *(._FILES)
-        *(.PROGRAMBUFFER)
-        *(._IDT)
-        *(._GDT)
+        *(PROGRAMBUFFER)
+        *(SymbolIDT)
+        *(SymbolGDT)
+        . += 0x0800;
+        *(.bss)
         __DATAEND = .;
     }
-
     __kernel_end = .;
-    __kernel_sectors = ((__kernel_end - __kernel_start) + 511) / 512;
+    __kernel_sectors = ((__kernel_end - __CODEADDR) / 512) + (((__kernel_end - __CODEADDR) % 512) != 0? 1: 0);
+    /DISCARD/ : {
+        *(.eh_frame)
+        *(.eh_frame*)
+        *(.gcc_except_table)
+        *(.gcc_except_table*)
+        *(.note*)
+        *(.comment)
+        *(.debug*)
+        *(.gnu*)
+    }
 }

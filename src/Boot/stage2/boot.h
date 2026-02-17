@@ -30,7 +30,3 @@ extern void ASMCALL asm_updateCursor32(uint32_t x, uint32_t y);
 extern driveHeader bootDrive;
 // C Functions
 void setup32();
-
-typedef struct BootIn{
-    MemRegion Memory;
-}BootIn;

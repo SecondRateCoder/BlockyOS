@@ -4,7 +4,7 @@ systemProgramEnviroment LINKERSECTION("PROGRAMBUFFER") systemState;
 
 standardHeader *ASMCALL getCODEBase(void *CODE){
     for(uint32_t cc =0; cc < systemState.loaded; ++cc){
-        if(memwithin(systemState.Programs[cc]->PAGES.CODE, systemState.Programs[cc]->PAGES.loadedCODEPages * (kB * 4), CODE)){
+        if(memwithin(systemState.Programs[cc]->PAGES.CODE, systemState.Programs[cc]->PAGES.loadedCODEPages * (kB * 4), CODE, 0)){
             return systemState.Programs[cc];
         }
     }
@@ -12,7 +12,7 @@ standardHeader *ASMCALL getCODEBase(void *CODE){
 
 standardHeader *ASMCALL getDATABase(void *DATA){
     for(uint32_t cc =0; cc < systemState.loaded; ++cc){
-        if(memwithin(systemState.Programs[cc]->PAGES.DATA, systemState.Programs[cc]->PAGES.loadedDATAPages * (kB * 4), DATA)){
+        if(memwithin(systemState.Programs[cc]->PAGES.DATA, systemState.Programs[cc]->PAGES.loadedDATAPages * (kB * 4), DATA, 0)){
             return systemState.Programs[cc];
         }
     }

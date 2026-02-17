@@ -29,9 +29,9 @@ typedef uint8_t SHA256HASH[SHA256_SIZE_BYTES];
 #define LOW32(_32) ((_32) & 0xFFFF)
 #define LOW16(_16) ((_16) & 0x00FF)
 
-#define NULL (void *)0
-#define min(A, B) (A) < (B)? (A): (B)
-#define max(A, B) (A) > (B)? (A): (B)
+#define NULL ((void *)0)
+#define min(A, B) ((A) < (B)? (A): (B))
+#define max(A, B) ((A) > (B)? (A): (B))
 
 typedef struct EnviromentVar{
     char alias[aliasLen];

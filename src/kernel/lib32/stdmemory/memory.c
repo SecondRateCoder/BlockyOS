@@ -1,7 +1,8 @@
 #include "./kernel/lib32/generic/standard.h"
 
-bool memwithin(void *buffer, size_t size, void *address){
-    return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + size);
+bool memwithin(void *buffer, size_t buffer_size, void *address, size_t address_size){
+    return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + buffer_size) &&
+            ((size_t)address + address_size) < ((size_t)buffer + buffer_size);
 }
 
 void memset(void *buffer, size_t len, uint8_t val){

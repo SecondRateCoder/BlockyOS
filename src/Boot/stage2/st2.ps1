@@ -13,7 +13,7 @@ $Image = Join-Path $Build ("floppy-$($Date).img")
 $Objdir = Join-Path $Build "objs"
 $Log = Join-Path $Build ("logst2.txt")
 $ST2BIN = Join-Path -Path $Objdir "boot2.bin"
-$MAPFILE = Join-Path -Path $Build "gcc_boot2.map"
+$MAPFILE = Join-Path -Path $Build "boot2map.log"
 
 $LINKERSCRIPT = Join-Path (Get-Location) "/src/Boot/stage2/boot.ld"
 
@@ -37,11 +37,9 @@ function Log-Write {
         [string]$Msg,
         [System.ConsoleColor]$color
     )
-
     Write-Host $Msg -ForegroundColor $color
     $esc=[char]27
     $clean = $Msg -replace "$esc(?:\[[0-9;?]*[ -/]*[@-~]|][^\a]*\a|P.*?$esc\\|X.*?$esc\\|\^.*?$esc\\|_.*?$esc\\|[@-Z\\-_])",""
-
     Add-Content -Path $Log -Value $clean
 }
 
@@ -156,7 +154,7 @@ $BOOT2CFILES|ForEach-Object{
 
 # Compile .asm files
 $BOOT2ASMFILES|ForEach-Object{
-	$args_ = @("-f", "elf32", $_, "-o", $(Join-Path -Path $Objdir "asm.$((Get-Item -Path $_).BaseName).o"))
+	$args_ = @("-f", "elf32", $_, "-o", $(Join-Path -Path $Objdir "asm.$((Get-Item -Path $_).BaseName).o"), "-d", "__DEBUG=")
 	Log-Write -Msg "$($NASM) $($args_ -join ' ')" -color Blue
 	$COMPILEOUT = (& $NASM $args_) 2>&1
 	$COMPILEOUT|ForEach-Object{
