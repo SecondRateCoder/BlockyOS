@@ -1,16 +1,3 @@
-#pragma once
-
-#include "Interrupt/interrupt.h"
-#include "Interrupt/IRQ/IRQ.h"
-#include "GDT/GDT.h"
-#include "IO/IO.h"
-#include "./kernel/lib32/stdmem/32/stdmem.h"
-
-#define i868GDT_SEGCODE 0x08
-#define i868GDT_SEGDATA 0x10
-
-typedef struct BootIn{
-    MemInfo Memory;
-}BootIn;
-
-void LoadSTDKernelState(gdtDESC_t *inGDT, idtDESC_t *inIDT, BootIn in);
+version https://git-lfs.github.com/spec/v1
+oid sha256:2b8ce99a0ff6a06a60aef9335213ec5b3314912ae0a0d10e554bc0f9ab60338b
+size 416

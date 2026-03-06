@@ -76,15 +76,14 @@ $cLines = @()
 $cLines += "//      **AUTO-GENERATED SCRIPT**
 #include `"InterruptRoutines.h`"
 
-void InitIDT(idtENTRY_t *IDT, uint16_t CodeSegment){
-    idtDESC_t temp = {.table = (uint32_t)IDT, .limit = $(256 - $EXCLUDE.Count)};
+void InitIDT(idtENTRY_t *IDT, uint16_t limit, uint16_t CodeSegment){
+    idtDESC_t temp = {.table = (uint32_t)IDT, .limit = limit};
     LoadIDT(&temp);
 ".TrimEnd()
 
 for($i = 0; $i -lt 256; $i++){
     if($i -notin $EXCLUDE){
-        $cLines += "`tInitInterrupt(
-            IDT, $i, true, ISR_INTERRUPT$($i), CodeSegment, 
+        $cLines += "`tInitInterrupt($i, true, ISR_INTERRUPT$($i), CodeSegment, 
             IDTFLAGS_RING0 | IDTFLAGS32B_INTRGATE | IDTFLAGS_PRESENT);"
     }
 }

@@ -6,10 +6,15 @@ bits 16
 %define ENDL NEWLINE, RETURN, NULL
 
 extern printf16
-
+section .text
 global setDefaultControllerInfo16
 ;   es:di(VBEInfoBlock) getControllerInfo16()
 setDefaultControllerInfo16:
+    [bits 16]
+    xchg bx, bx
+    nop
+    nop
+    nop
     push bp
     mov bp, sp
     xor bx, bx

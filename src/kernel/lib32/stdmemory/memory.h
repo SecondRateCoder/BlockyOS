@@ -1,16 +1,3 @@
-#pragma once
-
-#include "./kernel/lib32/stdmath/int/_int.h"
-
-#define NULL ((void *)0)
-
-void memcpy(void *dst, void *src, size_t len);
-bool memcmp(void *a, void *b, size_t len);
-void memset(void *buffer, size_t len, uint8_t val);
-
-bool memcheckb(void *a, size_t len, u8_t byte);
-bool memcheckh(void *a, size_t len, u16_t byte);
-bool memcheckl(void *a, size_t len, long byte);
-bool memcheckll(void *a, size_t len, size_t byte);
-
-bool memwithin(void *buffer, size_t size, void *address, size_t address_size);
+version https://git-lfs.github.com/spec/v1
+oid sha256:a90192ddf6463b0fc966779c7b7df73c32b3e6e0658a9e106180ad4534877b4e
+size 519

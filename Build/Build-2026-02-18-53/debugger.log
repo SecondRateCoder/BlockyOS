@@ -1,0 +1,21 @@
+Bochs internal debugger, type 'help' for help or 'c' to continue
+Switching to CPU0
+Next at t=0
+(0) [0x0000fffffff0] f000:fff0 (unk. ctxt): jmpf 0xf000:e05b          ; ea5be000f0
+c
+(0) Magic breakpoint
+Next at t=35768943
+(0) [0x000000007c43] 0000:7c43 (unk. ctxt): mov eax, 0x00000000       ; 66b800000000
+c
+(0) Magic breakpoint
+Next at t=35777259
+(0) [0x000000000d47] 0000:0d47 (unk. ctxt): nop                       ; 90
+c
+(0) Magic breakpoint
+Next at t=35861926
+(0) [0x000000000d7c] 0000:0d7c (unk. ctxt): push 0x0fc6               ; 68c60f
+Next at t=35861927
+(0) [0x000000000d7f] 0000:0d7f (unk. ctxt): call .+7187  (0x00002995) ; e8131c
+c
+Next at t=37832670
+(0) [0x000000000003] 0000:0003 (unk. ctxt): (invalid)                 ; f053

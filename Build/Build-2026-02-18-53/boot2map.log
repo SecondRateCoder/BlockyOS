@@ -1,0 +1,624 @@
+Archive member included to satisfy reference by file (symbol)
+
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdio.o (__udivdi3)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdio.o (__umoddi3)
+
+Discarded input sections
+
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c._int.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.boot32.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.f-rat.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.interrupt.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.InterruptRoutines.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.IRQ.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.math.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.memory.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdfile.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.letter.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdio.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdkernel.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdmem.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdprogram.o
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.string.o
+ .debug_info    0x00000000      0x331 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .debug_abbrev  0x00000000      0x15a C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .debug_loclists
+                0x00000000      0x4de C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .debug_aranges
+                0x00000000       0x20 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .debug_rnglists
+                0x00000000       0x2a C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .debug_line    0x00000000      0x17b C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .debug_str     0x00000000      0x1fd C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .debug_line_str
+                0x00000000       0xda C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .eh_frame      0x00000000       0x64 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .debug_info    0x00000000      0x350 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ .debug_abbrev  0x00000000      0x170 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ .debug_loclists
+                0x00000000      0x462 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ .debug_aranges
+                0x00000000       0x20 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ .debug_rnglists
+                0x00000000       0x1f C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ .debug_line    0x00000000      0x1d0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ .debug_str     0x00000000      0x1fd C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ .debug_line_str
+                0x00000000       0xda C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ .comment       0x00000000       0x13 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ .eh_frame      0x00000000       0x74 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.bootstart.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.f-rat.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.GDT.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.Interrupt.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.InterruptRoutines.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.IO.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdfile.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdgraphics.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdmem.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdout.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdprogram.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.VGA.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c._int.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.boot32.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.f-rat.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.interrupt.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.InterruptRoutines.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.IRQ.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.math.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.memory.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdfile.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.letter.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdio.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdkernel.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdmem.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdprogram.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.string.o
+                0x00000d00                        boot = 0xd00
+                0x00000d00                        . = boot
+                0x00000d00                        __kernel_start = boot
+
+.all            0x00000d00     0xd6e4
+ *(.entry)
+ .entry         0x00000d00      0x600 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.bootstart.o
+                0x00000d43                start
+                0x00000f0c                halt32
+                0x00000f10                bochs_breakpoint32
+                0x00000f29                TestA20
+                0x00000f50                switch16_32
+                0x00001300                        __CODEADDR = .
+ *(PROGHEADER)
+ PROGHEADER     0x00001300      0x824 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.boot32.o
+                0x00001300                boot2
+ *(.text)
+ *fill*         0x00001b24        0xc 
+ .text          0x00001b30        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.bootstart.o
+ .text          0x00001b30       0x32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.GDT.o
+                0x00001b30                LoadGDT
+                0x00001b52                getGDTDesc32
+ *fill*         0x00001b62        0xe 
+ .text          0x00001b70       0x6c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.Interrupt.o
+                0x00001b70                isr_inthandle
+                0x00001ba1                getIDTDesc32
+                0x00001bb1                LoadIDT
+                0x00001bc8                int32disable
+                0x00001bd2                int32enable
+ *fill*         0x00001bdc        0x4 
+ .text          0x00001be0      0xb70 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.InterruptRoutines.o
+                0x00001be0                _interruptTableLength
+                0x00001be4                _interruptTable
+                0x00001be4                ISR_INTERRUPT0
+                0x00001bee                ISR_INTERRUPT1
+                0x00001bf8                ISR_INTERRUPT2
+                0x00001c02                ISR_INTERRUPT3
+                0x00001c0c                ISR_INTERRUPT4
+                0x00001c16                ISR_INTERRUPT5
+                0x00001c20                ISR_INTERRUPT6
+                0x00001c2a                ISR_INTERRUPT7
+                0x00001c34                ISR_INTERRUPT8
+                0x00001c3c                ISR_INTERRUPT9
+                0x00001c46                ISR_INTERRUPT10
+                0x00001c4e                ISR_INTERRUPT11
+                0x00001c56                ISR_INTERRUPT12
+                0x00001c5e                ISR_INTERRUPT13
+                0x00001c66                ISR_INTERRUPT14
+                0x00001c6e                ISR_INTERRUPT15
+                0x00001c78                ISR_INTERRUPT16
+                0x00001c82                ISR_INTERRUPT17
+                0x00001c8a                ISR_INTERRUPT18
+                0x00001c94                ISR_INTERRUPT19
+                0x00001c9e                ISR_INTERRUPT20
+                0x00001ca8                ISR_INTERRUPT21
+                0x00001cb0                ISR_INTERRUPT22
+                0x00001cba                ISR_INTERRUPT23
+                0x00001cc4                ISR_INTERRUPT24
+                0x00001cce                ISR_INTERRUPT25
+                0x00001cd8                ISR_INTERRUPT26
+                0x00001ce2                ISR_INTERRUPT27
+                0x00001cec                ISR_INTERRUPT28
+                0x00001cf6                ISR_INTERRUPT29
+                0x00001cfe                ISR_INTERRUPT30
+                0x00001d06                ISR_INTERRUPT31
+                0x00001d10                ISR_INTERRUPT32
+                0x00001d1a                ISR_INTERRUPT33
+                0x00001d24                ISR_INTERRUPT34
+                0x00001d2e                ISR_INTERRUPT35
+                0x00001d38                ISR_INTERRUPT36
+                0x00001d42                ISR_INTERRUPT37
+                0x00001d4c                ISR_INTERRUPT38
+                0x00001d56                ISR_INTERRUPT39
+                0x00001d60                ISR_INTERRUPT40
+                0x00001d6a                ISR_INTERRUPT41
+                0x00001d74                ISR_INTERRUPT42
+                0x00001d7e                ISR_INTERRUPT43
+                0x00001d88                ISR_INTERRUPT44
+                0x00001d92                ISR_INTERRUPT45
+                0x00001d9c                ISR_INTERRUPT46
+                0x00001da6                ISR_INTERRUPT47
+                0x00001db0                ISR_INTERRUPT48
+                0x00001dba                ISR_INTERRUPT49
+                0x00001dc4                ISR_INTERRUPT50
+                0x00001dce                ISR_INTERRUPT51
+                0x00001dd8                ISR_INTERRUPT52
+                0x00001de2                ISR_INTERRUPT53
+                0x00001dec                ISR_INTERRUPT54
+                0x00001df6                ISR_INTERRUPT55
+                0x00001e00                ISR_INTERRUPT56
+                0x00001e0a                ISR_INTERRUPT57
+                0x00001e14                ISR_INTERRUPT58
+                0x00001e1e                ISR_INTERRUPT59
+                0x00001e28                ISR_INTERRUPT60
+                0x00001e32                ISR_INTERRUPT61
+                0x00001e3c                ISR_INTERRUPT62
+                0x00001e46                ISR_INTERRUPT63
+                0x00001e50                ISR_INTERRUPT64
+                0x00001e5a                ISR_INTERRUPT65
+                0x00001e64                ISR_INTERRUPT66
+                0x00001e6e                ISR_INTERRUPT67
+                0x00001e78                ISR_INTERRUPT68
+                0x00001e82                ISR_INTERRUPT69
+                0x00001e8c                ISR_INTERRUPT70
+                0x00001e96                ISR_INTERRUPT71
+                0x00001ea0                ISR_INTERRUPT72
+                0x00001eaa                ISR_INTERRUPT73
+                0x00001eb4                ISR_INTERRUPT74
+                0x00001ebe                ISR_INTERRUPT75
+                0x00001ec8                ISR_INTERRUPT76
+                0x00001ed2                ISR_INTERRUPT77
+                0x00001edc                ISR_INTERRUPT78
+                0x00001ee6                ISR_INTERRUPT79
+                0x00001ef0                ISR_INTERRUPT80
+                0x00001efa                ISR_INTERRUPT81
+                0x00001f04                ISR_INTERRUPT82
+                0x00001f0e                ISR_INTERRUPT83
+                0x00001f18                ISR_INTERRUPT84
+                0x00001f22                ISR_INTERRUPT85
+                0x00001f2c                ISR_INTERRUPT86
+                0x00001f36                ISR_INTERRUPT87
+                0x00001f40                ISR_INTERRUPT88
+                0x00001f4a                ISR_INTERRUPT89
+                0x00001f54                ISR_INTERRUPT90
+                0x00001f5e                ISR_INTERRUPT91
+                0x00001f68                ISR_INTERRUPT92
+                0x00001f72                ISR_INTERRUPT93
+                0x00001f7c                ISR_INTERRUPT94
+                0x00001f86                ISR_INTERRUPT95
+                0x00001f90                ISR_INTERRUPT96
+                0x00001f9a                ISR_INTERRUPT97
+                0x00001fa4                ISR_INTERRUPT98
+                0x00001fae                ISR_INTERRUPT99
+                0x00001fb8                ISR_INTERRUPT100
+                0x00001fc2                ISR_INTERRUPT101
+                0x00001fcc                ISR_INTERRUPT102
+                0x00001fd6                ISR_INTERRUPT103
+                0x00001fe0                ISR_INTERRUPT104
+                0x00001fea                ISR_INTERRUPT105
+                0x00001ff4                ISR_INTERRUPT106
+                0x00001ffe                ISR_INTERRUPT107
+                0x00002008                ISR_INTERRUPT108
+                0x00002012                ISR_INTERRUPT109
+                0x0000201c                ISR_INTERRUPT110
+                0x00002026                ISR_INTERRUPT111
+                0x00002030                ISR_INTERRUPT112
+                0x0000203a                ISR_INTERRUPT113
+                0x00002044                ISR_INTERRUPT114
+                0x0000204e                ISR_INTERRUPT115
+                0x00002058                ISR_INTERRUPT116
+                0x00002062                ISR_INTERRUPT117
+                0x0000206c                ISR_INTERRUPT118
+                0x00002076                ISR_INTERRUPT119
+                0x00002080                ISR_INTERRUPT120
+                0x0000208a                ISR_INTERRUPT121
+                0x00002094                ISR_INTERRUPT122
+                0x0000209e                ISR_INTERRUPT123
+                0x000020a8                ISR_INTERRUPT124
+                0x000020b2                ISR_INTERRUPT125
+                0x000020bc                ISR_INTERRUPT126
+                0x000020c6                ISR_INTERRUPT127
+                0x000020d0                ISR_INTERRUPT128
+                0x000020dd                ISR_INTERRUPT129
+                0x000020ea                ISR_INTERRUPT130
+                0x000020f7                ISR_INTERRUPT131
+                0x00002104                ISR_INTERRUPT132
+                0x00002111                ISR_INTERRUPT133
+                0x0000211e                ISR_INTERRUPT134
+                0x0000212b                ISR_INTERRUPT135
+                0x00002138                ISR_INTERRUPT136
+                0x00002145                ISR_INTERRUPT137
+                0x00002152                ISR_INTERRUPT138
+                0x0000215f                ISR_INTERRUPT139
+                0x0000216c                ISR_INTERRUPT140
+                0x00002179                ISR_INTERRUPT141
+                0x00002186                ISR_INTERRUPT142
+                0x00002193                ISR_INTERRUPT143
+                0x000021a0                ISR_INTERRUPT144
+                0x000021ad                ISR_INTERRUPT145
+                0x000021ba                ISR_INTERRUPT146
+                0x000021c7                ISR_INTERRUPT147
+                0x000021d4                ISR_INTERRUPT148
+                0x000021e1                ISR_INTERRUPT149
+                0x000021ee                ISR_INTERRUPT150
+                0x000021fb                ISR_INTERRUPT151
+                0x00002208                ISR_INTERRUPT152
+                0x00002215                ISR_INTERRUPT153
+                0x00002222                ISR_INTERRUPT154
+                0x0000222f                ISR_INTERRUPT155
+                0x0000223c                ISR_INTERRUPT156
+                0x00002249                ISR_INTERRUPT157
+                0x00002256                ISR_INTERRUPT158
+                0x00002263                ISR_INTERRUPT159
+                0x00002270                ISR_INTERRUPT160
+                0x0000227d                ISR_INTERRUPT161
+                0x0000228a                ISR_INTERRUPT162
+                0x00002297                ISR_INTERRUPT163
+                0x000022a4                ISR_INTERRUPT164
+                0x000022b1                ISR_INTERRUPT165
+                0x000022be                ISR_INTERRUPT166
+                0x000022cb                ISR_INTERRUPT167
+                0x000022d8                ISR_INTERRUPT168
+                0x000022e5                ISR_INTERRUPT169
+                0x000022f2                ISR_INTERRUPT170
+                0x000022ff                ISR_INTERRUPT171
+                0x0000230c                ISR_INTERRUPT172
+                0x00002319                ISR_INTERRUPT173
+                0x00002326                ISR_INTERRUPT174
+                0x00002333                ISR_INTERRUPT175
+                0x00002340                ISR_INTERRUPT176
+                0x0000234d                ISR_INTERRUPT177
+                0x0000235a                ISR_INTERRUPT178
+                0x00002367                ISR_INTERRUPT179
+                0x00002374                ISR_INTERRUPT180
+                0x00002381                ISR_INTERRUPT181
+                0x0000238e                ISR_INTERRUPT182
+                0x0000239b                ISR_INTERRUPT183
+                0x000023a8                ISR_INTERRUPT184
+                0x000023b5                ISR_INTERRUPT185
+                0x000023c2                ISR_INTERRUPT186
+                0x000023cf                ISR_INTERRUPT187
+                0x000023dc                ISR_INTERRUPT188
+                0x000023e9                ISR_INTERRUPT189
+                0x000023f6                ISR_INTERRUPT190
+                0x00002403                ISR_INTERRUPT191
+                0x00002410                ISR_INTERRUPT192
+                0x0000241d                ISR_INTERRUPT193
+                0x0000242a                ISR_INTERRUPT194
+                0x00002437                ISR_INTERRUPT195
+                0x00002444                ISR_INTERRUPT196
+                0x00002451                ISR_INTERRUPT197
+                0x0000245e                ISR_INTERRUPT198
+                0x0000246b                ISR_INTERRUPT199
+                0x00002478                ISR_INTERRUPT200
+                0x00002485                ISR_INTERRUPT201
+                0x00002492                ISR_INTERRUPT202
+                0x0000249f                ISR_INTERRUPT203
+                0x000024ac                ISR_INTERRUPT204
+                0x000024b9                ISR_INTERRUPT205
+                0x000024c6                ISR_INTERRUPT206
+                0x000024d3                ISR_INTERRUPT207
+                0x000024e0                ISR_INTERRUPT208
+                0x000024ed                ISR_INTERRUPT209
+                0x000024fa                ISR_INTERRUPT210
+                0x00002507                ISR_INTERRUPT211
+                0x00002514                ISR_INTERRUPT212
+                0x00002521                ISR_INTERRUPT213
+                0x0000252e                ISR_INTERRUPT214
+                0x0000253b                ISR_INTERRUPT215
+                0x00002548                ISR_INTERRUPT216
+                0x00002555                ISR_INTERRUPT217
+                0x00002562                ISR_INTERRUPT218
+                0x0000256f                ISR_INTERRUPT219
+                0x0000257c                ISR_INTERRUPT220
+                0x00002589                ISR_INTERRUPT221
+                0x00002596                ISR_INTERRUPT222
+                0x000025a3                ISR_INTERRUPT223
+                0x000025b0                ISR_INTERRUPT224
+                0x000025bd                ISR_INTERRUPT225
+                0x000025ca                ISR_INTERRUPT226
+                0x000025d7                ISR_INTERRUPT227
+                0x000025e4                ISR_INTERRUPT228
+                0x000025f1                ISR_INTERRUPT229
+                0x000025fe                ISR_INTERRUPT230
+                0x0000260b                ISR_INTERRUPT231
+                0x00002618                ISR_INTERRUPT232
+                0x00002625                ISR_INTERRUPT233
+                0x00002632                ISR_INTERRUPT234
+                0x0000263f                ISR_INTERRUPT235
+                0x0000264c                ISR_INTERRUPT236
+                0x00002659                ISR_INTERRUPT237
+                0x00002666                ISR_INTERRUPT238
+                0x00002673                ISR_INTERRUPT239
+                0x00002680                ISR_INTERRUPT240
+                0x0000268d                ISR_INTERRUPT241
+                0x0000269a                ISR_INTERRUPT242
+                0x000026a7                ISR_INTERRUPT243
+                0x000026b4                ISR_INTERRUPT244
+                0x000026c1                ISR_INTERRUPT245
+                0x000026ce                ISR_INTERRUPT246
+                0x000026db                ISR_INTERRUPT247
+                0x000026e8                ISR_INTERRUPT248
+                0x000026f5                ISR_INTERRUPT249
+                0x00002702                ISR_INTERRUPT250
+                0x0000270f                ISR_INTERRUPT251
+                0x0000271c                ISR_INTERRUPT252
+                0x00002729                ISR_INTERRUPT253
+                0x00002736                ISR_INTERRUPT254
+                0x00002743                ISR_INTERRUPT255
+                0x00002750                _interruptTableEnd
+ .text          0x00002750       0x52 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.IO.o
+                0x00002750                outb
+                0x0000275c                inb
+                0x00002765                outw
+                0x00002772                inw
+                0x0000277b                outl
+                0x00002787                inl
+                0x00002790                iowait
+ *fill*         0x000027a2        0xe 
+ .text          0x000027b0       0x32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdfile.o
+                0x000027b0                x86DISKREAD
+                0x000027b1                x86DISKWRITE
+                0x000027b2                x86DISKUPDATE
+                0x000027b3                LBA2CHS
+ *fill*         0x000027e2        0xe 
+ .text          0x000027f0      0x148 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdgraphics.o
+                0x000027f0                setDefaultControllerInfo16
+ *fill*         0x00002938        0x8 
+ .text          0x00002940     0x19b1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdmem.o
+                0x00002940                E280GetNextMemBlock16
+                0x00002995                MemDetect16
+ *fill*         0x000042f1        0xf 
+ .text          0x00004300      0x17b C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdout.o
+                0x00004300                printf16
+ *fill*         0x0000447b        0x5 
+ .text          0x00004480       0x31 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.stdprogram.o
+                0x00004480                getStanderdHeader32
+                0x000044a9                getEIP
+ *fill*         0x000044b1        0xf 
+ .text          0x000044c0       0x6b C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\asm.VGA.o
+                0x000044c1                asm_disableCursor32
+                0x000044ce                asm_getCursor32
+                0x000044e3                asm_enableCursor32
+                0x00004508                asm_updateCursor32
+ .text          0x0000452b      0x2d4 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c._int.o
+                0x0000452b                decode64
+                0x0000459e                decode32
+                0x000045f0                decode_32u
+                0x00004632                clamp_sizet
+                0x000046ad                encode64
+                0x00004718                encode32
+                0x00004766                encode32u
+                0x000047a5                bit_max
+ .text          0x000047ff      0x19c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.boot32.o
+                0x000047ff                IRQHandlerFunc
+                0x0000486f                timerPrint
+                0x000048b4                setup32
+ .text          0x0000499b      0x65c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.f-rat.o
+                0x0000499b                FrATstep
+                0x00004c0d                FrATSIZE
+                0x00004cb1                FrATDEPTH
+                0x00004dd5                FrATPARALLEL
+                0x00004ef9                getFree
+ .text          0x00004ff7      0x17c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.interrupt.o
+                0x00004ff7                isr_inthandleC
+                0x00005067                InitInterrupt
+                0x000050ed                ToggleInterrupt
+ .text          0x00005173     0x1fb4 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.InterruptRoutines.o
+                0x00005173                InitIDT
+ .text          0x00007127      0x39a C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.IRQ.o
+                0x00007127                RegIRQHandler
+                0x000071a8                IRQDefaultAction
+                0x000071c6                IRQInit
+                0x00007224                PICInit
+                0x000072eb                PICMask
+                0x00007375                PICDisable
+                0x000073af                PICSendSEOI
+                0x00007409                PICReadIRQRequestReg
+                0x00007465                PICReadIRQServiceReg
+ .text          0x000074c1      0x630 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.math.o
+                0x000077e8                powll
+                0x00007847                powf
+                0x00007979                setprecision
+                0x00007a06                sqrtf
+                0x00007a21                isqrt
+                0x00007a71                absf
+                0x00007a8b                absi
+                0x00007a9a                absl
+                0x00007aa9                absll
+ .text          0x00007af1      0x318 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.memory.o
+                0x00007af1                memwithin
+                0x00007b7e                memset
+                0x00007bd2                memcmp
+                0x00007c34                memcpy
+                0x00007c86                memcheckb
+                0x00007ce6                memcheckh
+                0x00007d3e                memcheckl
+                0x00007d9c                memcheckll
+ .text          0x00007e09      0x618 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdfile.o
+                0x00007e09                envInit
+                0x00007e6a                getstdfileEnv
+                0x00007ea0                readSectors
+                0x00008058                writeSectors
+                0x0000828b                flatRead
+                0x000082e7                getDrive
+                0x0000831f                getFile
+                0x0000839a                closeFile
+                0x000083cc                getUsable
+ .text          0x00008421        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.letter.o
+ .text          0x00008421     0x18d3 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.o
+                0x00008421                tellVBEInfo
+                0x00008442                setFontChar
+                0x00008554                getFont
+                0x00008604                getFontChar
+                0x0000866e                getFontCharF
+                0x000086c7                ChartoImage
+                0x00008761                putcdecoded
+                0x00008801                putimage
+ .text          0x00009cf4      0x876 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdio.o
+                0x00009cf4                putc32
+                0x00009e19                setColor
+                0x00009e31                updateCursor32
+                0x00009f70                puts32
+                0x00009f9c                printf32
+                0x0000a35a                printarg32
+ .text          0x0000a56a       0x66 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdkernel.o
+                0x0000a56a                LoadSTDKernelState
+ .text          0x0000a5d0      0x6ce C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdmem.o
+                0x0000a5d0                InitBitmapAllocator
+ .text          0x0000ac9e      0x12e C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdprogram.o
+                0x0000ac9e                getCODEBase
+                0x0000ad0f                getDATABase
+                0x0000ad80                getEnv
+                0x0000ad8a                loadBinary
+                0x0000ad99                loadProgram
+ .text          0x0000adcc      0x469 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.string.o
+                0x0000adcc                strlen
+                0x0000adfc                strchecks
+                0x0000ae9b                strcmpc
+                0x0000af4c                isdigit
+                0x0000af72                tobyte
+                0x0000afb7                tobitcomplex
+                0x0000afdf                toword
+                0x0000b0a1                tolong
+                0x0000b164                tolonglong
+ *fill*         0x0000b235        0xb 
+ .text          0x0000b240      0x11a C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+                0x0000b240                __udivdi3
+ *fill*         0x0000b35a        0x6 
+ .text          0x0000b360      0x136 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+                0x0000b360                __umoddi3
+                0x0000b496                        __CODEEND = .
+                0x0000b496                        __DATAADDR = .
+ *(.rodata)
+ *fill*         0x0000b496        0x2 
+ .rodata        0x0000b498      0x130 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.boot32.o
+                0x0000b4a8                GDTSize
+                0x0000b4aa                IDTSize
+ .rodata        0x0000b5c8      0x2b2 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.interrupt.o
+ *fill*         0x0000b87a        0x2 
+ .rodata        0x0000b87c       0x10 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.InterruptRoutines.o
+ .rodata        0x0000b88c       0x10 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.IRQ.o
+ *fill*         0x0000b89c        0x4 
+ .rodata        0x0000b8a0       0xcc C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.math.o
+ .rodata        0x0000b96c      0x4d5 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.letter.o
+ *fill*         0x0000be41        0x3 
+ .rodata        0x0000be44       0x14 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.o
+ .rodata        0x0000be58       0x18 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdio.o
+                0x0000be68                VGA_MAXX
+                0x0000be6c                VGA_MAXY
+ .rodata        0x0000be70       0x10 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdkernel.o
+ .rodata        0x0000be80        0x6 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdprogram.o
+ *(.data)
+ .data          0x0000be86        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c._int.o
+ *fill*         0x0000be86        0x2 
+ .data          0x0000be88        0xe C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.boot32.o
+                0x0000be88                GDTdesc
+                0x0000be90                IDTdesc
+ .data          0x0000be96        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.f-rat.o
+ *fill*         0x0000be96        0xa 
+ .data          0x0000bea0       0x58 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.interrupt.o
+                0x0000bea0                ERRORS
+ .data          0x0000bef8        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.InterruptRoutines.o
+ .data          0x0000bef8        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.IRQ.o
+ .data          0x0000bef8        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.math.o
+ .data          0x0000bef8        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.memory.o
+ .data          0x0000bef8        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdfile.o
+ .data          0x0000bef8        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.letter.o
+ .data          0x0000bef8        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.o
+ .data          0x0000bef8        0x5 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdio.o
+                0x0000bef8                VGA
+                0x0000befc                TABSIZE
+ .data          0x0000befd        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdkernel.o
+ .data          0x0000befd        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdmem.o
+ .data          0x0000befd        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdprogram.o
+ .data          0x0000befd        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.string.o
+ .data          0x0000befd        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .data          0x0000befd        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+ *(PROGRAMBUFFER)
+ *fill*         0x0000befd        0x3 
+ PROGRAMBUFFER  0x0000bf00       0x84 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdprogram.o
+                0x0000bf00                systemState
+ *(SymbolIDT)
+ *fill*         0x0000bf84       0x1c 
+ SymbolIDT      0x0000bfa0      0x800 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.boot32.o
+                0x0000bfa0                IDT
+ *(SymbolGDT)
+ SymbolGDT      0x0000c7a0       0x80 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.boot32.o
+                0x0000c7a0                GDT
+                0x0000d020                        . = (. + 0x800)
+ *fill*         0x0000c820      0x800 
+ *(.bss)
+ .bss           0x0000d020        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c._int.o
+ .bss           0x0000d020        0x8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.boot32.o
+                0x0000d020                timer
+ *fill*         0x0000d028       0x18 
+ .bss           0x0000d040      0x1a0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.f-rat.o
+ .bss           0x0000d1e0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.interrupt.o
+ .bss           0x0000d1e0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.InterruptRoutines.o
+ .bss           0x0000d1e0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.IRQ.o
+ .bss           0x0000d1e0        0x1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.math.o
+                0x0000d1e0                local_precision
+ .bss           0x0000d1e1        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.memory.o
+ *fill*         0x0000d1e1       0x1f 
+ .bss           0x0000d200     0x1000 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdfile.o
+ .bss           0x0000e200        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.letter.o
+ .bss           0x0000e200      0x180 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.o
+ .bss           0x0000e380       0x40 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdio.o
+                0x0000e380                g_color
+                0x0000e384                VGAX
+                0x0000e388                VGAY
+ .bss           0x0000e3c0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdkernel.o
+ .bss           0x0000e3c0       0x24 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdmem.o
+ .bss           0x0000e3e4        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdprogram.o
+ .bss           0x0000e3e4        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.string.o
+ .bss           0x0000e3e4        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_udivdi3.o)
+ .bss           0x0000e3e4        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a(_umoddi3.o)
+                0x0000e3e4                        __DATAEND = .
+                0x0000e3e4                        __kernel_end = .
+                0x00000069                        __kernel_sectors = (((__kernel_end - __CODEADDR) / 0x200) + (((__kernel_end - __CODEADDR) % 0x200) != 0x0)?0x1:0x0)
+
+FontTable       0x0000e400      0x200
+ FontTable      0x0000e400      0x200 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\c.stdgraphics.o
+
+/DISCARD/
+ *(.eh_frame)
+ *(.eh_frame*)
+ *(.gcc_except_table)
+ *(.gcc_except_table*)
+ *(.note*)
+ *(.comment)
+ *(.debug*)
+ *(.gnu*)
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\libgcc.a
+OUTPUT(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-02-18-53\objs\boot2.bin binary)

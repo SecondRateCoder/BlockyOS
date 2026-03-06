@@ -1,32 +1,3 @@
-#pragma once
-
-
-#include "./kernel/lib32/generic/standard.h"
-#include "./kernel/lib32/stdio/stdio.h"
-#include "./kernel/lib32/stdkernel/stdkernel.h"
-// #include "./kernel/lib32/stdkernel/Interrupt/interrupt.h"
-#include "./kernel/lib32/stdmem/32/stdmem.h"
-#include "localfile/f-rat/f-rat.h"
-#include "./kernel/lib32/stdmath/int/_int.h"
-#include "./kernel/lib32/stdprogram/stdprogram.h"
-
-extern idtDESC_t FORCE_SYMBOLEXPOSURE IDTdesc;
-extern gdtDESC_t FORCE_SYMBOLEXPOSURE GDTdesc;
-
-extern const uint16_t GDTSize, GDTSize;
-extern gdtENTRY_t GDT[];
-extern idtENTRY_t IDT[];
-
-
-extern uint8_t __kernel_start, __CODEADDR, __CODEEND, __DATAADDR, __DATAEND, __kernel_end, __kernel_start;
-
-// Halt and restart
-extern void ASMCALL start(void);
-extern void ASMCALL halt32(void);
-extern void ASMCALL bochs_breakpoint32(void);
-extern void ASMCALL asm_updateCursor32(uint32_t x, uint32_t y);
-
-// C Types
-extern driveHeader bootDrive;
-// C Functions
-void setup32();
+version https://git-lfs.github.com/spec/v1
+oid sha256:7121ac958f1c815c99dc8f5a6791d0656b3bd7b2afb9251dbb96957869f0c4b3
+size 980

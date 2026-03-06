@@ -30,7 +30,7 @@ endstruc
 
 struc BootIn
     .MemRegion      resb 12
-    .VBEOut         resb (VbeInfo)
+    .VBEOut         resb 256
 endstruc
 
 section .entry
@@ -98,11 +98,7 @@ start:
 	mov cl, 1
 	je .DISKREADnoEDD
 .DISKREADCONTINUE:
-    ; Get Graphics state
 	xchg bx, bx
-    call getControllerInfo16
-    push bx
-    push es
 	; Generate Memory Map
 	push BootOut
 	call MemDetect16
@@ -116,6 +112,11 @@ start:
     mov [.IDTLimit], ax
     mov [.IDTTable], dword IDT
 
+    ; Get Graphics state
+    call setDefaultControllerInfo16
+    push bx
+    push es
+    
     push setup32
     push dword .tempIDTdesc
     push dword .tempGDTdesc
