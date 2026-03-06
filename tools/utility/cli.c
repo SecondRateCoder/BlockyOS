@@ -171,4 +171,48 @@ command_t *consume(char **arg, uint32_t *argl){
 	return NULL;
 }
 
+void *paramparse(uint8_t optype, void **in, uint8_t max){
+	void *out = 0;
+	uint32_t len = 0;
+	for(uint8_t cc = 0; cc < max; ++cc){
+		switch(FLAGUNSET(optype, optypeREQUIRED)){
+			case optypeSTR: {
+				out = strdup(in[cc]);
+				return out;
+			}
+			case optypeMULTIPLE: {
+				void *snippet = NULL;
+				
+				void **list = (void **)out;
+				void **current = list + len;
+				if((len % 5) == 0){list = realloc(list, (len + 5) * sizeof(void **));}
+				else{
+					uint32_t itemlen = 0;
+					// Keep looping until index len has overflowed into the next entry
+					while(in[cc][itemlen] != in[cc + 1][0]){itemlen++;}
+					itemlen++;
+					current[len] = memdup(in[cc], itemlen);
+					len++;
+				}
+			}
+			case optypeDIGIT: {
+				out = malloc(sizeof(size_t));
+				out[0] = strtol(in[cc]);
+				return out;
+			}
+			case optypeFPATH: {
+				FILE *f = fopen(in[cc], "r");
+				if(f){
+					fclose(f);
+					out = strdup(in[cc]);
+					return out;
+				}
+				return NULL;
+			}
+			default: {return out;}
+		}
+	}
+	return out;
+}
+
 bool process(command_t *cmd){return cmd.func(&(cmd.bf));}
