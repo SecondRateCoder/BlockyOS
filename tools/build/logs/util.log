@@ -1,0 +1,34 @@
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\\tools\\build\\\obj\\util\\cli.o -g -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\\tools\\utility\\
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:33:37:[m[K [01;35m[Kwarning: [m[Kinitialization discards '[01m[Kconst[m[K' qualifier from pointer target type [[01;35m[K-Wdiscarded-qualifiers[m[K]
+   33 |                         .opbuffer = [01;35m[Koptionsbuffer[m[K
+      |                                     [01;35m[K^~~~~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:40:37:[m[K [01;35m[Kwarning: [m[Kinitialization discards '[01m[Kconst[m[K' qualifier from pointer target type [[01;35m[K-Wdiscarded-qualifiers[m[K]
+   40 |                         .opbuffer = [01;35m[Koptionsbuffer[m[K + 4
+      |                                     [01;35m[K^~~~~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:47:37:[m[K [01;35m[Kwarning: [m[Kinitialization discards '[01m[Kconst[m[K' qualifier from pointer target type [[01;35m[K-Wdiscarded-qualifiers[m[K]
+   47 |                         .opbuffer = [01;35m[Koptionsbuffer[m[K + 8
+      |                                     [01;35m[K^~~~~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:54:37:[m[K [01;35m[Kwarning: [m[Kinitialization discards '[01m[Kconst[m[K' qualifier from pointer target type [[01;35m[K-Wdiscarded-qualifiers[m[K]
+   54 |                         .opbuffer = [01;35m[Koptionsbuffer[m[K + 11
+      |                                     [01;35m[K^~~~~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:61:37:[m[K [01;35m[Kwarning: [m[Kinitialization discards '[01m[Kconst[m[K' qualifier from pointer target type [[01;35m[K-Wdiscarded-qualifiers[m[K]
+   61 |                         .opbuffer = [01;35m[Koptionsbuffer[m[K + 14
+      |                                     [01;35m[K^~~~~~~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:[m[K In function '[01m[Kconsume[m[K':
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:177:46:[m[K [01;35m[Kwarning: [m[Kpassing argument 1 of '[01m[Kmemsearch[m[K' discards '[01m[Kconst[m[K' qualifier from pointer target type [[01;35m[K-Wdiscarded-qualifiers[m[K]
+  177 |                                 if(memsearch([01;35m[Kcommands[m[K, sizeof(commands), temp, strlen(temp), offsetof(command_t, cmd)) || memsearch(commands, sizeof(commands), temp, strlen(temp), offsetof(command_t, alias))){goto finish;}
+      |                                              [01;35m[K^~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:84:22:[m[K [01;36m[Knote: [m[Kexpected '[01m[K[01;32m[Kvoid *[m[K[m[K' but argument is of type '[01m[K[01;34m[Kconst command_t *[m[K[m[K'
+   84 | bool memsearch([01;32m[Kv[m[K[01;32m[Ko[m[K[01;32m[Ki[m[K[01;32m[Kd[m[K[01;32m[K [m[K[01;32m[K*[m[K[01;32m[Ki[m[K[01;32m[Kn[m[K, uint32_t inlen, void *cmp, uint32_t cmplen, uint32_t stride){
+      |                [01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K^[m[K[01;32m[K~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:177:133:[m[K [01;35m[Kwarning: [m[Kpassing argument 1 of '[01m[Kmemsearch[m[K' discards '[01m[Kconst[m[K' qualifier from pointer target type [[01;35m[K-Wdiscarded-qualifiers[m[K]
+  177 |                                 if(memsearch(commands, sizeof(commands), temp, strlen(temp), offsetof(command_t, cmd)) || memsearch([01;35m[Kcommands[m[K, sizeof(commands), temp, strlen(temp), offsetof(command_t, alias))){goto finish;}
+      |                                                                                                                                     [01;35m[K^~~~~~~~[m[K
+[01m[KC:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\cli.c:84:22:[m[K [01;36m[Knote: [m[Kexpected '[01m[K[01;32m[Kvoid *[m[K[m[K' but argument is of type '[01m[K[01;34m[Kconst command_t *[m[K[m[K'
+   84 | bool memsearch([01;32m[Kv[m[K[01;32m[Ko[m[K[01;32m[Ki[m[K[01;32m[Kd[m[K[01;32m[K [m[K[01;32m[K*[m[K[01;32m[Ki[m[K[01;32m[Kn[m[K, uint32_t inlen, void *cmp, uint32_t cmplen, uint32_t stride){
+      |                [01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K~[m[K[01;32m[K^[m[K[01;32m[K~[m[K
+gcc -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\tools\utility\funcs.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\\tools\\build\\\obj\\util\\funcs.o -g -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\\tools\\utility\\
+
+gcc -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\\tools\\build\\util.exe C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\\tools\\build\\\obj\\util\\cli.o
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\\tools\\build\\\obj\\util\\funcs.o
+

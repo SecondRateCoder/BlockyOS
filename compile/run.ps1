@@ -17,16 +17,13 @@ param(
     [int]$SectorSize = 512
 )
 $GCC = "./compile/toolchain/prebuild/gcc.ps1"
-$NASM = ${env:NASM}
+# $NASM = ${env:NASM}
+$NASM = 'nasm'
 $QEMU = ${env:qemu-x86_64}
 $BOCHS = ${env:bochs}
 $WCC = "wcc"
-$WLINK = "wlink"
 # $ST1 = Join-Path (Get-Location) "Boot\stage1\st1.ps1"
 $STDLIB = Join-Path (Get-Location) "\src\kernel\lib32\stdkernel\stdkernel.ps1"
-$ST1 = Join-Path (Get-Location) "src\Boot\stage1\st1.ps1"
-# $ST2 = Join-Path (Get-Location) "Boot\stage2\st2.ps1"
-$ST2 = Join-Path (Get-Location) "src\Boot\stage2\st2.ps1"
 
 $Date = (Get-Date -Format "yyyy-MM-dd-ss")
 $Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
@@ -67,9 +64,18 @@ function Log-Write{
     param(
         [string]$Msg,
         [System.ConsoleColor]$color
-        )
-    Write-Host $Msg -ForegroundColor $color
-    Add-Content -Path $debuglog -Value ($Msg -replace "`e\[[0-9;]*[A-Za-z]","")
+    )
+    $clean = ""
+    $esc=[char]27
+    if($color){
+        Write-Host $Msg -ForegroundColor $color
+        $clean = $Msg -replace "$esc(?:\[[0-9;?]*[ -/]*[@-~]|][^\a]*\a|P.*?$esc\\|X.*?$esc\\|\^.*?$esc\\|_.*?$esc\\|[@-Z\\-_])",""
+    }else{
+        Write-Host $Msg
+        $clean = $Msg
+    }
+    if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
+    Add-Content -Path $debuglog -Value $clean
 }
 
 
@@ -112,16 +118,21 @@ function Prepare {
     if(-not(Test-Path $Objdir)){New-Item -Path $Objdir -ItemType Directory -Force}
     if(-not(Test-Path $debuglog)){New-Item -Path $debuglog -ItemType File -Force}
     if(-not(Test-Path $Image)){New-Item -Path $Build -ItemType File -Force -ErrorAction SilentlyContinue}
-    
-    if(-not(Test-Path $NASM)){
-        Log-Write -color Red -Msg "NASM not found at $NASM. Please install NASM."
+    Write-Host (& $NASM -v)
+    if($LASTEXITCODE -ne 0){
+        Log-Write -color Red -Msg "NASM not found at $($NASM). Please install NASM."
+        exit 1
+    }
+    Write-Host (& 'gcc' -v)
+    if($LASTEXITCODE -ne 0){
+        Log-Write -color Red -Msg "GCC not found at $(GCC). Please install GCC."
         exit 1
     }
     if(-not(Test-Path $BOCHSRC)){
         New-Item -Path $BOCHSRC -ItemType File -Force
         Add-Content -Path $BOCHSRC -Value $BOCHSFILE
     }
-    (. $STDLIB)
+    (& $STDLIB)
 }
 
 function Parse-Number {
@@ -194,8 +205,7 @@ function Compile-Watcom{
 
 if($clear -eq $true){Remove-Item (Join-Path (Get-Location) "Build") -Force -Recurse}
 (Prepare)
-(. $ST1 -Date $Date -NASM $NASM -GCC $GCC)
-(. $ST2 -Date $Date -NASM $NASM -WLINK $WLINK -GCC $GCC)
+(& "$(Join-Path (Get-Location) 'src/Boot/compile.ps1')" -Date $Date -NASM $NASM -GCC $GCC -ProxyFileSystem @{})
 
 $cc = 0;
 Handle-PadToken -token "\x$($Reserved.ToString())"

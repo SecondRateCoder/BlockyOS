@@ -2,8 +2,10 @@
     "recommendations": [
         "ms-vscode.cpptools",
         "ms-vscode.cpptools-extension-pack",
-        "ms-vscode.cpptools-themes",
         "repreng.csv",
-        "aaron-bond.better-comments"
+        "aaron-bond.better-comments",
+        "maziac.hex-hover-converter",
+        "lixquid.calculator",
+        "zixuanwang.linkerscript"
     ]
 }

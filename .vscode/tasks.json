@@ -2,6 +2,28 @@
     "tasks": [
         {
             "type": "shell",
+            "label": "Build Utils",
+            "dependsOn": "Clear Terminal",
+            "command": "powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}//tools//utility//util.ps1"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel":"shared",
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        }, {
+            "type": "shell",
             "label": "Prep Broad Image",
             "dependsOn": "Clear Terminal",
             "command": "powershell.exe",

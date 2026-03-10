@@ -1,0 +1,21 @@
+
+cpu: model=core2_penryn_t9600, count=1, reset_on_triple_fault=1, ips=10000000
+boot: disk
+vgaromimage: file=
+romimage: file=
+memory: guest=1024, host=1024
+ata0-master: type=disk, path="C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\floppy-2026-03-10-43.img", mode=flat, status=inserted, translation=lba
+vga: extension=cirrus, update_freq=60
+sound: driver=default
+speaker: enabled=1, mode=sound
+e1000: enabled=1
+usb_ohci: enabled=1
+pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=e1000, slot3=usb_ohci
+display_library: win32, options="gui_debug"
+config_interface: win32config
+magic_break: enabled=1
+port_e9_hack: enabled=1, all_rings=1
+debugger_log: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\debugger.log
+log: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\bochs.log
+iodebug: all_rings=1
+

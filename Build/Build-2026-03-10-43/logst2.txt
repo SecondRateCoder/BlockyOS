@@ -1,0 +1,455 @@
+Boot2:
+lib32:
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\generic\CRC32\CCITT32-ANSI\CRC32.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\16bit\stdgraphics.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.letter.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdout.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\VGA.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT\GDT.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\Interrupt.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\IO\IO.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\int\_int.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\math.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16\stdmem.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\string.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c,
+Sorted:
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\math.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\int\_int.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\string.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\16bit\stdgraphics.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.letter.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdout.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\VGA.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\IO\IO.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\Interrupt.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT\GDT.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16\stdmem.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\generic\CRC32\CCITT32-ANSI\CRC32.c,
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\math.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.math.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\int\_int.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c._int.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.memory.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c: In function 'memwithin':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:4:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + buffer_size) &&
+      |             ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:4:33: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + buffer_size) &&
+      |                                 ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:4:53: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + buffer_size) &&
+      |                                                     ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:4:73: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    4 |     return ((size_t)address) > ((size_t)buffer) && ((size_t)address) < ((size_t)buffer + buffer_size) &&
+      |                                                                         ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:5:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    5 |             ((size_t)address + address_size) < ((size_t)buffer + buffer_size);
+      |              ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c:5:49: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    5 |             ((size_t)address + address_size) < ((size_t)buffer + buffer_size);
+      |                                                 ^
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\string.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.string.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdgraphics.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.h:1,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.letter.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdgraphics.letter.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.h:1,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.letter.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.letter.c:4:13: warning: multi-character literal with 5 characters exceeds 'int' size of 4 bytes
+    4 |     .code = 'PLAIN',
+      |             ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.letter.c:4:13: warning: overflow in conversion from 'int' to 'char' changes value from '1279347022' to '78' [-Woverflow]
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdio.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c: In function 'putc32':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:19:75: warning: passing argument 5 of 'putcdecoded' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   19 |                         putcdecoded(c, (Pixel){.Pixel = 0}, &VGAX, &VGAY, &PlainBasic);
+      |                                                                           ^~~~~~~~~~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.h:4:
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics/32bit/stdgraphics.h:109:77: note: expected 'Font *' but argument is of type 'const Font *'
+  109 | bool putcdecoded(char c, Pixel colorOffset, uint32_t *x, uint32_t *y, Font *f);
+      |                                                                       ~~~~~~^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:24:116: warning: passing argument 5 of 'putcdecoded' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   24 |                         for(uint8_t cc =0; cc < TABSIZE; ++cc){putcdecoded(' ', (Pixel){.Pixel = 0}, &VGAX, &VGAY, &PlainBasic);}
+      |                                                                                                                    ^~~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics/32bit/stdgraphics.h:109:77: note: expected 'Font *' but argument is of type 'const Font *'
+  109 | bool putcdecoded(char c, Pixel colorOffset, uint32_t *x, uint32_t *y, Font *f);
+      |                                                                       ~~~~~~^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c: In function 'printf32':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c:132:28: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  132 |                     puts32((char *)(((size_t)argp[dwords] << 32)  | argp[dwords]));
+      |                            ^
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdkernel.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt/interrupt.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt/interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.h:7:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmem/32/stdmem.h:21:1: warning: no semicolon at end of struct or union
+   21 | }PACKEDSTRUCT E820MemBlock;
+      | ^
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.interrupt.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.IRQ.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.h:4:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/Interrupt/interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdkernel/stdkernel.h:7,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c:4:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmem/32/stdmem.h:21:1: warning: no semicolon at end of struct or union
+   21 | }PACKEDSTRUCT E820MemBlock;
+      | ^
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.InterruptRoutines.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c:2:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.h:4:
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.h:19:1: warning: 'packed' attribute ignored [-Wattributes]
+   19 | extern PACKEDSTRUCT uint8_t interruptTableEnd;
+      | ^~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdmem.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.h:21:1: warning: no semicolon at end of struct or union
+   21 | }PACKEDSTRUCT E820MemBlock;
+      | ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c: In function 'InitBitmapAllocator':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:7:35: error: passing argument 3 of 'bitmapstate' makes integer from pointer without a cast [-Wint-conversion]
+    7 |                 bitmapstate(1, 0, __BITMAP_RESERVED);
+      |                                   ^~~~~~~~~~~~~~~~~
+      |                                   |
+      |                                   uint8_t * {aka unsigned char *}
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.h:52:83: note: expected 'uint32_t' {aka 'unsigned int'} but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+   52 | static BitMapAllocatorState bitmapstate(uint8_t property, uint8_t state, uint32_t value);
+      |                                                                          ~~~~~~~~~^~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:19:9: error: implicit declaration of function 'bitmapMark' [-Wimplicit-function-declaration]
+   19 |         bitmapMark(0, minsize / blocksize, 0);
+      |         ^~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:21:29: error: 'blockSize' undeclared (first use in this function); did you mean 'blocksize'?
+   21 |                 (reserved / blockSize) + (reserved % blockSize != 0),
+      |                             ^~~~~~~~~
+      |                             blocksize
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:21:29: note: each undeclared identifier is reported only once for each function it appears in
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:26:22: error: 'MemInfo' has no member named 'Table'
+   26 |                 if(in.Table[cc].Type != E820BlockType_Free){
+      |                      ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:28:36: error: 'MemInfo' has no member named 'Table'
+   28 |                                 (in.Table[cc].Base / blockSize) + (in.Table[cc].Base % blockSize != 0),
+      |                                    ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:28:70: error: 'MemInfo' has no member named 'Table'
+   28 |                                 (in.Table[cc].Base / blockSize) + (in.Table[cc].Base % blockSize != 0),
+      |                                                                      ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:29:36: error: 'MemInfo' has no member named 'Table'
+   29 |                                 (in.Table[cc].Limit / blockSize) + (in.Table[cc].Limit % blockSize != 0),
+      |                                    ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:29:71: error: 'MemInfo' has no member named 'Table'
+   29 |                                 (in.Table[cc].Limit / blockSize) + (in.Table[cc].Limit % blockSize != 0),
+      |                                                                       ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c: At top level:
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:36:6: warning: conflicting types for 'bitmapMark'; have 'void(uint64_t,  uint32_t,  _Bool)' {aka 'void(long long unsigned int,  unsigned int,  _Bool)'}
+   36 | void bitmapMark(size_t index, uint32_t pages, bool value){
+      |      ^~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:19:9: note: previous implicit declaration of 'bitmapMark' with type 'void(uint64_t,  uint32_t,  _Bool)' {aka 'void(long long unsigned int,  unsigned int,  _Bool)'}
+   19 |         bitmapMark(0, minsize / blocksize, 0);
+      |         ^~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c: In function 'bitmapMark':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:37:9: error: unknown type name 'BitmaAllocatorState'; did you mean 'BitMapAllocatorState'?
+   37 |         BitmaAllocatorState state = bitmapstate(0, 0, 0);
+      |         ^~~~~~~~~~~~~~~~~~~
+      |         BitMapAllocatorState
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:37:37: error: incompatible types when initializing type 'int' using type 'BitMapAllocatorState'
+   37 |         BitmaAllocatorState state = bitmapstate(0, 0, 0);
+      |                                     ^~~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:40:32: error: request for member 'Bitmap' in something not a structure or union
+   40 |                 if(value){state.Bitmap[index / 8] &= (value << (index % 8));}
+      |                                ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:41:27: error: request for member 'Bitmap' in something not a structure or union
+   41 |                 else{state.Bitmap[index / 8] &= ~(value << (index % 8));}
+      |                           ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:44:21: error: request for member 'Bitmap' in something not a structure or union
+   44 |         memset(state.Bitmap + (index / 8), pages / 8, value);
+      |                     ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:46:32: error: request for member 'Bitmap' in something not a structure or union
+   46 |                 if(value){state.Bitmap[(pages + index) / 8] &= (value << (pages % 8));}
+      |                                ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:47:27: error: request for member 'Bitmap' in something not a structure or union
+   47 |                 else{state.Bitmap[(pages + index) / 8] &= ~(value << (pages % 8));}
+      |                           ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c: In function 'flatpageAlloc':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:53:9: error: unknown type name 'BitmapAlloctorState'; did you mean 'BitMapAllocatorState'?
+   53 |         BitmapAlloctorState state = bitmapstate(0, 0, 0);
+      |         ^~~~~~~~~~~~~~~~~~~
+      |         BitMapAllocatorState
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:53:37: error: incompatible types when initializing type 'int' using type 'BitMapAllocatorState'
+   53 |         BitmapAlloctorState state = bitmapstate(0, 0, 0);
+      |                                     ^~~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:55:21: error: request for member 'Bitmap' in something not a structure or union
+   55 |         while((state.Bitmap[(state.snapshot / 8)] >> (state.snapshot % 8)) & 0x1){
+      |                     ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:55:35: error: request for member 'snapshot' in something not a structure or union
+   55 |         while((state.Bitmap[(state.snapshot / 8)] >> (state.snapshot % 8)) & 0x1){
+      |                                   ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:55:60: error: request for member 'snapshot' in something not a structure or union
+   55 |         while((state.Bitmap[(state.snapshot / 8)] >> (state.snapshot % 8)) & 0x1){
+      |                                                            ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:56:25: error: request for member 'snapshot' in something not a structure or union
+   56 |                 if(state.snapshot < state.bitMapSize){state.snapshot++;}
+      |                         ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:56:42: error: request for member 'bitMapSize' in something not a structure or union
+   56 |                 if(state.snapshot < state.bitMapSize){state.snapshot++;}
+      |                                          ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:56:60: error: request for member 'snapshot' in something not a structure or union
+   56 |                 if(state.snapshot < state.bitMapSize){state.snapshot++;}
+      |                                                            ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:59:30: error: request for member 'snapshot' in something not a structure or union
+   59 |                         state.snapshot = 0;
+      |                              ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:63:25: error: request for member 'snapshot' in something not a structure or union
+   63 |         bitmapMark(state.snapshot, size / state.blockSize, 1);
+      |                         ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:63:48: error: request for member 'blockSize' in something not a structure or union
+   63 |         bitmapMark(state.snapshot, size / state.blockSize, 1);
+      |                                                ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:65:40: error: request for member 'memory' in something not a structure or union
+   65 |         E820MemBlock *memblock = *state.memory.table;
+      |                                        ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:66:40: error: request for member 'memory' in something not a structure or union
+   66 |         for(uint32_t cc = 0; cc < state.memory.count; ++cc, memblock = state.memory.table + cc){
+      |                                        ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:66:77: error: request for member 'memory' in something not a structure or union
+   66 |         for(uint32_t cc = 0; cc < state.memory.count; ++cc, memblock = state.memory.table + cc){
+      |                                                                             ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:67:20: error: implicit declaration of function 'iswithin'; did you mean 'memwithin'? [-Wimplicit-function-declaration]
+   67 |                 if(iswithin(state.snapshot, size, memblock.Base, membock.Limit)){
+      |                    ^~~~~~~~
+      |                    memwithin
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:67:34: error: request for member 'snapshot' in something not a structure or union
+   67 |                 if(iswithin(state.snapshot, size, memblock.Base, membock.Limit)){
+      |                                  ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:67:59: error: 'memblock' is a pointer; did you mean to use '->'?
+   67 |                 if(iswithin(state.snapshot, size, memblock.Base, membock.Limit)){
+      |                                                           ^
+      |                                                           ->
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:67:66: error: 'membock' undeclared (first use in this function); did you mean 'memblock'?
+   67 |                 if(iswithin(state.snapshot, size, memblock.Base, membock.Limit)){
+      |                                                                  ^~~~~~~
+      |                                                                  memblock
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:68:40: error: 'memblock' is a pointer; did you mean to use '->'?
+   68 |                         memcpy(memblock.Base + (state.snapshot * state.blocksize), (size_t)size, sizeof(size_t));
+      |                                        ^
+      |                                        ->
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:68:54: error: request for member 'snapshot' in something not a structure or union
+   68 |                         memcpy(memblock.Base + (state.snapshot * state.blocksize), (size_t)size, sizeof(size_t));
+      |                                                      ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:68:71: error: request for member 'blocksize' in something not a structure or union
+   68 |                         memcpy(memblock.Base + (state.snapshot * state.blocksize), (size_t)size, sizeof(size_t));
+      |                                                                       ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:68:84: error: passing argument 2 of 'memcpy' makes pointer from integer without a cast [-Wint-conversion]
+   68 |                         memcpy(memblock.Base + (state.snapshot * state.blocksize), (size_t)size, sizeof(size_t));
+      |                                                                                    ^~~~~~~~~~~~
+      |                                                                                    |
+      |                                                                                    long long unsigned int
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:4:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/memory.h:7:30: note: expected 'void *' but argument is of type 'long long unsigned int'
+    7 | void memcpy(void *dst, void *src, size_t len);
+      |                        ~~~~~~^~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:69:40: error: 'memblock' is a pointer; did you mean to use '->'?
+   69 |                         return memblock.Base + (state.snapshot * state.blocksize) + sizeof(size_t);
+      |                                        ^
+      |                                        ->
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:69:54: error: request for member 'snapshot' in something not a structure or union
+   69 |                         return memblock.Base + (state.snapshot * state.blocksize) + sizeof(size_t);
+      |                                                      ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:69:71: error: request for member 'blocksize' in something not a structure or union
+   69 |                         return memblock.Base + (state.snapshot * state.blocksize) + sizeof(size_t);
+      |                                                                       ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c: In function 'flatPageFree':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:75:37: warning: dereferencing 'void *' pointer
+   75 |         bitmapMark(memory, (size_t)(*(memory - sizeof(size_t))));
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:75:28: error: invalid use of void expression
+   75 |         bitmapMark(memory, (size_t)(*(memory - sizeof(size_t))));
+      |                            ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:75:20: error: passing argument 1 of 'bitmapMark' makes integer from pointer without a cast [-Wint-conversion]
+   75 |         bitmapMark(memory, (size_t)(*(memory - sizeof(size_t))));
+      |                    ^~~~~~
+      |                    |
+      |                    void *
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:36:24: note: expected 'uint64_t' {aka 'long long unsigned int'} but argument is of type 'void *'
+   36 | void bitmapMark(size_t index, uint32_t pages, bool value){
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:75:9: error: too few arguments to function 'bitmapMark'; expected 3, have 2
+   75 |         bitmapMark(memory, (size_t)(*(memory - sizeof(size_t))));
+      |         ^~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:36:6: note: declared here
+   36 | void bitmapMark(size_t index, uint32_t pages, bool value){
+      |      ^~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c: In function 'treeFree':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:80:9: error: unknown type name 'treeAllocHeader'
+   80 |         treeAllocHeader *block = memory - sizef(treeAllocHeader);
+      |         ^~~~~~~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:80:43: error: implicit declaration of function 'sizef'; did you mean 'size_t'? [-Wimplicit-function-declaration]
+   80 |         treeAllocHeader *block = memory - sizef(treeAllocHeader);
+      |                                           ^~~~~
+      |                                           size_t
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:80:49: error: 'treeAllocHeader' undeclared (first use in this function)
+   80 |         treeAllocHeader *block = memory - sizef(treeAllocHeader);
+      |                                                 ^~~~~~~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:81:14: error: request for member 'prev' in something not a structure or union
+   81 |         block->prev->next = NULL;
+      |              ^~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c: In function 'treeAlloc':
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:86:9: error: unknown type name 'BitmapAllocatorState'; did you mean 'BitMapAllocatorState'?
+   86 |         BitmapAllocatorState state = bitmapstate(0, 0, 0);
+      |         ^~~~~~~~~~~~~~~~~~~~
+      |         BitMapAllocatorState
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:86:38: error: incompatible types when initializing type 'int' using type 'BitMapAllocatorState'
+   86 |         BitmapAllocatorState state = bitmapstate(0, 0, 0);
+      |                                      ^~~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:87:9: error: unknown type name 'treeAllocHeader'
+   87 |         treeAllocHeader *base = (treeAllocHeader *)(lastAlloc - (lastAlloc % state.blockSize) + sizeof(size_t));
+      |         ^~~~~~~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:87:34: error: 'treeAllocHeader' undeclared (first use in this function)
+   87 |         treeAllocHeader *base = (treeAllocHeader *)(lastAlloc - (lastAlloc % state.blockSize) + sizeof(size_t));
+      |                                  ^~~~~~~~~~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:87:51: error: expected expression before ')' token
+   87 |         treeAllocHeader *base = (treeAllocHeader *)(lastAlloc - (lastAlloc % state.blockSize) + sizeof(size_t));
+      |                                                   ^
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:88:26: error: 'current' undeclared (first use in this function)
+   88 |         treeAllocHeader *current = base;
+      |                          ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c:90:41: error: 'curent' undeclared (first use in this function)
+   90 |         current->next = current->base + curent->limit;
+      |                                         ^~~~~~
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdprogram.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c:1:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.h:5:10: fatal error: ./Boot/stage2/localfile/stdfile.h: No such file or directory
+    5 | #include "./Boot/stage2/localfile/stdfile.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\generic\CRC32\CCITT32-ANSI\CRC32.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.CRC32.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\generic\CRC32\CCITT32-ANSI\CRC32.h:3,
+                 from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\generic\CRC32\CCITT32-ANSI\CRC32.c:1:
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src/kernel/lib32/generic/standard.h:26:9: warning: 'NULLSTR' redefined
+   26 | #define NULLSTR(s) (char[s]){0}
+      |         ^~~~~~~
+In file included from C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src/kernel/lib32/generic/standard.h:5:
+C:/Users/olusa/OneDrive/Documents/GitHub/BlockyOS/src/kernel/lib32/stdmemory/string.h:20:9: note: this is the location of the previous definition
+   20 | #define NULLSTR {0}
+      |         ^~~~~~~
+nasm -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\16bit\stdgraphics.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.stdgraphics.o -d __DEBUG=
+nasm -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdout.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.stdout.o -d __DEBUG=
+nasm -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\VGA.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.VGA.o -d __DEBUG=
+nasm -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\IO\IO.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.IO.o -d __DEBUG=
+nasm -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\Interrupt.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.Interrupt.o -d __DEBUG=
+nasm -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT\GDT.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.GDT.o -d __DEBUG=
+nasm -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.InterruptRoutines.o -d __DEBUG=
+nasm -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16\stdmem.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.stdmem.o -d __DEBUG=
+nasm -f elf32 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.stdprogram.o -d __DEBUG=
+./compile/toolchain/prebuild/gcc.ps1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.GDT.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.Interrupt.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.InterruptRoutines.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.IO.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.stdgraphics.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.stdmem.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.stdout.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.stdprogram.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\asm.VGA.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c._int.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.CRC32.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.interrupt.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.InterruptRoutines.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.IRQ.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.math.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.memory.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdgraphics.letter.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdgraphics.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdio.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdkernel.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdmem.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdprogram.o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.string.o --strip-all -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\boot2.bin -T C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\Legacy\stage2\boot.ld -Map C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\boot2map.log -m elf_i386 -L C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0 -l gcc
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: cannot find C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdmem.o: No such file or directory
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\prebuild\i686-elf\bin\i686-elf-ld.exe: cannot find C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\c.stdprogram.o: No such file or directory
+
+GCC link failed
+Linked: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-10-43\objs\boot2.bin

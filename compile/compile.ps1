@@ -47,13 +47,22 @@ config_interface: win32config
 magic_break: enabled=1
 panic: action=ask
 log: "
-function Log-Write {
+function Log-Write{
     param(
         [string]$Msg,
         [System.ConsoleColor]$color
-        )
-    Write-Host $Msg -ForegroundColor $color
-    Add-Content -Path $Log -Value $Msg
+    )
+    $clean = ""
+    $esc=[char]27
+    if($color){
+        Write-Host $Msg -ForegroundColor $color
+        $clean = $Msg -replace "$esc(?:\[[0-9;?]*[ -/]*[@-~]|][^\a]*\a|P.*?$esc\\|X.*?$esc\\|\^.*?$esc\\|_.*?$esc\\|[@-Z\\-_])",""
+    }else{
+        Write-Host $Msg
+        $clean = $Msg
+    }
+    if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
+    Add-Content -Path $Log -Value $clean
 }
 
 function Img-Push {
@@ -227,7 +236,7 @@ function Asm-Compile{
 
                             # Produce an object/ELF. Use -nostdlib/-ffreestanding if building freestanding code.
                             Log-Write -color Yellow "GCC: $GCC $file -o $outElf -nostdlib"
-                            $gccOut = & $GCC $file "-o" $outElf 2>&1 "-nostdlib"
+                            $gccOut = & $GCC -Params @($file, "-o", $outElf, "-nostdlib") 2>&1
                             if ($LASTEXITCODE -ne 0) {
                                 Log-Write -color Red "GCC failed for $($file): $($gccOut)"
                                 break
