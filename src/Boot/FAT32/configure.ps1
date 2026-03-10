@@ -20,10 +20,10 @@ PARAMETERS
 #>
 
 param(
-    [Parameter(Mandatory=$false)][string]$EmuScript = "./FAT32.ps1",
-    [Parameter(Mandatory=$false)][string]$ImageFile = "./FAT32.iso",
+    [Parameter(Mandatory=$false)][string]$EmuScript = Join-Path (Get-Location) "src/Boot/FAT32/FAT32.ps1",
+    [Parameter(Mandatory=$false)][string]$ImageFile = Join-Path (Get-Location) "src/Boot/FAT32/FAT32.iso",
     [Parameter(Mandatory=$true)][string]$SourceDir,
-    [Parameter(Mandatory=$true)][string]$TargetPath,
+    [Parameter(Mandatory=$false)][string]$TargetPath = "/",
     [int]$ReservedBytes = 65536,
     [switch]$DryRun
 )
