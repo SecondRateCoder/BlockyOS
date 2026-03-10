@@ -4,7 +4,8 @@ OUTPUT_FORMAT("binary")
 SECTIONS{
     .data : {
         *(.UEFIPartitionTable*)
-        /* *(.data*) */
+        *(.data*)
+        *(.rodata*)
     }
     
     /DISCARD/ : {*(.*)}
