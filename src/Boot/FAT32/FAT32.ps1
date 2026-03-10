@@ -1,8 +1,8 @@
 param(
     [Parameter(Mandatory=$false)]
-    [string]$File = "./FAT32.iso",      # FAT32 image
+    [string]$File = Join-Path (Get-Location) "/src/Boot/FAT32/FAT32.iso",      # FAT32 image
     [Parameter(Mandatory=$true)]
-    [string]$Target,    # Path inside FAT32
+    [string]$Target = "/",    # Path inside FAT32
     [Parameter(Mandatory=$false)]
     [string]$Arg,       # Extra argument
     [Parameter(Mandatory=$true)]
