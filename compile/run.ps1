@@ -60,6 +60,17 @@ log: $($BOCHSLOG)
 iodebug: all_rings=1
 "
 
+function UEFI-Populate{
+	param(
+		[string]$PartitionBlob,
+		[string[]]$Partitions,
+		[string]$DiskBytes
+	)
+	Img-Push -data (Get-Content $PartitonBlob)
+	foreach($blob in $Partitions){Img-Push -data (Get-Content $blob)}
+	Img-Push -data (Get-Content $DiskBytes)
+}
+
 function Log-Write{
     param(
         [string]$Msg,
