@@ -13,6 +13,11 @@ param(
     [int]$Reserved,
     [Parameter(Mandatory=$false)]
     [int]$Hidden,
+    [switch]$emudebug,
+    [Parameter(Mandatory=$false)]
+    [string]$EXEdebug,
+    [Parameter(Mandatory=$true)]
+    [string]$prefix = (Get-Date -Format "yyyy-MM-dd-ss").ToString(),
     [Parameter(Mandatory=$false)]
     [int]$SectorSize = 512
 )
@@ -24,24 +29,34 @@ $BOCHS = ${env:bochs}
 $WCC = "wcc"
 # $ST1 = Join-Path (Get-Location) "Boot\stage1\st1.ps1"
 $STDLIB = Join-Path (Get-Location) "\src\kernel\lib32\stdkernel\stdkernel.ps1"
-
-$Date = (Get-Date -Format "yyyy-MM-dd-ss")
-$Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
-$Image = Join-Path $Build ("floppy-" + $Date + ".img")
+$Build = Join-Path (Get-Location) ("Build\Build-" + $prefix)
+$Image = Join-Path $Build ("floppy-" + $prefix + ".img")
 $BroadImageFile = Join-Path (Get-Location) "Build\temp\floppy.img"
 $Objdir = Join-Path $Build "objs"
 
 $BOCHSRC = Join-Path $Build ".bochsrc"
 $BOCHSLOG = Join-Path $Build "bochs.log"
-$debuglog = Join-Path $Build "debug.log"
+$debuglog = Join-Path $Build "emudebug.log"
 $debuggerlog = Join-Path $Build "debugger.log"
-
 $bochsPath = $env:bochs
 $bochsDir  = Split-Path $bochsPath
+
+$args_qemu = @(
+    "-drive", "if=pflash,format=raw,readonly=on,file=$(Join-Path (Get-Location) 'compile/toolchain/qemu/OVMF_CODE_4M.fd')",
+    "-drive", "if=pflash,format=raw,file=$(Join-Path (Get-Location) 'compile/toolchain/qemu/OVMF_VARS_4M.fd')"
+    "-fda", "$($Image)", 
+    "-vga", "cirrus", "-full-screen"
+    "-cpu", "host", "-m", "1024"
+    "-chardev", "file,id=dbg,path=$($debuglog)", 
+    "-dump-vmstate", "$(Join-Path $Build "qemudump.json")"
+    "-device", "isa-debugcon,iobase=0xE9,chardev=dbg", "-usb",
+    "-debugcon", "stdio",
+    "-d", "guest_errors,unimp,pcall,io"
+)
 $BOCHSFILE = "
 cpu: model=core2_penryn_t9600, count=1, reset_on_triple_fault=1, ips=10000000
 boot: disk
-vgaromimage: file=$(Get-ChildItem -Path $bochsDir -Recurse -Filter 'VGABIOS-lgpl-latest-cirrus.bin' | Select-Object -ExpandProperty FullName)
+vgaromimage: file=$(Join-Path (Get-Location) 'compile/toolchain/qemu/OVMF_CODE_4M.fd')
 romimage: file=$(Get-ChildItem -Path $bochsDir -Recurse -Filter 'BIOS-bochs-latest*' | Select-Object -ExpandProperty FullName)
 memory: guest=1024, host=1024
 ata0-master: type=disk, path=`"$($Image)`", mode=flat, status=inserted, translation=lba
@@ -85,8 +100,14 @@ function Log-Write{
         Write-Host $Msg
         $clean = $Msg
     }
-    if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
-    Add-Content -Path $debuglog -Value $clean
+    $success = $false
+    do{
+        $success = $true
+        try{
+            if(-not (Test-Path $debuglog)){New-Item $Log -ItemType File}
+            Add-Content -Path $debuglog -Value $clean
+        }catch{$success = $true}
+    }while($success -eq $false)
 }
 
 
@@ -216,7 +237,7 @@ function Compile-Watcom{
 
 if($clear -eq $true){Remove-Item (Join-Path (Get-Location) "Build") -Force -Recurse}
 (Prepare)
-(& "$(Join-Path (Get-Location) 'src/Boot/compile.ps1')" -Date $Date -NASM $NASM -GCC $GCC -ProxyFileSystem @{})
+(& "$(Join-Path (Get-Location) 'src/Boot/compile.ps1')" -prefix $prefix -NASM $NASM -GCC $GCC -ProxyFileSystem @{})
 
 $cc = 0;
 Handle-PadToken -token "\x$($Reserved.ToString())"
@@ -237,16 +258,16 @@ $padding = [Math]::Abs(($SectorSize * $SectorNum) - (Get-Item $Image).Length)
 if(((Get-Item $Image).Length % $SectorSize) -ne 0){(Img-Pad)}
 if($broadimage){Copy-Item -Path $Image -Destination $BroadImageFile}
 if($run){
-    $args_qemu = @(
-        "-fda", "$($Image)", 
-        "-vga", "cirrus", "-full-screen"
-        "-cpu", "host", "-m", "1024"
-        "-chardev", "file,id=dbg,path=$($debuglog)", 
-        "-dump-vmstate", "$(Join-Path $Build "qemudump.json")"
-        "-device", "isa-debugcon,iobase=0xE9,chardev=dbg", "-usb"
-    )
     Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ')"
-    & $QEMU @args_qemu
+    $QEMUOUT = ""
+    if($emudebug -and $EXEdebug -and (Test-Path $EXEdebug)){
+        $QEMUOUT = & $QEMU @args_qemu "-S" "-gdb" "tcp::1234"
+        $GDBOUT = & gdb $EXEdebug
+        Log-Write "$($GDBOUT -join "`n")"
+        $GDBOUT = & target remote localhost:1234
+        Log-Write "$($GDBOUT -join "`n")"
+    }else{$QEMUOUT = & $QEMU @args_qemu}
+    Log-Write "$($QEMUOUT -join "`n")"
 }elseif($runbochs){
     $env:Path += $Build
     Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $Build "\bx_enh_dbg.ini")

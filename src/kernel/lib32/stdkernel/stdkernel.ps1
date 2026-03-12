@@ -77,7 +77,7 @@ $cLines += "//      **AUTO-GENERATED SCRIPT**
 #include `"InterruptRoutines.h`"
 
 void InitIDT(idtENTRY_t *IDT, uint16_t limit, uint16_t CodeSegment){
-    idtDESC_t temp = {.table = (uint32_t)IDT, .limit = limit};
+    idtDESC_t temp = {.table = IDT, .limit = limit};
     LoadIDT(&temp);
 ".TrimEnd()
 

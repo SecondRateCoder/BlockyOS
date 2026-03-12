@@ -27,7 +27,7 @@
         },
         {
             "name": "GCC",
-            "intelliSenseMode": "windows-clang-x86",
+            "intelliSenseMode": "gcc-x64",
             "defines": [
                 "_DEBUG",
                 "UNICODE",
@@ -36,15 +36,23 @@
             "compilerPath": "${workspaceFolder}\\compile\\toolchain/prebuild\\i686-elf\\bin\\i686-elf-gcc-15.2.0.exe",
             "compilerArgs": [
                 "-nostdlib",
-                "-m32",
+                "-ffreestanding",
+                "-fshort-wchar",
+                "-mno-red-zone",
+                "-fno-stack-protector",
+                "-fpic",
+                "-m64",
                 "-std=c99",
                 "-fno-leading-underscore",
                 "-ffreestanding",
-                "-fdiagnostics-color=always",
-                "-I",
-                "${workspaceFolder}\\src\\"
+                "-fdiagnostics-color=always"
             ],
-            "cStandard": "c99"
+            "cStandard": "c99",
+            "includePath": [
+                "${workspaceFolder}/",
+                "${workspaceFolder}/src/",
+                "${workspaceFolder}/compile/toolchain/posix-uefi/"
+            ]
         },
         {
             "name": "GCC(Default)",

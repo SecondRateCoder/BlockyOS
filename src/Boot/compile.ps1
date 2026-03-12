@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory=$true)]
-    [string]$Date,
+    [string]$prefix,
     [Parameter(Mandatory=$true)]
     [string]$NASM,
     [Parameter(Mandatory=$true)]
@@ -13,22 +13,17 @@ param(
     [string[]]$ProxyFileSystem
 )
 
-$Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
+$Build = Join-Path (Get-Location) ("Build\Build-" + $prefix)
 $Log = Join-Path $Build ("logcompile.txt")
 $Objdir = Join-Path $Build "\objs\"
 $PROXYFS = Join-Path $Objdir "\proxy\file-system\"
+if(-not (Test-Path $PROXYFS)){New-Item $PROXYFS -ItemType Directory}
 $SRC = Join-Path (Get-Location) '/src/Boot/'
 $FAT32CONFIG = "$($SRC)/FAT32/configure.ps1"
 $FAT32EMU = "$($SRC)/FAT32/FAT32.ps1"
 
 $LST1BIN = Join-Path -Path $Objdir "boot1.bin"
 $LST2BIN = Join-Path -Path $Objdir "boot2.bin"
-
-if(-not (Test-Path (Join-Path -Path $Objdir "UEFI/table.json"))){
-    New-Item (Join-Path -Path $Objdir "UEFI/") -ItemType Directory
-    New-Item (Join-Path -Path $Objdir "UEFI/table.json") -ItemType File
-}
-[hashtable]$UEFIBINARIESTABLE = Get-Item (Join-Path -Path $Objdir "UEFI/table.json") | ConvertFrom-Json -AsHashTable
 
 function Log-Write{
     param(
@@ -44,8 +39,14 @@ function Log-Write{
         Write-Host $Msg
         $clean = $Msg
     }
-    if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
-    Add-Content -Path $Log -Value $clean
+    $success = $false
+    do{
+        $success = $true
+        try{
+            if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
+            Add-Content -Path $Log -Value $clean
+        }catch{$success = $true}
+    }while($success -eq $false)
 }
 
 function Generate-PFS{
@@ -74,9 +75,15 @@ function Generate-PFS{
     }
 }
 
-(& "$($SRC)/Legacy/stage1/st1.ps1" -Date $Date -NASM $NASM -GCC $GCC)
-(& "$($SRC)/Legacy/stage2/st2.ps1" -Date $Date -NASM $NASM -GCC $GCC)
-(& "$($SRC)/UEFI/UEFI.ps1" -Date $Date -NASM $NASM -GCC $GCC)
+(& "$($SRC)/Legacy/stage1/st1.ps1" -prefix $prefix -NASM $NASM)
+(& "$($SRC)/Legacy/stage2/st2.ps1" -prefix $prefix -NASM $NASM -GCC $GCC)
+(& "$($SRC)/UEFI/UEFI.ps1" -prefix $prefix -NASM $NASM -GCCPS1 $GCC)
+if(-not (Test-Path (Join-Path -Path $Objdir "UEFI/table.json"))){
+    New-Item (Join-Path -Path $Objdir "UEFI/") -ItemType Directory
+    New-Item (Join-Path -Path $Objdir "UEFI/table.json") -ItemType File
+}
+[hashtable]$UEFIBINARIESTABLE = Get-Item (Join-Path -Path $Objdir "UEFI/table.json") | ConvertFrom-Json -AsHashTable
+
 
 (Generate-PFS -PFSDesc $ProxyFileSystem)
 $UEFIProxy = @()

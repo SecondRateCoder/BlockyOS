@@ -34,3 +34,5 @@ SECTIONS{
         *(.gnu*)
     }
 }
+
+__BITMAP_RESERVED = 512;

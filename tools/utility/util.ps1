@@ -28,7 +28,14 @@ function Log-Write{
         $clean = $Msg
     }
     if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
-    Add-Content -Path $Log -Value $clean
+    $success = $false
+    do{
+        $success = $true
+        try{
+            if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
+            Add-Content -Path $Log -Value $clean
+        }catch{$success = $true}
+    }while($success -eq $false)
 }
 
 $OBJFILE = @()

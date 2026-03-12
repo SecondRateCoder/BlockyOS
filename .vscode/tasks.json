@@ -32,7 +32,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-File",
-                "${workspaceFolder}//compile//intermid.ps1"
+                "${workspaceFolder}//compile//intermid.ps1",
             ],
             "presentation": {
                 "echo": true,

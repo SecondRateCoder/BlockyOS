@@ -24,12 +24,12 @@ $LD = "ld"
 $QEMU = "C:\msys64\ucrt64\bin\qemu-system-x86_64.exe"
 $BOCHS = "C:\Users\olusa\Bochs-3.0\bochs.exe"
 
-$Date = (Get-Date -Format "yyyy-MM-dd-ss")
-$Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
-$Image = Join-Path $Build ("floppy-" + $Date + ".img")
+$prefix = (Get-Date -Format "yyyy-MM-dd-ss")
+$Build = Join-Path (Get-Location) ("Build\Build-" + $prefix)
+$Image = Join-Path $Build ("floppy-" + $prefix + ".img")
 $BroadImageFile = Join-Path (Get-Location) "Build\temp\floppy.img"
 $Objdir = Join-Path $Build "objs"
-$Log = Join-Path $Build ("log-" + $Date + ".txt")
+$Log = Join-Path $Build ("log-" + $prefix + ".txt")
 
 $BOCHSRC = Join-Path $Build ".bochsrc"
 $BOCHSLOG = Join-Path $Build "bochs.log"
@@ -61,8 +61,14 @@ function Log-Write{
         Write-Host $Msg
         $clean = $Msg
     }
-    if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
-    Add-Content -Path $Log -Value $clean
+    $success = $false
+    do{
+        $success = $true
+        try{
+            if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
+            Add-Content -Path $Log -Value $clean
+        }catch{$success = $true}
+    }while($success -eq $false)
 }
 
 function Img-Push {

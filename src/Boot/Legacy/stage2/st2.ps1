@@ -1,5 +1,5 @@
 param(
-	[string]$Date,
+	[string]$prefix,
 	[string]$NASM,
 	[string]$GCC,
 	[string]$WLINK
@@ -8,10 +8,10 @@ param(
 # wcc -mm -zc -s -fo=main.obj main.c
 # wlink format raw name program.bin file main.obj
 
-$Build = Join-Path (Get-Location) ("Build/Build-" + $Date)
-# $Image = Join-Path $Objdir ("boot2-$($Date).img")
+$Build = Join-Path (Get-Location) ("Build/Build-" + $prefix)
+# $Image = Join-Path $Objdir ("boot2-$($prefix).img")
 $Objdir = Join-Path $Build "objs"
-$Log = Join-Path $Build ("logst2.txt")
+$Log = Join-Path $Build ("logst2.log")
 $ST2BIN = Join-Path -Path $Objdir "boot2.bin"
 $MAPFILE = Join-Path -Path $Build "boot2map.log"
 
@@ -37,17 +37,19 @@ function Log-Write{
         [string]$Msg,
         [System.ConsoleColor]$color
     )
-    $clean = ""
+    # $clean = $Msg -replace "$esc(?:\[[0-9;?]*[ -/]*[@-~]|][^\a]*\a|P.*?$esc\\|X.*?$esc\\|\^.*?$esc\\|_.*?$esc\\|[@-Z\\-_])",""
     $esc=[char]27
-    if($color){
-        Write-Host $Msg -ForegroundColor $color
-        $clean = $Msg -replace "$esc(?:\[[0-9;?]*[ -/]*[@-~]|][^\a]*\a|P.*?$esc\\|X.*?$esc\\|\^.*?$esc\\|_.*?$esc\\|[@-Z\\-_])",""
-    }else{
-        Write-Host $Msg
-        $clean = $Msg
-    }
-    if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
-    Add-Content -Path $Log -Value $clean
+    $clean = $Msg -replace "$($esc)\[[0-9;]*[A-Za-z]",""
+    if($color){Write-Host $Msg -ForegroundColor $color
+    }else{Write-Host $Msg}
+    $success = $false
+    do{
+        $success = $true
+        try{
+            if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
+            Add-Content -Path $Log -Value $clean
+        }catch{$success = $true}
+    }while($success -eq $false)
 }
 
 
@@ -123,22 +125,20 @@ $COMPILECLI = @(
 )
 
 # Order files
-Log-Write -Msg "Boot2:" -color Blue
-(Get-ChildItem -Path (Join-Path (Get-Location) "src/boot/stage2/") -Include @("*.c", "*.asm") -Recurse -Force -File)|ForEach-Object{
-    Log-Write -Msg " $($_)," -color Blue
-    $COMBINED += $_.FullName
-}
-Log-Write -Msg "lib32:" -color Blue
-(Get-ChildItem -Path (Join-Path (Get-Location) "src/kernel/lib32/") -Include @("*.c", "*.asm") -Recurse -Force -File)|ForEach-Object{
-	if($_.BaseName -notin $EXCLUDE){
-		Log-Write -Msg " $($_)," -color Blue
-		$COMBINED += $_.FullName
-	}
+Log-Write -Msg "Files:" -color Blue
+(Get-ChildItem -Path @((Join-Path (Get-Location) "src/Boot/Legacy/stage2/"), (Join-Path (Get-Location) "src/kernel/lib32/")) -Include @("*.c", "*.asm") -Recurse -Force -File)|ForEach-Object{
+    if($_ -ilike "*src/Boot/Legacy/stage2/*"){
+        Log-Write -Msg " $($_)," -color Blue
+        $COMBINED += $_.FullName
+    }elseif($EXCLUDE -notcontains $_.BaseName){
+        Log-Write -Msg " $($_)," -color Blue
+        $COMBINED += $_.FullName
+    }
 }
 
 Log-Write -Msg "Sorted:" -color Blue
 (Sort-ByForceOrder -Files $COMBINED -ForceOrder $ForceOrder)|ForEach-Object{
-    if($_ -match '.asm'){
+    if($_ -match 'asm'){
         Log-Write -Msg " $($_)," -color Blue
         $BOOT2ASMFILES += $_
         $BOOT2OFILES += (Join-Path -Path $Objdir "asm.$([System.IO.Path]::GetFileNameWithoutExtension($_)).o")
@@ -150,13 +150,11 @@ Log-Write -Msg "Sorted:" -color Blue
     }
 }
 
-# Compile all 32-bit files
-$cc = 0
+# Compile all .c files
 $BOOT2CFILES|ForEach-Object{
 	Log-Write -Msg "$($GCC) -c $($_) -o $(Join-Path -Path $Objdir "c.$((Get-Item -Path $_).BaseName).o") $($COMPILECLI -join ' ')" -color Blue
 	$COMPILEOUT = (& $GCC -Params @("-c", $_, "-o", (Join-Path -Path $Objdir "c.$((Get-Item -Path $_).BaseName).o"), $COMPILECLI)) 2>&1
-	$COMPILEOUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
-	$cc++
+	Log-Write "$($COMPILEOUT -join "`n")"
 }
 
 # Compile .asm files
@@ -232,7 +230,7 @@ $GLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
 
 if ($LASTEXITCODE -ne 0) {
 	Log-Write -Msg "GCC link failed" -Color Red
-	# throw "Linking failed..."
+	throw "Linking failed..."
 }
 Log-Write -Msg "Linked: $($ST2BIN)" -Color Green
 

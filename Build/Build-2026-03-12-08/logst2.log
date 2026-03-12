@@ -1,0 +1,174 @@
+Files:
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\Legacy\stage2\boot32.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\Legacy\stage2\bootstart.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\generic\CRC32\CCITT32-ANSI\CRC32.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\16bit\stdgraphics.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.letter.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdout.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\VGA.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT\GDT.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\Interrupt.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\IO\IO.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\int\_int.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\math.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16\stdmem.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\Paging.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem32.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\string.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c,
+Sorted:
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\math.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\int\_int.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\string.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmemory\memory.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\16bit\stdgraphics.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdgraphics\32bit\stdgraphics.letter.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdio.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\stdout.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdio\VGA.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\IO\IO.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\stdkernel.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\InterruptRoutines.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\IRQ\IRQ.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\interrupt.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\Interrupt\Interrupt.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdkernel\GDT\GDT.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\Paging.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\16\stdmem.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem32.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmem\32\stdmem.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdprogram\stdprogram.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\generic\CRC32\CCITT32-ANSI\CRC32.c,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\Legacy\stage2\bootstart.asm,
+ C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\Legacy\stage2\boot32.c,
+./compile/toolchain/prebuild/gcc.ps1 -c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\kernel\lib32\stdmath\math.c -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-03-12-08\objs\c.math.o -nostdlib -m32 -z nostartfiles -fdiagnostics-color=always -fno-leading-underscore -ffreestanding -fno-stack-protector -I C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\ -std=c99 -D LOCALSTANDARDFILE -D LOCALFILE
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s: Assembler messages:
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:3: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:3: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:5: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:13: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:13: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:14: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:14: Error: junk at end of line, first unrecognized character is `b'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:16: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:24: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:24: Error: junk at end of line, first unrecognized character is `b'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:25: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:25: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:27: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:65: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:65: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:66: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:66: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:68: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:79: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:112: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:122: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:122: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:123: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:123: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:125: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:167: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:167: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:168: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:168: Error: junk at end of line, first unrecognized character is `p'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:170: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:184: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:193: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:199: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:199: Error: junk at end of line, first unrecognized character is `p'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:200: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:200: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:202: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:258: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:262: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:272: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:272: Error: junk at end of line, first unrecognized character is `f'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:273: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:273: Error: junk at end of line, first unrecognized character is `p'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:275: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:325: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:325: Error: junk at end of line, first unrecognized character is `p'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:327: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:327: Error: junk at end of line, first unrecognized character is `p'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:329: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:366: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:366: Error: junk at end of line, first unrecognized character is `p'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:368: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:368: Error: junk at end of line, first unrecognized character is `p'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:370: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:449: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:450: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:466: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:476: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:486: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:486: Error: junk at end of line, first unrecognized character is `p'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:489: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:489: Error: junk at end of line, first unrecognized character is `l'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:490: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:490: Error: junk at end of line, first unrecognized character is `l'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:495: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:495: Error: junk at end of line, first unrecognized character is `s'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:497: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:505: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:505: Error: junk at end of line, first unrecognized character is `s'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:506: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:506: Error: junk at end of line, first unrecognized character is `s'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:508: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:564: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:564: Error: junk at end of line, first unrecognized character is `s'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:566: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:566: Error: junk at end of line, first unrecognized character is `s'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:568: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:572: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:573: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:578: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:578: Error: junk at end of line, first unrecognized character is `s'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:580: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:580: Error: junk at end of line, first unrecognized character is `i'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:582: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:616: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:616: Error: junk at end of line, first unrecognized character is `i'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:618: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:618: Error: junk at end of line, first unrecognized character is `a'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:620: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:633: Error: invalid instruction suffix for `pop'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:635: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:635: Error: junk at end of line, first unrecognized character is `a'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:637: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:637: Error: junk at end of line, first unrecognized character is `a'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:639: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:645: Error: invalid instruction suffix for `pop'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:647: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:647: Error: junk at end of line, first unrecognized character is `a'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:649: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:649: Error: junk at end of line, first unrecognized character is `a'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:651: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:657: Error: invalid instruction suffix for `pop'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:659: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:659: Error: junk at end of line, first unrecognized character is `a'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:661: Warning: .type pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:661: Error: junk at end of line, first unrecognized character is `a'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:663: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:665: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:666: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:667: Error: invalid instruction suffix for `push'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:691: Error: invalid instruction suffix for `pop'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:692: Error: invalid instruction suffix for `pop'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:693: Error: invalid instruction suffix for `pop'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:694: Error: invalid instruction suffix for `pop'
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:696: Warning: .size pseudo-op used outside of .def/.endef: ignored.
+C:\Users\PC\AppData\Local\Temp\ccVByanh.s:696: Error: junk at end of line, first unrecognized character is `a'

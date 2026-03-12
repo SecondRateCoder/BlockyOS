@@ -1,13 +1,14 @@
 param(
-    [string]$Date,
-    [string]$NASM,
-    [string]$GCC
+    [Parameter(Mandatory=$true)]
+    [string]$prefix,
+    [Parameter(Mandatory=$true)]
+    [string]$NASM
 )
 
-$Build = Join-Path (Get-Location) ("Build\Build-" + $Date)
-# $Image = Join-Path $Build ("floppy-" + $Date + ".img")
+$Build = Join-Path (Get-Location) ("Build\Build-" + $prefix)
+# $Image = Join-Path $Build ("floppy-" + $prefix + ".img")
 $Objdir = Join-Path $Build "\objs\"
-$Log = Join-Path $Build ("logst1.txt")
+$Log = Join-Path $Build ("logst1.log")
 # $ST1OBJ = Join-Path -Path $Objdir "boot1.o"
 $ST1BIN = Join-Path -Path $Objdir "boot1.bin"
 # $LINKERSCRIPT = Join-Path (Get-Location) "src/Boot/stage1/boot.ld"
@@ -28,8 +29,14 @@ function Log-Write{
         Write-Host $Msg
         $clean = $Msg
     }
-    if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
-    Add-Content -Path $Log -Value $clean
+    $success = $false
+    do{
+        $success = $true
+        try{
+            if(-not (Test-Path $Log)){New-Item $Log -ItemType File}
+            Add-Content -Path $Log -Value $clean
+        }catch{$success = $true}
+    }while($success -eq $false)
 }
 
 # function Img-Push{
@@ -58,9 +65,6 @@ function Log-Write{
 Log-Write -Msg "$($NASM) -f bin $($FILE) -o $($ST1BIN)" -color Blue
 
 $NASMOUT = (& $NASM "-f" "bin" $FILE "-o" $ST1BIN) 2>&1
-$NASMOUT|ForEach-Object{
-    if($_ -match 'error'){Log-Write -Msg $_ -color Red}
-    else{Log-Write -Msg $_ -color Blue}
-}
+Log-Write "$($NASMOUT -join "`n")"
 
 # Img-Push -data (Get-Content -Path $ST1BIN -Raw -Encoding Byte)
