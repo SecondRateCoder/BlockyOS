@@ -242,7 +242,7 @@ function Asm-Compile{
 
                             # Produce an object/ELF. Use -nostdlib/-ffreestanding if building freestanding code.
                             Log-Write -color Yellow "GCC: $GCC $file -o $outElf -nostdlib"
-                            $gccOut = & $GCC -Params @($file, "-o", $outElf, "-nostdlib") 2>&1
+                            $gccOut = & $GCC $file "-o" $outElf "-nostdlib" 2>&1
                             if ($LASTEXITCODE -ne 0) {
                                 Log-Write -color Red "GCC failed for $($file): $($gccOut)"
                                 break
@@ -366,15 +366,6 @@ function Asm-Compile{
         }
     }
 }
-
-# ...existing code...
-
-# // filepath: c:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Compiles\compile.ps1
-# ...existing code...
-
-# Replace the separate "Pushing compiled data" loop and the standalone ExtraFiles handling
-# with a single call — Asm-Compile now handles compiled outputs and ExtraFiles.
-
 
 # Main Logic
 (Prepare)

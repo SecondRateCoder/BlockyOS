@@ -6,13 +6,9 @@ param(
 )
 
 $Build = Join-Path (Get-Location) ("Build\Build-" + $prefix)
-# $Image = Join-Path $Build ("floppy-" + $prefix + ".img")
 $Objdir = Join-Path $Build "\objs\"
-$Log = Join-Path $Build ("logst1.log")
-# $ST1OBJ = Join-Path -Path $Objdir "boot1.o"
+$Log = Join-Path $Build ("st1.log")
 $ST1BIN = Join-Path -Path $Objdir "boot1.bin"
-# $LINKERSCRIPT = Join-Path (Get-Location) "src/Boot/stage1/boot.ld"
-# $MAPFILE = Join-Path -Path $Build "gcc_boot1.map"
 $FILE = Join-Path -Path (Get-Location) "src\boot\Legacy\stage1\boot.asm"
 
 function Log-Write{

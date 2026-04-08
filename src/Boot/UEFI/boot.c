@@ -1,4 +1,4 @@
-#include "Partition/boot-record.h"
+#include "standard.h"
 
 
 efi_status_t EFIAPI efi_main(efi_handle_t handle, efi_system_table_t *sysTable){

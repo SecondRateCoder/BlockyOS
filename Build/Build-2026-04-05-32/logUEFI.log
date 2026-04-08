@@ -1,0 +1,23 @@
+Stale source detected for C:\Users\PC\Documents\GitHub\BlockyOS\src\Boot\UEFI\boot.c. source=2026-04-04T15:58:12.2898541Z, stored=04/04/2026 15:58:12, delta=+3600.290 sec
+gcc -c C:\Users\PC\Documents\GitHub\BlockyOS\src\Boot\UEFI\boot.c -o C:\Users\PC\Documents\GitHub\BlockyOS\Build\Build-2026-04-05-32\objs\UEFI.c.boot.o -I C:\Users\PC\Documents\GitHub\BlockyOS/src/ -I C:\Users\PC\Documents\GitHub\BlockyOS\compile\toolchain\posix-uefi\ -I C:\Users\PC\Documents\GitHub\BlockyOS\compile\toolchain\posix-uefi\/uefi -nostdlib -m64 -fdiagnostics-color=always -fshort-wchar -fno-strict-aliasing -ffreestanding -fno-stack-protector -fno-stack-check -Wno-builtin-declaration-mismatch -fpic -fPIC -DHAVE_USE_MS_ABI -mno-red-zone -maccumulate-outgoing-args
+[01m[Kgcc.exe:[m[K [01;35m[Kwarning: [m[K$_.FullName,: linker input file unused because linking not done
+[01m[Kgcc.exe:[m[K [01;31m[Kerror: [m[K$_.FullName,: linker input file not found: No such file or directory
+[01m[Kgcc.exe:[m[K [01;35m[Kwarning: [m[K'-o': linker input file unused because linking not done
+[01m[Kgcc.exe:[m[K [01;31m[Kerror: [m[K'-o': linker input file not found: No such file or directory
+[01m[Kgcc.exe:[m[K [01;35m[Kwarning: [m[KC:\Users\PC\Documents\GitHub\BlockyOS\Build\Build-2026-04-05-32\objs\UEFI.c.boot.o: linker input file unused because linking not done
+[01m[Kgcc.exe:[m[K [01;31m[Kerror: [m[KC:\Users\PC\Documents\GitHub\BlockyOS\Build\Build-2026-04-05-32\objs\UEFI.c.boot.o: linker input file not found: No such file or directory
+Building POSIX-UEFI runtime library...
+'uname' is not recognized as an internal or external command,
+operable program or batch file.
+mingw32-make: *** No rule to make target 'crt_x86.o', needed by 'all'.  Stop.
+Failed to build POSIX-UEFI runtime library.
+Stale source detected for C:\Users\PC\Documents\GitHub\BlockyOS\src\Boot\UEFI\boot.c. source=2026-04-04T15:58:12.2898541Z, stored=04/04/2026 15:58:12, delta=+3600.290 sec
+gcc -c C:\Users\PC\Documents\GitHub\BlockyOS\src\Boot\UEFI\boot.c -o C:\Users\PC\Documents\GitHub\BlockyOS\Build\Build-2026-04-05-32\objs\UEFI.c.boot.o -I C:\Users\PC\Documents\GitHub\BlockyOS/src/ -I C:\Users\PC\Documents\GitHub\BlockyOS\compile\toolchain\posix-uefi\ -I C:\Users\PC\Documents\GitHub\BlockyOS\compile\toolchain\posix-uefi\/uefi -nostdlib -m32 -fdiagnostics-color=always -fshort-wchar -fno-strict-aliasing -ffreestanding -fno-stack-protector -fno-stack-check -Wno-builtin-declaration-mismatch -fpic -fPIC
+In file included from [01m[KC:\Users\PC\Documents\GitHub\BlockyOS\src\Boot\UEFI\standard.h:2[m[K,
+                 from [01m[KC:\Users\PC\Documents\GitHub\BlockyOS\src\Boot\UEFI\boot.c:1[m[K:
+[01m[KC:\Users\PC\Documents\GitHub\BlockyOS\compile\toolchain\posix-uefi/uefi/uefi.h:258:23:[m[K [01;31m[Kerror: [m[Kunknown type name '[01m[Kjmp_buf[m[K'
+  258 | extern uintn_t setjmp([01;31m[Kjmp_buf[m[K env) __attribute__((returns_twice));
+      |                       [01;31m[K^~~~~~~[m[K
+[01m[KC:\Users\PC\Documents\GitHub\BlockyOS\compile\toolchain\posix-uefi/uefi/uefi.h:259:21:[m[K [01;31m[Kerror: [m[Kunknown type name '[01m[Kjmp_buf[m[K'
+  259 | extern void longjmp([01;31m[Kjmp_buf[m[K env, uintn_t value) __attribute__((noreturn));
+      |                     [01;31m[K^~~~~~~[m[K

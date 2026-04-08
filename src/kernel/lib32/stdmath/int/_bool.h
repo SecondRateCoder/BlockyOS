@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c1ce86db58d2dd798107b827978e79a25f088fbea2e5ad2ad6fa78d9f7f97a07
-size 178
+#pragma once
+
+#ifndef _MY_BOOL_H
+#define _MY_BOOL_H
+
+#if defined(__cplusplus)
+  /* C++ already has bool */
+#else
+  #include <stdbool.h>
+#endif
+
+#endif /* _MY_BOOL_H */

@@ -49,4 +49,4 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-Build/Build-2026-02-18-53/floppy-2026-02-18-53.img
+*.img

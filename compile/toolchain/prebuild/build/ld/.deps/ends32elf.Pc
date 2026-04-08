@@ -1,0 +1,1 @@
+ends32elf.c: ../../binutils-2.42/ld/emulparams/nds32elf.sh ../../binutils-2.42/ld/scripttempl/nds32elf.sc ../../binutils-2.42/ld/scripttempl/misc-sections.sc ../../binutils-2.42/ld/scripttempl/DWARF.sc ../../binutils-2.42/ld/emultempl/elf.em ../../binutils-2.42/ld/emultempl/elf-generic.em ../../binutils-2.42/ld/emultempl/nds32elf.em ../../binutils-2.42/ld/emultempl/emulation.em

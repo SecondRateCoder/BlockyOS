@@ -1,0 +1,3 @@
+cris-opc.lo: ../../binutils-2.42/opcodes/cris-opc.c \
+ ../../binutils-2.42/opcodes/../include/opcode/cris.h
+../../binutils-2.42/opcodes/../include/opcode/cris.h:

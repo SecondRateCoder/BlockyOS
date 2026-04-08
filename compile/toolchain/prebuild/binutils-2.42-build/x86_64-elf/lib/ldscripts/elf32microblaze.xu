@@ -1,0 +1,124 @@
+/* Script for -Ur */
+/* Copyright (C) 2014-2024 Free Software Foundation, Inc.
+   Copying and distribution of this script, with or without modification,
+   are permitted in any medium without royalty provided the copyright
+   notice and this notice are preserved.  */
+OUTPUT_FORMAT("elf32-microblaze", "elf32-microblaze",
+	      "elf32-microblazeel")
+/**/
+SECTIONS
+{
+  .vectors.reset 0x0 : { KEEP (*(.vectors.reset)) } = 0
+  .vectors.sw_exception 0x8 : { KEEP (*(.vectors.sw_exception)) } = 0
+  .vectors.interrupt 0x10 : { KEEP (*(.vectors.interrupt)) } = 0
+  .vectors.debug_sw_break 0x18 : { KEEP (*(.vectors.debug_sw_break)) } = 0
+  .vectors.hw_exception 0x20 : { KEEP (*(.vectors.hw_exception)) } = 0
+  .text : {
+    *(.text)
+  }
+  .init : { KEEP (*(SORT_NONE(.init)))	} =0
+  .fini : { KEEP (*(SORT_NONE(.fini)))	} =0
+  .rodata : {
+    *(.rodata)
+    CONSTRUCTORS; /* Is this needed? */
+  }
+  /* Alignments by 8 to ensure that _SDA2_BASE_ on a word boundary */
+  /* Note that .sdata2 and .sbss2 must be contiguous */
+  .sdata2 : {
+    *(.sdata2)
+  }
+  .sbss2 : {
+    *(.sbss2)
+  }
+  .data : {
+    *(.data)
+    CONSTRUCTORS; /* Is this needed? */
+  }
+   /* Added to handle pic code */
+  .got : {
+    *(.got)
+  }
+  .got1 : {
+    *(.got1)
+  }
+  .got2 : {
+    *(.got2)
+  }
+  /* Added by Sathya to handle C++ exceptions */
+  .eh_frame : {
+    *(.eh_frame)
+  }
+  .jcr : {
+    *(.jcr)
+  }
+  .gcc_except_table : {
+    *(.gcc_except_table)
+  }
+  /* Alignments by 8 to ensure that _SDA_BASE_ on a word boundary */
+  /* Note that .sdata and .sbss must be contiguous */
+  .sdata : {
+    *(.sdata)
+  }
+  .sbss : {
+    *(.sbss)
+  }
+  .bss : {
+    *(.bss)
+  }
+  .heap : {
+  }
+  .stack : {
+  }
+  .tdata : {
+    *(.tdata)
+  }
+  .tbss : {
+    *(.tbss)
+  }
+  /* Stabs debugging sections.  */
+  .stab          0 : { *(.stab) }
+  .stabstr       0 : { *(.stabstr) }
+  .stab.excl     0 : { *(.stab.excl) }
+  .stab.exclstr  0 : { *(.stab.exclstr) }
+  .stab.index    0 : { *(.stab.index) }
+  .stab.indexstr 0 : { *(.stab.indexstr) }
+  .comment 0 (INFO) : { *(.comment); LINKER_VERSION; }
+  .gnu.build.attributes : { *(.gnu.build.attributes) }
+  /* DWARF debug sections.
+     Symbols in the DWARF debugging sections are relative to the beginning
+     of the section so we begin them at 0.  */
+  /* DWARF 1.  */
+  .debug          0 : { *(.debug) }
+  .line           0 : { *(.line) }
+  /* GNU DWARF 1 extensions.  */
+  .debug_srcinfo  0 : { *(.debug_srcinfo) }
+  .debug_sfnames  0 : { *(.debug_sfnames) }
+  /* DWARF 1.1 and DWARF 2.  */
+  .debug_aranges  0 : { *(.debug_aranges) }
+  .debug_pubnames 0 : { *(.debug_pubnames) }
+  /* DWARF 2.  */
+  .debug_info     0 : { *(.debug_info) }
+  .debug_abbrev   0 : { *(.debug_abbrev) }
+  .debug_line     0 : { *(.debug_line) }
+  .debug_frame    0 : { *(.debug_frame) }
+  .debug_str      0 : { *(.debug_str) }
+  .debug_loc      0 : { *(.debug_loc) }
+  .debug_macinfo  0 : { *(.debug_macinfo) }
+  /* SGI/MIPS DWARF 2 extensions.  */
+  .debug_weaknames 0 : { *(.debug_weaknames) }
+  .debug_funcnames 0 : { *(.debug_funcnames) }
+  .debug_typenames 0 : { *(.debug_typenames) }
+  .debug_varnames  0 : { *(.debug_varnames) }
+  /* DWARF 3.  */
+  .debug_pubtypes 0 : { *(.debug_pubtypes) }
+  .debug_ranges   0 : { *(.debug_ranges) }
+  /* DWARF 5.  */
+  .debug_addr     0 : { *(.debug_addr) }
+  .debug_line_str 0 : { *(.debug_line_str) }
+  .debug_loclists 0 : { *(.debug_loclists) }
+  .debug_macro    0 : { *(.debug_macro) }
+  .debug_names    0 : { *(.debug_names) }
+  .debug_rnglists 0 : { *(.debug_rnglists) }
+  .debug_str_offsets 0 : { *(.debug_str_offsets) }
+  .debug_sup      0 : { *(.debug_sup) }
+}

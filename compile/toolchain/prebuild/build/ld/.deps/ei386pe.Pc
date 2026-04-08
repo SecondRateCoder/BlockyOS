@@ -1,0 +1,1 @@
+ei386pe.c: ../../binutils-2.42/ld/emulparams/i386pe.sh ../../binutils-2.42/ld/scripttempl/pe.sc ../../binutils-2.42/ld/emultempl/pe.em ../../binutils-2.42/ld/emultempl/emulation.em

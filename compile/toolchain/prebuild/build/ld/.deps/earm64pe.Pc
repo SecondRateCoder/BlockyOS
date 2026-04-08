@@ -1,0 +1,1 @@
+earm64pe.c: ../../binutils-2.42/ld/emulparams/arm64pe.sh ../../binutils-2.42/ld/scripttempl/pep.sc ../../binutils-2.42/ld/emultempl/pep.em ../../binutils-2.42/ld/emultempl/emulation.em

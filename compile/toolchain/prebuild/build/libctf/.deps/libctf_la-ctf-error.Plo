@@ -1,0 +1,125 @@
+libctf_la-ctf-error.lo: ../../binutils-2.42/libctf/ctf-error.c \
+ ../../binutils-2.42/libctf/ctf-impl.h config.h \
+ /usr/share/mingw-w64/include/errno.h \
+ /usr/share/mingw-w64/include/crtdefs.h \
+ /usr/share/mingw-w64/include/corecrt.h \
+ /usr/share/mingw-w64/include/_mingw.h \
+ /usr/share/mingw-w64/include/_mingw_mac.h \
+ /usr/share/mingw-w64/include/_mingw_secapi.h \
+ /usr/share/mingw-w64/include/vadefs.h \
+ /usr/share/mingw-w64/include/sdks/_mingw_ddk.h \
+ /usr/share/mingw-w64/include/sys/param.h \
+ /usr/share/mingw-w64/include/sys/types.h \
+ /usr/share/mingw-w64/include/_mingw_off_t.h \
+ /usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/limits.h \
+ /usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/syslimits.h \
+ /usr/share/mingw-w64/include/limits.h \
+ ../../binutils-2.42/libctf/ctf-decls.h \
+ /usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/stddef.h \
+ /usr/share/mingw-w64/include/stddef.h \
+ /usr/share/mingw-w64/include/stdlib.h \
+ /usr/share/mingw-w64/include/corecrt_wstdlib.h \
+ /usr/share/mingw-w64/include/sec_api/stdlib_s.h \
+ /usr/share/mingw-w64/include/malloc.h \
+ /usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/mm_malloc.h \
+ ../../binutils-2.42/libctf/../include/libiberty.h \
+ ../../binutils-2.42/libctf/../include/ansidecl.h \
+ /usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/stdarg.h \
+ /usr/share/mingw-w64/include/stdarg.h \
+ /usr/share/mingw-w64/include/_mingw_stdarg.h \
+ /usr/share/mingw-w64/include/stdio.h \
+ /usr/share/mingw-w64/include/corecrt_stdio_config.h \
+ /usr/share/mingw-w64/include/swprintf.inl \
+ /usr/share/mingw-w64/include/sec_api/stdio_s.h \
+ ../../binutils-2.42/libctf/../include/ctf-api.h \
+ ../../binutils-2.42/libctf/../include/ctf.h \
+ /usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/stdint.h \
+ /usr/share/mingw-w64/include/stdint.h \
+ ../../binutils-2.42/libctf/../zlib/zlib.h \
+ ../../binutils-2.42/libctf/../zlib/zconf.h \
+ /usr/share/mingw-w64/include/unistd.h /usr/share/mingw-w64/include/io.h \
+ /usr/share/mingw-w64/include/string.h \
+ /usr/share/mingw-w64/include/sec_api/string_s.h \
+ /usr/share/mingw-w64/include/process.h \
+ /usr/share/mingw-w64/include/corecrt_startup.h \
+ ../../binutils-2.42/libctf/../include/getopt.h \
+ /usr/share/mingw-w64/include/pthread_unistd.h \
+ ../../binutils-2.42/libctf/ctf-sha1.h \
+ ../../binutils-2.42/libctf/../include/sha1.h \
+ /usr/share/mingw-w64/include/ctype.h ../../binutils-2.42/libctf/elf.h \
+ ../../binutils-2.42/libctf/../include/ansidecl.h \
+ ../../binutils-2.42/libctf/../include/elf/common.h \
+ ../../binutils-2.42/libctf/../include/elf/external.h ../bfd/bfd.h \
+ ../../binutils-2.42/libctf/../include/symcat.h \
+ /usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/stdbool.h \
+ ../../binutils-2.42/libctf/../include/diagnostics.h \
+ /usr/share/mingw-w64/include/sys/stat.h \
+ /usr/share/mingw-w64/include/_mingw_stat64.h \
+ /usr/share/mingw-w64/include/inttypes.h \
+ ../../binutils-2.42/libctf/../include/hashtab.h \
+ ../../binutils-2.42/libctf/ctf-intl.h \
+ ../../binutils-2.42/libctf/ctf-inlines.h
+../../binutils-2.42/libctf/ctf-impl.h:
+config.h:
+/usr/share/mingw-w64/include/errno.h:
+/usr/share/mingw-w64/include/crtdefs.h:
+/usr/share/mingw-w64/include/corecrt.h:
+/usr/share/mingw-w64/include/_mingw.h:
+/usr/share/mingw-w64/include/_mingw_mac.h:
+/usr/share/mingw-w64/include/_mingw_secapi.h:
+/usr/share/mingw-w64/include/vadefs.h:
+/usr/share/mingw-w64/include/sdks/_mingw_ddk.h:
+/usr/share/mingw-w64/include/sys/param.h:
+/usr/share/mingw-w64/include/sys/types.h:
+/usr/share/mingw-w64/include/_mingw_off_t.h:
+/usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/limits.h:
+/usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/syslimits.h:
+/usr/share/mingw-w64/include/limits.h:
+../../binutils-2.42/libctf/ctf-decls.h:
+/usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/stddef.h:
+/usr/share/mingw-w64/include/stddef.h:
+/usr/share/mingw-w64/include/stdlib.h:
+/usr/share/mingw-w64/include/corecrt_wstdlib.h:
+/usr/share/mingw-w64/include/sec_api/stdlib_s.h:
+/usr/share/mingw-w64/include/malloc.h:
+/usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/mm_malloc.h:
+../../binutils-2.42/libctf/../include/libiberty.h:
+../../binutils-2.42/libctf/../include/ansidecl.h:
+/usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/stdarg.h:
+/usr/share/mingw-w64/include/stdarg.h:
+/usr/share/mingw-w64/include/_mingw_stdarg.h:
+/usr/share/mingw-w64/include/stdio.h:
+/usr/share/mingw-w64/include/corecrt_stdio_config.h:
+/usr/share/mingw-w64/include/swprintf.inl:
+/usr/share/mingw-w64/include/sec_api/stdio_s.h:
+../../binutils-2.42/libctf/../include/ctf-api.h:
+../../binutils-2.42/libctf/../include/ctf.h:
+/usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/stdint.h:
+/usr/share/mingw-w64/include/stdint.h:
+../../binutils-2.42/libctf/../zlib/zlib.h:
+../../binutils-2.42/libctf/../zlib/zconf.h:
+/usr/share/mingw-w64/include/unistd.h:
+/usr/share/mingw-w64/include/io.h:
+/usr/share/mingw-w64/include/string.h:
+/usr/share/mingw-w64/include/sec_api/string_s.h:
+/usr/share/mingw-w64/include/process.h:
+/usr/share/mingw-w64/include/corecrt_startup.h:
+../../binutils-2.42/libctf/../include/getopt.h:
+/usr/share/mingw-w64/include/pthread_unistd.h:
+../../binutils-2.42/libctf/ctf-sha1.h:
+../../binutils-2.42/libctf/../include/sha1.h:
+/usr/share/mingw-w64/include/ctype.h:
+../../binutils-2.42/libctf/elf.h:
+../../binutils-2.42/libctf/../include/ansidecl.h:
+../../binutils-2.42/libctf/../include/elf/common.h:
+../../binutils-2.42/libctf/../include/elf/external.h:
+../bfd/bfd.h:
+../../binutils-2.42/libctf/../include/symcat.h:
+/usr/lib/gcc/x86_64-w64-mingw32/14-win32/include/stdbool.h:
+../../binutils-2.42/libctf/../include/diagnostics.h:
+/usr/share/mingw-w64/include/sys/stat.h:
+/usr/share/mingw-w64/include/_mingw_stat64.h:
+/usr/share/mingw-w64/include/inttypes.h:
+../../binutils-2.42/libctf/../include/hashtab.h:
+../../binutils-2.42/libctf/ctf-intl.h:
+../../binutils-2.42/libctf/ctf-inlines.h:

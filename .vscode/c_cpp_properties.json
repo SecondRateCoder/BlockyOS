@@ -58,14 +58,14 @@
             "name": "GCC(Default)",
             "includePath": [
                 "${workspaceFolder}/src/",
-                "C:/gnu-efi-master/inc",
-                "${workspaceFolder}/compile/toolchain/prebuild/i686-elf/include/",
+                "${workspaceFolder}/compile/toolchain/posix-uefi/",
                 "${workspaceFolder}/"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "__32="
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",

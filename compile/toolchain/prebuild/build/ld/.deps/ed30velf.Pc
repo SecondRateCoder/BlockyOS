@@ -1,0 +1,1 @@
+ed30velf.c: ../../binutils-2.42/ld/emulparams/d30velf.sh ../../binutils-2.42/ld/scripttempl/elfd30v.sc ../../binutils-2.42/ld/scripttempl/misc-sections.sc ../../binutils-2.42/ld/scripttempl/DWARF.sc ../../binutils-2.42/ld/emultempl/generic.em ../../binutils-2.42/ld/emultempl/genelf.em ../../binutils-2.42/ld/emultempl/elf-generic.em ../../binutils-2.42/ld/emultempl/emulation.em

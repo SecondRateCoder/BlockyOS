@@ -1,0 +1,1 @@
+escore3_elf.c: ../../binutils-2.42/ld/emulparams/score3_elf.sh ../../binutils-2.42/ld/scripttempl/elf.sc ../../binutils-2.42/ld/scripttempl/misc-sections.sc ../../binutils-2.42/ld/scripttempl/DWARF.sc ../../binutils-2.42/ld/emultempl/elf.em ../../binutils-2.42/ld/emultempl/elf-generic.em ../../binutils-2.42/ld/emultempl/scoreelf.em ../../binutils-2.42/ld/emultempl/emulation.em

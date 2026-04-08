@@ -6,6 +6,8 @@
         "aaron-bond.better-comments",
         "maziac.hex-hover-converter",
         "lixquid.calculator",
-        "zixuanwang.linkerscript"
+        "zixuanwang.linkerscript",
+        "whiteout2.x86",
+        "brandonfowler.exe-runner"
     ]
 }

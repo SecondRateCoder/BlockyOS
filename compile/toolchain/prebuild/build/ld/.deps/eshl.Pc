@@ -1,0 +1,1 @@
+eshl.c: ../../binutils-2.42/ld/emulparams/shl.sh ../../binutils-2.42/ld/emulparams/sh.sh ../../binutils-2.42/ld/scripttempl/sh.sc ../../binutils-2.42/ld/emultempl/generic.em ../../binutils-2.42/ld/emultempl/emulation.em

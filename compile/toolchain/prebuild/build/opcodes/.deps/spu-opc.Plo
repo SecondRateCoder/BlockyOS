@@ -1,0 +1,5 @@
+spu-opc.lo: ../../binutils-2.42/opcodes/spu-opc.c \
+ ../../binutils-2.42/opcodes/../include/opcode/spu.h \
+ ../../binutils-2.42/opcodes/../include/opcode/spu-insns.h
+../../binutils-2.42/opcodes/../include/opcode/spu.h:
+../../binutils-2.42/opcodes/../include/opcode/spu-insns.h:

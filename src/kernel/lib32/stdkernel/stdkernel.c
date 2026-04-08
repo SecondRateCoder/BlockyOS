@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:846b3be78676af2ae58d66664b70e35bd941ff3a0a0696970eacef4a0a62185c
-size 363
+#include "stdkernel.h"
+
+void LoadSTDKernelState(gdtDESC_t *inGDT, idtDESC_t *inIDT, BootIn in, uint8_t PIC1InterruptLine, uint8_t PIC2InterruptLine){
+    InitIDT((idtENTRY_t *)(inIDT->table), inIDT->limit, i868GDT_SEGCODE);
+    PICInit(PIC1InterruptLine - 0x20, PIC2InterruptLine - 0x20);
+    LoadGDT(inGDT, i868GDT_SEGCODE, i868GDT_SEGDATA);
+    return;
+}

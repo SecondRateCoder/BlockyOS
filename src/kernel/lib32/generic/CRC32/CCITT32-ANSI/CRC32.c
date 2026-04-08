@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:707f4b9af67dacd93088019904037411b4a7153e1f3a2a1a6f0502b47037d4ab
-size 470
+#include "CRC32.h"
+
+uint32_t crc32(const uint8_t *data, size_t len, uint32_t polynomial, uint32_t init, uint32_t xor){
+    uint32_t crc = init;
+
+    while(len--){
+        crc ^= (uint32_t)(*data++) << 24;  // align byte to MSB
+
+        for (int i = 0; i < 8; i++) {
+            if (crc & 0x80000000u) {
+                crc = (crc << 1) ^ polynomial;
+            } else {
+                crc <<= 1;
+            }
+        }
+    }
+
+    return crc ^ xor;
+}

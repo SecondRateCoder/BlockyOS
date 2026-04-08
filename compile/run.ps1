@@ -21,18 +21,23 @@ param(
     [Parameter(Mandatory=$false)]
     [int]$SectorSize = 512
 )
-$GCC = "./compile/toolchain/prebuild/gcc.ps1"
+$GCC = 'gcc'
 # $NASM = ${env:NASM}
 $NASM = 'nasm'
-$QEMU = ${env:qemu-x86_64}
-$BOCHS = ${env:bochs}
-$WCC = "wcc"
-# $ST1 = Join-Path (Get-Location) "Boot\stage1\st1.ps1"
+$QEMU = if(${env:qemu-x86_64}){${env:qemu-x86_64}}else{'qemu-system-x86_64'}
+$BOCHS = if(${env:bochs}){${env:bochs}}else{'bochs'}
 $STDLIB = Join-Path (Get-Location) "\src\kernel\lib32\stdkernel\stdkernel.ps1"
 $Build = Join-Path (Get-Location) ("Build\Build-" + $prefix)
-$Image = Join-Path $Build ("floppy-" + $prefix + ".img")
+$Image = Join-Path $Build "disk.img"
+$BootPartitionDir = Join-Path $Build 'boot-part/'
+$BootPartitionBlob = Join-Path $BootPartitionDir "legacyblob.bin"
+$UEFIBootBlob = Join-Path $BootPartitionDir "blob.efi"
 $BroadImageFile = Join-Path (Get-Location) "Build\temp\floppy.img"
 $Objdir = Join-Path $Build "objs"
+$FATOUTDIR = Join-Path $Build 'emu/FAT32/'
+$DiskConfigJson = Join-Path (Get-Location) "compile\disk-config.json"
+$GPTScript = Join-Path (Get-Location) "compile\emu\GPT.ps1"
+$FSScript = Join-Path (Get-Location) "compile\emu\FS.ps1"
 
 $BOCHSRC = Join-Path $Build ".bochsrc"
 $BOCHSLOG = Join-Path $Build "bochs.log"
@@ -42,9 +47,9 @@ $bochsPath = $env:bochs
 $bochsDir  = Split-Path $bochsPath
 
 $args_qemu = @(
-    "-drive", "if=pflash,format=raw,readonly=on,file=$(Join-Path (Get-Location) 'compile/toolchain/qemu/OVMF_CODE_4M.fd')",
-    "-drive", "if=pflash,format=raw,file=$(Join-Path (Get-Location) 'compile/toolchain/qemu/OVMF_VARS_4M.fd')"
-    "-fda", "$($Image)", 
+    "-drive", "if=pflash,format=raw,readonly=on,file=$(Join-Path (Get-Location) 'compile/toolchain/uefi/OVMF_CODE_4M.fd')",
+    "-drive", "if=pflash,format=raw,file=$(Join-Path (Get-Location) 'compile/toolchain/uefi/OVMF_VARS_4M.fd')"
+    "-drive", "file=$($Image),format=raw,if=ide"
     "-vga", "cirrus", "-full-screen"
     "-cpu", "host", "-m", "1024"
     "-chardev", "file,id=dbg,path=$($debuglog)", 
@@ -118,11 +123,28 @@ function Img-Push{
         # Write the data first
         $file.Write($data, 0, $data.Length)
         (Img-Pad)
-    }finally{$file.Close()}
+    }finally{
+        if($file){
+            try{$file.Close()}catch{}
+            try{$file.Dispose()}catch{}
+        }
+    }
 }
 
 function Img-Pad{
-    $file = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
+    # Ensure no processes are holding the file
+    Start-Sleep -Milliseconds 500
+    $attemptCount = 0
+    while($attemptCount -lt 5){
+        try{
+            $file = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
+            break
+        }catch{
+            $attemptCount++
+            if($attemptCount -ge 5){throw}
+            Start-Sleep -Milliseconds 1000
+        }
+    }
     $currentSize = (Get-Item $Image).Length
     $padding = ($SectorSize - ($currentSize % $SectorSize)) % $SectorSize
     try{
@@ -135,6 +157,10 @@ function Img-Pad{
 }
 
 function Prepare {
+    if($clear -eq $true){
+        Remove-Item (Join-Path (Get-Location) "/Build/") -Force -Recurse
+        New-Item -Path $Build -ItemType Directory -Force
+    }
     if(-not(Test-Path $Build)){New-Item -Path $Build -ItemType Directory -Force}
     if($broadimage){
         if(-not(Test-Path $BroadImageFile)){
@@ -148,6 +174,8 @@ function Prepare {
         }
     }
     if(-not(Test-Path $Objdir)){New-Item -Path $Objdir -ItemType Directory -Force}
+    if(-not(Test-Path $FATOUTDIR)){New-Item -Path $FATOUTDIR -ItemType Directory -Force}
+    if(-not(Test-Path $BootPartitionDir)){New-Item -Path $BootPartitionDir -ItemType Directory -Force}
     if(-not(Test-Path $debuglog)){New-Item -Path $debuglog -ItemType File -Force}
     if(-not(Test-Path $Image)){New-Item -Path $Build -ItemType File -Force -ErrorAction SilentlyContinue}
     Write-Host (& $NASM -v)
@@ -182,10 +210,8 @@ function Handle-PadToken {
         [string]$token
         # [string]$filePath  # required for \a
     )
-
-    try {
+    try{
         if($null -eq $token){throw "Token is null"}
-
         if($token.StartsWith('\x')){
             $num = Parse-Number $token.Substring(2)
             if($num -lt 0){throw "Negative size not allowed"}
@@ -222,12 +248,12 @@ function Compile-Watcom{
     param([string]$src, [string[]]$wargs)
     $argList = @()
     $out = Join-Path $Objdir "$([System.IO.Path]::GetFileNameWithoutExtension($src)).bin"
-    if ($wargs) { $argList += $wargs -split '\s+' }
+    if($wargs){$argList += $wargs -split '\s+'}
     # produce an output object/exe; adjust flags to your toolchain (wcc/wcl usage may differ)
     $argList += @($src, "-fo=$($out)")
     Log-Write -color Yellow -Msg ("WATCOM: " + $WATCOM + " " + ($argList -join ' '))
     $proc = & $WCC @argList 2>&1
-    if ($LASTEXITCODE -ne 0) {
+    if($LASTEXITCODE -ne 0){
         Log-Write -color Red -Msg ("WATCOM failed: " + ($proc -join "`n"))
         Img-Push -data (Get-Item -Path $src)
         return $false
@@ -235,27 +261,73 @@ function Compile-Watcom{
     return $true
 }
 
-if($clear -eq $true){Remove-Item (Join-Path (Get-Location) "Build") -Force -Recurse}
+
 (Prepare)
-(& "$(Join-Path (Get-Location) 'src/Boot/compile.ps1')" -prefix $prefix -NASM $NASM -GCC $GCC -ProxyFileSystem @{})
 
-$cc = 0;
-Handle-PadToken -token "\x$($Reserved.ToString())"
-Handle-PadToken -token "\x$($Hidden.ToString())"
-foreach($item in $ExtraFiles){
-    if($item[0] -eq '\'){
-        switch($item[1]){
-            'w'{Compile-Watcom -src $item[1] -wargs $ExtraFiles[$cc + 1]}
-            'a'{Handle-PadToken -token $item[1]}
-            'x'{Handle-PadToken -token $item[1]}
-        }
-    }
-    $cc++
+Log-Write -color Cyan "===== Step 1: Compile Bootloaders ====="
+Log-Write -color Cyan "===== Step 1.1: Compile Legacy BootLoader Blob ====="
+if(-not (Test-Path $BootPartitionDir)){New-Item -Path $BootPartitionDir -ItemType Directory -Force | Out-Null}
+(& "$(Join-Path (Get-Location) 'src/Boot/Legacy/legacy.ps1')" -prefix $prefix -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
+if(-not (Test-Path $BootPartitionBlob)){
+    Log-Write -color Red -Msg "Legacy Bootloader blob not created: $BootPartitionBlob"
+    exit 1
 }
+Log-Write -color Green "Legacy bootloader compiled: $BootPartitionBlob"
 
-$padding = [Math]::Abs(($SectorSize * $SectorNum) - (Get-Item $Image).Length)
-(Img-Push -data (New-Object -TypeName byte[] $padding))
-if(((Get-Item $Image).Length % $SectorSize) -ne 0){(Img-Pad)}
+Log-Write -color Cyan "===== Step 1.2: Compile UEFI BootLoader Blob ====="
+(& "$(Join-Path (Get-Location) 'src/Boot/UEFI/UEFI.ps1')" -prefix $prefix -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
+if(-not (Test-Path $UEFIBootBlob)){
+    Log-Write -color Red -Msg "UEFI Bootloader blob not created: $UEFIBootBlob"
+    exit 1
+}
+Log-Write -color Green "UEFI bootloader compiled: $UEFIBootBlob"
+
+Log-Write -color Cyan "===== Step 2: Create Disk Layout (GPT) ====="
+if(Test-Path $Image){Remove-Item $Image -Force}
+if(-not (Test-Path $DiskConfigJson)){
+    Log-Write -color Red -Msg "Disk config not found: $DiskConfigJson"
+    exit 1
+}
+Log-Write -color Yellow "Creating GPT disk: $($Image)"
+(& $GPTScript -JsonFile $DiskConfigJson -OutputPath $Image -LogFile (Join-Path $Build "gpt.log") -Verbose)
+
+Log-Write -color Cyan "===== Step 3: Combine Boot Partition (Legacy + UEFI) ====="
+$legacyBytes = [System.IO.File]::ReadAllBytes($BootPartitionBlob)
+$uefiBytes = [System.IO.File]::ReadAllBytes($UEFIBootBlob)
+$bootPartSize = 33554432  # 32MB
+$combinedSize = $legacyBytes.Length + $uefiBytes.Length
+if($combinedSize -gt $bootPartSize){
+    Log-Write -color Red -Msg "Combined bootloaders ($combinedSize bytes) exceed boot partition size ($bootPartSize bytes)"
+    exit 1
+}
+$paddingNeeded = $bootPartSize - $combinedSize
+Log-Write -color Green "Boot partition: Legacy ($($legacyBytes.Length)) + UEFI ($($uefiBytes.Length)) + Padding ($paddingNeeded) = $bootPartSize bytes"
+
+Log-Write -color Cyan "===== Step 4: Assemble Final Disk ====="
+# Combine Legacy + UEFI + Padding into boot bytes
+$bootBytes = New-Object byte[] $bootPartSize
+[Array]::Copy($legacyBytes, 0, $bootBytes, 0, $legacyBytes.Length)
+[Array]::Copy($uefiBytes, 0, $bootBytes, $legacyBytes.Length, $uefiBytes.Length)
+# Padding bytes are already zero-initialized
+$diskFile = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
+try{
+    $diskFile.Write($bootBytes, 0, $bootBytes.Length)
+    Log-Write -color Green "Boot partition written to disk ($(($bootBytes.Length / 1MB)) MB)."
+}finally{
+    $diskFile.Close()
+    $diskFile.Dispose()
+}
+Log-Write -color Green "Disk image finalized: $($Image)"
+
+Log-Write -color Cyan "===== Step 5: Format Boot Partition (FAT32) ====="
+if(Test-Path $FSScript){
+    Log-Write -color Yellow "Formatting boot partition with FAT32..."
+    try{
+        (& $FSScript -FileSystemType 'FAT32' -PartitionImage $Image -PartitionOffset 1048576 -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs.log") -Verbose)
+        Log-Write -color Green "Boot partition formatted successfully"
+    }catch{Log-Write -color Yellow "FS.ps1 formatting encountered an issue: $_"}
+}else{Log-Write -color Yellow "FS.ps1 not found at $FSScript, skipping FAT32 formatting"}
+
 if($broadimage){Copy-Item -Path $Image -Destination $BroadImageFile}
 if($run){
     Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ')"

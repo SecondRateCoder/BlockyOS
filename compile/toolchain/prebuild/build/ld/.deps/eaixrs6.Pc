@@ -1,0 +1,1 @@
+eaixrs6.c: ../../binutils-2.42/ld/emulparams/aixrs6.sh ../../binutils-2.42/ld/scripttempl/aix.sc ../../binutils-2.42/ld/emultempl/aix.em ../../binutils-2.42/ld/emultempl/emulation.em

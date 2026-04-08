@@ -1,17 +1,16 @@
 param(
 	[string]$prefix,
 	[string]$NASM,
-	[string]$GCC,
-	[string]$WLINK
+	[string]$GCC
 )
 
-# wcc -mm -zc -s -fo=main.obj main.c
-# wlink format raw name program.bin file main.obj
-
 $Build = Join-Path (Get-Location) ("Build/Build-" + $prefix)
-# $Image = Join-Path $Objdir ("boot2-$($prefix).img")
+$TEMPFOLDER = Join-Path (Get-Location) 'compile/cache'
+if(-not (Test-Path $TEMPFOLDER)){New-Item $TEMPFOLDER -ItemType Directory -Force}
+$TEMPJSON = Join-Path (Get-Location) 'compile/cache/desc.json'
+if(-not (Test-Path $TEMPJSON)){New-Item $TEMPJSON -ItemType File -Force}
 $Objdir = Join-Path $Build "objs"
-$Log = Join-Path $Build ("logst2.log")
+$Log = Join-Path $Build ("st2.log")
 $ST2BIN = Join-Path -Path $Objdir "boot2.bin"
 $MAPFILE = Join-Path -Path $Build "boot2map.log"
 
@@ -52,31 +51,7 @@ function Log-Write{
     }while($success -eq $false)
 }
 
-
-# function Img-Push {
-# 	param([byte[]]$data)
-# 	$file = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
-# 	$padding = $data.Length
-# 	do{
-# 		$padding = [math]::Abs($padding - 512)
-# 	}while($padding -ge 512)
-# 	Log-Write -color Yellow -Msg (
-# 		"Byte array of size: $($data.Length),
-#         padded with size: $($padding), 
-#         starting at address: $((Get-Item -Path $Image).Length) 
-#         and ending at address: $((Get-Item -Path $Image).Length + $padding + $data.Length)"
-#     )
-# 	try{
-# 		if($data){$file.Write($data, 0, $data.Length)}
-# 		if($padding -gt 0){
-# 			$padBytes = New-Object byte[] $padding
-# 			$file.Write($padBytes, 0, $padding)
-# 			Log-Write -color Yellow -Msg "Padded $($Image) with $($padding) bytes."
-# 		}
-# 	}finally{$file.Close()}
-# }
-
-function Get-FolderPriority {
+function Get-FolderPriority{
     param(
         [string]$FilePath,
         [string[]]$ForceOrder
@@ -104,6 +79,127 @@ function Get-FolderPriority {
     return [int]::MaxValue
 }
 
+function Get-TimestampCache{
+    param(
+        [Parameter(Mandatory)]
+        [string]$JsonPath
+    )
+
+    if(-not (Test-Path $JsonPath)){
+        New-Item -Path $JsonPath -ItemType File -Force | Out-Null
+        Set-Content -Path $JsonPath -Value '{}' -NoNewline
+    }
+
+    $raw = Get-Content -Path $JsonPath -Raw
+    if([string]::IsNullOrWhiteSpace($raw)){
+        $raw = '{}'
+        Set-Content -Path $JsonPath -Value $raw -NoNewline
+    }
+
+    try{return $raw | ConvertFrom-Json -AsHashTable
+    }catch{return @{}}
+}
+
+function Save-TimestampCache {
+    param(
+        [Parameter(Mandatory)]
+        [string]$JsonPath,
+
+        [Parameter(Mandatory)]
+        $Data
+    )
+
+    $Data | ConvertTo-Json -Depth 4 | Set-Content -Path $JsonPath
+}
+
+function Test-JsonTimestampIsOutdated {
+    param(
+        [Parameter(Mandatory)]
+        [string]$JsonPath,
+
+        [Parameter(Mandatory)]
+        [string]$FilePath
+    )
+
+    if(-not (Test-Path $FilePath)) { throw "Target file not found: $FilePath" }
+
+    $json = Get-TimestampCache -JsonPath $JsonPath
+    $fullPath = (Get-Item $FilePath).FullName
+
+    $storedTimestamp = if ($json.PSObject.Properties.Name -contains $fullPath) { $json.$fullPath } else { $null }
+    if(-not $storedTimestamp) {
+        return $true
+    }
+
+    try {
+        $storedTime = [DateTime]::Parse($storedTimestamp)
+    } catch {
+        return $true
+    }
+
+    $actualTime = (Get-Item $FilePath).LastWriteTimeUtc
+    if($actualTime -gt $storedTime.ToUniversalTime()) {
+        return $true
+    }
+
+    return $false
+}
+
+function Get-JsonTimestampInfo {
+    param(
+        [Parameter(Mandatory)]
+        [string]$JsonPath,
+
+        [Parameter(Mandatory)]
+        [string]$FilePath
+    )
+
+    if(-not (Test-Path $FilePath)) { throw "Target file not found: $FilePath" }
+
+    $json = Get-TimestampCache -JsonPath $JsonPath
+    $fullPath = (Get-Item $FilePath).FullName
+    $storedTimestamp = if ($json.PSObject.Properties.Name -contains $fullPath) { $json.$fullPath } else { $null }
+    $storedTime = $null
+    if($storedTimestamp){
+        try{ $storedTime = [DateTime]::Parse($storedTimestamp).ToUniversalTime() } catch { $storedTime = $null }
+    }
+    $actualTime = (Get-Item $FilePath).LastWriteTimeUtc
+
+    return [PSCustomObject]@{
+        FilePath = $fullPath
+        StoredTimestamp = $storedTimestamp
+        StoredTime = $storedTime
+        ActualTime = $actualTime
+        Delta = if($storedTime){$actualTime - $storedTime}else{$null}
+    }
+}
+
+function Format-TimestampDiff {
+    param(
+        [Nullable[TimeSpan]]$Delta
+    )
+
+    if(-not $Delta){ return 'n/a' }
+    return "{0:+0.000;-0.000;0.000}" -f $Delta.TotalSeconds
+}
+
+function Update-JsonTimestamp {
+    param(
+        [Parameter(Mandatory)]
+        [string]$JsonPath,
+
+        [Parameter(Mandatory)]
+        [string]$FilePath
+    )
+
+    if(-not (Test-Path $FilePath)) { throw "Target file not found: $FilePath" }
+
+    $json = Get-TimestampCache -JsonPath $JsonPath
+    $fullPath = (Get-Item $FilePath).FullName
+    $json.$fullPath = (Get-Item $FilePath).LastWriteTimeUtc.ToString('o')
+    Save-TimestampCache -JsonPath $JsonPath -Data $json
+}
+
 function Sort-ByForceOrder {
     param(
         [string[]]$Files,
@@ -120,8 +216,8 @@ $COMPILECLI = @(
 	"-nostdlib", "-m32", "-z", "nostartfiles",
 	"-fdiagnostics-color=always",  "-fno-leading-underscore", "-ffreestanding", "-fno-stack-protector"
 	"-I", "$(Join-Path (Get-Location) "src/")", 
-	"-std=c99", 
-	"-D", "LOCALSTANDARDFILE", "-D", "LOCALFILE"
+	"-std=c99",
+	"-D", "LOCALSTANDARDFILE", "-D", "LOCALFILE", '-D', '__32'
 )
 
 # Order files
@@ -152,46 +248,78 @@ Log-Write -Msg "Sorted:" -color Blue
 
 # Compile all .c files
 $BOOT2CFILES|ForEach-Object{
-	Log-Write -Msg "$($GCC) -c $($_) -o $(Join-Path -Path $Objdir "c.$((Get-Item -Path $_).BaseName).o") $($COMPILECLI -join ' ')" -color Blue
-	$COMPILEOUT = (& $GCC -Params @("-c", $_, "-o", (Join-Path -Path $Objdir "c.$((Get-Item -Path $_).BaseName).o"), $COMPILECLI)) 2>&1
-	Log-Write "$($COMPILEOUT -join "`n")"
+    $o = Join-Path -Path $Objdir "c.$((Get-Item -Path $_).BaseName).o"
+    $cacheFile = Join-Path $TEMPFOLDER "$((Get-Item $_).BaseName).o"
+    $tsInfo = Get-JsonTimestampInfo -JsonPath $TEMPJSON -FilePath $_
+    $needsCompile = (-not $tsInfo.StoredTimestamp) -or ($tsInfo.ActualTime -gt $tsInfo.StoredTime) -or (-not (Test-Path $cacheFile))
+
+    if($needsCompile){
+        Log-Write -Msg "Stale source detected for $($_). source=$($tsInfo.ActualTime.ToString('o')), stored=$($tsInfo.StoredTimestamp ?? 'none'), delta=$(Format-TimestampDiff -Delta $tsInfo.Delta) sec" -color Yellow
+        Log-Write -Msg "$($GCC) -c $($_) -o $($o) $($COMPILECLI -join ' ')" -color Blue
+        $COMPILEOUT = & $GCC '-c' $_ '-o' $o $COMPILECLI 2>&1
+        if($LASTEXITCODE -ne 0){
+            Log-Write -Msg "$($COMPILEOUT -join "`n")" -color Red
+            throw "Compilation failed for $($_)"
+        }
+        Copy-Item -Path $o -Destination $cacheFile -Force
+        Log-Write -Msg "Compiled and cached object: $cacheFile" -color Green
+        Update-JsonTimestamp -JsonPath $TEMPJSON -FilePath $_
+        Log-Write "$($COMPILEOUT -join "`n")"
+    } else {
+        Log-Write -Msg "Restoring cached object for $($_) from $cacheFile; source=$($tsInfo.ActualTime.ToString('o')), stored=$($tsInfo.StoredTimestamp), delta=$(Format-TimestampDiff -Delta $tsInfo.Delta) sec" -color Green
+        Copy-Item -Destination $o -Path $cacheFile -Force
+        Log-Write -Msg "Copied cache to build object: $o" -color Cyan
+    }
 }
 
 # Compile .asm files
 $BOOT2ASMFILES|ForEach-Object{
-	$args_ = @("-f", "elf32", $_, "-o", $(Join-Path -Path $Objdir "asm.$((Get-Item -Path $_).BaseName).o"), "-d", "__DEBUG=")
-	Log-Write -Msg "$($NASM) $($args_ -join ' ')" -color Blue
-	$COMPILEOUT = (& $NASM $args_) 2>&1
-	$COMPILEOUT|ForEach-Object{
-		if($_ -match 'error'){Log-Write -Msg $_ -color Red}
-		else{Log-Write -Msg $_ -color Yellow}
-	}
-	$cc++
+    $o = Join-Path -Path $Objdir "asm.$((Get-Item -Path $_).BaseName).o"
+    $cacheFile = Join-Path $TEMPFOLDER "$((Get-Item $_).BaseName).o"
+    $args_ = @("-f", "elf32", $_, "-o", $o, "-d", "__DEBUG=")
+    $tsInfo = Get-JsonTimestampInfo -JsonPath $TEMPJSON -FilePath $_
+    $needsCompile = (-not $tsInfo.StoredTimestamp) -or ($tsInfo.ActualTime -gt $tsInfo.StoredTime) -or (-not (Test-Path $cacheFile))
+
+    if($needsCompile){
+        Log-Write -Msg "Stale source detected for $($_). source=$($tsInfo.ActualTime.ToString('o')), stored=$($tsInfo.StoredTimestamp ?? 'none'), delta=$(Format-TimestampDiff -Delta $tsInfo.Delta) sec" -color Yellow
+        Log-Write -Msg "$($NASM) $($args_ -join ' ')" -color Blue
+        $COMPILEOUT = (& $NASM $args_) 2>&1
+        $COMPILEOUT|ForEach-Object{
+            if($_ -match 'error'){Log-Write -Msg $_ -color Red}
+            else{Log-Write -Msg $_ -color Yellow}
+        }
+        if($LASTEXITCODE -ne 0){throw "Assembler failed for $($_)"}
+        Copy-Item -Path $o -Destination $cacheFile -Force
+        Log-Write -Msg "Assembled and cached object: $cacheFile" -color Green
+        Update-JsonTimestamp -JsonPath $TEMPJSON -FilePath $_
+    } else {
+        Log-Write -Msg "Restoring cached object for $($_) from $cacheFile; source=$($tsInfo.ActualTime.ToString('o')), stored=$($tsInfo.StoredTimestamp), delta=$(Format-TimestampDiff -Delta $tsInfo.Delta) sec" -color Green
+        Copy-Item -Destination $o -Path $cacheFile -Force
+        Log-Write -Msg "Copied cache to build object: $o" -color Cyan
+    }
 }
 
 # build files
-New-Item -Path $ST2BIN -ItemType File -Force
 New-Item -Path $MAPFILE -ItemType File -Force
 
 # gcc link
-$args_ = @()
-$BOOT2OFILES = ($BOOT2OFILES | Sort-Object -Unique)
-$BOOT2OFILES|ForEach-Object{$args_ += $_}
-$LGCC = (Get-ChildItem -Path (Get-Item $GCC).Parent -Filter 'libgcc.a' -Recurse -File)
-@(
-    "--strip-all",
+$args_ = @(
+    # '-L', "$(Join-Path (Get-Location) 'compile\toolchain\prebuild\i686-elf\lib\gcc\i686-elf\15.2.0\')", 
+    '-l', 'gcc',
     "-o", $ST2BIN,
-	"-T", "$($LINKERSCRIPT)", 
-	"-Map", "$($MAPFILE)", "-m", "elf_i386",
-    "-L", "$($LGCC.Directory.FullName)",
-    "-l", "gcc"
-)|ForEach-Object{$args_ += $_}
+    "-Wl,--strip-all",
+    "-nostdlib",
+	"-Wl,-T,$($LINKERSCRIPT)", 
+	"-Wl,-Map,$($MAPFILE)"
+)
 
-Log-Write -Msg "$($GCC) $($args_ -join ' ')" -color Blue
-$GLINK_OUT = (& $GCC -Image "ld" -Params $args_) 2>&1 | Out-String
-$GLINK_OUT|ForEach-Object{Log-Write -Msg $_ -color Yellow}
+Log-Write -Msg "$($GCC) $($args_ -join ' ') $($BOOT2OFILES -join ' ')" -color Blue
+$GLINK_OUT = & (Join-Path (Get-Location) 'compile\toolchain\prebuild\gcc.ps1') -Params @($args_, $BOOT2OFILES)
+# $GLINK_OUT = & $GCC $args_ $BOOT2OFILES 2>&1
+Log-Write -Msg "$($GLINK_OUT -join "`n")"
+# $OBJCOPYOUT = objcopy '-O' 'binary' $ST2BIN $ST2BIN 2>&1
+# Log-Write -Msg "$($OBJCOPYOUT -join "`n")"
 
-# objcopy -O binary $ST2ELF $ST2BIN
 
 # #wcc link
 # $LNK = "
