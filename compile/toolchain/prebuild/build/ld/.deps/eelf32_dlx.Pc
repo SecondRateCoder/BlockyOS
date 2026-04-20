@@ -1,1 +1,0 @@
-eelf32_dlx.c: ../../binutils-2.42/ld/emulparams/elf32_dlx.sh ../../binutils-2.42/ld/scripttempl/dlx.sc ../../binutils-2.42/ld/scripttempl/misc-sections.sc ../../binutils-2.42/ld/scripttempl/DWARF.sc ../../binutils-2.42/ld/emultempl/generic.em ../../binutils-2.42/ld/emultempl/genelf.em ../../binutils-2.42/ld/emultempl/elf-generic.em ../../binutils-2.42/ld/emultempl/emulation.em

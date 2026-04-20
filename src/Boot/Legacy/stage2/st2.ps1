@@ -1,10 +1,10 @@
 param(
-	[string]$prefix,
+	[string]$PREFIX,
 	[string]$NASM,
 	[string]$GCC
 )
 
-$Build = Join-Path (Get-Location) ("Build/Build-" + $prefix)
+$Build = Join-Path (Get-Location) ("Build/Build-" + $PREFIX)
 $TEMPFOLDER = Join-Path (Get-Location) 'compile/cache'
 if(-not (Test-Path $TEMPFOLDER)){New-Item $TEMPFOLDER -ItemType Directory -Force}
 $TEMPJSON = Join-Path (Get-Location) 'compile/cache/desc.json'
@@ -217,12 +217,12 @@ $COMPILECLI = @(
 	"-fdiagnostics-color=always",  "-fno-leading-underscore", "-ffreestanding", "-fno-stack-protector"
 	"-I", "$(Join-Path (Get-Location) "src/")", 
 	"-std=c99",
-	"-D", "LOCALSTANDARDFILE", "-D", "LOCALFILE", '-D', '__32'
+	"-D", "LOCALSTANDARDFILE", "-D", "LOCALFILE", '-D', '__ia32__'
 )
 
 # Order files
 Log-Write -Msg "Files:" -color Blue
-(Get-ChildItem -Path @((Join-Path (Get-Location) "src/Boot/Legacy/stage2/"), (Join-Path (Get-Location) "src/kernel/lib32/")) -Include @("*.c", "*.asm") -Recurse -Force -File)|ForEach-Object{
+(Get-ChildItem -Path @((Join-Path (Get-Location) "src/Boot/Legacy/stage2/"), (Join-Path (Get-Location) "src/kernel/lib/")) -Include @("*.c", "*.asm") -Recurse -Force -File)|ForEach-Object{
     if($_ -ilike "*src/Boot/Legacy/stage2/*"){
         Log-Write -Msg " $($_)," -color Blue
         $COMBINED += $_.FullName

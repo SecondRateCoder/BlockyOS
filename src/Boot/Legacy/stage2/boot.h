@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "kernel/lib32/generic/standard.h"
+#include "kernel/lib/stdlib.h"
 #include "kernel/lib32/stdio/stdio.h"
 #include "kernel/lib32/stdkernel/stdkernel.h"
 // #include "kernel/lib32/stdkernel/Interrupt/interrupt.h"

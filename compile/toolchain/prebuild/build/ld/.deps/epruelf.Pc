@@ -1,1 +1,0 @@
-epruelf.c: ../../binutils-2.42/ld/emulparams/pruelf.sh ../../binutils-2.42/ld/scripttempl/pru.sc ../../binutils-2.42/ld/scripttempl/misc-sections.sc ../../binutils-2.42/ld/scripttempl/DWARF.sc ../../binutils-2.42/ld/emultempl/elf.em ../../binutils-2.42/ld/emultempl/elf-generic.em ../../binutils-2.42/ld/emultempl/pruelf.em ../../binutils-2.42/ld/emultempl/emulation.em

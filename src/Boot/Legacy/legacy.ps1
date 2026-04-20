@@ -1,6 +1,6 @@
 param(
 	[Parameter(Mandatory=$true)]
-	[string]$prefix,
+	[string]$PREFIX,
 	[Parameter(Mandatory=$true)]
 	[string]$NASM,
 	[Parameter(Mandatory=$true)]
@@ -9,7 +9,7 @@ param(
     [string]$EMUOUT
 )
 
-$Build = Join-Path (Get-Location) ("Build/Build-" + $prefix)
+$Build = Join-Path (Get-Location) ("Build/Build-" + $PREFIX)
 $Objdir = Join-Path $Build "\objs\"
 $ST1BIN = Join-Path -Path $Objdir "boot1.bin"
 $ST2BIN = Join-Path -Path $Objdir "boot2.bin"
@@ -54,8 +54,8 @@ function Img-Push {
     }finally{$file.Close()}
 }
 
-(& "$($SRC)/Legacy/stage1/st1.ps1" -prefix $prefix -NASM $NASM)
-(& "$($SRC)/Legacy/stage2/st2.ps1" -prefix $prefix -NASM $NASM -GCC $GCC)
+(& "$($SRC)/Legacy/stage1/st1.ps1" -prefix $PREFIX -NASM $NASM)
+# (& "$($SRC)/Legacy/stage2/st2.ps1" -prefix $PREFIX -NASM $NASM -GCC $GCC)
 
 Img-Push -data ([System.IO.File]::ReadAllBytes($ST1BIN))
-Img-Push -data ([System.IO.File]::ReadAllBytes($ST2BIN))
+# Img-Push -data ([System.IO.File]::ReadAllBytes($ST2BIN))

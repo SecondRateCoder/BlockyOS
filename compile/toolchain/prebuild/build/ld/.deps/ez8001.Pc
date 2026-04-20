@@ -1,1 +1,0 @@
-ez8001.c: ../../binutils-2.42/ld/emulparams/z8001.sh ../../binutils-2.42/ld/scripttempl/z8000.sc ../../binutils-2.42/ld/emultempl/generic.em ../../binutils-2.42/ld/emultempl/emulation.em

@@ -1,0 +1,902 @@
+Archive member included to satisfy reference by file (symbol)
+
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o (_entry)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\UEFI.c.boot.o (InitializeLib)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o) (FreePool)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o) (AsciiStrLen)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o) (RtZeroMem)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o) (RtStrCmp)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o) (EFIDebug)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o) (InitializeLibPlatform)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\UEFI.c.boot.o (Print)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o) (_PoolCatPrint)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o) (Input)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o) (gEFiUiInterfaceProtocolGuid)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o) (DevicePathFromHandle)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o) (StatusToString)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o) (WaitForSingleEvent)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o) (InitializeGuid)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o) (LibLocateHandle)
+C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+                              C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o) (RShiftU64)
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000000000                . = 0x0
+                0x0000000000000000                ImageBase = .
+
+.hash
+ *(.hash)
+
+.gnu.hash
+ *(.gnu.hash)
+                0x0000000000000000                . = ALIGN (0x1000)
+
+.eh_frame       0x0000000000000000     0x1be8
+ *(.eh_frame)
+ .eh_frame      0x0000000000000000       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+ .eh_frame      0x0000000000000030       0x50 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\UEFI.c.boot.o
+                                         0x68 (size before relaxing)
+ .eh_frame      0x0000000000000080       0x40 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+                                         0x58 (size before relaxing)
+ .eh_frame      0x00000000000000c0       0xd8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+                                         0xf0 (size before relaxing)
+ .eh_frame      0x0000000000000198      0x400 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+                                        0x418 (size before relaxing)
+ .eh_frame      0x0000000000000598      0x2c8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+                                        0x2e0 (size before relaxing)
+ .eh_frame      0x0000000000000860       0x90 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+                                         0xa8 (size before relaxing)
+ .eh_frame      0x00000000000008f0      0x150 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+                                        0x168 (size before relaxing)
+ .eh_frame      0x0000000000000a40       0x18 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+                                         0x30 (size before relaxing)
+ .eh_frame      0x0000000000000a58      0x3d0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+                                        0x3e8 (size before relaxing)
+ .eh_frame      0x0000000000000e28      0x1e0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+                                        0x1f8 (size before relaxing)
+ .eh_frame      0x0000000000001008       0x80 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+                                         0x98 (size before relaxing)
+ .eh_frame      0x0000000000001088      0x718 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+                                        0x730 (size before relaxing)
+ .eh_frame      0x00000000000017a0       0x18 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+                                         0x30 (size before relaxing)
+ .eh_frame      0x00000000000017b8       0xc8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+                                         0xe0 (size before relaxing)
+ .eh_frame      0x0000000000001880       0x90 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+                                         0xa8 (size before relaxing)
+ .eh_frame      0x0000000000001910      0x288 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+                                        0x2a0 (size before relaxing)
+ .eh_frame      0x0000000000001b98       0x50 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+                                         0x68 (size before relaxing)
+
+.eh_frame_hdr
+ *(.eh_frame_hdr)
+
+.gcc_except_table
+ *(.gcc_except_table*)
+                0x0000000000002000                . = ALIGN (0x1000)
+
+.text           0x0000000000002000     0x7490
+                0x0000000000002000                _text = .
+ *(.text)
+ .text          0x0000000000002000       0x29 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+                0x0000000000002000                _start
+ *fill*         0x0000000000002029       0x17 
+ .text          0x0000000000002040       0xbb C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+                0x0000000000002040                _relocate
+ .text          0x00000000000020fb       0xab C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\UEFI.c.boot.o
+                0x00000000000020fb                efi_main
+ *fill*         0x00000000000021a6        0xa 
+ .text          0x00000000000021b0      0x134 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+                0x00000000000021b0                _entry
+ *fill*         0x00000000000022e4       0x1c 
+ .text          0x0000000000002300      0x2b3 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+                0x0000000000002300                InitializeUnicodeSupport
+                0x00000000000023f0                EFIDebugVariable
+                0x0000000000002440                InitializeLib
+                0x0000000000002540                memset
+                0x0000000000002590                memcpy
+ *fill*         0x00000000000025b3        0xd 
+ .text          0x00000000000025c0      0x9b7 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+                0x00000000000025c0                AllocatePool
+                0x00000000000025f0                AllocateZeroPool
+                0x0000000000002640                ReallocatePool_1
+                0x00000000000026e0                FreePool
+                0x0000000000002700                ZeroMem
+                0x0000000000002710                SetMem
+                0x0000000000002720                CopyMem_1
+                0x0000000000002730                CopyMemC
+                0x0000000000002740                CompareMem
+                0x0000000000002750                GrowBuffer
+                0x0000000000002830                LibMemoryMap
+                0x0000000000002920                LibGetVariableAndSize
+                0x0000000000002a00                LibGetVariable
+                0x0000000000002a20                LibDeleteVariable
+                0x0000000000002a90                LibSetNVVariable
+                0x0000000000002ac0                LibSetVariable
+                0x0000000000002af0                LibInsertToTailOfBootOrder
+                0x0000000000002c50                ValidMBR
+                0x0000000000002e00                DecimaltoBCD
+                0x0000000000002e10                BCDtoDecimal
+                0x0000000000002e20                LibGetSystemConfigurationTable
+                0x0000000000002eb0                LibGetUiString
+ *fill*         0x0000000000002f77        0x9 
+ .text          0x0000000000002f80      0x5fc C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+                0x0000000000002f80                StrCmp
+                0x0000000000002f90                StrnCmp
+                0x0000000000002fe0                LibStubStriCmp
+                0x0000000000003080                LibStubStrLwrUpr
+                0x0000000000003090                StriCmp
+                0x00000000000030b0                StrLwr
+                0x00000000000030d0                StrUpr
+                0x00000000000030f0                StrCpy
+                0x0000000000003100                StrnCpy
+                0x0000000000003110                StpCpy
+                0x0000000000003120                StpnCpy
+                0x0000000000003130                StrCat
+                0x0000000000003140                StrnCat
+                0x0000000000003150                StrnLen
+                0x0000000000003160                StrLen
+                0x0000000000003170                StrSize
+                0x0000000000003180                StrDuplicate
+                0x00000000000031c0                AsciiStrLen
+                0x00000000000031f0                AsciiStrCmp
+                0x0000000000003240                AsciiStrnCmp
+                0x0000000000003290                xtoi
+                0x0000000000003330                Atoi
+                0x0000000000003390                MetaMatch
+                0x00000000000034c0                LibStubMetaiMatch
+                0x0000000000003560                MetaiMatch
+ *fill*         0x000000000000357c        0x4 
+ .text          0x0000000000003580      0x18c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+                0x0000000000003580                RtZeroMem
+                0x00000000000035c0                RtSetMem
+                0x00000000000035f0                RtCopyMem
+                0x0000000000003670                RtCopyMemC
+                0x0000000000003680                RtCompareMem
+                0x00000000000036d0                RtCompareGuid
+                0x0000000000003700                RtIsZeroGuid
+ *fill*         0x000000000000370c       0x14 
+ .text          0x0000000000003720      0x353 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+                0x0000000000003720                RtStrCmp
+                0x0000000000003780                RtStrCpy
+                0x00000000000037c0                RtStrnCpy
+                0x0000000000003830                RtStpCpy
+                0x0000000000003860                RtStpnCpy
+                0x00000000000038e0                RtStrCat
+                0x0000000000003930                RtStrnCat
+                0x00000000000039b0                RtStrLen
+                0x00000000000039e0                RtStrnLen
+                0x0000000000003a10                RtStrSize
+                0x0000000000003a40                RtBCDtoDecimal
+                0x0000000000003a50                RtDecimaltoBCD
+ .text          0x0000000000003a73        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+ *fill*         0x0000000000003a73        0xd 
+ .text          0x0000000000003a80        0x1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+                0x0000000000003a80                InitializeLibPlatform
+ *fill*         0x0000000000003a81       0x3f 
+ .text          0x0000000000003ac0     0x2099 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+                0x0000000000003ac0                _DbgOut
+                0x0000000000003ae0                _SPrint
+                0x0000000000003c00                _PoolPrint
+                0x0000000000003f90                UnicodeSPrint
+                0x0000000000004020                AsciiSPrint
+                0x00000000000040b0                PoolPrint
+                0x0000000000004150                CatPrint
+                0x0000000000004200                Print
+                0x00000000000042c0                PrintAt
+                0x0000000000004360                IPrint
+                0x0000000000004410                IPrintAt
+                0x00000000000044b0                AsciiPrint
+                0x0000000000004570                ValueToHex
+                0x0000000000004590                ValueToString
+                0x00000000000045b0                FloatToString
+                0x00000000000046e0                TimeToString
+                0x0000000000004780                DbgPrint
+                0x00000000000059b0                DumpHex
+ *fill*         0x0000000000005b59       0x27 
+ .text          0x0000000000005b80     0x11eb C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+                0x0000000000006a60                _PoolCatPrint
+                0x0000000000006ad0                UnicodeVSPrint
+                0x0000000000006b20                VPoolPrint
+                0x0000000000006b60                _IPrint
+                0x0000000000006c60                VPrint
+                0x0000000000006c90                AsciiVSPrint
+ *fill*         0x0000000000006d6b        0x5 
+ .text          0x0000000000006d70      0x110 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+                0x0000000000006d70                Output
+                0x0000000000006d90                IInput
+                0x0000000000006e60                Input
+ .text          0x0000000000006e80        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+ .text          0x0000000000006e80     0x174b C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+                0x0000000000007cd0                DevicePathFromHandle
+                0x0000000000007d10                DevicePathInstance
+                0x0000000000007dc0                DevicePathInstanceCount
+                0x0000000000007e00                DevicePathSize
+                0x0000000000007e40                DuplicateDevicePath
+                0x0000000000007eb0                AppendDevicePath
+                0x0000000000008020                AppendDevicePathNode
+                0x00000000000080a0                FileDevicePath
+                0x0000000000008150                UnpackDevicePath
+                0x0000000000008220                AppendDevicePathInstance
+                0x0000000000008310                LibDevicePathToInterface
+                0x00000000000083a0                DevicePathToStr
+                0x00000000000084e0                LibMatchDevicePaths
+                0x0000000000008560                LibDuplicateDevicePathInstance
+ *fill*         0x00000000000085cb       0x15 
+ .text          0x00000000000085e0       0x50 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+                0x00000000000085e0                StatusToString
+ .text          0x0000000000008630      0x1f5 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+                0x0000000000008630                LibCreateProtocolNotifyEvent
+                0x00000000000086b0                WaitForSingleEvent
+                0x0000000000008790                WaitForEventWithTimeout
+ *fill*         0x0000000000008825        0xb 
+ .text          0x0000000000008830      0x113 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+                0x0000000000008830                InitializeGuid
+                0x0000000000008840                CompareGuid_1
+                0x0000000000008850                IsZeroGuid
+                0x0000000000008860                GuidToString
+ *fill*         0x0000000000008943       0x3d 
+ .text          0x0000000000008980      0xaba C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+                0x0000000000008980                LibLocateHandle
+                0x0000000000008a40                LibLocateProtocol
+                0x0000000000008ae0                LibLocateHandleByDiskSignature
+                0x0000000000008e20                LibOpenRoot
+                0x0000000000008e70                LibFileInfo
+                0x0000000000008ef0                LibFileSystemInfo
+                0x0000000000008f70                LibFileSystemVolumeLabelInfo
+                0x0000000000008ff0                LibInstallProtocolInterfaces
+                0x00000000000091a0                LibUninstallProtocolInterfaces
+                0x0000000000009260                LibReinstallProtocolInterfaces
+ *fill*         0x000000000000943a        0x6 
+ .text          0x0000000000009440       0x4c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+                0x0000000000009440                LShiftU64
+                0x0000000000009450                RShiftU64
+                0x0000000000009460                MultU64x32
+                0x0000000000009470                DivU64x32
+ *(.text.*)
+ *(.gnu.linkonce.t.*)
+ *(.plt)
+                0x0000000000009490                . = ALIGN (0x10)
+ *fill*         0x000000000000948c        0x4 
+                0x0000000000009490                _etext = .
+                0x0000000000007490                _text_size = (_etext - _text)
+
+.iplt           0x0000000000009490        0x0
+ .iplt          0x0000000000009490        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+
+.rela.dyn       0x0000000000009490        0x0
+ .rela.iplt     0x0000000000009490        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+                0x000000000000a000                . = ALIGN (0x1000)
+
+.data           0x000000000000a000      0xd50
+                0x000000000000a000                _data = .
+ *(.got.plt)
+ .got.plt       0x000000000000a000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ *(.got)
+ .got           0x000000000000a000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ *(.data*)
+ .data          0x000000000000a000        0x8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ .data          0x000000000000a008        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+ .data          0x000000000000a008        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\UEFI.c.boot.o
+ .data          0x000000000000a008        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+ .data          0x000000000000a008        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+ .data          0x000000000000a008        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ .data          0x000000000000a008        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+ .data          0x000000000000a008        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+ .data          0x000000000000a008        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+ .data          0x000000000000a008        0x8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+                0x000000000000a008                EFIDebug
+ .data          0x000000000000a010        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+ .data          0x000000000000a010        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .data          0x000000000000a010        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .data          0x000000000000a010        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+ .data          0x000000000000a010      0x4f0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+                0x000000000000a010                ShellDynamicCommandProtocolGuid
+                0x000000000000a020                ShellParametersProtocolGuid
+                0x000000000000a030                ShellProtocolGuid
+                0x000000000000a040                SimpleTextInputExProtocol
+                0x000000000000a050                gEfiDebugSupportProtocolGuid
+                0x000000000000a060                gEfiDebugImageInfoTableGuid
+                0x000000000000a070                AbsolutePointerProtocol
+                0x000000000000a080                SimplePointerProtocol
+                0x000000000000a090                Tcp4Protocol
+                0x000000000000a0a0                Tcp4ServiceBindingProtocol
+                0x000000000000a0b0                Udp4Protocol
+                0x000000000000a0c0                Udp4ServiceBindingProtocol
+                0x000000000000a0d0                Ip4Protocol
+                0x000000000000a0e0                Ip4ServiceBindingProtocol
+                0x000000000000a0f0                EfiDtbTableGuid
+                0x000000000000a100                SalSystemTableGuid
+                0x000000000000a110                gEfiSmbios3TableGuid
+                0x000000000000a120                gEfiSmbiosTableGuid
+                0x000000000000a130                AcpiTableGuid
+                0x000000000000a140                MpsTableGuid
+                0x000000000000a150                UnknownDevice
+                0x000000000000a160                EfiPartTypeLegacyMbrGuid
+                0x000000000000a170                EfiPartTypeSystemPartitionGuid
+                0x000000000000a180                gEfiVTUTF8Guid
+                0x000000000000a190                gEfiVT100PlusGuid
+                0x000000000000a1a0                gEfiVT100Guid
+                0x000000000000a1b0                gEfiPcAnsiGuid
+                0x000000000000a1c0                AdapterDebugProtocol
+                0x000000000000a1d0                gEfiEdidOverrideProtocolGuid
+                0x000000000000a1e0                gEfiEdidActiveProtocolGuid
+                0x000000000000a1f0                gEfiEdidDiscoveredProtocolGuid
+                0x000000000000a200                gEfiGraphicsOutputProtocolGuid
+                0x000000000000a210                TextInSpliterProtocol
+                0x000000000000a220                ErrorOutSpliterProtocol
+                0x000000000000a230                TextOutSpliterProtocol
+                0x000000000000a240                VgaClassProtocol
+                0x000000000000a250                LegacyBootProtocol
+                0x000000000000a260                VariableStoreProtocol
+                0x000000000000a270                InternalShellProtocol
+                0x000000000000a280                gEfiMpServicesProtocolGuid
+                0x000000000000a290                gEfiFileSystemVolumeLabelInfoIdGuid
+                0x000000000000a2a0                gEfiFileSystemInfoGuid
+                0x000000000000a2b0                gEfiFileInfoGuid
+                0x000000000000a2c0                gEfiEbcProtocolGuid
+                0x000000000000a2d0                gEfiDriverFamilyOverrideProtocolGuid
+                0x000000000000a2e0                gEfiBusSpecificDriverOverrideProtocolGuid
+                0x000000000000a2f0                gEfiPlatformDriverOverrideProtocolGuid
+                0x000000000000a300                gEfiHashProtocolGuid
+                0x000000000000a310                gEfiComponentName2ProtocolGuid
+                0x000000000000a320                gEfiComponentNameProtocolGuid
+                0x000000000000a330                gEfiDriverBindingProtocolGuid
+                0x000000000000a340                gEfiPciRootBridgeIoProtocolGuid
+                0x000000000000a350                gEfiPciIoProtocolGuid
+                0x000000000000a360                gEFiUiInterfaceProtocolGuid
+                0x000000000000a370                gEfiNetworkInterfaceIdentifierProtocolGuid
+                0x000000000000a380                gEfiPxeBaseCodeCallbackProtocolGuid
+                0x000000000000a390                gEfiPxeBaseCodeProtocolGuid
+                0x000000000000a3a0                gEfiSimpleNetworkProtocolGuid
+                0x000000000000a3b0                gEfiSerialIoProtocolGuid
+                0x000000000000a3c0                gEfiUnicodeCollationProtocolGuid
+                0x000000000000a3d0                gEfiDeviceIoProtocolGuid
+                0x000000000000a3e0                gEfiLoadFile2ProtocolGuid
+                0x000000000000a3f0                gEfiLoadFileProtocolGuid
+                0x000000000000a400                gEfiLoadedImageDevicePathProtocolGuid
+                0x000000000000a410                gEfiSimpleFileSystemProtocolGuid
+                0x000000000000a420                gEfiDxeServicesTableGuid
+                0x000000000000a430                gEfiDiskIo2ProtocolGuid
+                0x000000000000a440                gEfiDiskIoProtocolGuid
+                0x000000000000a450                gEfiBlockIo2ProtocolGuid
+                0x000000000000a460                gEfiBlockIoProtocolGuid
+                0x000000000000a470                gEfiSimpleTextOutProtocolGuid
+                0x000000000000a480                gEfiSimpleTextInProtocolGuid
+                0x000000000000a490                gEfiLoadedImageProtocolGuid
+                0x000000000000a4a0                gEfiDevicePathUtilitiesProtocolGuid
+                0x000000000000a4b0                gEfiDevicePathFromTextProtocolGuid
+                0x000000000000a4c0                gEfiDevicePathToTextProtocolGuid
+                0x000000000000a4d0                gEfiDevicePathProtocolGuid
+                0x000000000000a4e0                gEfiGlobalVariableGuid
+                0x000000000000a4f0                EndInstanceDevicePath
+                0x000000000000a4f4                EndDevicePath
+                0x000000000000a4f8                RootDevicePath
+                0x000000000000a4fc                PoolAllocationType
+ .data.rel.local
+                0x000000000000a500       0x58 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+                0x000000000000a500                UnicodeInterface
+                0x000000000000a520                LibStubUnicodeInterface
+ .data          0x000000000000a558        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+ *fill*         0x000000000000a558        0x8 
+ .data.rel.local
+                0x000000000000a560      0x1c0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+                0x000000000000a560                DevPathTable
+ .data          0x000000000000a720        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+ .data.rel.local
+                0x000000000000a720      0x2a0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+                0x000000000000a720                ErrorCodeTable
+ .data          0x000000000000a9c0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+ .data          0x000000000000a9c0       0x50 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+ *fill*         0x000000000000aa10       0x10 
+ .data.rel.ro.local
+                0x000000000000aa20      0x2c0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+ .data          0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+ .data          0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+ *(.sdata)
+                0x000000000000ace0                . = ALIGN (0x10)
+                0x000000000000ace0                __init_array_start = .
+ *(SORT_BY_NAME(.init_array.*))
+ *(.init_array)
+                0x000000000000ace0                __init_array_end = .
+                0x000000000000ace0                . = ALIGN (0x10)
+                0x000000000000ace0                __CTOR_LIST__ = .
+ *(SORT_BY_NAME(.ctors.*))
+ *(.ctors)
+                0x000000000000ace0                __CTOR_END__ = .
+                0x000000000000ace0                . = ALIGN (0x10)
+                0x000000000000ace0                __DTOR_LIST__ = .
+ *(SORT_BY_NAME(.dtors.*))
+ *(.dtors)
+                0x000000000000ace0                __DTOR_END__ = .
+                0x000000000000ace0                . = ALIGN (0x10)
+                0x000000000000ace0                __fini_array_start = .
+ *(SORT_BY_NAME(.fini_array.*))
+ *(.fini_array)
+                0x000000000000ace0                __fini_array_end = .
+ *(.sbss)
+ *(.scommon)
+ *(.dynbss)
+ *(.bss*)
+ .bss           0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ .bss           0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+ .bss           0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\UEFI.c.boot.o
+ .bss           0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+ .bss           0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+ .bss           0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ .bss           0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+ .bss           0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+ .bss           0x000000000000ace0        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+ .bss           0x000000000000ace0       0x28 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+                0x000000000000ace0                LibRuntimeRestoreTPL
+                0x000000000000ace8                LibRuntimeRaiseTPL
+                0x000000000000acf0                LibRuntimeDebugOut
+                0x000000000000acf8                LibFwInstance
+                0x000000000000ad00                RT
+ .bss           0x000000000000ad08        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+ .bss           0x000000000000ad08        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .bss           0x000000000000ad08        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .bss           0x000000000000ad08        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+ *fill*         0x000000000000ad08        0x8 
+ .bss           0x000000000000ad10       0x29 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+                0x000000000000ad10                gZeroGuid
+                0x000000000000ad20                BS
+                0x000000000000ad28                ST
+                0x000000000000ad30                LibImageHandle
+                0x000000000000ad38                LibInitialized
+ .bss           0x000000000000ad39        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+ .bss           0x000000000000ad39        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+ .bss           0x000000000000ad39        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+ *fill*         0x000000000000ad39        0x7 
+ .bss           0x000000000000ad40       0x10 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+                0x000000000000ad40                GuidList
+ .bss           0x000000000000ad50        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+ .bss           0x000000000000ad50        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+ *(COMMON)
+ *(.rel.local)
+
+.igot.plt       0x000000000000ad50        0x0
+ .igot.plt      0x000000000000ad50        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+
+.note.gnu.build-id
+ *(.note.gnu.build-id)
+                0x000000000000ad50                _edata = .
+                0x00000000000018c0                _data_size = (_edata - _etext)
+                0x000000000000b000                . = ALIGN (0x1000)
+
+.reloc          0x000000000000b000        0xc
+ *(.reloc)
+ .reloc         0x000000000000b000        0xc C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+                0x000000000000c000                . = ALIGN (0x1000)
+                0x000000000000c000                _DYNAMIC = .
+
+.dynamic
+ *(.dynamic)
+                0x000000000000c000                . = ALIGN (0x1000)
+
+.rela           0x000000000000c000        0x0
+ *(.rela.text*)
+ .rela.text     0x000000000000c000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ *(.rela.data*)
+ *(.rela.got)
+ .rela.got      0x000000000000c000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ *(.rela.dyn)
+ *(.rela.stab)
+ *(.rela.init_array*)
+ *(.rela.fini_array*)
+ *(.rela.ctors*)
+ *(.rela.dtors*)
+                0x000000000000c000                . = ALIGN (0x1000)
+
+.rela.plt
+ *(.rela.plt)
+                0x000000000000c000                . = ALIGN (0x1000)
+
+.rodata         0x000000000000c000     0x1250
+ *(.rodata*)
+ .rodata        0x000000000000c000        0x6 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\UEFI.c.boot.o
+ .rodata        0x000000000000c006       0x1c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+ .rodata        0x000000000000c022       0x14 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ *fill*         0x000000000000c036        0xa 
+ .rodata        0x000000000000c040      0x250 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .rodata        0x000000000000c290      0x180 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .rodata        0x000000000000c410        0x8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+ .rodata        0x000000000000c418      0x628 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+ .rodata        0x000000000000ca40      0x516 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+ *fill*         0x000000000000cf56        0x2 
+ .rodata        0x000000000000cf58      0x2f8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+                0x000000000000e000                . = ALIGN (0x1000)
+
+.dynsym
+ *(.dynsym)
+                0x000000000000e000                . = ALIGN (0x1000)
+
+.dynstr
+ *(.dynstr)
+                0x000000000000e000                . = ALIGN (0x1000)
+
+.ignored.reloc  0x000000000000e000        0x0
+ *(.rela.reloc)
+ *(.note.GNU-stack)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+ .note.GNU-stack
+                0x000000000000e000        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+
+.comment        0x0000000000000000       0x31
+ *(.comment)
+ .comment       0x0000000000000000       0x31 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\UEFI.c.boot.o
+                                         0x13 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+                                         0x20 (size before relaxing)
+ .comment       0x0000000000000031        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+                                         0x20 (size before relaxing)
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\UEFI.c.boot.o
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a
+LOAD C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libgnuefi.a
+OUTPUT(C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\blob.bin elf64-x86-64)
+
+.debug_line     0x0000000000000000     0x61e2
+ .debug_line    0x0000000000000000       0x5b C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ .debug_line    0x000000000000005b      0x178 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+ .debug_line    0x00000000000001d3      0x1dc C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+ .debug_line    0x00000000000003af      0x2d2 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+ .debug_line    0x0000000000000681      0x9f9 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ .debug_line    0x000000000000107a      0x592 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+ .debug_line    0x000000000000160c      0x1fb C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+ .debug_line    0x0000000000001807      0x447 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+ .debug_line    0x0000000000001c4e       0x6e C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+ .debug_line    0x0000000000001cbc       0x7f C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+ .debug_line    0x0000000000001d3b     0x15c6 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .debug_line    0x0000000000003301      0xf43 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .debug_line    0x0000000000004244      0x151 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+ .debug_line    0x0000000000004395       0x73 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+ .debug_line    0x0000000000004408     0x10ca C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+ .debug_line    0x00000000000054d2       0xbf C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+ .debug_line    0x0000000000005591      0x1c7 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+ .debug_line    0x0000000000005758      0x145 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+ .debug_line    0x000000000000589d      0x893 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+ .debug_line    0x0000000000006130       0xb2 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+
+.debug_line_str
+                0x0000000000000000      0xbf5
+ .debug_line_str
+                0x0000000000000000      0xbf5 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+                                         0xd4 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+                                        0x2ee (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+                                        0x2cc (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+                                        0x2de (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+                                        0x2dd (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+                                        0x2b2 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+                                        0x2b6 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+                                        0x2a6 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+                                        0x2d3 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+                                        0x2d1 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+                                        0x361 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+                                        0x359 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+                                        0x2c9 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+                                        0x2c6 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+                                        0x2ba (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+                                        0x29d (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+                                        0x2c3 (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+                                        0x2af (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+                                        0x2ce (size before relaxing)
+ .debug_line_str
+                0x0000000000000bf5        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+                                        0x23c (size before relaxing)
+
+.debug_info     0x0000000000000000    0x1e187
+ .debug_info    0x0000000000000000       0x28 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ .debug_info    0x0000000000000028     0x18f6 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+ .debug_info    0x000000000000191e     0x1ad8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+ .debug_info    0x00000000000033f6     0x1f35 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+ .debug_info    0x000000000000532b     0x2f7c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ .debug_info    0x00000000000082a7      0xdb9 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+ .debug_info    0x0000000000009060      0x4fe C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+ .debug_info    0x000000000000955e      0x752 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+ .debug_info    0x0000000000009cb0      0xa44 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+ .debug_info    0x000000000000a6f4     0x1789 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+ .debug_info    0x000000000000be7d     0x380c C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .debug_info    0x000000000000f689     0x2bf8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .debug_info    0x0000000000012281     0x1988 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+ .debug_info    0x0000000000013c09     0x2329 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+ .debug_info    0x0000000000015f32     0x3fab C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+ .debug_info    0x0000000000019edd      0x1de C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+ .debug_info    0x000000000001a0bb     0x1af1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+ .debug_info    0x000000000001bbac      0x607 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+ .debug_info    0x000000000001c1b3     0x1e31 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+ .debug_info    0x000000000001dfe4      0x1a3 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+
+.debug_abbrev   0x0000000000000000     0x3537
+ .debug_abbrev  0x0000000000000000       0x14 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ .debug_abbrev  0x0000000000000014      0x21d C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+ .debug_abbrev  0x0000000000000231      0x2f3 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+ .debug_abbrev  0x0000000000000524      0x326 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+ .debug_abbrev  0x000000000000084a      0x51a C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ .debug_abbrev  0x0000000000000d64      0x2e7 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+ .debug_abbrev  0x000000000000104b      0x1e0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+ .debug_abbrev  0x000000000000122b      0x21d C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+ .debug_abbrev  0x0000000000001448      0x164 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+ .debug_abbrev  0x00000000000015ac      0x1a9 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+ .debug_abbrev  0x0000000000001755      0x5ac C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .debug_abbrev  0x0000000000001d01      0x4ec C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .debug_abbrev  0x00000000000021ed      0x270 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+ .debug_abbrev  0x000000000000245d      0x220 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+ .debug_abbrev  0x000000000000267d      0x4e0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+ .debug_abbrev  0x0000000000002b5d      0x12b C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+ .debug_abbrev  0x0000000000002c88      0x2b1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+ .debug_abbrev  0x0000000000002f39      0x205 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+ .debug_abbrev  0x000000000000313e      0x356 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+ .debug_abbrev  0x0000000000003494       0xa3 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+
+.debug_aranges  0x0000000000000000      0x3a0
+ .debug_aranges
+                0x0000000000000000       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+ .debug_aranges
+                0x0000000000000030       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+ .debug_aranges
+                0x0000000000000060       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+ .debug_aranges
+                0x0000000000000090       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+ .debug_aranges
+                0x00000000000000c0       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ .debug_aranges
+                0x00000000000000f0       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+ .debug_aranges
+                0x0000000000000120       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+ .debug_aranges
+                0x0000000000000150       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+ .debug_aranges
+                0x0000000000000180       0x20 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+ .debug_aranges
+                0x00000000000001a0       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+ .debug_aranges
+                0x00000000000001d0       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .debug_aranges
+                0x0000000000000200       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .debug_aranges
+                0x0000000000000230       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+ .debug_aranges
+                0x0000000000000260       0x20 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+ .debug_aranges
+                0x0000000000000280       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+ .debug_aranges
+                0x00000000000002b0       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+ .debug_aranges
+                0x00000000000002e0       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+ .debug_aranges
+                0x0000000000000310       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+ .debug_aranges
+                0x0000000000000340       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+ .debug_aranges
+                0x0000000000000370       0x30 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+
+.debug_str      0x0000000000000000     0x3507
+ .debug_str     0x0000000000000000     0x3507 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/crt0-efi-x86_64.o
+                                         0xe0 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+                                       0x137e (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+                                       0x13f7 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+                                       0x1697 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+                                       0x1955 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+                                        0x457 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+                                        0x268 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+                                        0x261 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtdata.o)
+                                        0x7ff (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(initplat.o)
+                                       0x130b (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+                                       0x16b8 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+                                       0x1593 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+                                       0x132c (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(data.o)
+                                       0x1c9e (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+                                       0x182b (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+                                        0x1f6 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+                                       0x13cd (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+                                        0x676 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+                                       0x1345 (size before relaxing)
+ .debug_str     0x0000000000003507        0x0 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+                                        0x1e7 (size before relaxing)
+
+.debug_loclists
+                0x0000000000000000     0x660a
+ .debug_loclists
+                0x0000000000000000      0x141 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/reloc_x86_64.o
+ .debug_loclists
+                0x0000000000000141       0xf4 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+ .debug_loclists
+                0x0000000000000235      0x274 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(init.o)
+ .debug_loclists
+                0x00000000000004a9      0xd1d C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ .debug_loclists
+                0x00000000000011c6      0x60e C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+ .debug_loclists
+                0x00000000000017d4      0x46d C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+ .debug_loclists
+                0x0000000000001c41      0x685 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+ .debug_loclists
+                0x00000000000022c6     0x14ff C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .debug_loclists
+                0x00000000000037c5      0xbd7 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .debug_loclists
+                0x000000000000439c      0x140 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(console.o)
+ .debug_loclists
+                0x00000000000044dc     0x1799 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)
+ .debug_loclists
+                0x0000000000005c75       0x62 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(error.o)
+ .debug_loclists
+                0x0000000000005cd7      0x1f8 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(event.o)
+ .debug_loclists
+                0x0000000000005ecf       0xd6 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(guid.o)
+ .debug_loclists
+                0x0000000000005fa5      0x64a C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(hand.o)
+ .debug_loclists
+                0x00000000000065ef       0x1b C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(math.o)
+
+.debug_rnglists
+                0x0000000000000000      0x478
+ .debug_rnglists
+                0x0000000000000000       0x3a C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(entry.o)
+ .debug_rnglists
+                0x000000000000003a       0xa1 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(misc.o)
+ .debug_rnglists
+                0x00000000000000db       0x25 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(str.o)
+ .debug_rnglists
+                0x0000000000000100       0x28 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(efirtlib.o)
+ .debug_rnglists
+                0x0000000000000128       0x61 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(rtstr.o)
+ .debug_rnglists
+                0x0000000000000189      0x15f C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(print.o)
+ .debug_rnglists
+                0x00000000000002e8      0x106 C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(va_print.o)
+ .debug_rnglists
+                0x00000000000003ee       0x8a C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\build\gnu-efi-4.0.4\x86_64\/lib/\libefi.a(dpath.o)

@@ -1,1 +1,0 @@
-etic54xcoff.c: ../../binutils-2.42/ld/emulparams/tic54xcoff.sh ../../binutils-2.42/ld/scripttempl/tic54xcoff.sc ../../binutils-2.42/ld/emultempl/ticoff.em ../../binutils-2.42/ld/emultempl/emulation.em

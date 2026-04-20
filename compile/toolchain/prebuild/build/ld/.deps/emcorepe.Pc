@@ -1,1 +1,0 @@
-emcorepe.c: ../../binutils-2.42/ld/emulparams/mcorepe.sh ../../binutils-2.42/ld/scripttempl/mcorepe.sc ../../binutils-2.42/ld/emultempl/pe.em ../../binutils-2.42/ld/emultempl/emulation.em

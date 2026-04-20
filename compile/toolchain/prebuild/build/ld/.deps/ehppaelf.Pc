@@ -1,1 +1,0 @@
-ehppaelf.c: ../../binutils-2.42/ld/emulparams/hppaelf.sh ../../binutils-2.42/ld/scripttempl/hppaelf.sc ../../binutils-2.42/ld/emultempl/elf.em ../../binutils-2.42/ld/emultempl/elf-generic.em ../../binutils-2.42/ld/emultempl/hppaelf.em ../../binutils-2.42/ld/emultempl/emulation.em

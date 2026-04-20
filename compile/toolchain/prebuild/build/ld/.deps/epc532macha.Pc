@@ -1,1 +1,0 @@
-epc532macha.c: ../../binutils-2.42/ld/emulparams/pc532macha.sh ../../binutils-2.42/ld/scripttempl/aout.sc ../../binutils-2.42/ld/emultempl/generic.em ../../binutils-2.42/ld/emultempl/emulation.em

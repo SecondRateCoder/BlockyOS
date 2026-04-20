@@ -1,5 +1,0 @@
-visium-opc.lo: ../../binutils-2.42/opcodes/visium-opc.c \
- ../../binutils-2.42/opcodes/../include/ansidecl.h \
- ../../binutils-2.42/opcodes/../include/opcode/visium.h
-../../binutils-2.42/opcodes/../include/ansidecl.h:
-../../binutils-2.42/opcodes/../include/opcode/visium.h:

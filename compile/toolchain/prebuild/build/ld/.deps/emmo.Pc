@@ -1,1 +1,0 @@
-emmo.c: ../../binutils-2.42/ld/emulparams/mmo.sh ../../binutils-2.42/ld/scripttempl/mmo.sc ../../binutils-2.42/ld/scripttempl/DWARF.sc ../../binutils-2.42/ld/emultempl/generic.em ../../binutils-2.42/ld/emultempl/mmo.em ../../binutils-2.42/ld/emultempl/elf-generic.em ../../binutils-2.42/ld/emultempl/mmix-elfnmmo.em ../../binutils-2.42/ld/emultempl/emulation.em

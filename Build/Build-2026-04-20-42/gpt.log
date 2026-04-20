@@ -1,0 +1,13 @@
+=== GPT/MBR Driver Session ===
+[2026-04-20 00:09:45] [INFO] Driver started
+[2026-04-20 00:09:45] [INFO] Loaded 2 partition definitions
+[2026-04-20 00:09:45] [INFO] Computed disk layout:
+[2026-04-20 00:09:45] [INFO]   First usable LBA : 2048
+[2026-04-20 00:09:45] [INFO]   Last usable LBA  : 2623487
+[2026-04-20 00:09:45] [INFO]   Total sectors    : 2623490
+[2026-04-20 00:09:45] [INFO]   Entry sectors    : 1
+[2026-04-20 00:09:45] [INFO] Creating disk image: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\disk.img
+[2026-04-20 00:09:45] [INFO] Writing protective MBR
+[2026-04-20 00:09:45] [INFO] Writing primary GPT header and entries
+[2026-04-20 00:09:45] [INFO] Writing backup GPT header and entries
+[2026-04-20 00:09:49] [INFO] Disk build complete

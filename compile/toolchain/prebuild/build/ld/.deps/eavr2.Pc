@@ -1,1 +1,0 @@
-eavr2.c: ../../binutils-2.42/ld/emulparams/avr2.sh ../../binutils-2.42/ld/scripttempl/avr.sc ../../binutils-2.42/ld/scripttempl/misc-sections.sc ../../binutils-2.42/ld/scripttempl/DWARF.sc ../../binutils-2.42/ld/emultempl/elf.em ../../binutils-2.42/ld/emultempl/elf-generic.em ../../binutils-2.42/ld/emultempl/avrelf.em ../../binutils-2.42/ld/emultempl/emulation.em

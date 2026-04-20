@@ -1,5 +1,0 @@
-===== Step 1: Compile Bootloaders =====
-===== Step 1.1: Compile Legacy BootLoader Blob =====
-Legacy bootloader compiled: C:\Users\PC\Documents\GitHub\BlockyOS\Build\Build-2026-04-05-32\boot-part\legacyblob.bin
-===== Step 1.2: Compile UEFI BootLoader Blob =====
-UEFI Bootloader blob not created: C:\Users\PC\Documents\GitHub\BlockyOS\Build\Build-2026-04-05-32\boot-part\blob.efi

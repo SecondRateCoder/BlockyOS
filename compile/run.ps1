@@ -17,7 +17,7 @@ param(
     [Parameter(Mandatory=$false)]
     [string]$EXEdebug,
     [Parameter(Mandatory=$true)]
-    [string]$prefix = (Get-Date -Format "yyyy-MM-dd-ss").ToString(),
+    [string]$PREFIX = (Get-Date -Format "yyyy-MM-dd-ss").ToString(),
     [Parameter(Mandatory=$false)]
     [int]$SectorSize = 512
 )
@@ -27,7 +27,7 @@ $NASM = 'nasm'
 $QEMU = if(${env:qemu-x86_64}){${env:qemu-x86_64}}else{'qemu-system-x86_64'}
 $BOCHS = if(${env:bochs}){${env:bochs}}else{'bochs'}
 $STDLIB = Join-Path (Get-Location) "\src\kernel\lib32\stdkernel\stdkernel.ps1"
-$Build = Join-Path (Get-Location) ("Build\Build-" + $prefix)
+$Build = Join-Path (Get-Location) ("Build\Build-" + $PREFIX)
 $Image = Join-Path $Build "disk.img"
 $BootPartitionDir = Join-Path $Build 'boot-part/'
 $BootPartitionBlob = Join-Path $BootPartitionDir "legacyblob.bin"
@@ -267,7 +267,7 @@ function Compile-Watcom{
 Log-Write -color Cyan "===== Step 1: Compile Bootloaders ====="
 Log-Write -color Cyan "===== Step 1.1: Compile Legacy BootLoader Blob ====="
 if(-not (Test-Path $BootPartitionDir)){New-Item -Path $BootPartitionDir -ItemType Directory -Force | Out-Null}
-(& "$(Join-Path (Get-Location) 'src/Boot/Legacy/legacy.ps1')" -prefix $prefix -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
+(& "$(Join-Path (Get-Location) 'src/Boot/Legacy/legacy.ps1')" -prefix $PREFIX -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
 if(-not (Test-Path $BootPartitionBlob)){
     Log-Write -color Red -Msg "Legacy Bootloader blob not created: $BootPartitionBlob"
     exit 1
@@ -275,7 +275,7 @@ if(-not (Test-Path $BootPartitionBlob)){
 Log-Write -color Green "Legacy bootloader compiled: $BootPartitionBlob"
 
 Log-Write -color Cyan "===== Step 1.2: Compile UEFI BootLoader Blob ====="
-(& "$(Join-Path (Get-Location) 'src/Boot/UEFI/UEFI.ps1')" -prefix $prefix -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
+(& "$(Join-Path (Get-Location) 'src/Boot/UEFI/UEFI.ps1')" -prefix $PREFIX -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
 if(-not (Test-Path $UEFIBootBlob)){
     Log-Write -color Red -Msg "UEFI Bootloader blob not created: $UEFIBootBlob"
     exit 1
@@ -289,7 +289,7 @@ if(-not (Test-Path $DiskConfigJson)){
     exit 1
 }
 Log-Write -color Yellow "Creating GPT disk: $($Image)"
-(& $GPTScript -JsonFile $DiskConfigJson -OutputPath $Image -LogFile (Join-Path $Build "gpt.log") -Verbose)
+(& $GPTScript -LayoutJson $DiskConfigJson -OutputImage $Image -LogFile (Join-Path $Build "gpt.log") -Verbose)
 
 Log-Write -color Cyan "===== Step 3: Combine Boot Partition (Legacy + UEFI) ====="
 $legacyBytes = [System.IO.File]::ReadAllBytes($BootPartitionBlob)
@@ -323,12 +323,15 @@ Log-Write -color Cyan "===== Step 5: Format Boot Partition (FAT32) ====="
 if(Test-Path $FSScript){
     Log-Write -color Yellow "Formatting boot partition with FAT32..."
     try{
-        (& $FSScript -FileSystemType 'FAT32' -PartitionImage $Image -PartitionOffset 1048576 -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs.log") -Verbose)
+        (& $FSScript -PartitionName 'Boot' -FileSystemType 'FAT32' -PartitionFlag 'efi-boot' -DiskImage $Image -SourceDirectory $e -LogFile (Join-Path $Build "fs.log") -Verbose)
         Log-Write -color Green "Boot partition formatted successfully"
     }catch{Log-Write -color Yellow "FS.ps1 formatting encountered an issue: $_"}
 }else{Log-Write -color Yellow "FS.ps1 not found at $FSScript, skipping FAT32 formatting"}
 
 if($broadimage){Copy-Item -Path $Image -Destination $BroadImageFile}
+
+# & (Join-Path (Get-Location) '/compile/emu/ValiGPT.ps1') -ImagePath $Image -Verbose
+
 if($run){
     Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ')"
     $QEMUOUT = ""

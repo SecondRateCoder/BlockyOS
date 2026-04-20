@@ -19,17 +19,17 @@ param(
     [switch]$Run_Bochs	   # Should the kernel be run? with Bochs
     )
 #C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\compile.ps1 -AsmFiles "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot1.asm", "C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\Boot\boot2.asm" -Run 1
-$NASM = "C:\Users\olusa\AppData\Local\bin\NASM\nasm.exe"
-$LD = "ld"
-$QEMU = "C:\msys64\ucrt64\bin\qemu-system-x86_64.exe"
-$BOCHS = "C:\Users\olusa\Bochs-3.0\bochs.exe"
+$NASM = 'nasm'
+$LD = 'ld'
+$QEMU = 'qemu-system-x86_64'
+$BOCHS = 'bochs'
 
-$prefix = (Get-Date -Format "yyyy-MM-dd-ss")
-$Build = Join-Path (Get-Location) ("Build\Build-" + $prefix)
-$Image = Join-Path $Build ("floppy-" + $prefix + ".img")
+$PREFIX = (Get-Date -Format "yyyy-MM-dd-ss")
+$Build = Join-Path (Get-Location) ("Build\Build-" + $PREFIX)
+$Image = Join-Path $Build ("floppy-" + $PREFIX + ".img")
 $BroadImageFile = Join-Path (Get-Location) "Build\temp\floppy.img"
 $Objdir = Join-Path $Build "objs"
-$Log = Join-Path $Build ("log-" + $prefix + ".txt")
+$Log = Join-Path $Build ("log-" + $PREFIX + ".txt")
 
 $BOCHSRC = Join-Path $Build ".bochsrc"
 $BOCHSLOG = Join-Path $Build "bochs.log"

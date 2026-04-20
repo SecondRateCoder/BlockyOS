@@ -1,1 +1,0 @@
-evanilla.c: ../../binutils-2.42/ld/emulparams/vanilla.sh ../../binutils-2.42/ld/scripttempl/vanilla.sc ../../binutils-2.42/ld/emultempl/vanilla.em ../../binutils-2.42/ld/emultempl/emulation.em

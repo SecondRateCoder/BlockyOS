@@ -33,7 +33,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "${workspaceFolder}\\compile\\toolchain/prebuild\\i686-elf\\bin\\i686-elf-gcc-15.2.0.exe",
+            "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
             "compilerArgs": [
                 "-nostdlib",
                 "-ffreestanding",
@@ -51,8 +51,12 @@
             "includePath": [
                 "${workspaceFolder}/",
                 "${workspaceFolder}/src/",
-                "${workspaceFolder}/compile/toolchain/posix-uefi/"
-            ]
+                "${workspaceFolder}/compile/toolchain/build/gnu-efi-4.0.4/x86_64/include/efi",
+                "${workspaceFolder}/compile/toolchain/build/gnu-efi-4.0.4/x86_64/include/efi/legacy",
+                "${workspaceFolder}/compile/toolchain/build/gnu-efi-4.0.4/x86_64/include/efi/protocol",
+                "${workspaceFolder}/compile/toolchain/build/gnu-efi-4.0.4/x86_64/include/efi/x86_64"
+            ],
+            "mergeConfigurations": true
         },
         {
             "name": "GCC(Default)",
@@ -65,7 +69,7 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "__32="
+                "__ia32__="
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",

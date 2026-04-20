@@ -1,1 +1,0 @@
-ealphavms.c: ../../binutils-2.42/ld/emulparams/alphavms.sh ../../binutils-2.42/ld/scripttempl/alphavms.sc ../../binutils-2.42/ld/emultempl/generic.em ../../binutils-2.42/ld/emultempl/vms.em ../../binutils-2.42/ld/emultempl/emulation.em

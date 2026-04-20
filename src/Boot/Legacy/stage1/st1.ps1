@@ -1,11 +1,11 @@
 param(
     [Parameter(Mandatory=$true)]
-    [string]$prefix,
+    [string]$PREFIX,
     [Parameter(Mandatory=$true)]
     [string]$NASM
 )
 
-$Build = Join-Path (Get-Location) ("Build\Build-" + $prefix)
+$Build = Join-Path (Get-Location) ("Build\Build-" + $PREFIX)
 $Objdir = Join-Path $Build "\objs\"
 $Log = Join-Path $Build ("st1.log")
 $ST1BIN = Join-Path -Path $Objdir "boot1.bin"

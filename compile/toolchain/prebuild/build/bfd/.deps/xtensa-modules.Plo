@@ -1,7 +1,0 @@
-xtensa-modules.lo: ../../binutils-2.42/bfd/xtensa-modules.c \
- ../../binutils-2.42/bfd/../include/ansidecl.h \
- ../../binutils-2.42/bfd/../include/xtensa-isa.h \
- ../../binutils-2.42/bfd/../include/xtensa-isa-internal.h
-../../binutils-2.42/bfd/../include/ansidecl.h:
-../../binutils-2.42/bfd/../include/xtensa-isa.h:
-../../binutils-2.42/bfd/../include/xtensa-isa-internal.h:

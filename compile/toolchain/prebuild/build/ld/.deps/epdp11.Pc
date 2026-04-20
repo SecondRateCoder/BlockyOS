@@ -1,1 +1,0 @@
-epdp11.c: ../../binutils-2.42/ld/emulparams/pdp11.sh ../../binutils-2.42/ld/scripttempl/pdp11.sc ../../binutils-2.42/ld/emultempl/generic.em ../../binutils-2.42/ld/emultempl/pdp11.em ../../binutils-2.42/ld/emultempl/emulation.em

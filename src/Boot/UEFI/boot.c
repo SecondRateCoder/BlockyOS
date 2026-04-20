@@ -1,7 +1,7 @@
 #include "standard.h"
 
-
-efi_status_t EFIAPI efi_main(efi_handle_t handle, efi_system_table_t *sysTable){
-	printf("Faah");
+EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
+	InitializeLib(Image, Table);
+	Print(L"Hi");
 	return EFI_SUCCESS;
 }
