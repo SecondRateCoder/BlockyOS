@@ -1,10 +1,9 @@
+#pragma once
+
 #include "raw.h"
-#include "ref/blake2.h"
 
 #define FRATSIG "FRAT_FILESYSTEM USABLE"
 #define FRATBLOCKSIG "FRATROOT"
-#define PATHSEP '/'
-#define PATHnoSEP '\\'
 
 typedef struct miniGPT{
 	char sig[8];
@@ -71,7 +70,7 @@ typedef struct fsroot{
 }fsroot;
 
 typedef struct conf_fsroot{
-	fsroot root;
+	fsroot *root;
 	size_t logLBA;
 	LBA loc;
 	uint32_t lastClusterAlloc;
@@ -82,21 +81,21 @@ typedef struct conf_fsroot{
 	}clusterBuffer;
 }conf_fsroot;
 
-typedef struct fshandle{
+typedef struct fhandle{
 	conf_fsroot *root;
 	fsblock *file;
 	size_t progress;
 	uint8_t progresslimit;
 	struct handlecache{
-		size_t progresstimestamp;
+		ssize_t progresstimestamp;
 		// 1 means read, 0 means write.
 		int8_t rw;
 		void *block;
 	}handlecache[8];
-}fshandle;
+}fhandle;
 
 typedef struct diritem{
-	size_t fscode		: 42;
+	size_t fcode		: 42;
 	size_t attributes	: 16;
 	// A code, if it is 0, then this item is the end of the list
 	ssize_t local;
@@ -108,7 +107,7 @@ typedef struct dirhandle{
 	diribuffer dirarray;
 }dirhandle;
 
-struct unhandle{
+typedef struct unhandle{
 	bool dir;
 	union{
 		dirhandle *dhandle_;
@@ -127,6 +126,8 @@ GPTeNSTR *makeGPTeNSTR(char *str);
 void __finit(conf_fsroot *root, fsblock *fb, char *path);
 
 
-fshandle *fsloadh(conf_fsroot *root, char *path, char *args);
-void _fpush1(fshandle *handle, void *buffer);
-void *_fread1(fshandle *handle);
+fhandle *fsloadh(conf_fsroot *root, char *path, char *args);
+void _fpush1(fhandle *handle, void *buffer);
+void *_fread1(fhandle *handle);
+dirhandle *__fgetparent(conf_fsroot *root, char *path);
+bool __ftest(fhandle *h);

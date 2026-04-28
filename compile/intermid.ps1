@@ -1,13 +1,16 @@
 param(
-    [string]$run
+    [string]$run,
+    [switch]$nocompile
 )
 
 $PREFIX = (Get-Date -Format "yyyy-MM-dd-ss").ToString()
 $EXE = Join-Path (Get-Location) ("Build\Build-" + $PREFIX + "\UEFI\objs\blob.efi")
 if($run -eq "bochs"){
-& (Join-Path (Get-Location) "\compile\run.ps1") -BroadImage -SectorNum (1024 * 1024) -clear -emudebug -EXEdebug $EXE -prefix $PREFIX -runbochs
+    & (Join-Path (Get-Location) "\compile\run.ps1") -BroadImage -SectorNum (1024 * 1024) -clear -emudebug -prefix $PREFIX -runbochs -enabledebug -enablevars
 }elseif($run -eq 'qemu'){
-& (Join-Path (Get-Location) "\compile\run.ps1") -BroadImage -SectorNum (1024 * 1024) -clear -run -emudebug -EXEdebug $EXE -prefix $PREFIX
+    & (Join-Path (Get-Location) "\compile\run.ps1") -BroadImage -SectorNum (1024 * 1024) -clear -run -emudebug -prefix $PREFIX      -enabledebug -enablevars
 }else{
-& (Join-Path (Get-Location) "\compile\run.ps1") -BroadImage -SectorNum (1024 * 1024) -clear -emudebug -EXEdebug $EXE -prefix $PREFIX
+    if($nocompile){
+        & (Join-Path (Get-Location) "\compile\run.ps1") -BroadImage -SectorNum (1024 * 1024) -clear -emudebug -prefix $PREFIX -nocompile
+    }else{& (Join-Path (Get-Location) "\compile\run.ps1") -BroadImage -SectorNum (1024 * 1024) -clear -emudebug -prefix $PREFIX}
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "tools.h"
 
 typedef size_t LBA;

@@ -6,14 +6,14 @@
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "Build Utils",
-            "program": "${workspaceFolder}//tools//build//util.exe",
+            "program": "${workspaceFolder}//tools//filesystem//fs.exe",
             "args": [
-                "-c", "-state", "disksector-vfs", "-force", "-param", "...,aaa,bbb,ccc" //, "-file", "C://Users//olusa//OneDrive//Documents//GitHub//BlockyOS//tools//utility//tests//test.file"
+                "${workspaceFolder}/Build/temp/image.img"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath": "gdb",
             "setupCommands": [
@@ -32,7 +32,7 @@
                 "echo": true,
                 "reveal": "always",
                 "focus": false,
-                "panel": "dedicated"
+                "panel": "shared"
             }
         },
         {

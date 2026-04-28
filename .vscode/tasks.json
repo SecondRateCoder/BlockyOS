@@ -3,14 +3,17 @@
         {
             "type": "shell",
             "label": "Build Utils",
-            "dependsOn": "Clear Terminal",
-            "command": "powershell.exe",
+            "dependsOn": [
+                "Clear Terminal"
+                // ,"Prep Broad Image"
+            ],
+            "command": "pwsh",
             "args": [
                 "-NoProfile",
                 "-ExecutionPolicy",
                 "Bypass",
                 "-File",
-                "${workspaceFolder}//tools//utility//util.ps1"
+                "${workspaceFolder}//tools//filesystem//fs.ps1",
             ],
             "presentation": {
                 "echo": true,
@@ -26,13 +29,14 @@
             "type": "shell",
             "label": "Prep Broad Image",
             "dependsOn": "Clear Terminal",
-            "command": "powershell.exe",
+            "command": "pwsh",
             "args": [
                 "-NoProfile",
                 "-ExecutionPolicy",
                 "Bypass",
                 "-File",
                 "${workspaceFolder}//compile//intermid.ps1",
+                "-nocompile"
             ],
             "presentation": {
                 "echo": true,

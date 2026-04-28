@@ -1,5 +1,5 @@
 ===== Step 2: Create Disk Layout (GPT) =====
-Creating GPT disk: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-28-10\disk.img
+Creating GPT disk: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-28-16\disk.img
 ===== Step 3: Format Boot Partition (FAT32) =====
 Formatting boot partition with FAT32...
 Boot partition formatted successfully

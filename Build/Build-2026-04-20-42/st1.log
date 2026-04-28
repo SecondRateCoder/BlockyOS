@@ -1,2 +1,0 @@
-nasm -f bin C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\src\boot\Legacy\stage1\boot.asm -o C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-20-42\objs\boot1.bin
-

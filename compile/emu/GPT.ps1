@@ -18,6 +18,26 @@ function Pad-Array{
     return $Array
 }
 
+function Compute-CRC32{
+    param([byte[]]$Data)
+
+    $table = @(0..255 | ForEach-Object{
+        $crc = $_
+        for($i=0; $i -lt 8; $i++){
+            if($crc -band 1){$crc = (0xEDB88320 -bxor ($crc -shr 1))
+            }else{$crc = ($crc -shr 1)}
+        }
+        $crc
+    })
+
+    $crc32 = 0xFFFFFFFF
+    foreach($b in $Data){
+        $crc32 = ($crc32 -shr 8) -bxor $table[($crc32 -bxor $b) -band 0xFF]
+    }
+
+    return (-bnot $crc32) -band 0xFFFFFFFF
+}
+
 # ============================================================
 # HELP
 # ============================================================
@@ -76,6 +96,20 @@ PARAMETERS
 "@
 }
 
+function LBA-2-CHS{
+    param(
+        [uint64]$LBA,
+        [byte]$HeadsPerCylinder = 255,
+        [byte]$SectorsPerTrack = 63
+    )
+
+    return [pscustomobject]@{
+        cylinder    = $LBA / ($HeadsPerCylinder * $SectorsPerTrack)
+        head        = ($LBA / $SectorsPerTrack) % $HeadsPerCylinder
+        sector      = ($LBA % $SectorsPerTrack) + 1
+    }
+}
+
 function New-ProtectiveMBRFromJson{
     param(
         [Parameter(Mandatory=$true)]
@@ -102,8 +136,8 @@ function New-ProtectiveMBRFromJson{
     $mbr = New-Object byte[] 512
 
     # Boot signature
-    $mbr[510] = 0x55
-    $mbr[511] = 0xAA
+    $mbr[510] = [UInt16]0x55
+    $mbr[511] = [UInt16]0xAA
 
     # Partition entry offset
     $entryOffset = 446
@@ -122,18 +156,16 @@ function New-ProtectiveMBRFromJson{
         # Status
         $Buffer[$Offset + 0] = $Status
 
-        # CHS start (set to 0/1/1)
-        $Buffer[$Offset + 1] = 0x00
-        $Buffer[$Offset + 2] = 0x02
-        $Buffer[$Offset + 3] = 0x00
+        $Buffer[$Offset + 1] = [byte]($StartLBA / (255 * 63))
+        $Buffer[$Offset + 2] = [byte](($StartLBA / 255) % 63)
+        $Buffer[$Offset + 3] = [byte](($StartLBA % 255) + 1)
 
         # Type
-        $Buffer[$Offset + 4] = $Type
-
-        # CHS end (set to max: FF FF FF)
-        $Buffer[$Offset + 5] = 0xFF
-        $Buffer[$Offset + 6] = 0xFF
-        $Buffer[$Offset + 7] = 0xFF
+        $Buffer[$Offset + 4] = [byte]$Type
+        $CHS = LBA-2-CHS $StartLBA
+        $Buffer[$Offset + 5] = [byte]$CHS.cylinder
+        $Buffer[$Offset + 6] = [byte]$CHS.head
+        $Buffer[$Offset + 7] = [byte]$CHS.sector
 
         # LBA start
         [BitConverter]::GetBytes($StartLBA).CopyTo($Buffer, $Offset + 8)
@@ -153,7 +185,8 @@ function New-ProtectiveMBRFromJson{
             size   = $p.size
             start  = $currentLBA
             end    = $currentLBA + $sectors - 1
-            sectors = $sectors
+            sectors= $sectors
+            type   = $p.type
         }
         $currentLBA += $sectors
     }
@@ -176,9 +209,14 @@ function New-ProtectiveMBRFromJson{
 
     # Write up to 4 entries
     for($i = 0; $i -lt [math]::Min(4, $computed.Count); $i++){
-        $p = $computed[$i]
-        Write-MbrEntry -Buffer $mbr -Offset ($entryOffset + 16 * $i) -Status 0x00 -Type 0xEE -StartLBA ([uint32]$p.start) -SectorCount ([uint32]$p.sectors)
+        # $p = $computed[$i]
+        $type = if($computed[$i].type -contains 'efi-boot'){0x44}else{0x00}
+        Write-MbrEntry -Buffer $mbr -Offset ($entryOffset + (16 * $i)) -Status 0x00 -Type $type -StartLBA ([uint32]($computed[$i]).start) -SectorCount ([uint32]($computed[$i]).sectors)
     }
+
+    # Boot signature
+    $mbr[510] = [UInt16]0x55
+    $mbr[511] = [UInt16]0xAA
 
     return $mbr
 }
@@ -191,15 +229,51 @@ if ($Help){Show-Help; exit}
 $logBuffer = @()
 
 function Log{
-    param([string]$Msg, [string]$Level = "INFO")
+    param([string]$Msg, [string]$Level = "INFO", [System.ConsoleColor]$color)
 
     $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $line = "[$ts] [$Level] $Msg"
 
-    if($Verbose){Write-Host $line}
+    if($Verbose){if($color){Write-Host $line -ForegroundColor $color}else{Write-Host $line}}
     if($LogFile){Add-Content -Path $LogFile -Value $line}
 
     $logBuffer += $line
+}
+
+function New-LoggedFileStream{
+    param(
+        [string]$Path
+    )
+
+    $proxy = New-Object PSObject -Property @{
+        BaseStream = [System.IO.File]::Open($Path, [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::Read)
+        LastSeek   = 0
+    }
+
+    $proxy | Add-Member -MemberType ScriptMethod -Name Seek -Value {
+        param($offset, $origin)
+
+        $this.LastSeek = $offset
+        Log -Info "WARNING" -color Yellow ">> [SEEK] Offset=$offset Origin=$origin  (Caller: $((Get-PSCallStack)[1].Location))"
+
+        return $this.BaseStream.Seek($offset, $origin)
+    }
+
+    $proxy | Add-Member -MemberType ScriptMethod -Name Write -Value {
+        param([byte[]]$buffer, $offset, $count)
+
+        if(($count -eq 0) -or (-not $count)){$count = $buffer.Count - $offset}
+        $caller = (Get-PSCallStack)[1].Location
+        $abs = $this.BaseStream.Position
+
+        Log -Info "WARNING" -color Yellow ">> ([WRITE] Position=$abs  Count=$count  Caller=$caller)"
+
+        return $this.BaseStream.Write($buffer, $offset, $count)
+    }
+
+    
+
+    return $proxy
 }
 
 if($LogFile){"=== GPT/MBR Driver Session ===" | Out-File -FilePath $LogFile -Force}
@@ -247,11 +321,11 @@ Log "Loaded $($parts.Count) partition definitions"
 function Get-GptAttributeValue{
     param([object]$Attributes)
 
-    if (-not $Attributes) { return [uint64]0 }
+    if(-not $Attributes){return [uint64]0}
 
     $attrs = @()
-    if ($Attributes -is [string]) { $attrs = @($Attributes) }
-    else { $attrs = @($Attributes) }
+    if($Attributes -is [string]){$attrs = @($Attributes)
+    }else{$attrs = @($Attributes)}
 
     [uint64]$value = 0
 
@@ -382,9 +456,16 @@ Apply-GiveDirectives -Parts $parts -DiskSectors $diskSectorsBase -FirstUsableLBA
 $lastUsableLBA = ($parts | Sort-Object endLBA -Descending)[0].endLBA
 
 # Backup GPT placement after last usable LBA
-$backupEntriesLBA = $lastUsableLBA + 1
-$backupHeaderLBA  = $backupEntriesLBA + $entrySectors
-$totalSectors     = $backupHeaderLBA + 1
+# $backupEntriesLBA = $lastUsableLBA + 1
+# $backupHeaderLBA  = $backupEntriesLBA + $entrySectors
+# $totalSectors     = $backupHeaderLBA + 1
+$entriesBytes   = $entryCount * $entrySize
+$entrySectors   = [math]::Ceiling($entriesBytes / $sectorSize)
+# Final LBA of disk
+$backupHeaderLBA = $lastUsableLBA + 1 + $entrySectors
+$totalSectors    = $backupHeaderLBA + 1
+# Backup entries go immediately before backup header
+$backupEntriesLBA = $backupHeaderLBA - $entrySectors
 
 Log "Computed disk layout:"
 Log "  First usable LBA : $firstUsableLBA"
@@ -407,42 +488,119 @@ if($IsDrive){
 }else{
     Log "Creating disk image: $OutputImage"
     try{
-        $fs = New-Object System.IO.FileStream($OutputImage, [System.IO.FileMode]::Create, $access, [System.IO.FileShare]::None)
-        $fs.SetLength([int64]($totalSectors * $sectorSize))
+        $fs = New-LoggedFileStream $OutputImage
+        $fs.BaseStream.SetLength([int64]($totalSectors * $sectorSize))
     }catch{
         Log "Failed to create disk image: $_" "ERROR"
         exit 1
     }
 }
+# $bw = New-Object System.IO.BinaryWriter($fs.BaseStream)
 
-$bw = New-Object System.IO.BinaryWriter($fs)
 
 function Seek-Bytes{
     param([UInt64]$Offset)
-    $bw.BaseStream.Seek([int64]$Offset, [System.IO.SeekOrigin]::Begin) | Out-Null
+    $fs.Seek([int64]$Offset, [System.IO.SeekOrigin]::Begin) | Out-Null
 }
 
 # ============================================================
 # WRITE PROTECTIVE MBR
 # ============================================================
+# Log "Writing protective MBR"
+
+# $ProtectiveMBR = New-ProtectiveMBRFromJson -JsonPath $LayoutJson
+
+# # Partition entry 0: type EE, start LBA 1, size = min(totalSectors-1, 0xFFFFFFFF)
+# # CHS fields left as 0/FF (standard "large disk" encoding)
+# $ProtectiveMBR[446 + 4] = 0xEE
+# # [BitConverter]::GetBytes([uint32]1).CopyTo($ProtectiveMBR, 454)
+# # [BitConverter]::GetBytes([uint32][math]::Min($totalSectors - 1, 0xFFFFFFFF)).CopyTo($ProtectiveMBR, 458)
+# Seek-Bytes 0
+# $fs.Write($ProtectiveMBR)
 Log "Writing protective MBR"
 
-$ProtectiveMBR = New-ProtectiveMBRFromJson -JsonPath $LayoutJson
+# Create a clean 512-byte buffer
+$ProtectiveMBR = $ProtectiveMBR = New-ProtectiveMBRFromJson -JsonPath $LayoutJson
+$ProtectiveMBR[510] = 0x55
+$ProtectiveMBR[511] = 0xAA
 
-# Partition entry 0: type EE, start LBA 1, size = min(totalSectors-1, 0xFFFFFFFF)
-# CHS fields left as 0/FF (standard "large disk" encoding)
-$ProtectiveMBR[446 + 4] = 0xEE
-# [BitConverter]::GetBytes([uint32]1).CopyTo($ProtectiveMBR, 454)
-# [BitConverter]::GetBytes([uint32][math]::Min($totalSectors - 1, 0xFFFFFFFF)).CopyTo($ProtectiveMBR, 458)
+# Define the single Protective Partition (Entry 0)
+$mbrOffset = 446
+$ProtectiveMBR[$mbrOffset + 4] = 0xEE # Type: GPT Protective
+$CHS = LBA-2-CHS 1
+$ProtectiveMBR[$mbrOffset + 1] = $CHS.cylinder
+$ProtectiveMBR[$mbrOffset + 2] = $CHS.head
+$ProtectiveMBR[$mbrOffset + 3] = $CHS.sector
+
+# Start LBA must be 1
+[BitConverter]::GetBytes([uint32]1).CopyTo($ProtectiveMBR, $mbrOffset + 8)
+
+# Size should cover the whole disk (totalSectors - 1)
+$mbrSize = if ($totalSectors -gt 0xFFFFFFFF) { 0xFFFFFFFF } else { [uint32]($totalSectors - 1) }
+[BitConverter]::GetBytes($mbrSize).CopyTo($ProtectiveMBR, $mbrOffset + 12)
+
 Seek-Bytes 0
-$bw.Write($ProtectiveMBR)
+$fs.Write($ProtectiveMBR)
 
 # ============================================================
 # GPT HEADER + ENTRIES HELPERS
 # ============================================================
 $diskGuid = [Guid]::NewGuid()
 
-function Write-GptHeader{
+# function Write-GptHeader{
+#     param(
+#         [UInt64]$HeaderLBA,
+#         [UInt64]$BackupLBA,
+#         [UInt64]$EntriesLBA,
+#         [UInt64]$FirstUsableLBA,
+#         [UInt64]$LastUsableLBA,
+#         [UInt32]$EntryCount,
+#         [UInt32]$EntrySize,
+#         [Guid]$DiskGuid
+#     )
+
+#     $hdr = New-Object byte[] 512
+
+#     # Signature "EFI PART"
+#     [Text.Encoding]::ASCII.GetBytes("EFI PART").CopyTo($hdr,0)
+
+#     # Revision 1.0
+#     [BitConverter]::GetBytes(0x00010000).CopyTo($hdr,8)
+
+#     # Header size
+#     [BitConverter]::GetBytes(92).CopyTo($hdr,12)
+
+#     # CRC32 (0 for now)
+#     # 16-19 reserved
+
+#     # Current LBA
+#     [BitConverter]::GetBytes($HeaderLBA).CopyTo($hdr,24)
+
+#     # Backup LBA
+#     [BitConverter]::GetBytes($BackupLBA).CopyTo($hdr,32)
+
+#     # First usable LBA
+#     [BitConverter]::GetBytes($FirstUsableLBA).CopyTo($hdr,40)
+
+#     # Last usable LBA
+#     [BitConverter]::GetBytes($LastUsableLBA).CopyTo($hdr,48)
+
+#     # Disk GUID
+#     $DiskGuid.ToByteArray().CopyTo($hdr,56)
+
+#     # Partition entries starting LBA
+#     [BitConverter]::GetBytes($EntriesLBA).CopyTo($hdr,72)
+
+#     # Number of partition entries
+#     [BitConverter]::GetBytes($EntryCount).CopyTo($hdr,80)
+
+#     # Size of each entry
+#     [BitConverter]::GetBytes($EntrySize).CopyTo($hdr,84)
+
+#     # CRC32 of partition array (0 for now)
+#     return $hdr
+# }
+function Write-GptHeader {
     param(
         [UInt64]$HeaderLBA,
         [UInt64]$BackupLBA,
@@ -451,51 +609,74 @@ function Write-GptHeader{
         [UInt64]$LastUsableLBA,
         [UInt32]$EntryCount,
         [UInt32]$EntrySize,
-        [Guid]$DiskGuid
+        [Guid]$DiskGuid,
+        [Int32]$EntriesCRC32 = 0,
+        [Int32]$HeaderCRC32 = 0
     )
 
     $hdr = New-Object byte[] 512
 
-    # Signature "EFI PART"
     [Text.Encoding]::ASCII.GetBytes("EFI PART").CopyTo($hdr,0)
-
-    # Revision 1.0
     [BitConverter]::GetBytes(0x00010000).CopyTo($hdr,8)
-
-    # Header size
     [BitConverter]::GetBytes(92).CopyTo($hdr,12)
 
-    # CRC32 (0 for now)
-    # 16-19 reserved
+    # CRC32 placeholder (will be overwritten)
+    [BitConverter]::GetBytes($HeaderCRC32).CopyTo($hdr,16)
 
-    # Current LBA
     [BitConverter]::GetBytes($HeaderLBA).CopyTo($hdr,24)
-
-    # Backup LBA
     [BitConverter]::GetBytes($BackupLBA).CopyTo($hdr,32)
-
-    # First usable LBA
     [BitConverter]::GetBytes($FirstUsableLBA).CopyTo($hdr,40)
-
-    # Last usable LBA
     [BitConverter]::GetBytes($LastUsableLBA).CopyTo($hdr,48)
 
-    # Disk GUID
     $DiskGuid.ToByteArray().CopyTo($hdr,56)
 
-    # Partition entries starting LBA
     [BitConverter]::GetBytes($EntriesLBA).CopyTo($hdr,72)
-
-    # Number of partition entries
     [BitConverter]::GetBytes($EntryCount).CopyTo($hdr,80)
-
-    # Size of each entry
     [BitConverter]::GetBytes($EntrySize).CopyTo($hdr,84)
 
-    # CRC32 of partition array (0 for now)
+    [BitConverter]::GetBytes($EntriesCRC32).CopyTo($hdr,88)
+
     return $hdr
 }
 
+
+# function Write-GptEntries{
+#     param(
+#         [UInt64]$LBA,
+#         [array]$Parts,
+#         [int]$EntrySize,
+#         [int]$SectorSize
+#     )
+
+#     Seek-Bytes ($LBA * $SectorSize)
+
+#     foreach($p in $Parts){
+#         $entry = New-Object byte[] $EntrySize
+
+#         # Type GUID
+#         ([Guid]$p.type).ToByteArray().CopyTo($entry,0)
+
+#         # Unique GUID
+#         ([Guid]::NewGuid()).ToByteArray().CopyTo($entry,16)
+
+#         # Start / End LBA
+#         [BitConverter]::GetBytes([UInt64]$p.startLBA).CopyTo($entry,32)
+#         [BitConverter]::GetBytes([UInt64]$p.endLBA).CopyTo($entry,40)
+
+#         # Attributes
+#         [BitConverter]::GetBytes([UInt64]$p.attributesValue).CopyTo($entry,48)
+
+#         # Name (UTF-16LE)
+#         $nameBytes = [Text.Encoding]::Unicode.GetBytes([string]$p.name)
+#         $maxNameBytes = $EntrySize - 56
+#         if($nameBytes.Length -gt $maxNameBytes){
+#             $nameBytes = $nameBytes[0..($maxNameBytes-1)]
+#         }
+#         $nameBytes.CopyTo($entry,56)
+
+#         $fs.Write($entry)
+#     }
+# }
 function Write-GptEntries{
     param(
         [UInt64]$LBA,
@@ -504,35 +685,47 @@ function Write-GptEntries{
         [int]$SectorSize
     )
 
-    Seek-Bytes ($LBA * $SectorSize)
+    $ms = New-Object System.IO.MemoryStream
+    $bwLocal = New-Object System.IO.BinaryWriter($ms)
 
     foreach($p in $Parts){
         $entry = New-Object byte[] $EntrySize
 
-        # Type GUID
         ([Guid]$p.type).ToByteArray().CopyTo($entry,0)
-
-        # Unique GUID
         ([Guid]::NewGuid()).ToByteArray().CopyTo($entry,16)
-
-        # Start / End LBA
         [BitConverter]::GetBytes([UInt64]$p.startLBA).CopyTo($entry,32)
         [BitConverter]::GetBytes([UInt64]$p.endLBA).CopyTo($entry,40)
-
-        # Attributes
         [BitConverter]::GetBytes([UInt64]$p.attributesValue).CopyTo($entry,48)
 
-        # Name (UTF-16LE)
         $nameBytes = [Text.Encoding]::Unicode.GetBytes([string]$p.name)
         $maxNameBytes = $EntrySize - 56
-        if($nameBytes.Length -gt $maxNameBytes){
+        if ($nameBytes.Length -gt $maxNameBytes) {
             $nameBytes = $nameBytes[0..($maxNameBytes-1)]
         }
         $nameBytes.CopyTo($entry,56)
 
-        $bw.Write($entry)
+        $bwLocal.Write($entry)
     }
+
+    $bwLocal.Flush()
+    $bytes = $ms.ToArray()
+
+    # # Write to disk
+    # Seek-Bytes ($LBA * $SectorSize)
+    # $fs.Write($bytes)
+    # return ,$bytes
+
+    # Pad to full entry array size (EntrySize * EntryCount)
+    $expectedSize = $EntrySize * $Parts.Count
+    $padded = New-Object byte[] $expectedSize
+    $bytes.CopyTo($padded, 0)
+    # Write to disk
+    Seek-Bytes ($LBA * $SectorSize)
+    $fs.Write($padded, 0, $padded.Length)
+    # Return the exact bytes used for CRC
+    return ,$padded
 }
+
 
 # ============================================================
 # WRITE PRIMARY GPT
@@ -541,6 +734,9 @@ $primaryHeaderLBA  = 1
 $primaryEntriesLBA = 2
 
 Log "Writing primary GPT header and entries"
+# Generate GPT Entries
+$primaryEntries = Write-GptEntries -LBA $primaryEntriesLBA -Parts $parts -EntrySize $entrySize -SectorSize $sectorSize
+$entriesCRC = [Int32]((Compute-CRC32 $primaryEntries) -band 0xFFFFFFFF)
 
 $primaryHdr = Write-GptHeader `
     -HeaderLBA $primaryHeaderLBA `
@@ -550,19 +746,35 @@ $primaryHdr = Write-GptHeader `
     -LastUsableLBA $lastUsableLBA `
     -EntryCount ([uint32]$entryCount) `
     -EntrySize ([uint32]$entrySize) `
-    -DiskGuid $diskGuid
+    -DiskGuid $diskGuid `
+    -EntriesCRC32 $entriesCRC `
+    -HeaderCRC32 0
 
+# Generate CRC32 Hash
+
+# $headerCRC = [Int32]((Compute-CRC32 $primaryHdr[0..91]) -band 0xFFFFFFFF)
+$hdrCopy = $primaryHdr.Clone()
+$hdrCopy[16] = 0
+$hdrCopy[17] = 0
+$hdrCopy[18] = 0
+$hdrCopy[19] = 0
+$headerCRC = Compute-CRC32 $hdrCopy[0..91]
+
+[BitConverter]::GetBytes($headerCRC).CopyTo($primaryHdr,16)
+
+# Write Header
 Seek-Bytes ($primaryHeaderLBA * $sectorSize)
-$bw.Write([byte[]]$primaryHdr)
-
-Write-GptEntries -LBA $primaryEntriesLBA -Parts $parts -EntrySize $entrySize -SectorSize $sectorSize
+$fs.Write([byte[]]$primaryHdr)
 
 # ============================================================
 # WRITE BACKUP GPT
 # ============================================================
 Log "Writing backup GPT header and entries"
 
-Write-GptEntries -LBA $backupEntriesLBA -Parts $parts -EntrySize $entrySize -SectorSize $sectorSize
+# $backupEntries = Write-GptEntries -LBA $backupEntriesLBA -Parts $parts -EntrySize $entrySize -SectorSize $sectorSize
+$backupEntries = Write-GptEntries -LBA $backupEntriesLBA -Parts $parts -EntrySize $entrySize -SectorSize $sectorSize
+
+$backupEntriesCRC = [Int32]((Compute-CRC32 $backupEntries) -band 0xFFFFFFFF)
 
 $backupHdr = Write-GptHeader `
     -HeaderLBA $backupHeaderLBA `
@@ -572,16 +784,20 @@ $backupHdr = Write-GptHeader `
     -LastUsableLBA $lastUsableLBA `
     -EntryCount ([uint32]$entryCount) `
     -EntrySize ([uint32]$entrySize) `
-    -DiskGuid $diskGuid
+    -DiskGuid $diskGuid `
+    -EntriesCRC32 $backupEntriesCRC `
+    -HeaderCRC32 0
+
+$backupHeaderCRC = [Int32]((Compute-CRC32 $backupHdr[0..91]) -band 0xFFFFFFFF)
+[BitConverter]::GetBytes($backupHeaderCRC).CopyTo($backupHdr,16)
 
 Seek-Bytes ($backupHeaderLBA * $sectorSize)
-$bw.Write([byte[]]$backupHdr)
+$fs.Write([byte[]]$backupHdr)
 
 # ============================================================
 # DONE
 # ============================================================
-$bw.Close()
-$fs.Close()
+$fs.BaseStream.Close()
 
 Log "Disk build complete"
 Write-Host "Disk successfully built → $OutputImage"
