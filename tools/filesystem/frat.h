@@ -98,7 +98,8 @@ typedef struct fshandle{
 typedef struct diritem{
 	size_t fscode		: 42;
 	size_t attributes	: 16;
-	size_t index;
+	// A code, if it is 0, then this item is the end of the list
+	ssize_t local;
 }diritem, *diribuffer;
 typedef struct dirhandle{
     conf_fsroot *root;
