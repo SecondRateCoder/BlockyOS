@@ -1,0 +1,115 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Utils",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask": "Build Utils",
+            "program": "${workspaceFolder}//tools//build//util.exe",
+            "args": [
+                "-c", "-state", "disksector-vfs", "-force", "-param", "...,aaa,bbb,ccc" //, "-file", "C://Users//olusa//OneDrive//Documents//GitHub//BlockyOS//tools//utility//tests//test.file"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            }
+        },
+        {
+            "name": "Debug run.ps1",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}\\compile\\run.ps1",
+            "args": [
+                "-extrafiles", "\\a0x2800",
+                "-BroadImage",
+                "-SectorNum", "2000",
+                "-clear",
+                "-Reserved", "1"
+            ],
+            "cwd": "${cwd}",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            }
+        }, {
+            "name": "(QEMU)Debug Kernel",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}\\compile\\intermid.ps1",
+            "args": ["-run", "qemu"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            },
+            "cwd": "${cwd}"
+        }, {
+            "name": "(bochs)Debug Kernel",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}\\compile\\intermid.ps1",
+            "args": ["-run", "bochs"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            },
+            "cwd": "${cwd}"
+        }, {
+            "name": "Debug F-Rat.exe",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask": "C/C++: gcc.exe build f-rat.c",
+            "program": "${workspaceFolder}\\tools\\f-rat.exe",
+            "args": [
+                "${workspaceFolder}\\Build\\temp\\floppy.img",
+                "textual.txt",
+                ""
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            },
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
