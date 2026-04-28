@@ -1,0 +1,26 @@
+
+cpu: model=corei7_ivy_bridge_3770k, count=2, reset_on_triple_fault=1
+boot: disk
+memory: guest=1024, host=1024
+config_interface: win32config
+display_library: sdl
+
+sound: driver=default
+speaker: enabled=1, mode=sound
+e1000: enabled=1
+pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=e1000
+vga: extension=cirrus, update_freq=60, realtime=1
+mouse: enabled=1
+
+
+magic_break: enabled=1
+port_e9_hack: enabled=1, all_rings=1
+
+log: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-28-10\bochs.log
+iodebug: all_rings=1
+
+romimage: file=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\uefi\release\OVMF_CODE.fd
+vgaromimage: file=C:\msys64\mingw64\share\bochs\VGABIOS-lgpl-latest-cirrus.bin
+ata0: enabled=1, ioaddr1=0x1F0, ioaddr2=0x3F0, irq=14
+ata0-master: type=disk, path="C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-28-10\disk.img", mode=flat, status=inserted, translation=lba
+

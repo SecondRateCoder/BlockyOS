@@ -1,0 +1,38 @@
+{
+    "Sector Size": 512,
+    "Boot Sector": {
+        "Sectors": 3,
+        "Makeup": {
+            "Configured Block Size": "The Block Size the FS was Formatted in",
+            "Configured Cluster Map Size": "The Cluster Map the FS was Formatted in",
+            "Version Code": [
+                "128 bits",
+                "The Version Data for the FileSystem."
+            ],
+            "FSCODE": "FRAT_FILESYSTEM USABLE",
+            "Log Block[1 full sector]": {
+                "Source": "8-bit Log Alias, If multiple Items have the same Log Alias, they are considered part of the Operation",
+                "Operation [4-bit]": [
+                    "Transfer",
+                    "Copy",
+                    "Create",
+                    "Delete"
+                ],
+                "Destination": "8-bit Log Alias, Multiple Items cannot have the same Log Alias, they should be considered corrupted"
+            },
+            "Cluster Map": {
+                "Cluster Item": {
+                    "File Code": [
+                        42,
+                        "The Associative File Code for a Sector/Block. A value of 0 means the Sector/Block is Unused, whilst a Value of 1 means the Sector/Block is Reserved, Any other value associates with another File",
+                        "Made up of a Hash of it's Full Path"
+                    ],
+                    "Item Flag": [
+                        "encrypted[1 bit]",
+                        "Log Alias[8 bits]"
+                    ]
+                }
+            }
+        }
+    }
+}
