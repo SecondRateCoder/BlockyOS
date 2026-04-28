@@ -145,11 +145,7 @@ void __fcreate(conf_fsroot *root, char *path, char *flags){
         if(strcheck(flags, 'f') || !flagcheck(fb->attr, __fsfile)){fb->attr |= __fsfile;}
         if(strcheck(flags, 'r') || !flagcheck(fb->attr, __fsreadonly)){fb->attr |= __fsfile;}
         fb->attr |= __fsmetadatacluster;
-        size_t hash;
-        blake2b_state hashstate;
-        blake2b_init(&hashstate, 8);
-        blake2b_update(&hashstate, path, strlen(path));
-        blake2b_final(&hashstate, &hash, 8);
+        size_t hash = __getfcode(path);
         fb->fcode = hash;
         fb->logalias = 0;
         fb->index = 0;
@@ -216,18 +212,27 @@ void *__fread1(conf_fsroot *root, fsblock *fb, size_t i){
 }
 
 fsblock *__ffind(conf_fsroot *root, char *path){
-    size_t hash;
-    blake2b_state hashstate;
-    blake2b_init(&hashstate, 8);
-    blake2b_update(&hashstate, path, strlen(path));
-    blake2b_final(&hashstate, &hash, 8);
-    hash &= 0x3FFFFFFFFFF;
+    size_t hash = __getfcode(path);
     for(size_t cc = 0; cc < root->clusterBuffer.clusterSize; ++cc){
         if(root->clusterBuffer.fs[cc].fcode == hash && root->clusterBuffer.fs[cc].index == 0){
             return root->clusterBuffer.fs + cc;
         }
     }
     return NULL;
+}
+
+size_t __getfcode(char *s_){
+    char *s = strdup(s_);
+    for(uint32_t cc = 0; cc < strlen(s_); ++cc){
+        if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}
+    }
+    size_t hash;
+    blake2b_state hashstate;
+    blake2b_init(&hashstate, 8);
+    blake2b_update(&hashstate, s, strlen(s));
+    blake2b_final(&hashstate, &hash, 8);
+    hash &= 0x3FFFFFFFFFF;
+    return hash
 }
 
 void __fpush1(conf_fsroot *root, fsblock *fb, size_t i, void *buffer){
@@ -244,6 +249,34 @@ void __fpush1(conf_fsroot *root, fsblock *fb, size_t i, void *buffer){
     rawenv *re = startup(ppath);
     writeblock(re, buffer, loc, 1);
     dispose(re);
+}
+
+dirhandle *__floaddir(conf_fsroot *root, char *path, char *args){
+    dirhandle *out = malloc(sizeof(dirhandle));
+    out->root = root;
+    out->path = strdup(path);
+    out->current = __ffind(root, path);
+    if(flagcheck(out->current->attr, __fsdirectory)){
+        rawenv *re = startup(ppath);
+        out->diribuffer = (diritem *)readblock(re, root->loc + 2 + root->clusterBuffer.clusterSize + (((size_t)out->current - (size_t)root->clusterBuffer.fs) / sizeof(fsblock), 1);
+        dispose(re);
+    }else{
+        free(out);
+        return NULL;
+    }
+    return out;
+}
+
+fsblock *__fgetitem_s(dirhandle *dir, char *name){
+    char *fullpath = strdup(dir->path);
+    fullpath = realloc(fullpath, strlen(dir->path) + strlen(name));
+    fullpath[strlen(dir->path)] = '/';
+    memcpy(fullpath + strlen(dir->path) - 1, name, strlen(name);
+    return __ffind(fullpath);
+}
+
+unhandle *__fsearchitem(dir_handle *dir, char *name){
+    
 }
 
 fshandle *fsloadh(conf_fsroot *root, char *path, char *args){
