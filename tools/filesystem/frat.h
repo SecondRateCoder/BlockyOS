@@ -3,6 +3,8 @@
 
 #define FRATSIG "FRAT_FILESYSTEM USABLE"
 #define FRATBLOCKSIG "FRATROOT"
+#define PATHSEP '/'
+#define PATHnoSEP '\\'
 
 typedef struct miniGPT{
 	char sig[8];
@@ -92,6 +94,26 @@ typedef struct fshandle{
 		void *block;
 	}handlecache[8];
 }fshandle;
+
+typedef struct diritem{
+	size_t fscode		: 42;
+	size_t attributes	: 16;
+	size_t index;
+}diritem, *diribuffer;
+typedef struct dirhandle{
+    conf_fsroot *root;
+	fsblock *current;
+	char *path;
+	diribuffer dirarray;
+}dirhandle;
+
+struct unhandle{
+	bool dir;
+	union{
+		dirhandle *dhandle_;
+		fhandle *fhandle_;
+	};
+}unhandle;
 
 bool checkdisk(char *path);
 LBA *queryparttablefs(miniGPT *gpt, rawenv *re);
