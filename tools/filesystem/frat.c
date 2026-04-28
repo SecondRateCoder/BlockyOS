@@ -272,11 +272,28 @@ fsblock *__fgetitem_s(dirhandle *dir, char *name){
     fullpath = realloc(fullpath, strlen(dir->path) + strlen(name));
     fullpath[strlen(dir->path)] = '/';
     memcpy(fullpath + strlen(dir->path) - 1, name, strlen(name);
-    return __ffind(fullpath);
+    fcode *out = __ffind(fullpath);
+    free(fullpath);
+    return out;
 }
 
 unhandle *__fsearchitem(dir_handle *dir, char *name){
-    
+    char *fullpath = strdup(dir->path);
+    fullpath = realloc(fullpath, strlen(dir->path) + strlen(name));
+    fullpath[strlen(dir->path)] = '/';
+    memcpy(fullpath + strlen(dir->path) - 1, name, strlen(name);
+    size_t hash = __getfcode(fullpath);
+    for(uint32_t cc = 0; dir->dirarray[cc].local != 0; ++cc){
+        if(dir->dirarray[cc].fcode == hash){
+			unhandle *out = malloc(sizeof(unhandle));
+            out->dir = flagcheck(dir->dirarray[cc].attributes, __fsdirectory);
+			if(out->dir){out->dhandle_ = __floaddir(dir->root, fullpath, "");
+			}else{out->fhandle_ = fsloadh(dir->root, fullpath, "");}
+			free(fullpath);
+			return out;
+        }
+    }
+	return NULL;
 }
 
 fshandle *fsloadh(conf_fsroot *root, char *path, char *args){
