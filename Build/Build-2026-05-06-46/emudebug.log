@@ -1,0 +1,13 @@
+===== Step 1: Compile Bootloaders =====
+===== Step 1.1: Compile Legacy BootLoader Blob =====
+Legacy bootloader compiled: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-06-46\boot-part\legacyblob.bin
+===== Step 1.2: Compile UEFI BootLoader Blob =====
+UEFI bootloader compiled: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-06-46\boot-part\efi\boot\bootx64.efi
+===== Step 2: Create Disk Layout (GPT) =====
+Creating GPT disk: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-06-46\disk.img
+===== Step 3: Format Boot Partition (FAT32) =====
+Formatting boot partition with FAT32...
+Boot partition formatted successfully
+===== Step 4: Validating Image =====
+Double-verifying Image
+Command:  qemu-system-x86_64 -vga std -cpu qemu64 -m 2048 -machine q35 -boot order=c -smp 2 -net none -serial stdio -L C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\uefi\default -drive if=pflash,format=raw,readonly=on,file=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\uefi\default\OVMF_CODE.fd -drive unit=0,file=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-06-46\disk.img,format=raw,if=none,id=maindrive -device virtio-blk-pci,drive=maindrive -chardev file,id=dbg,path=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-06-46\debugger.log -usb -usbdevice keyboard -usbdevice mouse -display sdl -vga cirrus -drive if=pflash,format=raw,file=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\uefi\default\OVMF_VARS.fd 

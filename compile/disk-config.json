@@ -2,21 +2,21 @@
 	"partitions": [
 		{
 			"name": "Boot",
-			"size": 268435456,
+			"size": 1073741824,
 			"type": "c12a7328-f81f-11d2-ba4b-00a0c93ec93b",
 			"attributes": ["efi-boot", "readonly"],
 			"give": []
 		},
 		{
 			"name": "Root",
-			"size": 1073741800,
+			"size": 1610612736,
 			"type": "EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000",
 			"attributes": ["required"],
 			"give": ["fit"]
 		},
 		{
 			"name": "Test",
-			"size": 24,
+			"size": 10485760,
 			"type": "EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000",
 			"attributes": [],
 			"give": []
