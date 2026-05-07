@@ -1,0 +1,43 @@
+#pragma once
+
+#include "efi.h"
+#include "efilib.h"
+
+#include "src/Boot/UEFI/tools/tools.h"
+
+#define GPT_LBA 1
+#define GPT_BLOCKS(blockSize) ((sizeof(miniGPT) / (blockSize)) + ((sizeof(miniGPT) % (blockSize)) != 0))
+
+typedef size_t LBA;
+
+typedef struct rawenv_pool{
+    EFI_HANDLE handle;
+    EFI_DEVICE_PATH *device;
+    EFI_DISK_IO *D;
+    EFI_BLOCK_IO_MEDIA *M;
+}rawenv_pool;
+
+typedef struct rawenv{
+    EFI_BLOCK_IO *B;
+    #ifdef __DEBUG__
+    bool EnableVerbose;
+    #endif
+    #ifdef __FRAT_USEPARTITION_PROTOCOL__
+    struct partitionpool{
+        rawenv_pool *pool;
+        UINTN lpool;
+    }partitionpool;
+    UINT32 MediaID;
+#else
+    UINT32 configBlockSize;
+#endif
+}rawenv;
+
+void configureBlockSize(rawenv *re, UINT32 configBlockSize);
+rawenv *startup(UINT32 MediaID, UINT32 configblocksize);
+void *readblock(rawenv *re, UINTN pos, UINTN blocks);
+BOOLEAN writeblock(rawenv *re, void *buffer, size_t pos, size_t blocks);
+void dispose(rawenv *re);
+
+void EnableVerbose(rawenv *re);
+void DisableVerbose(rawenv *re);

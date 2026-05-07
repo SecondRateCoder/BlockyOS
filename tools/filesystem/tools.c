@@ -14,7 +14,7 @@ ssize_t strchecki(char *s, char c){
 	return -1;
 }
 
-void *memdup(void *mem, size_t s){
+void *__memdup(void *mem, size_t s){
 	void *out = malloc(s);
 	memcpy(out, mem, s);
 	return out;
@@ -163,13 +163,13 @@ int trng__(void *key, size_t keylen){
 #pragma comment(lib, "bcrypt.lib")
 
 int trng__(void *key, size_t keylen){
-    NTSTATUS st = BCryptGenRandom(
+    NTSTATUS gST = BCryptGenRandom(
         NULL,
         key,
         (ULONG)keylen,
         BCRYPT_USE_SYSTEM_PREFERRED_RNG
     );
-    return st == 0 ? 0 : -1;
+    return gST == 0 ? 0 : -1;
 }
 
 #endif

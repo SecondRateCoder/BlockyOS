@@ -5,23 +5,31 @@
 
 #include "src/Boot/UEFI/tools/tools.h"
 
+#define GPT_LBA 1
+#define GPT_BLOCKS(blockSize) ((sizeof(miniGPT) / (blockSize)) + ((sizeof(miniGPT) % (blockSize)) != 0))
+
 typedef size_t LBA;
 
-typedef struct rawenv{
-    EFI_DISK_IO_PROTOCOL *D;
-    EFI_BLOCK_IO_PROTOCOL *B;
-    UINT32 configBlockSize;
+typedef struct rawenv_t{
+    /// @brief If true then the Interface is a Block IO Interface;
+    bool isPart;
+    EFI_BLOCK_IO *Blk;
+    EFI_DEVICE_PATH *Dev;
+    UINT32 MediaID;
+    UINT32 CalcBlock, ConfBlock, RealBlock;
 #ifdef __DEBUG__
     bool EnableVerbose;
 #endif
-}rawenv;
+}rawenv_t, *rawenv;
 
-void configureBlockSize(rawenv *re, UINT32 configBlockSize);
-rawenv *startup(UINT32 MediaID, UINT32 configblocksize);
-rawenv *startup_me(EFI_HANDLE Image, UINT32 configblocksize);
-void *readblock(rawenv *re, UINTN pos, UINTN blocks);
-BOOLEAN writeblock(rawenv *re, void *buffer, size_t pos, size_t blocks);
-void dispose(rawenv *re);
+void EnableVerbose(rawenv re);
+void DisableVerbose(rawenv re);
 
-void EnableVerbose(rawenv *re);
-void DisableVerbose(rawenv *re);
+UINT32 getblocksize(rawenv re);
+void setblocksize(rawenv re, UINT32 new);
+
+rawenv startup(UINT32 MediaID, UINT32 configuredBlockSize);
+void *readblock(rawenv re, UINTN pos, UINTN blocks);
+void writeblock(rawenv re, void *buffer, UINTN pos, UINTN blocks);
+
+void dispose(rawenv re);

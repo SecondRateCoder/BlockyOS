@@ -504,7 +504,7 @@ void _fpush1(fhandle *handle, void *buffer){
 		for(uint8_t cc = 0; cc < (sizeof(handle->handlecache) / sizeof(handle->handlecache[0])); ++cc){
 			if(abs(handle->progress - handle->handlecache[cc].progresstimestamp) > handle->progresslimit || handle->handlecache[cc].progresstimestamp == -1){
 				if(handle->handlecache[cc].block){free(handle->handlecache[cc].block);}
-				handle->handlecache[cc].block = memdup(buffer, getblocksize());
+				handle->handlecache[cc].block = __memdup(buffer, getblocksize());
 				handle->handlecache[cc].progresstimestamp = handle->progress;
 				handle->handlecache[cc].rw = 0;
 				__fpush1(handle->root, handle->file, handle->progress, buffer);
@@ -522,7 +522,7 @@ void *_fread1(fhandle *handle){
 		if(abs(handle->progress - handle->handlecache[cc].progresstimestamp) > handle->progresslimit || handle->handlecache[cc].progresstimestamp == -1){
 			if(handle->handlecache[cc].block){free(handle->handlecache[cc].block);}
 			void *buffer = __fread1(handle->root, handle->file, handle->progress);
-			handle->handlecache[cc].block = memdup(buffer, getblocksize());
+			handle->handlecache[cc].block = __memdup(buffer, getblocksize());
 			handle->handlecache[cc].progresstimestamp = handle->progress;
 			handle->handlecache[cc].rw = 0;
 			handle->progress++;

@@ -1,24 +1,32 @@
 #include "frat.h"
 
 BOOLEAN checkdisk(EFI_HANDLE Image){
+#ifdef __DEBUG__
+	Print(L"\nVerifying Disk GPT");
+#endif
 	bool out = false;
 	UINT32 mID;
 	if(!EFI_ERROR(getDriveMediaID(Image, &mID))){
-		rawenv *re = startup(mID, __FS_DEFAULTBLOCKSIZE);
-		uint8_t *block = readblock(re, GPT_LBA, GPT_BLOCKS(__FS_DEFAULTBLOCKSIZE));
+		rawenv re = startup(mID, __FS_DEFAULTBLOCKSIZE);
+		uint8_t *block = readblock(re, GPT_LBA, 1);
 		miniGPT *gpt = (miniGPT *)block;
+#ifdef __DEBUG__
+		char dup[9];
+		__memcpy(dup, gpt->sig, 8);
+		dup[8] = 0;
+		Print(
+			L"\nsig: %a"
+			L"\tRev: %u",
+			dup, gpt->rev
+		);
+#endif
 		if(!__memcmp(gpt->sig, "EFI PART", 8)){out = TRUE;}else{out = FALSE;}
 		FreePool(block);
 		dispose(re);
 	}
-	return out;
-}
-
-GPTeNSTR *makeGPTeNSTR(char *str){
-	GPTeNSTR *out = __calloc(sizeof(GPTeNSTR), 1);
-	for(size_t cc = 0; cc < __min(__strlen(str), GPTeNAMELEN); ++cc){
-		(*out)[cc] = str[cc];
-	}
+#ifdef __DEBUG__
+	Print(L"\nGPT Exists? %a", ((out == true)? "TRUE": "FALSE"));
+#endif
 	return out;
 }
 
@@ -27,16 +35,17 @@ LBA *loadpart(EFI_HANDLE Image, UINT32 MediaID, GPTeNSTR name){
 	Print(L"\nLoading Partition: %.72s", name);
 #endif
 	if(checkdisk(Image)){
-		rawenv *re = startup(MediaID, __FS_DEFAULTBLOCKSIZE);
-		configureBlockSize(re, 512);
+		rawenv re = startup(MediaID, __FS_DEFAULTBLOCKSIZE);
+		setblocksize(re, 512);
 		uint8_t *block = readblock(re, 1, 1);
 		miniGPT *gpt = (miniGPT *)block;
-		GPTentry *ge = (GPTentry *)(readblock(re, gpt->GPTarray, (gpt->partEntries * re->configBlockSize) / sizeof(GPTentry)));
+		GPTentry *ge = (GPTentry *)(readblock(re, gpt->GPTarray, (gpt->partEntries * getblocksize(re)) / sizeof(GPTentry)));
 		dispose(re);
 		for(uint32_t i = 0; i < gpt->partEntries; i++){
 			if(!__memcmp(name, ge[i].name, GPTeNAMESIZE)){
 				LBA *out = AllocatePool(sizeof(LBA) * 2);
 				out[0] = ge[i].sLBA;    out[1] = ge[i].eLBA;
+				FreePool(gpt);
 				FreePool(ge);
 #ifdef __DEBUG__
 				Print(L"\nFound Partition: %llu:%llu", out[0], out[1]);
@@ -44,6 +53,8 @@ LBA *loadpart(EFI_HANDLE Image, UINT32 MediaID, GPTeNSTR name){
 				return out;
 			}
 		}
+		FreePool(gpt);
+		FreePool(ge);
 	}
 #ifdef __DEBUG__
 	Print(L"\nFound No Partition named: %s", name);
@@ -65,9 +76,9 @@ void formatpart(EFI_HANDLE Image, UINT32 MediaID, GPTeNSTR name){
 		.signature = FRATSIG,
 	};
 	// Reset all Info
-	rawenv *re = startup(MediaID, __FS_DEFAULTBLOCKSIZE);
+	rawenv re = startup(MediaID, __FS_DEFAULTBLOCKSIZE);
 	writeblock(re, block, part[0], 1);
-	__memset(block, 0, re->configBlockSize);
+	__memset(block, 0, getblocksize(re));
 	// Clear Log
 	writeblock(re, block, part[0] + 1, 1);
 	// Clear ClusterMap
@@ -78,15 +89,15 @@ void formatpart(EFI_HANDLE Image, UINT32 MediaID, GPTeNSTR name){
 	FreePool(block);
 }
 
-LBA *queryparttablefs(miniGPT *gpt, rawenv *re){
+LBA *queryparttablefs(miniGPT *gpt, rawenv re){
 #ifdef __DEBUG__
 	Print(L"\nQuerying Part Table");
 #endif
 	// Query all Partitions for the FileSystem.
 	LBA parttable = gpt->GPTarray;
-	GPTentry *ge = (GPTentry *)(readblock(re, parttable, (gpt->partEntries * sizeof(GPTentry)) / re->configBlockSize));
+	GPTentry *ge = (GPTentry *)(readblock(re, parttable, (gpt->partEntries * sizeof(GPTentry)) / getblocksize(re)));
 	for(uint32_t i = 0; i < gpt->partEntries; i++){
-		if(queryfs(re, re->configBlockSize * ge[i].sLBA)){
+		if(queryfs(re, getblocksize(re) * ge[i].sLBA)){
 			LBA *out = AllocatePool(sizeof(LBA) * 2);
 			out[0] = ge[i].sLBA;    out[1] = ge[i].eLBA;
 			FreePool(ge);
@@ -97,17 +108,13 @@ LBA *queryparttablefs(miniGPT *gpt, rawenv *re){
 	return NULL;
 }
 
-LBA getloc(conf_fsroot *root, fsblock *fb){
-	return root->clusterBuffer.clusterLBA + root->clusterBuffer.clusterSectors + (((size_t)fb - (size_t)root->clusterBuffer.fs) / sizeof(fsblock));
-}
-
-BOOLEAN queryfs(rawenv *re, LBA base){
+BOOLEAN queryfs(rawenv re, LBA base){
 #ifdef __DEBUG__
 	Print(L"\nQuerying FS at %llu", base);
 #endif
 	// Check that a FileSystem exists at the bytebase.
 	BOOLEAN out = 0;
-	uint8_t *block = readblock(re, base / re->configBlockSize, 3);
+	uint8_t *block = readblock(re, base / getblocksize(re), 3);
 	fsroot *fr = (fsroot *)block;
 	if(!__memcmp(fr->signature, FRATSIG, 22)){out = TRUE;}else{out = FALSE;}
 	FreePool(block);
@@ -121,8 +128,8 @@ conf_fsroot *fmount(EFI_HANDLE Image, UINT32 MediaID){
 	LBA *partition;
 	if(checkdisk(Image)){
 		// Get the LBA Info for a Partition
-		rawenv *re = startup(MediaID, __FS_DEFAULTBLOCKSIZE);
-		void *block = readblock(re, GPT_LBA, GPT_BLOCKS(re->configBlockSize));
+		rawenv re = startup(MediaID, __FS_DEFAULTBLOCKSIZE);
+		void *block = readblock(re, GPT_LBA, GPT_BLOCKS(getblocksize(re)));
 		miniGPT *gpt = (miniGPT *)block;
 		if((partition = queryparttablefs(gpt, re))){
 			FreePool(gpt);
@@ -133,18 +140,22 @@ conf_fsroot *fmount(EFI_HANDLE Image, UINT32 MediaID){
 		// Generate the fsroot
 		block = readblock(re, partition[0], 1);
 		fsroot *fsroot_ = (fsroot *)block;
-		configureBlockSize(re, fsroot_->confBlockSize);
+		setblocksize(re, fsroot_->confBlockSize);
 		conf_fsroot *largeroot = AllocatePool(sizeof(conf_fsroot));
-		size_t items = ((partition[1] - partition[0]) / re->configBlockSize) - ((partition[1] - partition[0]) % re->configBlockSize);
+		size_t items = ((partition[1] - partition[0]) / getblocksize(re)) - ((partition[1] - partition[0]) % getblocksize(re));
 		*largeroot = (conf_fsroot){
+#ifdef __FRAT_USEPARTITION_PROTOCOL__
 			.loc = partition[0],
+#else
+			.loc = 0,
+#endif
 			.root = fsroot_,
 			.lastClusterAlloc = 0,
 			.logLBA = partition[0] + 1,
 			.clusterBuffer = {
 				.clusterLBA = partition[0] + 2,
 				.clusterSectors = items,
-				.clusterSize = (items * re->configBlockSize) / sizeof(fsblock),
+				.clusterSize = (items * getblocksize(re)) / sizeof(fsblock),
 				.fs = readblock(re, partition[0] + 2, items)
 			},
 			.MediaID = MediaID,
@@ -255,7 +266,7 @@ fsblock *__faddr(conf_fsroot *root, fsblock *family){
 #ifdef __DEBUG__
 	Print(L"\n\tWriting 0-Block: %llu", loc);
 #endif
-		rawenv *re = startup(root->MediaID, root->root->confBlockSize);
+		rawenv re = startup(root->MediaID, root->root->confBlockSize);
 		writeblock(re, bl0, loc, 1);
 		FreePool(bl0);
 		dispose(re);
@@ -271,7 +282,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 	void *block = AllocatePool(root->root->confBlockSize);
 	conf_fsblock *metadata = (conf_fsblock *)block;
 	EFI_TIME time;
-	if(EFI_ERROR(RT->GetTime(&time, NULL))){time = (EFI_TIME){0};}
+	if(EFI_ERROR(gRT->GetTime(&time, NULL))){time = (EFI_TIME){0};}
 	char *name;
 	for(INT64 i = __strlen(path) - 1; i > -1; i--){
 		if(i > GPTeNAMELEN){path[i] = '\0';}else{
@@ -292,7 +303,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 	flagunset(metadata->attributes, __fsmetadatacluster);
 	__memset(metadata->name, 0, GPTeNAMELEN);
 	__memcpy(metadata->name, name, __strlen(name));
-	rawenv *re = startup(root->MediaID, root->root->confBlockSize);
+	rawenv re = startup(root->MediaID, root->root->confBlockSize);
 	writeblock(re, block, loc, 1);
 	dispose(re);
 }
@@ -312,7 +323,7 @@ void *__fread1(conf_fsroot *root, fsblock *fb, size_t i){
 #ifdef __DEBUG__
 	Print(L"\nReading File Block at %llu, Item: %llu.\tRoot: %llu", loc, i, fb->fcode);
 #endif
-	rawenv *re = startup(root->MediaID, root->root->confBlockSize);
+	rawenv re = startup(root->MediaID, root->root->confBlockSize);
 	void *out = readblock(re, loc, 1);
 	dispose(re);
 	return out;
@@ -368,7 +379,7 @@ void __fpush1(conf_fsroot *root, fsblock *fb, size_t i, void *buffer){
 #ifdef __DEBUG__
 	Print(L"\nWriting File Block at %llu, Item: %llu.\tRoot: %llu", loc, i, fb->fcode);
 #endif
-	rawenv *re = startup(root->MediaID, root->root->confBlockSize);
+	rawenv re = startup(root->MediaID, root->root->confBlockSize);
 	writeblock(re, buffer, loc, 1);
 	dispose(re);
 }
@@ -401,7 +412,7 @@ void __fuloaddir(dirhandle *handle){
 	Print(L"\nUn-Mounting Directory [%a]", handle->path);
 #endif
 	// Flush root
-	rawenv *re = startup(handle->root->MediaID, handle->root->root->confBlockSize);
+	rawenv re = startup(handle->root->MediaID, handle->root->root->confBlockSize);
 	writeblock(re, handle->root->root, handle->root->loc, 1);
 	// Flush cluster Array/Buffer
 	writeblock(re, handle->root->clusterBuffer.fs, handle->root->clusterBuffer.clusterLBA, handle->root->clusterBuffer.clusterSectors);	
@@ -410,7 +421,7 @@ void __fuloaddir(dirhandle *handle){
 	fsblock *f = NULL;
 	do{
 		f = __ffindhi(handle->root, handle->file->fcode, entry);
-		if(f){writeblock(re, handle->dirarray + (re->configBlockSize * (entry - 1)), handle->root->loc + 2 + handle->root->clusterBuffer.clusterSectors + (((size_t)f - (size_t)handle->root->clusterBuffer.fs) / sizeof(fsblock)), 1);}
+		if(f){writeblock(re, handle->dirarray + (getblocksize(re) * (entry - 1)), handle->root->loc + 2 + handle->root->clusterBuffer.clusterSectors + (((size_t)f - (size_t)handle->root->clusterBuffer.fs) / sizeof(fsblock)), 1);}
 		entry++;
 	}while(f);
 	dispose(re);
@@ -423,7 +434,7 @@ void __fdirrefresh(dirhandle *handle){
 #ifdef __DEBUG__
 	Print(L"\nRefreshing Dir %a", handle->path);
 #endif
-	rawenv *re = startup(handle->root->MediaID, handle->root->root->confBlockSize);
+	rawenv re = startup(handle->root->MediaID, handle->root->root->confBlockSize);
 	size_t blockprogress = 0;
 	BOOLEAN exit_ = FALSE;
 	do{
@@ -431,11 +442,11 @@ void __fdirrefresh(dirhandle *handle){
 		fsblock *fb = __ffindi(handle->root, handle->path, blockprogress + 1);
 		if(fb){
 			// Read off the Block 
-			handle->dirarray = __realloc(handle->dirarray, handle->loadedblocks * re->configBlockSize, re->configBlockSize * (blockprogress + 1));
+			handle->dirarray = __realloc(handle->dirarray, handle->loadedblocks * getblocksize(re), getblocksize(re) * (blockprogress + 1));
 			void *temp = readblock(re, getloc(handle->root, fb), 1);
-			__memcpy(handle->dirarray + (re->configBlockSize * blockprogress), temp, re->configBlockSize);
+			__memcpy(handle->dirarray + (getblocksize(re) * blockprogress), temp, getblocksize(re));
 			FreePool(temp);
-			for(size_t cc = 0; cc < re->configBlockSize / sizeof(diritem); ++cc){if(handle->dirarray[cc].local == 0){exit_ = TRUE;	break;}}
+			for(size_t cc = 0; cc < getblocksize(re) / sizeof(diritem); ++cc){if(handle->dirarray[cc].local == 0){exit_ = TRUE;	break;}}
 			blockprogress++;
 		}else if(!fb){exit_ = TRUE;}
 	}while(!exit_);
@@ -473,7 +484,7 @@ void fsuloadh(fhandle *handle){
 	Print(L"\nUn-Mounting File [%llu]", handle->file->fcode);
 #endif
 	// Flush root
-	rawenv *re = startup(handle->root->MediaID, handle->root->root->confBlockSize);
+	rawenv re = startup(handle->root->MediaID, handle->root->root->confBlockSize);
 	writeblock(re, handle->root->root, handle->root->loc, 1);
 	// Flush cluster Array/Buffer
 	writeblock(re, handle->root->clusterBuffer.fs, handle->root->clusterBuffer.clusterLBA, handle->root->clusterBuffer.clusterSectors);
@@ -501,18 +512,18 @@ conf_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 	Print(L"\nReading File Info.\tRoot: %llu", fb->fcode);
 #endif
 	LBA loc = getloc(root, fb);
-	rawenv *re = startup(root->MediaID, root->root->confBlockSize);
+	rawenv re = startup(root->MediaID, root->root->confBlockSize);
 	void *out = readblock(re, loc, 1);
 	dispose(re);
 	return out;
 }
 
 void __fupdatetstamp(conf_fsroot *root, fsblock *file, BOOLEAN wt){
-	rawenv *re = startup(root->MediaID, root->root->confBlockSize);
+	rawenv re = startup(root->MediaID, root->root->confBlockSize);
 	conf_fsblock *finfo = __freadinfo(root, file);
 	LBA loc = getloc(root, file);
 	EFI_TIME time;
-	if(!EFI_ERROR(ST->RuntimeServices->GetTime(&time, NULL))){
+	if(!EFI_ERROR(gST->RuntimeServices->GetTime(&time, NULL))){
 		if(wt){
 			finfo->writetime = (time.Hour * 3600) + (time.Minute * 60) + time.Second;
 			finfo->writedate = time.Day;
@@ -537,7 +548,7 @@ void _fpush1(fhandle *handle, void *buffer){
 		for(uint8_t cc = 0; cc < (sizeof(handle->handlecache) / sizeof(handle->handlecache[0])); ++cc){
 			if(abs(handle->progress - handle->handlecache[cc].progresstimestamp) > handle->progresslimit || handle->handlecache[cc].progresstimestamp == -1){
 				if(handle->handlecache[cc].block){FreePool(handle->handlecache[cc].block);}
-				handle->handlecache[cc].block = memdup(buffer, handle->root->root->confBlockSize);
+				handle->handlecache[cc].block = __memdup(buffer, handle->root->root->confBlockSize);
 				handle->handlecache[cc].progresstimestamp = handle->progress;
 				handle->handlecache[cc].rw = 0;
 				__fpush1(handle->root, handle->file, handle->progress, buffer);
@@ -558,7 +569,7 @@ void *_fread1(fhandle *handle){
 		if(abs(handle->progress - handle->handlecache[cc].progresstimestamp) > handle->progresslimit || handle->handlecache[cc].progresstimestamp == -1){
 			if(handle->handlecache[cc].block){FreePool(handle->handlecache[cc].block);}
 			void *buffer = __fread1(handle->root, handle->file, handle->progress);
-			handle->handlecache[cc].block = memdup(buffer, handle->root->root->confBlockSize);
+			handle->handlecache[cc].block = __memdup(buffer, handle->root->root->confBlockSize);
 			handle->handlecache[cc].progresstimestamp = handle->progress;
 			handle->handlecache[cc].rw = 0;
 			handle->progress++;
@@ -792,4 +803,8 @@ void __fprint_info(conf_fsblock *finfo){
 		(uint32_t)(finfo->writetime % 60), 
 		finfo->accessdate, finfo->writedate
 	);
+}
+
+LBA getloc(conf_fsroot *root, fsblock *fb){
+	return root->clusterBuffer.clusterLBA + root->clusterBuffer.clusterSectors + (((size_t)fb - (size_t)root->clusterBuffer.fs) / sizeof(fsblock));
 }

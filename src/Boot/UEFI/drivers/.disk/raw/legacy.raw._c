@@ -1,0 +1,286 @@
+#include "raw.h"
+
+BOOLEAN IsGptPartition(EFI_DEVICE_PATH *Dp){return (Dp->Type == MEDIA_DEVICE_PATH && Dp->SubType == MEDIA_HARDDRIVE_DP);}
+EFI_STATUS rawenv_LoadPartitions(rawenv_pool *out, UINTN *lOut){
+    EFI_STATUS Status = 0;
+    EFI_HANDLE *handles = NULL;
+    UINTN count = 0, found = 0;
+    EFI_GUID BlockIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID,
+			DiskIoGuid = EFI_DISK_IO_PROTOCOL_GUID,
+    		DevicePathGuid = EFI_DEVICE_PATH_PROTOCOL_GUID;
+    Status = uefi_call_wrapper(BS->LocateHandleBuffer, 5, ByProtocol, &BlockIoGuid, NULL, &count, &handles);
+    if(EFI_ERROR(Status)){return Status;}
+
+    // Length-only mode
+    if(!out && lOut){
+        *lOut = 0;
+        for(UINTN i = 0; i < count; i++){
+            EFI_DEVICE_PATH *Dp = NULL;
+            Status = uefi_call_wrapper(BS->HandleProtocol, 3, handles[i], &DevicePathGuid, (void**)&Dp);
+            if(EFI_ERROR(Status) || !Dp){continue;}
+
+            while(!IsDevicePathEnd(Dp)){
+                if(IsGptPartition(Dp)){
+                    (*lOut)++;
+                    break;
+                }
+                Dp = NextDevicePathNode(Dp);
+            }
+        }
+        FreePool(handles);
+        return EFI_SUCCESS;
+    }
+
+    // Fill mode
+    if(out && lOut){
+        for(UINTN i = 0; i < count && found < *lOut; i++){
+			EFI_BLOCK_IO *Blk = NULL;
+            EFI_DEVICE_PATH *Dp = NULL;
+            Status |= uefi_call_wrapper(BS->HandleProtocol, 3, handles[i], &DevicePathGuid, (void**)&Dp);
+			Status |= uefi_call_wrapper(BS->HandleProtocol, 3, handles[i], &BlockIoGuid, (void**)&Blk);
+            if(EFI_ERROR(Status) || (!Dp && !Blk)){continue;}
+            while(!IsDevicePathEnd(Dp)){
+                if(IsGptPartition(Dp)){
+                    out[found].device = Dp;
+                    out[found].handle = handles[i];
+					out[found].M = Blk->Media;
+                    Status = uefi_call_wrapper(BS->HandleProtocol, 3, handles[i], &DiskIoGuid, (void**)&(out[found].D));
+                    found++;
+                    break;
+                }
+                Dp = NextDevicePathNode(Dp);
+            }
+        }
+        *lOut = found;
+    }
+    FreePool(handles);
+    return EFI_SUCCESS;
+}
+
+void configureBlockSize(rawenv *re, UINT32 configBlockSize){re->configBlockSize = configBlockSize;}
+
+#ifdef __DEBUG__
+	void EnableVerbose(rawenv *re){re->EnableVerbose = true;}
+	void DisableVerbose(rawenv *re){re->EnableVerbose = false;}
+#else
+	void EnableVerbose(rawenv *re){return;}
+	void DisableVerbose(rawenv *re){return;}
+#endif
+
+rawenv *startup(UINT32 MediaID, UINT32 configblocksize){
+#ifdef __DEBUG__
+	Print(L"\n\nStarting File Interface[%a:%u]: %u:%u", __FILE__, __LINE__, MediaID, configblocksize);
+#endif
+	EFI_STATUS Status;
+	EFI_HANDLE *handles = NULL;
+	UINTN count = 0;
+	EFI_GUID BlockIOGuid = EFI_BLOCK_IO_PROTOCOL_GUID;
+	EFI_GUID DiskIOGuid  = EFI_DISK_IO_PROTOCOL_GUID;
+	rawenv *re = AllocatePool(sizeof(rawenv));
+	if(!re){return NULL;}
+#ifdef __DEBUG__
+	re->EnableVerbose = TRUE;
+#endif
+	re->B = NULL;
+#ifdef __FRAT_USEPARTITION_PROTOCOL__
+	re->MediaID = MediaID;
+#endif
+	Status = uefi_call_wrapper(BS->LocateHandleBuffer, 5, ByProtocol, &BlockIOGuid, NULL, &count, &handles);
+	if(EFI_ERROR(Status) || count == 0 || handles == NULL){
+#ifdef __DEBUG__
+		Print(L"\nLocateHandleBuffer(BlockIO) failed: %r\n", Status);
+#endif
+		FreePool(re);
+		return NULL;
+	}
+	for(UINTN cc = 0; cc < count; cc++){
+		EFI_BLOCK_IO *Blk = NULL;
+		Status = uefi_call_wrapper(BS->HandleProtocol, 3, handles[cc], &BlockIOGuid, (void**)&Blk);
+		if(EFI_ERROR(Status) || Blk->Media == NULL){Print(L"\nRawenv Mounting Error");	continue;}
+		if(Blk->Media->MediaId == MediaID){
+			re->B = Blk;
+#ifdef __FRAT_USEPARTITION_PROTOCOL__
+			Status |= rawenv_LoadPartitions(NULL, &re->partitionpool.lpool);
+			re->partitionpool.pool = AllocatePool(re->partitionpool.lpool * sizeof(rawenv_pool));
+			Status |= rawenv_LoadPartitions(re->partitionpool.pool, &re->partitionpool.lpool);
+#endif
+			// re->configBlockSize = (
+			// 	(configblocksize / re->B->Media->BlockSize) + 
+			// 	((configblocksize % re->B->Media->BlockSize) != 0? 1: 0)
+			// );
+			re->configBlockSize = (configblocksize + re->B->Media->BlockSize - 1) / re->B->Media->BlockSize;
+#ifdef __DEBUG__
+			Print(L"\nConfigured Block Size: %u\nActual Block Size: %u\nOutput Block Size: %u", configblocksize, re->B->Media->BlockSize, re->configBlockSize);
+#endif
+			FreePool(handles);
+			return re;
+		}
+	}
+	FreePool(handles);
+	FreePool(re);
+	return NULL;
+}
+
+
+// void *readblock(rawenv *re, UINTN pos, UINTN blocks){
+// #ifdef __DEBUG__
+// 	Print(
+// 		L"\nRead [%a:%u:	(%p)]: %llu; %llu", 
+// 		__FILE__, __LINE__,  __builtin_return_address(1),
+// 		#ifdef __FRAT_USEPARTITION_PROTOCOL__
+// 		pos * re->configBlockSize, 
+// 		#else
+// 		pos,
+// 		#endif
+// 		blocks * re->configBlockSize
+// 	);
+// #endif
+// 	void *out = AllocatePool(blocks * re->configBlockSize);
+// 	EFI_STATUS status = EFI_ERROR_MASK;
+// #ifdef __FRAT_USEPARTITION_PROTOCOL__
+	
+// 	for(UINTN cc = 0; cc < re->partitionpool.lpool; ++cc){
+// 		if(re->MediaID == re->partitionpool.pool[cc].M->MediaID){
+// 			status = uefi_call_wrapper(
+// 				re->partitionpool.pool[cc].D.ReadDisk, 5,
+// 				re->partitionpool.pool[cc].D, re->MediaID, 
+// 				pos * re->configBlockSize * re->B->Media->BlockSize, 
+// 				blocks * re->configBlockSize * re->B->Media->BlockSize, 
+// 				out
+// 			);
+// 		}
+// 	}
+// #else
+// 	status = uefi_call_wrapper(
+// 		re->B->ReadBlocks, 5, re->B,
+// 		re->B->Media->MediaId, pos * re->configBlockSize, blocks * re->configBlockSize, out
+// 	);
+	
+// #endif
+// #ifdef __DEBUG__
+// 	Print(L"\nRead Output: %a", (EFI_ERROR(status) ? "FALSE": "TRUE" ));
+// 	#ifdef __DEEP_DEBUG__
+// 		Print(L"\n\n");
+// 		for(
+// 			UINTN cc = 0; 
+// 			#ifdef __FRAT_USEPARTITION_PROTOCOL__
+// 			cc < ((blocks * re->configBlockSize * re->B->Media->BlockSize) / sizeof(uint32_t)); 
+// 			#else
+// 			cc < (blocks * re->configBlockSize * re->B->Media->BlockSize);
+// 			#endif
+// 			++cc
+// 		){
+// 			Print(L"%08x ", ((uint32_t *)out)[cc]);
+// 		}
+// 		Print(L"\n\n");
+// 	#endif
+// #endif
+// 	return out;
+// }
+void *readblock(rawenv *re, UINTN pos, UINTN blocks){
+    UINTN phys = re->B->Media->BlockSize;
+    UINTN logicalBytes = re->configBlockSize * phys;
+    UINTN totalBytes   = blocks * logicalBytes;
+#ifdef __DEBUG__
+    Print(
+        L"\nRead [%a:%u: (%p)]: %llu; %llu",
+        __FILE__, __LINE__, __builtin_return_address(1),
+        pos, blocks
+    );
+#endif
+    void *out = AllocatePool(totalBytes);
+    if(!out){return NULL;}
+    EFI_STATUS status = EFI_ERROR_MASK;
+#ifdef __FRAT_USEPARTITION_PROTOCOL__
+    // Disk I/O: offsets and sizes in BYTES
+    for (UINTN cc = 0; cc < re->partitionpool.lpool; ++cc){
+        if (re->MediaID == re->partitionpool.pool[cc].M->MediaId){
+            status = uefi_call_wrapper(
+                re->partitionpool.pool[cc].D->ReadDisk, 5,
+                re->partitionpool.pool[cc].D,
+                re->MediaID,
+                pos * logicalBytes,   // byte offset
+                totalBytes,           // byte size
+                out
+            );
+            break;
+        }
+    }
+#else
+    // Block I/O: LBA + BufferSizeInBytes
+    status = uefi_call_wrapper(
+        re->B->ReadBlocks, 5,
+        re->B,
+        re->B->Media->MediaId,
+        pos * re->configBlockSize, // starting LBA
+        totalBytes,                // bytes, multiple of phys
+        out
+    );
+#endif
+#ifdef __DEBUG__
+    Print(L"\nRead Output: %a", (EFI_ERROR(status) ? "FALSE" : "TRUE"));
+#endif
+    if(EFI_ERROR(status)){
+        FreePool(out);
+        return NULL;
+    }
+    return out;
+}
+
+
+
+BOOLEAN writeblock(rawenv *re, void *buffer, size_t pos, size_t blocks){
+#ifdef __DEBUG__
+	Print(
+		L"\nWrite [%a:%u:	(%p)]: %llu; %llu", 
+		__FILE__, __LINE__, __builtin_return_address(1),
+		pos * re->configBlockSize, blocks * re->configBlockSize
+	);
+#endif
+	EFI_STATUS status = EFI_ERROR_MASK;
+#ifdef __FRAT_USEPARTITION_PROTOCOL__
+	
+	for(UINTN cc = 0; cc < re->partitionpool.lpool; ++cc){
+		if(re->MediaID == re->partitionpool.pool[cc].M->MediaID){
+			status = uefi_call_wrapper(
+				re->partitionpool.pool[cc].D.WriteDisk, 5,
+				re->partitionpool.pool[cc].D, re->MediaID, 
+				pos * re->configBlockSize * re->B->Media->BlockSize, 
+				blocks * re->configBlockSize * re->B->Media->BlockSize, 
+				buffer
+			);
+		}
+	}
+#else
+	status = uefi_call_wrapper(
+		re->B->WriteBlocks, 5, re->B,
+		re->B->Media->MediaId, pos * re->configBlockSize, blocks * re->configBlockSize, buffer
+	);
+#endif
+#ifdef __DEBUG__
+	Print(L"\nRead Output: %a", (EFI_ERROR(status) ? "FALSE": "TRUE" ));
+	#ifdef __DEEP_DEBUG__
+		Print(L"\n\n");
+		for(
+			UINTN cc = 0; 
+			#ifdef __FRAT_USEPARTITION_PROTOCOL__
+			cc < ((blocks * re->configBlockSize * re->B->Media->BlockSize) / sizeof(uint32_t)); 
+			#else
+			cc < (blocks * re->configBlockSize * re->B->Media->BlockSize);
+			#endif
+			++cc
+		){
+			Print(L"%08x ", ((uint32_t *)buffer)[cc]);
+		}
+		Print(L"\n\n");
+	#endif
+#endif
+	return EFI_ERROR(status);
+}
+
+void dispose(rawenv *re){
+#ifdef __DEBUG__
+	if(re->EnableVerbose){Print(L"\nDisposing File Interface");}
+#endif
+	FreePool(re);
+}

@@ -10,6 +10,11 @@
 
 #include "src/Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
+#define cword_t CHAR16
+#define GPTeNAMESIZE 72
+#define GPTeNAMELEN (GPTeNAMESIZE / sizeof(cword_t))
+typedef cword_t GPTeNSTR[GPTeNAMELEN];
+
 #define __min(a, b) ((a) > (b)? (b): (a))
 #define __max(a, b) ((a) < (b)? (b): (a))
 #define abs(n) ((n) < 0? -(n): (n))
@@ -48,7 +53,7 @@ BOOLEAN isdigit(char c);
 
 BOOLEAN strcheck(char *s, char c);
 INT64 strchecki(char *s, char c);
-void *memdup(void *mem, UINT64 s);
+void *__memdup(void *mem, UINT64 s);
 UINT64 __getfcode(char *s_);
 char *readbuf(size_t s, CHAR16 *prefix);
 EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID);
@@ -75,3 +80,8 @@ UINT64 __memcmp(void *a, void *b, UINT64 len);
 
 void  *__calloc(UINT64 nLen, UINT64 nSize);
 void *__realloc(void *memory, UINT64 currSize, UINT64 nSize);
+
+BOOLEAN IsPartition(EFI_DEVICE_PATH *Dp);
+EFI_DEVICE_PATH *GetDevicePath(EFI_HANDLE Handle);
+
+GPTeNSTR *makeGPTeNSTR(char *str);
