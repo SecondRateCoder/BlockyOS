@@ -95,7 +95,7 @@ char *strchecksp(char *in, char *tokens, char *tokout){
 	return NULL;
 }
 
-void *__memdup(void *src, uint32_t len){
+void *memdup(void *src, uint32_t len){
 	void *out = malloc(len);
 	if(out){
 		memcpy(out, src, len);

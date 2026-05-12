@@ -1,10 +1,15 @@
 {
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.h": "2026-05-07T00:44:11.6010974Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.h": "2026-05-07T00:44:36.2414467Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.h": "2026-05-04T19:09:02.0676393Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.h": "2026-05-04T17:50:00.0469441Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2-impl.h": "2026-05-03T21:33:43.5384327Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2.h": "2026-05-03T21:29:37.6414355Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.h": "2026-05-07T00:11:43.6456193Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\standard.h": "2026-05-06T17:39:32.9171264Z",
+<<<<<<< HEAD
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.h": "2026-05-07T17:08:38.1965406Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\standard.h": "2026-05-07T23:08:43.8607058Z",
+=======
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.h": "2026-05-04T19:21:49.4479356Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\standard.h": "2026-05-04T01:04:14.5995658Z",
+>>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.)
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\legacy\\efilib.h": "2026-04-27T23:52:57.1063532Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\adapterdebug.h": "2026-04-27T23:52:57.1113529Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\eficonsplit.h": "2026-04-27T23:52:57.1123532Z",
@@ -54,14 +59,25 @@
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\libsmbios.h": "2026-04-27T23:52:57.1083529Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\pci22.h": "2026-04-27T23:52:57.1093536Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\romload.h": "2026-04-27T23:52:57.1203636Z",
+<<<<<<< HEAD
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.c": "2026-05-07T00:44:43.7514291Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.c": "2026-05-07T00:50:28.0834297Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.c": "2026-05-07T15:52:14.7345311Z",
+=======
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.c": "2026-05-04T19:14:59.4832248Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.c": "2026-05-04T18:31:57.2198072Z",
+>>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.)
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2b-ref.c": "2026-05-03T21:33:52.5942942Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2bp-ref.c": "2026-05-03T21:31:53.6809201Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2s-ref.c": "2026-05-03T21:33:56.9772977Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2sp-ref.c": "2026-05-03T21:33:58.7402976Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2xb-ref.c": "2026-05-03T21:34:00.4228055Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2xs-ref.c": "2026-05-03T21:34:02.0108065Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.c": "2026-05-07T00:47:27.2969136Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boot.c": "2026-05-07T01:10:12.8528798Z"
+<<<<<<< HEAD
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.c": "2026-05-07T17:08:32.2752991Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boot.c": "2026-05-07T22:59:14.2276874Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boothelper.c": "2026-05-07T22:42:10.3349419Z"
+=======
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.c": "2026-05-04T19:26:09.8062604Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boot.c": "2026-05-04T21:58:53.7096819Z"
+>>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.)
 }

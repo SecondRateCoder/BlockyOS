@@ -1,5 +1,14 @@
 {
 "isGitignoreExtActive": true,
-"FSharp.suggestGitignore": false,
-"git.ignoreLimitWarning": true,
+"git.ignoreLimitWarning": false,
+
+"terminal.integrated.profiles.windows":{
+    "VS2022 Developer Command Prompt":{
+        "path": [
+            "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Visual Studio 2022\\Visual Studio Tools\\Developer Command Prompt for VS 2022.exe",
+            "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\Tools\\VsDevCmd.bat"
+        ],
+        "args": []
+    }
+}
 }

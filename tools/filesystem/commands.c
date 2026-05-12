@@ -212,13 +212,13 @@ cmd_errout shell(char *in){
         return err;
     }
 
-    strtok_t *gST;
-    gST = strtok_i(in, " \t", 0);
+    strtok_t *st;
+    st = strtok_i(in, " \t", 0);
 
     /* First token = command */
-    char *tok = strtok_k(gST);
+    char *tok = strtok_k(st);
     if(!tok){
-        strtok_d(gST);
+        strtok_d(st);
         err.msg = "No command found";
         err.errcode = 3;
         return err;
@@ -226,7 +226,7 @@ cmd_errout shell(char *in){
 
     cmddesc *cmd = srchcmd(tok);
     if(!cmd){
-        strtok_d(gST);
+        strtok_d(st);
         err.msg = "Unknown command";
         err.errcode = 4;
         return err;
@@ -236,14 +236,14 @@ cmd_errout shell(char *in){
     size_t bpos = 0;
     uint8_t next_positional = 0;
 
-    while((tok = strtok_k(gST))){
+    while((tok = strtok_k(st))){
 
         /* Named parameter? */
         cmddesc_flag *named = srchflag(cmd, tok);
         if(named){
-            char *arg = strtok_k(gST);
+            char *arg = strtok_k(st);
             if(!arg){
-                strtok_d(gST);
+                strtok_d(st);
                 err.msg = "Parameter missing value";
                 err.errcode = 5;
                 return err;
@@ -255,7 +255,7 @@ cmd_errout shell(char *in){
             }
 
             if(!argparse(named->type, arg, &buffer[bpos])){
-                strtok_d(gST);
+                strtok_d(st);
                 err.msg = "Invalid named parameter value";
                 err.errcode = 6;
                 return err;
@@ -267,7 +267,7 @@ cmd_errout shell(char *in){
 
         /* Positional parameter */
         if(next_positional >= cmd->numflags){
-            strtok_d(gST);
+            strtok_d(st);
             err.msg = "Too many positional parameters";
             err.errcode = 7;
             return err;
@@ -281,7 +281,7 @@ cmd_errout shell(char *in){
         }
 
         if(!argparse(pos->type, tok, &buffer[bpos])){
-            strtok_d(gST);
+            strtok_d(st);
             err.msg = "Invalid positional parameter";
             err.errcode = 8;
             return err;
@@ -291,6 +291,6 @@ cmd_errout shell(char *in){
         next_positional++;
     }
     cmd->func(buffer, cmd->persistent);
-    strtok_d(gST);
+    strtok_d(st);
     return err;
 }

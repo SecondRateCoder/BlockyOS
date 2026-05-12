@@ -1,69 +1,31 @@
 #include "standard.h"
 
-void libinit(EFI_HANDLE img, EFI_SYSTEM_TABLE *table){
-	InitializeLib(img, table);
-	gST = table;
-	gRT = table->RuntimeServices;
-	gBS = table->BootServices;
-}
-
-EFI_BLOCK_IO_MEDIA *getParentDevice(EFI_HANDLE Image){
-    EFI_STATUS status = -1;
-    EFI_LOADED_IMAGE *ImageProc;
-    EFI_GUID ImageProcGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
-    status = uefi_call_wrapper(BS->HandleProtocol, 3, Image, &gEfiLoadedImageProtocolGuid, (void **)(&ImageProc));
-    if(!EFI_ERROR(status)){
-        EFI_DEVICE_PATH *Dp;
-        status = uefi_call_wrapper(BS->HandleProtocol, 2, ImageProc->DeviceHandle, &gEfiDevicePathProtocolGuid, (void **)(&Dp));
-        if(!EFI_ERROR(status)){
-            EFI_DEVICE_PATH *disk = Dp;
-            while(!IsDevicePathEnd(disk)){
-                if((disk->Type == MEDIA_DEVICE_PATH) && (disk->SubType == MEDIA_HARDDRIVE_DP)){
-                    break;
-                }
-                disk = NextDevicePathNode(disk);
-            }
-            UINTN Len = (UINTN)disk - (UINTN)Dp;
-            EFI_DEVICE_PATH *ParentPath = __memdup(Dp, Len + sizeof(EFI_DEVICE_PATH_PROTOCOL));
-            SetDevicePathEndNode((EFI_DEVICE_PATH*)((UINT8*)ParentPath + Len));
-            EFI_HANDLE Dh;
-            status = uefi_call_wrapper(BS->LocateDevicePath, 3, &gEfiBlockIoProtocolGuid, ParentPath, &Dh);
-            EFI_BLOCK_IO *DiskBlk;
-            status = uefi_call_wrapper(BS->HandleProtocol, 3, Dh, &gEfiBlockIoProtocolGuid, (void**)&DiskBlk);
-            return DiskBlk->Media;
-        }
-    }
-    return NULL;
-}
-
 EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
-	libinit(Image, Table);
-	if(EFI_ERROR(ValidateImageHandle(Image))){
 #ifdef __DEBUG__
-    // Print(L"\nError with Image Handle, Re-starting Image from Boot Menu");
+	Print(L"Sanity Check[0]\nDEBUG: %p; %p; %p; %p", Image, Table, Table->BootServices, BS);
 #endif
-        // CreateBootEntryLoadAndReboot(Image, L"BlockyOS Boot Device", L"FS0:\\EFI\\BOOT\\BOOTX64.efi");
-    }
+	InitializeLib(Image, Table);
+    if(!ST){ST = Table;}
+    if(!BS){BS = Table->BootServices;}
+    if(!RT){RT = Table->RuntimeServices;}
 #ifdef __DEBUG__
-    Print(L"\nStarting Boot Device");
+	Print(L"\nSanity Check[1]\nDEBUG: %p; %p; %p; %p", Image, Table, Table->BootServices, BS);
+	EFI_STATUS S = ValidateImageHandle(Image);
+	Print(L"\nImage Validity: %r (%u)\n", S, S);
+	if(EFI_ERROR(S)){return EFI_ABORTED;}
 #endif
 	conf_fsroot *root = NULL;
-    // Get Parent MediaID
-    EFI_BLOCK_IO_MEDIA *IOMedia = getParentDevice(Image);
-	if(IOMedia){
-		if(!(root = fmount(Image, IOMedia->MediaId))){
+	UINT32 mID;
+	if(!EFI_ERROR(getDriveMediaID(Image, &mID))){
+		if(!(root = fmount(Image, mID))){
 			GPTeNSTR *str = makeGPTeNSTR("Root");
-			formatpart(Image, IOMedia->MediaId, *str);
+			formatpart(Image, mID, *str);
 			FreePool(str);
-			if(!(root = fmount(Image, IOMedia->MediaId))){
-				Print(L"\nError! Couldnt Mount Drive %u\n", IOMedia->MediaId);
+			if(!(root = fmount(Image, mID))){
+				Print(L"\nError! Couldnt Mount Drive %u\n", mID);
 				return EFI_SUCCESS;
 			}
 		}
-	}else{
-#ifdef __DEBUG__
-    Print(L"\nImage Failed");
-#endif
-    }
+	}
 	return EFI_ABORTED;
 }

@@ -8,7 +8,10 @@
 #define FRATSIG "FRAT_FILESYSTEM USABLE"
 #define FRATBLOCKSIG "FRATROOT"
 #define FRAT_PROGLIMIT 2
+
 #define __FS_DEFAULTBLOCKSIZE 512
+#define GPT_LBA 1
+#define GPT_BLOCKS(blockSize) ((sizeof(miniGPT) / (blockSize)) + ((sizeof(miniGPT) % (blockSize)) == TRUE))
 
 typedef struct miniGPT{
 	char sig[8];
@@ -26,6 +29,10 @@ typedef struct miniGPT{
 	uint32_t partEntrySize;
 }__attribute__((packed)) miniGPT;
 
+#define cword_t CHAR16
+#define GPTeNAMESIZE 72
+#define GPTeNAMELEN (GPTeNAMESIZE / sizeof(cword_t))
+typedef cword_t GPTeNSTR[GPTeNAMELEN];
 typedef struct GPTentry{
 	size_t GUID[2];
 	size_t uGUID[2];
@@ -156,11 +163,12 @@ typedef struct dirrunner{
 LBA getloc(conf_fsroot *root, fsblock *fb);
 
 BOOLEAN checkdisk(EFI_HANDLE Image);
-LBA *queryparttablefs(miniGPT *gpt, rawenv re);
-BOOLEAN queryfs(rawenv re, LBA base);
+LBA *queryparttablefs(miniGPT *gpt, rawenv *re);
+BOOLEAN queryfs(rawenv *re, LBA base);
 conf_fsroot *fmount(EFI_HANDLE Image, UINT32 MediaID);
 LBA *loadpart(EFI_HANDLE Image, UINT32 MediaID, GPTeNSTR name);
 void formatpart(EFI_HANDLE Image, UINT32 MediaID, GPTeNSTR name);
+GPTeNSTR *makeGPTeNSTR(char *str);
 
 void __finit(conf_fsroot *root, fsblock *fb, char *path);
 
@@ -195,5 +203,3 @@ unhandle *__dirr(dirrunner *dr);
 void __dirr_free(dirrunner *dr);
 
 void __fprint_info(conf_fsblock *finfo);
-
-LBA getloc(conf_fsroot *root, fsblock *fb);

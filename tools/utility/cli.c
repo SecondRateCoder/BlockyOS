@@ -126,8 +126,8 @@ command_t *consume(char **arg, uint32_t argl, uint32_t *argcc){
 	for(uint8_t cmdindex = 0; cmdindex < cmdcc; ++cmdindex){
  		if(!strcmp(commands[cmdindex].cmd, arg[cc]) || !strcmp(commands[cmdindex].alias, arg[cc])){
 			// Duplicate Command and children
-			command_t *cmd = __memdup((void *)(commands + cmdindex), sizeof(command_t));
-			cmd->optionsbf.opbuffer = __memdup(((command_t *)(commands + cmdindex))->optionsbf.opbuffer, sizeof(option_t) * ((command_t *)(commands + cmdindex))->optionsbf.len);
+			command_t *cmd = memdup((void *)(commands + cmdindex), sizeof(command_t));
+			cmd->optionsbf.opbuffer = memdup(((command_t *)(commands + cmdindex))->optionsbf.opbuffer, sizeof(option_t) * ((command_t *)(commands + cmdindex))->optionsbf.len);
 			char *temp = NULL;
 			cc++;
 			// Populate options list

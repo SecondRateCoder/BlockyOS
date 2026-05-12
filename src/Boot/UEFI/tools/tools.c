@@ -14,7 +14,7 @@ INT64 strchecki(char *s, char c){
 	return -1;
 }
 
-void *__memdup(void *mem, size_t s){
+void *memdup(void *mem, size_t s){
 	void *out = AllocatePool(s);
 	__memcpy(out, mem, s);
 	return out;
@@ -44,7 +44,7 @@ char *readbuf(size_t s, CHAR16 *prefix){
 		size_t i = 0;
 		for(; i < s; ++i){
             EFI_INPUT_KEY key;
-            if(!EFI_ERROR(uefi_call_wrapper(gST->ConIn->ReadKeyStroke, 2, gST->ConIn, &key))){
+            if(!EFI_ERROR(ST->ConIn->ReadKeyStroke(ST->ConIn, &key))){
                 if(isascii((char)(key.UnicodeChar & 0xFF))){
                     out[i] = (char)(key.UnicodeChar & 0xFF);
                     if(out[i] == '\n' || out[i] == '\r'){break;}
@@ -57,7 +57,8 @@ char *readbuf(size_t s, CHAR16 *prefix){
 }
 
 strtok_t *strtok_i(char *in, char *delims, UINT32 enables){
-    if((flagcheck(enables, strtok__ForceSameBorderingDelims) || flagcheck(enables, strtok__ForceDifferentBorderingDelims)) &&
+    if(
+        (flagcheck(enables, strtok__ForceSameBorderingDelims) || flagcheck(enables, strtok__ForceDifferentBorderingDelims)) &&
         flagcheck(enables, strtok__ForceEndingDelim) || flagcheck(enables, strtok__ForceStartingDelim)
     ){return NULL;}
     if(flagcheck(enables, strtok__ForceSameBorderingDelims) && flagcheck(enables, strtok__ForceDifferentBorderingDelims)){return NULL;}
@@ -146,9 +147,10 @@ EFI_STATUS trng__(void *buffer, UINTN size){
     EFI_STATUS Status;
     EFI_RNG_PROTOCOL *Rng;
     EFI_GUID guid__ = EFI_RNG_PROTOCOL_GUID;
-    if(EFI_ERROR(uefi_call_wrapper(gST->BootServices->LocateProtocol, 3, &guid__, NULL, (void **)&Rng))){return ((UINT64)-1);}
+    if(EFI_ERROR(ST->BootServices->LocateProtocol(&guid__, NULL, (void **)&Rng))){return ((UINT64)-1);}
+
     // Ask firmware for random bytes (any algorithm)
-    return uefi_call_wrapper(Rng->GetRNG, 4, Rng, NULL, size, buffer);
+    return Rng->GetRNG(Rng, NULL, size, buffer);
 }
 
 char tolower(char upper){return upper - abs('A' - 'a');}
@@ -186,14 +188,6 @@ BOOLEAN match_rec(const char *p, const char *s){
     }
 }
 
-GPTeNSTR *makeGPTeNSTR(char *str){
-	GPTeNSTR *out = __calloc(sizeof(GPTeNSTR), 1);
-	for(size_t cc = 0; cc < __min(__strlen(str), GPTeNAMELEN); ++cc){
-		(*out)[cc] = str[cc];
-	}
-	return out;
-}
-
 BOOLEAN __pattmatch(const char *pattern, const char *str){
     // Preprocess pattern to handle escapes
     UINT64 len = __strlen(pattern);
@@ -213,48 +207,29 @@ BOOLEAN __pattmatch(const char *pattern, const char *str){
 }
 
 void *__realloc(void *memory, UINT64 currSize, UINT64 nSize){
-#ifndef __CUSTMEM_FUNC__
-    return ReallocatePool(currSize, nSize, memory);
-#else
-    if(nSize != currSize){
-        void *out = AllocatePool(nSize);
-        if(out){
-            __memcpy(out, memory, (nSize > currSize? nSize: (currSize - nSize)));
-            FreePool(memory);
-        }
-        return out;
+    void *out = AllocatePool(nSize);
+    if(out){
+        __memcpy(out, memory, (nSize > currSize? nSize: (currSize - nSize)));
+        FreePool(memory);
     }
-    return memory;
-#endif
+    return out;
 }
 
 void  *__calloc(UINT64 nLen, UINT64 nSize){
-#ifndef __CUSTMEM_FUNC__
-    return AllocateZeroPool(nSize * nLen);
-#else
     void *out = AllocatePool(nLen * nSize);
     __memset(out, 0, nSize * nLen);
     return out;
-#endif
 }
 
 void __memset(void *dst, UINT8 val, UINT64 len){
-#ifndef __CUSTMEM_FUNC__
-    SetMem(dst, val, len);
-#else
     while(len){((UINT8 *)dst)[len - 1] = val;    len--;}
-#endif
 }
 
 void __memcpy(void *dst, void *src, UINT64 len){
-#ifndef __CUSTMEM_FUNC__
-    CopyMem(dst, src, len);
-#else
     while(len){
         ((UINT8 *)dst)[len - 1] = ((UINT8 *)src)[len - 1];
         len--;
     }
-#endif
 }
 
 UINT64 __strlen(char *s){
@@ -281,63 +256,45 @@ UINT64 __strspn(const char *s, const char *reject){
 }
 
 UINT64 __memcmp(void *a, void *b, UINT64 len){
-#ifndef __CUSTMEM_FUNC__
-    return CompareMem(a, b, len);
-#else
-    UINT8 *pa = (UINT8 *)a;
-    UINT8 *pb = (UINT8 *)b;
-    while(len){
-        if(pa[len - 1] != pb[len - 1]){break;}
-        len--;
-    }
-    return len;   // 0 == equal, non‑zero == different
-#endif
+    while(len){if(((UINT64 *)a)[len - 1] != ((UINT64 *)b)[len - 1]){break;} len--;}
+    return len;
 }
 
 // EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID){
-//     EFI_STATUS Status;
 //     EFI_LOADED_IMAGE_PROTOCOL *lImage = NULL;
-//     EFI_GUID LoadedImageProtocolGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
-//     Status = gBS->HandleProtocol(Image, &LoadedImageProtocolGuid, (void**)&lImage);
-//     if(EFI_ERROR(Status)){
+// 	EFI_GUID LoadedImageProtocolGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
+// 	if(!EFI_ERROR(BS->HandleProtocol(Image, &LoadedImageProtocolGuid, (void**)&lImage))){
+// 		EFI_BLOCK_IO_PROTOCOL *Blk;
+// 		EFI_GUID BlockIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID;
+// 		if(!EFI_ERROR(BS->HandleProtocol(lImage->DeviceHandle, &BlockIoGuid, (void **)&Blk))){
+//             return Blk->Media->MediaId;
+// 		}
+// 	}
 // #ifdef __DEBUG__
-//         Print(L"\nHandleProtocol(LoadedImage) failed: %r\n", Status);
+//             Print(L"Found no MediaID");
 // #endif
-//         return Status;
-//     }
-//     EFI_BLOCK_IO_PROTOCOL *Blk;
-//     EFI_GUID BlockIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID;
-//     Status = gBS->HandleProtocol(lImage->DeviceHandle, &BlockIoGuid, (void **)&Blk);
-//     if(EFI_ERROR(Status)){
-// #ifdef __DEBUG__
-//         Print(L"\nHandleProtocol(BlockIo) failed: %r\n", Status);
-// #endif
-//         return Status;
-//     }
-//     *MediaID = Blk->Media->MediaId;
-//     return EFI_SUCCESS;
+//     return EFI_ERROR_MASK;
 // }
 EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID){
-#ifdef __DEBUG__
-    Print(L"\nGetting Drive Media ID");
-#endif
     EFI_STATUS Status;
-    EFI_LOADED_IMAGE *LoadedImage = NULL;
-    EFI_GUID LoadedImageProtocolGuid = LOADED_IMAGE_PROTOCOL;
-    EFI_GUID BlockIoGuid = BLOCK_IO_PROTOCOL;
-
-    Status = uefi_call_wrapper(BS->HandleProtocol, 3, Image, &LoadedImageProtocolGuid, (void**)&LoadedImage);
+    EFI_LOADED_IMAGE_PROTOCOL *lImage = NULL;
+    EFI_GUID LoadedImageProtocolGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
+    Status = BS->HandleProtocol(Image, &LoadedImageProtocolGuid, (void**)&lImage);
+    if(EFI_ERROR(Status)){
 #ifdef __DEBUG__
-    if(EFI_ERROR(Status)){Print(L"\nHandleProtocol(LoadedImage) = [%r:%u]\n", Status, Status);}
+        Print(L"\nHandleProtocol(LoadedImage) failed: %r\n", Status);
 #endif
-    if(EFI_ERROR(Status) || LoadedImage == NULL){return Status;}
-    EFI_BLOCK_IO *Blk = NULL;
-    Status = uefi_call_wrapper(BS->HandleProtocol, 3, LoadedImage->DeviceHandle, &BlockIoGuid, (void**)&Blk);
+        return Status;
+    }
+    EFI_BLOCK_IO_PROTOCOL *Blk;
+    EFI_GUID BlockIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID;
+    Status = BS->HandleProtocol(lImage->DeviceHandle, &BlockIoGuid, (void **)&Blk);
+    if(EFI_ERROR(Status)){
 #ifdef __DEBUG__
-    if(EFI_ERROR(Status)){Print(L"\nHandleProtocol(BlockIo) = [%r:%u]\n", Status, Status);}
-    
+        Print(L"\nHandleProtocol(BlockIo) failed: %r\n", Status);
 #endif
-    if(EFI_ERROR(Status) || Blk == NULL || Blk->Media == NULL){return Status;}
+        return Status;
+    }
     *MediaID = Blk->Media->MediaId;
     return EFI_SUCCESS;
 }
@@ -346,23 +303,5 @@ EFI_STATUS ValidateImageHandle(EFI_HANDLE Image){
     EFI_LOADED_IMAGE_PROTOCOL *Loaded = NULL;
     EFI_GUID Guid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
 
-    return uefi_call_wrapper(gBS->HandleProtocol, 4, Image, &Guid, (void**)&Loaded);
-}
-
-BOOLEAN IsPartition(EFI_DEVICE_PATH *Dp){
-    while(!IsDevicePathEnd(Dp)){
-        if(Dp->Type == MEDIA_DEVICE_PATH && Dp->SubType == MEDIA_HARDDRIVE_DP){return TRUE;}
-        Dp = NextDevicePathNode(Dp);
-    }
-    return FALSE;
-}
-
-EFI_DEVICE_PATH *GetDevicePath(EFI_HANDLE Handle){
-    EFI_DEVICE_PATH *Dp = NULL;
-    EFI_STATUS Status;
-
-    Status = uefi_call_wrapper(BS->HandleProtocol, 3, Handle, &gEfiDevicePathProtocolGuid, (void**)&Dp);
-
-    if(EFI_ERROR(Status)){return NULL;}
-    return Dp;
+    return BS->HandleProtocol(Image, &Guid, (void**)&Loaded);
 }

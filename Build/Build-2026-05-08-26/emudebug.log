@@ -1,0 +1,4 @@
+===== Step 1: Compile Bootloaders =====
+===== Step 1.1: Compile Legacy BootLoader Blob =====
+Legacy bootloader compiled: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-08-26\boot-part\legacyblob.bin
+===== Step 1.2: Compile UEFI BootLoader Blob =====

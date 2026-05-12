@@ -1,116 +1,104 @@
 #include "raw.h"
 
-void DisableVerbose(rawenv re){
+void configureBlockSize(rawenv *re, UINT32 configBlockSize){re->configBlockSize = configBlockSize;}
+
 #ifdef __DEBUG__
-	re->EnableVerbose = false;
+    void EnableVerbose(rawenv *re){re->EnableVerbose = true;}
+	void DisableVerbose(rawenv *re){re->EnableVerbose = false;}
+#else
+	void EnableVerbose(rawenv *re){return;}
+	void DisableVerbose(rawenv *re){return;}
 #endif
+
+rawenv *startup_me(EFI_HANDLE Image, UINT32 configblocksize){
+	EFI_LOADED_IMAGE_PROTOCOL *lImage;
+	EFI_GUID LoadedImageProtocolGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
+	if(!EFI_ERROR(BS->HandleProtocol(Image, &LoadedImageProtocolGuid, (void**)&lImage))){
+		EFI_BLOCK_IO_PROTOCOL *Blk;
+		EFI_GUID BlockIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID;
+		if(!EFI_ERROR(BS->HandleProtocol(lImage->DeviceHandle, &BlockIoGuid, (void **)&Blk))){
+			return startup(Blk->Media->MediaId, configblocksize);
+		}
+	}
 }
 
-void EnableVerbose(rawenv re){
+rawenv *startup(UINT32 MediaID, UINT32 configblocksize){
+#ifdef __DEBUG__
+	Print(L"\n\nStarting File Interface[%a:%u]: %u", __FILE__, __LINE__, MediaID);
+#endif
+	rawenv *re = AllocatePool(sizeof(rawenv));
 #ifdef __DEBUG__
 	re->EnableVerbose = true;
 #endif
-}
-
-UINT32 getblocksize(rawenv re){return re->ConfBlock;}
-void setblocksize(rawenv re, UINT32 new){
-	re->ConfBlock = new;
-	re->CalcBlock = (new + re->RealBlock - 1) / re->RealBlock;
-}
-
-rawenv startup(UINT32 MediaID, UINT32 configuredBlockSize){
-	EFI_STATUS status = 0;
-	EFI_HANDLE *handles = NULL;
-	UINTN handlecount = 0;
-	EFI_GUID BlockIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID,
-			 DiskIoGuid = EFI_DISK_IO_PROTOCOL_GUID,
-			 DevPathGuid = EFI_DEVICE_PATH_PROTOCOL_GUID;
-	rawenv re = AllocatePool(sizeof(rawenv_t));
-#ifdef __DEBUG__
-	re->EnableVerbose = TRUE;
-#endif
-	// Check for Disk Protocols
-	status = uefi_call_wrapper(BS->LocateHandleBuffer, 5, ByProtocol, &BlockIoGuid, &handlecount, NULL);
-	if(!EFI_ERROR(status)){
-		handles = AllocatePool(handlecount * sizeof(EFI_HANDLE));
-		status = uefi_call_wrapper(BS->LocateHandleBuffer, 5, ByProtocol, &BlockIoGuid, &handlecount, handles);
-		if(EFI_ERROR(status)){
-			FreePool(re);
-			FreePool(handles);
-			return NULL;
-		}
-	}
-	for(UINTN cc = 0; cc < handlecount; ++cc){
-		EFI_DEVICE_PATH *Dp;
-		status = uefi_call_wrapper(BS->HandleProtocol, 3, handles[cc], &DevPathGuid, (void **)(&Dp));
-		if(EFI_ERROR(status)){FreePool(handles);		FreePool(re);		return NULL;}
-		EFI_BLOCK_IO *Blk = NULL;
-		status = uefi_call_wrapper(BS->HandleProtocol, 3, handles[cc], &BlockIoGuid, (void **)(&Blk));
-		if(!EFI_ERROR(status)){
+	UINTN count;	EFI_HANDLE *handles;
+	EFI_GUID BlockIOGuid = EFI_BLOCK_IO_PROTOCOL_GUID;
+	BS->LocateHandleBuffer(ByProtocol, &BlockIOGuid, NULL, &count, &handles);
+	EFI_GUID DiskIOGuid = EFI_DISK_IO_PROTOCOL_GUID;
+	EFI_BLOCK_IO_PROTOCOL *Blk = NULL;
+	EFI_DISK_IO_PROTOCOL  *Dsk = NULL;
+	EFI_STATUS BlkStatus = (EFI_STATUS)-1, DskStatus = (EFI_STATUS)-1;
+	for(UINTN cc = 0; cc < count; cc++){
+		if(EFI_ERROR(BlkStatus)){BlkStatus = BS->HandleProtocol(handles[cc], &BlockIOGuid, (void **)&Blk);}
+		if(EFI_ERROR(DskStatus)){DskStatus = BS->HandleProtocol(handles[cc], &DiskIOGuid, (void **)&Dsk);}
+		if(EFI_ERROR(BlkStatus) && EFI_ERROR(DskStatus)){continue;
+		}else{
 			if(Blk->Media->MediaId == MediaID){
-				*re = (rawenv_t){
-					.Blk = Blk,
-					.isPart = IsPartition(Dp),
-					.MediaID = MediaID,
-					.RealBlock = Blk->Media->BlockSize,
-					.CalcBlock = (configuredBlockSize + Blk->Media->BlockSize - 1) / Blk->Media->BlockSize,
-					.ConfBlock = configuredBlockSize,
-					.Dev = GetDevicePath(handles[cc])
-				};
+				re->configBlockSize = configblocksize;
+				re->B = Blk;
+				re->D = Dsk;
 				return re;
-			}else{FreePool(handles);		FreePool(re);		return NULL;}
-		}else{FreePool(handles);		FreePool(re);		return NULL;}
-	}
-}
-
-void *readblock(rawenv re, UINTN pos, UINTN blocks){
-#ifdef __DEBUG__
-	Print(L"\n[%a:%u:  Parent:%p] >> Reading [%llu:%llu] from [%llu:%llu]", 
-		__FILE__, __LINE__, __builtin_return_address(0),
-		blocks, (blocks * re->RealBlock) + ((re->ConfBlock / re->RealBlock) != 0), pos, pos * re->CalcBlock
-	);
-#endif
-	EFI_STATUS status = -1;
-	void *out = AllocatePool((blocks * re->RealBlock) + ((re->ConfBlock / re->RealBlock) != 0));
-	if(out){
-		status = uefi_call_wrapper(
-			re->Blk->ReadBlocks, 5, re->Blk,
-			pos * re->CalcBlock, (blocks * re->RealBlock) + ((re->ConfBlock / re->RealBlock) != 0), 
-			out
-		);
-		if(EFI_ERROR(status)){
-			FreePool(out);
-#ifdef __DEBUG__
-			Print(L"Read Error");
-#endif
-			return NULL;
+			}else{continue;}
 		}
-#ifdef __DEBUG__
-		Print(L"Read %a", (EFI_ERROR(status)? "FAILURE": "SUCCESS"));
-#endif
-		return out;
 	}
+	FreePool(re);
 	return NULL;
 }
 
-void writeblock(rawenv re, void *buffer, UINTN pos, UINTN blocks){
-	#ifdef __DEBUG__
-	Print(L"\n[%a:%u:  Parent:%p] >> Reading [%llu:%llu] from [%llu:%llu]", 
-		__FILE__, __LINE__, __builtin_return_address(0),
-		blocks, (blocks * re->RealBlock) + ((re->ConfBlock / re->RealBlock) != 0),  pos, pos * re->CalcBlock
-	);
+void *readblock(rawenv *re, UINTN pos, UINTN blocks){
+#ifdef __DEBUG__
+	if(re->EnableVerbose){Print(L"\nReading [%a:%u]: Addr:%llu Size:%llu", __FILE__, __LINE__, pos, blocks);}
 #endif
-	EFI_STATUS status = 0;
-	status = uefi_call_wrapper(
-		re->Blk->WriteBlocks, 5, re->Blk,
-		pos * re->CalcBlock, (blocks * re->RealBlock) + ((re->ConfBlock / re->RealBlock) != 0), 
+	void *out = AllocatePool(blocks * re->B->Media->BlockSize);
+	EFI_STATUS status = re->D->ReadDisk(
+		re->D, re->B->Media->MediaId, 
+		(pos * re->configBlockSize), (blocks * re->configBlockSize),
+		out
+	);
+#ifdef __DEBUG__
+	Print(L"\nRead Res: %a", ((!EFI_ERROR(status)? "TRUE": "FALSE")));
+#endif
+	if(EFI_ERROR(status)){
+		FreePool(out);		out = NULL;
+	}
+#ifdef __DEEP_DEBUG__ && __DEBUG__
+	for(UINT32 cc = 0; cc < (blocks * re->configBlockSize); ++cc){Print(L"%u", ((UINT8 *)out)[cc]);}
+#endif
+	return out;
+}
+
+BOOLEAN writeblock(rawenv *re, void *buffer, size_t pos, size_t blocks){
+#ifdef __DEBUG__
+	if(re->EnableVerbose){Print(L"\nReading [%a:%u]: Addr:%llu Size:%llu", __FILE__, __LINE__, pos, blocks);}
+	#ifdef __DEEP_DEBUG__
+		Print(L"\n\n");
+		for(UINT32 cc = 0; cc < (blocks * re->configBlockSize); ++cc){Print(L"%u", ((UINT8 *)buffer)[cc]);}
+		Print(L"\n\n");
+	#endif
+#endif
+	EFI_STATUS status = re->D->WriteDisk(
+		re->D, re->B->Media->MediaId, 
+		pos * re->configBlockSize, blocks * re->configBlockSize,
 		buffer
 	);
 #ifdef __DEBUG__
-		Print(L"\nWrite %a", (EFI_ERROR(status)? "FAILURE": "SUCCESS"));
+	Print(L"\nWrite Res: %a", ((!EFI_ERROR(status)? "TRUE": "FALSE")));
 #endif
+	return EFI_ERROR(status);
 }
 
-void dispose(rawenv re){
+void dispose(rawenv *re){
+#ifdef __DEBUG__
+	if(re->EnableVerbose){Print(L"\nDisposing File Interface");}
+#endif
 	FreePool(re);
 }
