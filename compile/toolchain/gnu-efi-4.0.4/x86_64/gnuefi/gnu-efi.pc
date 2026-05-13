@@ -1,0 +1,13 @@
+prefix=/gnu-efi-4.0.4/x86_64/
+exec_prefix=/gnu-efi-4.0.4/x86_64/
+includedir=/gnu-efi-4.0.4/x86_64//include
+libdir=/gnu-efi-4.0.4/x86_64//lib
+efi_machine_type_name=x64
+gnu_efi_arch=x86_64
+gnu_efi_default_is_objcopy=true
+
+Name: gnu-efi
+Description: EFI development toolkit
+Version: 4.0.3
+Cflags: -I${includedir}/efi
+Libs: -lefi

@@ -5,7 +5,7 @@
             "name": "Debug Utils",
             "type": "cppdbg",
             "request": "launch",
-            // "preLaunchTask": "Build Utils",
+            "preLaunchTask": "Build Utils",
             "program": "${workspaceFolder}//tools//filesystem//fs.exe",
             "args": [
                 "${workspaceFolder}/Build/temp/image.img"
@@ -34,15 +34,32 @@
                 "focus": false,
                 "panel": "shared"
             }
+        },
+        {
+            "name": "Debug run.ps1",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}\\compile\\run.ps1",
+            "args": [
+                "-extrafiles", "\\a0x2800",
+                "-BroadImage",
+                "-SectorNum", "2000",
+                "-clear",
+                "-Reserved", "1"
+            ],
+            "cwd": "${cwd}",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            }
         }, {
             "name": "(QEMU)Debug Kernel",
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}\\compile\\intermid.ps1",
-            "args": [
-                "-run", "qemu",// "-imagetype", "release",
-                "-enablevarsbackup"
-            ],
+            "args": ["-run", "qemu"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -55,9 +72,7 @@
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}\\compile\\intermid.ps1",
-            "args": [
-                "-run", "bochs", "-imagetype", "default"
-            ],
+            "args": ["-run", "bochs"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -87,7 +102,7 @@
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb",
-            "miDebuggerPath": "gdb",
+            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing",

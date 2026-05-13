@@ -1,0 +1,42 @@
+
+cpu: model=corei7_ivy_bridge_3770k, count=2, reset_on_triple_fault=1
+boot: disk
+memory: guest=1024, host=1024
+config_interface: win32config
+display_library: sdl
+
+sound: driver=default
+speaker: enabled=1, mode=sound
+e1000: enabled=1
+pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=e1000
+vga: extension=cirrus, update_freq=60, realtime=1
+mouse: enabled=1
+
+
+magic_break: enabled=1
+port_e9_hack: enabled=1, all_rings=1
+
+<<<<<<< HEAD:Build/Build-2026-05-06-46/.bochsrc
+<<<<<<<< HEAD:Build/Build-2026-05-08-26/.bochsrc
+log: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-08-26\bochs.log
+========
+log: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-06-46\bochs.log
+>>>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.):Build/Build-2026-05-06-46/.bochsrc
+=======
+log: C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-28-16\bochs.log
+>>>>>>> parent of ac3772e (...):Build/Build-2026-04-28-16/.bochsrc
+iodebug: all_rings=1
+
+romimage: file=C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\compile\toolchain\uefi\release\OVMF_CODE.fd
+vgaromimage: file=C:\msys64\mingw64\share\bochs\VGABIOS-lgpl-latest-cirrus.bin
+ata0: enabled=1, ioaddr1=0x1F0, ioaddr2=0x3F0, irq=14
+<<<<<<< HEAD:Build/Build-2026-05-06-46/.bochsrc
+<<<<<<<< HEAD:Build/Build-2026-05-08-26/.bochsrc
+ata0-master: type=disk, path="C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-08-26\disk.img", mode=flat, status=inserted, translation=lba
+========
+ata0-master: type=disk, path="C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-05-06-46\disk.img", mode=flat, status=inserted, translation=lba
+>>>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.):Build/Build-2026-05-06-46/.bochsrc
+=======
+ata0-master: type=disk, path="C:\Users\olusa\OneDrive\Documents\GitHub\BlockyOS\Build\Build-2026-04-28-16\disk.img", mode=flat, status=inserted, translation=lba
+>>>>>>> parent of ac3772e (...):Build/Build-2026-04-28-16/.bochsrc
+

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.h": "2026-05-04T19:09:02.0676393Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.h": "2026-05-04T17:50:00.0469441Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2-impl.h": "2026-05-03T21:33:43.5384327Z",
@@ -10,6 +11,10 @@
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.h": "2026-05-04T19:21:49.4479356Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\standard.h": "2026-05-04T01:04:14.5995658Z",
 >>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.)
+=======
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boot.c": "2026-04-19T17:11:44.5317712Z",
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\standard.h": "2026-04-19T16:17:48.3498663Z",
+>>>>>>> parent of ac3772e (...)
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\legacy\\efilib.h": "2026-04-27T23:52:57.1063532Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\adapterdebug.h": "2026-04-27T23:52:57.1113529Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\eficonsplit.h": "2026-04-27T23:52:57.1123532Z",
@@ -58,6 +63,7 @@
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\lib.h": "2026-04-27T23:52:57.1073537Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\libsmbios.h": "2026-04-27T23:52:57.1083529Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\pci22.h": "2026-04-27T23:52:57.1093536Z",
+<<<<<<< HEAD
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\romload.h": "2026-04-27T23:52:57.1203636Z",
 <<<<<<< HEAD
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.c": "2026-05-07T00:44:43.7514291Z",
@@ -80,4 +86,7 @@
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.c": "2026-05-04T19:26:09.8062604Z",
   "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boot.c": "2026-05-04T21:58:53.7096819Z"
 >>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.)
+=======
+  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\romload.h": "2026-04-27T23:52:57.1203636Z"
+>>>>>>> parent of ac3772e (...)
 }

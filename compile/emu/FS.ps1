@@ -263,22 +263,7 @@ function Create-FAT32BootSector {
     $reservedSectors = 32
     $fatCopies = 2
     $totalSectors = [uint32]($PartitionSizeBytes / $sectorSize)
-
-    # Determine a valid FAT size by iterating until the cluster count and FAT sector count converge.
-    $fatSizeInSectors = 0
-    $previousFatSize = -1
-    $maxIterations = 100
-    $iteration = 0
-    do {
-        $previousFatSize = $fatSizeInSectors
-        $dataSectors = $totalSectors - $reservedSectors - ($fatCopies * $fatSizeInSectors)
-        $clusterCount = [uint32][Math]::Floor($dataSectors / $sectorsPerCluster)
-        $fatSizeInSectors = [uint32][Math]::Ceiling((($clusterCount + 2) * 4.0) / $sectorSize)
-        $iteration++
-        if ($iteration -gt $maxIterations) {
-            throw "FAT32 boot sector sizing did not converge after $maxIterations iterations"
-        }
-    } while ($fatSizeInSectors -ne $previousFatSize)
+    $fatSizeInSectors = [uint32][Math]::Ceiling(($totalSectors * 4.0) / ($sectorSize * 8.0))
 
     $bootSector = New-Object byte[] 512
     $ms = New-Object System.IO.MemoryStream($bootSector, 0, 512, $true)
@@ -345,33 +330,6 @@ function Create-FAT32BootSector {
 
     $writer.Flush()
     return $bootSector
-}
-
-function Get-FAT32ClusterSize{
-    param([uint64]$PartitionSizeBytes)
-
-    $sectorSize = 512
-    $candidateSizes = @(512, 1024, 2048, 4096)
-
-    foreach($clusterSize in $candidateSizes){
-        $sectorsPerCluster = [byte]($clusterSize / $sectorSize)
-        $totalSectors = [uint32]($PartitionSizeBytes / $sectorSize)
-        $fatSizeInSectors = 0
-        $previousFatSize = -1
-
-        do{
-            $previousFatSize = $fatSizeInSectors
-            $dataSectors = $totalSectors - 32 - (2 * $fatSizeInSectors)
-            if($dataSectors -lt 0){break}
-
-            $clusterCount = [uint32][Math]::Floor($dataSectors / $sectorsPerCluster)
-            $fatSizeInSectors = [uint32][Math]::Ceiling((($clusterCount + 2) * 4.0) / $sectorSize)
-        }while($fatSizeInSectors -ne $previousFatSize)
-
-        if($clusterCount -ge 65525){return $clusterSize}
-    }
-
-    throw "Partition too small for FAT32. Increase the partition size or use FAT16/NTFS."
 }
 
 function Create-FAT16BootSector {
@@ -710,21 +668,15 @@ switch($FileSystemType){
     }
     "FAT32" {
         Log-Message "Formatting as FAT32"
-        $clusterSize = Get-FAT32ClusterSize -PartitionSizeBytes $partitionSizeBytes
-        $boot = Create-FAT32BootSector -PartitionSizeBytes $partitionSizeBytes -VolumeLabel $VolumeName -ClusterSize $clusterSize
+        $boot = Create-FAT32BootSector -PartitionSizeBytes $partitionSizeBytes -VolumeLabel $VolumeName
         Log-Message -Message "Writing Boot Sector at: $([Int64]$partitionOffsetBytes)"
         $fs.Seek([int64]$partitionOffsetBytes,'Begin') | Out-Null
-        $fs.Write($boot,0,$boot.Length)
-
-        $backupBootOffset = $partitionOffsetBytes + (6 * $sectorSize)
-        Log-Message -Message "Writing Backup Boot Sector at: $([Int64]$backupBootOffset)"
-        $fs.Seek([int64]$backupBootOffset,'Begin') | Out-Null
         $fs.Write($boot,0,$boot.Length)
 
         Log-Message "Writing FSINFO Sector..."
         $fsinfo = New-Object byte[] 512
 
-        [BitConverter]::GetBytes([uint32]0x41615252).CopyTo($fsinfo, 0)
+        [BitConverter]::GetBytes([uint32]0x41415252).CopyTo($fsinfo, 0)
         [BitConverter]::GetBytes([uint32]0x61417272).CopyTo($fsinfo, 484)
         [BitConverter]::GetBytes([uint32]0xFFFFFFFFu).CopyTo($fsinfo, 488)
         [BitConverter]::GetBytes([uint32]0x00000003).CopyTo($fsinfo, 492)
@@ -733,23 +685,10 @@ switch($FileSystemType){
         $fs.Seek([int64]($partitionOffsetBytes + 512), 'Begin') | Out-Null
         $fs.Write($fsinfo, 0, 512)
 
-        $sectorsPerCluster = [byte]($clusterSize / $sectorSize)
-        $fatSizeInSectors = 0
-        $previousFatSize = -1
-        $maxIterations = 100
-        $iteration = 0
-        do {
-            $previousFatSize = $fatSizeInSectors
-            $dataSectors = $partitionSizeSectors - 32 - (2 * $fatSizeInSectors)
-            $clusters = [uint32][Math]::Floor($dataSectors / $sectorsPerCluster)
-            $fatSizeInSectors = [uint32][Math]::Ceiling((($clusters + 2) * 4.0) / $sectorSize)
-            $iteration++
-            if ($iteration -gt $maxIterations) {
-                throw "FAT32 FAT table sizing did not converge after $maxIterations iterations"
-            }
-        } while ($fatSizeInSectors -ne $previousFatSize)
-
-        $fatSectors = $fatSizeInSectors
+        $clusterSize = 4096
+        $clusters = [uint32]($partitionSizeBytes / $clusterSize)
+        $fatSizeBytes = $clusters * 4
+        $fatSectors = [uint32][Math]::Ceiling($fatSizeBytes / $sectorSize)
         $fatTable = New-Object uint32[] $clusters
 
         if($clusters -gt 0){

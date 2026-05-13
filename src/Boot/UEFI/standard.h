@@ -1,11 +1,6 @@
-#pragma once
-
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#define __ia32__
+#undef __x86_64__
 
 #include "efi.h"
 #include "efilib.h"
-
-#include "drivers/.disk/fs/frat.h"
-#include "tools/tools.h"
+// #include "kernel/lib/stdlib.h"

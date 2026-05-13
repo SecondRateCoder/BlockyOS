@@ -18,10 +18,9 @@ param(
     [string]$PREFIX = (Get-Date -Format "yyyy-MM-dd-ss").ToString(),
     [Parameter(Mandatory=$false)]
     [int]$SectorSize = 512,
-    [string]$imagetype = 'default',
+    [switch]$enabledebug,
     [switch]$enablevars,
-    [switch]$nocompile,
-    [switch]$enablevarsbackup
+    [switch]$nocompile
 )
 $GCC = 'gcc'
 # $NASM = ${env:NASM}
@@ -36,6 +35,7 @@ $BootPartitionBlob = Join-Path $BootPartitionDir 'legacyblob.bin'
 $UEFIBootBlob = Join-Path $BootPartitionDir 'efi/boot/bootx64.efi'
 $BroadImageFile = Join-Path (Get-Location) 'Build\temp\image.img'
 $Objdir = Join-Path $Build 'objs'
+$FATOUTDIR = Join-Path $Build 'emu/FAT32/'
 $DiskConfigJson = Join-Path (Get-Location) 'compile\disk-config.json'
 $GPTScript = Join-Path (Get-Location) 'compile\emu\GPT.ps1'
 $FSScript = Join-Path (Get-Location) 'compile\emu\FS.ps1'
@@ -44,44 +44,38 @@ $BOCHSRC = Join-Path $Build '.bochsrc'
 $BOCHSLOG = Join-Path $Build 'bochs.log'
 $debuglog = Join-Path $Build 'emudebug.log'
 $debuggerlog = Join-Path $Build 'debugger.log'
-if(-not (Test-Path $debuggerlog)){New-Item $debuggerlog -ItemType File -Force}
 
 
 $bochsbinariesfolder = 'C:/msys64/mingw64/share/bochs/'
-$firmwarefolder = $firmwarefolder = Join-Path (Get-Location) "compile/toolchain/uefi/$($imagetype)"
-if(-not (Test-Path $firmwarefolder)){
-    Log-Write "Invalid Image Type"
-    exit 1
-}
+$firmwarefolder = ''
+if($enabledebug){
+    $firmwarefolder = Join-Path (Get-Location) 'compile/toolchain/uefi/debug'
+}else{$firmwarefolder = Join-Path (Get-Location) 'compile/toolchain/uefi/release'}
 
 $ovmfcode = Join-Path $firmwarefolder 'OVMF_CODE.fd'
 $ovmfvars = Join-Path $firmwarefolder 'OVMF_VARS.fd'
-if($enablevarsbackup){
-    Copy-Item -Path (Join-Path (Get-Location) "compile/toolchain/uefi/vars-backup/$(if($imagetype -eq 'debug'){'DEBUG'}else{'RELEASE'})x64_OVMF_VARS.fd") -Destination $ovmfvars}
 $ovmfshell = Join-Path $firmwarefolder 'SHELL.efi'
-$gdbRemote = '1234'
 
 $args_qemu = @(
     '-vga', 'std', 
     '-cpu', 'qemu64', 
-    '-m', '2048',
+    '-m', '1024',
     # '-accel', "$(if($IsLinux){'kvm'}elseif($IsMacOS){'hvf'}elseif($IsWindows){'whpx'}else{'tcg'})",
     '-machine', 'q35',
-    '-boot', 'order=c',
     '-smp', '2',
     '-net', 'none',
-    '-serial', 'stdio',
     '-L', $firmwarefolder,
     '-drive', "if=pflash,format=raw,readonly=on,file=$($ovmfcode)",
-    '-drive', "unit=0,file=$($Image),format=raw,if=none,id=maindrive", '-device', 'virtio-blk-pci,drive=maindrive',
+    '-drive', "unit=0,file=$($Image),format=raw,if=none,id=maindrive",
+    '-device', 'virtio-blk-pci,drive=maindrive',
     # '-drive', "file=$(Join-Path (Get-Location) 'compile/toolchain/uefi/Shell.efi'),format=raw,if=virtio",
     # '-device', 'VGA,edid=on,xres=2560,yres=1440',
-    '-chardev', "file,id=dbg,path=$($debuggerlog)",
+    '-debugcon', 'stdio',
+    '-chardev', "file,id=dbg,path=$($debuglog)",
     '-usb', '-usbdevice', 'keyboard', '-usbdevice', 'mouse',
     '-display', 'sdl', '-vga', 'cirrus'#, '-full-screen'
 )
 if($enablevars){$args_qemu += '-drive', "if=pflash,format=raw,file=$($ovmfvars)"}
-if($imagetype -eq 'debug'){$args_qemu += '-gdb', "tcp::$($gdbRemote)", '-S'}
 $BOCHSFILE = "
 cpu: model=corei7_ivy_bridge_3770k, count=2, reset_on_triple_fault=1
 boot: disk
@@ -107,31 +101,6 @@ romimage: file=$($ovmfcode)
 vgaromimage: file=$(Join-Path $bochsbinariesfolder 'VGABIOS-lgpl-latest-cirrus.bin')
 ata0: enabled=1, ioaddr1=0x1F0, ioaddr2=0x3F0, irq=14
 ata0-master: type=disk, path=`"$($Image)`", mode=flat, status=inserted, translation=lba
-"
-
-$gdbCommandFile = Join-Path $Build 'gdb-command.log'
-$gdbCommandContent = "
-set architecture i386:x86-64
-set pagination off
-set confirm off
-
-file $($ovmfcode -replace "\\",'/')
-target remote :$($gdbRemote)
-
-set auto-connect-native-target off
-
-define hook-disconnect
-    quit
-end
-
-define hook-stop
-    if ! target_info exists remote_desc
-        quit
-    end
-end
-
-break efi_main
-continue
 "
 
 function UEFI-Populate{
@@ -228,6 +197,7 @@ function Prepare {
         }
     }
     if(-not(Test-Path $Objdir)){New-Item -Path $Objdir -ItemType Directory -Force}
+    if(-not(Test-Path $FATOUTDIR)){New-Item -Path $FATOUTDIR -ItemType Directory -Force}
     if(-not(Test-Path $BootPartitionDir)){New-Item -Path $BootPartitionDir -ItemType Directory -Force}
     if(-not(Test-Path $debuglog)){New-Item -Path $debuglog -ItemType File -Force}
     if(-not(Test-Path $Image)){New-Item -Path $Build -ItemType File -Force -ErrorAction SilentlyContinue}
@@ -329,7 +299,7 @@ if(-not $nocompile){
     Log-Write -color Green "Legacy bootloader compiled: $BootPartitionBlob"
 
     Log-Write -color Cyan "===== Step 1.2: Compile UEFI BootLoader Blob ====="
-    (& "$(Join-Path (Get-Location) 'src/Boot/UEFI/UEFI.ps1')" -prefix $PREFIX -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir -ENABLEDEBUGGABLE ($imagetype -eq 'debug'))
+    (& "$(Join-Path (Get-Location) 'src/Boot/UEFI/UEFI.ps1')" -prefix $PREFIX -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
     if(-not (Test-Path $UEFIBootBlob)){
         Log-Write -color Red -Msg "UEFI Bootloader blob not created: $UEFIBootBlob"
         exit 1
@@ -345,6 +315,34 @@ if(-not (Test-Path $DiskConfigJson)){
 }
 Log-Write -color Yellow "Creating GPT disk: $($Image)"
 (& $GPTScript -LayoutJson $DiskConfigJson -OutputImage $Image -LogFile (Join-Path $Build "gpt.log") -Verbose)
+
+# Log-Write -color Cyan "===== Step 3: Combine Boot Partition (Legacy + UEFI) ====="
+# $legacyBytes = [System.IO.File]::ReadAllBytes($BootPartitionBlob)
+# $uefiBytes = [System.IO.File]::ReadAllBytes($UEFIBootBlob)
+# $bootPartSize = 33554432  # 32MB
+# $combinedSize = $legacyBytes.Length + $uefiBytes.Length
+# if($combinedSize -gt $bootPartSize){
+#     Log-Write -color Red -Msg "Combined bootloaders ($combinedSize bytes) exceed boot partition size ($bootPartSize bytes)"
+#     exit 1
+# }
+# $paddingNeeded = $bootPartSize - $combinedSize
+# Log-Write -color Green "Boot partition: Legacy ($($legacyBytes.Length)) + UEFI ($($uefiBytes.Length)) + Padding ($paddingNeeded) = $bootPartSize bytes"
+
+# Log-Write -color Cyan "===== Step 4: Assemble Final Disk ====="
+# # Combine Legacy + UEFI + Padding into boot bytes
+# $bootBytes = New-Object byte[] $bootPartSize
+# [Array]::Copy($legacyBytes, 0, $bootBytes, 0, $legacyBytes.Length)
+# [Array]::Copy($uefiBytes, 0, $bootBytes, $legacyBytes.Length, $uefiBytes.Length)
+# # Padding bytes are already zero-initialized
+# $diskFile = [System.IO.File]::Open($Image, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write)
+# try{
+#     $diskFile.Write($bootBytes, 0, $bootBytes.Length)
+#     Log-Write -color Green "Boot partition written to disk ($(($bootBytes.Length / 1MB)) MB)."
+# }finally{
+#     $diskFile.Close()
+#     $diskFile.Dispose()
+# }
+# Log-Write -color Green "Disk image finalized: $($Image)"
 
 Log-Write -color Cyan "===== Step 3: Format Boot Partition (FAT32) ====="
 if(Test-Path $FSScript){
@@ -366,32 +364,23 @@ Log-Write 'Double-verifying Image' -color Blue
 # $GDISKOUT = & 'wsl' 'gdisk' (($Image -replace "\\",'/') -replace "C:/",'/mnt/c/')
 # Log-Write "$($GDISKOUT -join "`n")"
 
+if($broadimage){Copy-Item -Path $Image -Destination $BroadImageFile}
+
 if($run){
     Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ') "
     $QEMUOUT = ""
-    if($imagetype -eq 'debug'){
-        $qemuProcess = Start-Process -FilePath $QEMU -ArgumentList $args_qemu -PassThru
-        New-Item $gdbCommandFile -ItemType File -Force
-        Add-Content $gdbCommandFile $gdbCommandContent
-        Log-Write "gdb -x $($gdbCommandFile) --directory=$(Join-Path (Get-Location) '\src\')"
-        try{
-            $GDBOUT = (& gdb '-x' ($gdbCommandFile.Replace('\\','/')) '--directory' ((Join-Path (Get-Location) '\src\')).Replace('\\','/')) 2>&1
-            Log-Write "$($GDBOUT)"
-        }finally{
-            # Kill QEMU if still running when GDB exits
-            if($qemuProcess -and -not $qemuProcess.HasExited){
-                Stop-Process -Id $qemuProcess.Id -Force -ErrorAction SilentlyContinue
-            }
-        }
+    if($emudebug -and $EXEdebug -and (Test-Path $EXEdebug)){
+        $QEMUOUT = & $QEMU @args_qemu# "-S" "-gdb" "tcp::1234"
+        # $GDBOUT = & gdb $EXEdebug
+        # Log-Write "$($GDBOUT -join "`n")"
+        # $GDBOUT = & target remote localhost:1234
+        # Log-Write "$($GDBOUT -join "`n")"
     }else{$QEMUOUT = & $QEMU @args_qemu 2>&1}
     Log-Write "$($QEMUOUT -join "`n")"
 }elseif($runbochs){
     $env:Path += $Build
-    Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $B6uild "\bx_enh_dbg.ini")
+    Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $Build "\bx_enh_dbg.ini")
     Log-Write -Msg "$($BOCHS) -f $($BOCHSRC) -q -dbglog $($debuggerlog);`n`n $(Get-Content $BOCHSRC)" -color Blue
     & $BOCHS '-f' $BOCHSRC '-q' '-dbglog' $($debuggerlog)
     Copy-Item -Path (Join-Path $Build "\bx_enh_dbg.ini") -Destination (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini")
 }
-
-# Optimise by Using ShortCut
-if($broadimage){New-Item -Path (Join-Path (Get-Location) '/Build/temp/image.img') -ItemType SymbolicLink -Value $Image}
