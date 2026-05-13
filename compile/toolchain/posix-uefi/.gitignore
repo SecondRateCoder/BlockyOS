@@ -1,5 +1,0 @@
-*.o
-*.efi
-*.a
-*.so
-/build
