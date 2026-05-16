@@ -8,6 +8,7 @@
         "lixquid.calculator",
         "zixuanwang.linkerscript",
         "whiteout2.x86",
-        "brandonfowler.exe-runner"
+        "brandonfowler.exe-runner",
+        "github.codespaces"
     ]
 }
