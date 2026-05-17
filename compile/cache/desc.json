@@ -1,92 +1,16 @@
 {
-<<<<<<< HEAD
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.h": "2026-05-04T19:09:02.0676393Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.h": "2026-05-04T17:50:00.0469441Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2-impl.h": "2026-05-03T21:33:43.5384327Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2.h": "2026-05-03T21:29:37.6414355Z",
-<<<<<<< HEAD
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.h": "2026-05-07T17:08:38.1965406Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\standard.h": "2026-05-07T23:08:43.8607058Z",
-=======
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.h": "2026-05-04T19:21:49.4479356Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\standard.h": "2026-05-04T01:04:14.5995658Z",
->>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.)
-=======
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boot.c": "2026-04-19T17:11:44.5317712Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\standard.h": "2026-04-19T16:17:48.3498663Z",
->>>>>>> parent of ac3772e (...)
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\legacy\\efilib.h": "2026-04-27T23:52:57.1063532Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\adapterdebug.h": "2026-04-27T23:52:57.1113529Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\eficonsplit.h": "2026-04-27T23:52:57.1123532Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\efidbg.h": "2026-04-27T23:52:57.1133547Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\efivar.h": "2026-04-27T23:52:57.1143549Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\intload.h": "2026-04-27T23:52:57.1153541Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\legacyboot.h": "2026-04-27T23:52:57.1163542Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\piflash64.h": "2026-04-27T23:52:57.1173525Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\protocol\\vgaclass.h": "2026-04-27T23:52:57.1183531Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\x86_64\\efibind.h": "2026-04-27T23:52:57.1213533Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\x86_64\\efilibplat.h": "2026-04-27T23:52:57.122353Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\x86_64\\efisetjmp_arch.h": "2026-04-27T23:52:57.1233525Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\x86_64\\pe.h": "2026-04-27T23:52:57.1243532Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efi_nii.h": "2026-04-27T23:52:57.0753525Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efi_pxe.h": "2026-04-27T23:52:57.0773527Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efi.h": "2026-04-27T23:52:57.0743535Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efiapi.h": "2026-04-27T23:52:57.0783532Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\eficompiler.h": "2026-04-27T23:52:57.0793531Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\eficon.h": "2026-04-27T23:52:57.0803528Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\eficonex.h": "2026-04-27T23:52:57.0803528Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efidebug.h": "2026-04-27T23:52:57.0813535Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efidef.h": "2026-04-27T23:52:57.0823524Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efidevp.h": "2026-04-27T23:52:57.0833533Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efierr.h": "2026-04-27T23:52:57.0843527Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efifs.h": "2026-04-27T23:52:57.0853532Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efigpt.h": "2026-04-27T23:52:57.0863546Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efiip.h": "2026-04-27T23:52:57.0873553Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efilib.h": "2026-04-27T23:52:57.0893547Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efilink.h": "2026-04-27T23:52:57.090354Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efimp.h": "2026-04-27T23:52:57.0913532Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efinet.h": "2026-04-27T23:52:57.0923527Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efipart.h": "2026-04-27T23:52:57.0933546Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efipciio.h": "2026-04-27T23:52:57.094353Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efipoint.h": "2026-04-27T23:52:57.0953525Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efiprot.h": "2026-04-27T23:52:57.0963535Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efipxebc.h": "2026-04-27T23:52:57.0973532Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efirtlib.h": "2026-04-27T23:52:57.0983524Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efiser.h": "2026-04-27T23:52:57.0983524Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efisetjmp.h": "2026-04-27T23:52:57.0993528Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efishell.h": "2026-04-27T23:52:57.1003535Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efishellintf.h": "2026-04-27T23:52:57.1013531Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efistdarg.h": "2026-04-27T23:52:57.102353Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efitcp.h": "2026-04-27T23:52:57.1033552Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efiudp.h": "2026-04-27T23:52:57.1043538Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\efiui.h": "2026-04-27T23:52:57.1053539Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\lib.h": "2026-04-27T23:52:57.1073537Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\libsmbios.h": "2026-04-27T23:52:57.1083529Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\pci22.h": "2026-04-27T23:52:57.1093536Z",
-<<<<<<< HEAD
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\romload.h": "2026-04-27T23:52:57.1203636Z",
-<<<<<<< HEAD
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.c": "2026-05-07T00:44:43.7514291Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.c": "2026-05-07T15:52:14.7345311Z",
-=======
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.c": "2026-05-04T19:14:59.4832248Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.c": "2026-05-04T18:31:57.2198072Z",
->>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.)
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2b-ref.c": "2026-05-03T21:33:52.5942942Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2bp-ref.c": "2026-05-03T21:31:53.6809201Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2s-ref.c": "2026-05-03T21:33:56.9772977Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2sp-ref.c": "2026-05-03T21:33:58.7402976Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2xb-ref.c": "2026-05-03T21:34:00.4228055Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2xs-ref.c": "2026-05-03T21:34:02.0108065Z",
-<<<<<<< HEAD
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.c": "2026-05-07T17:08:32.2752991Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boot.c": "2026-05-07T22:59:14.2276874Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boothelper.c": "2026-05-07T22:42:10.3349419Z"
-=======
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.c": "2026-05-04T19:26:09.8062604Z",
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boot.c": "2026-05-04T21:58:53.7096819Z"
->>>>>>> parent of f70e00e (Getting Comfortable with the UEFI ABI, very Hard ngl.)
-=======
-  "C:\\Users\\olusa\\OneDrive\\Documents\\GitHub\\BlockyOS\\compile\\toolchain\\build\\gnu-efi-4.0.4\\x86_64\\include\\efi\\romload.h": "2026-04-27T23:52:57.1203636Z"
->>>>>>> parent of ac3772e (...)
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\fs\\frat.c": "2026-05-17T23:34:42.4386958Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\.disk\\raw\\raw.c": "2026-05-17T23:27:46.2934006Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2b-ref.c": "2026-05-14T00:09:21.5816998Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2bp-ref.c": "2026-05-14T00:09:29.0424608Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2s-ref.c": "2026-05-14T00:09:33.0171596Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2sp-ref.c": "2026-05-14T00:09:38.7814073Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2xb-ref.c": "2026-05-14T00:09:42.315407Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\crypto\\blake2\\ref\\blake2xs-ref.c": "2026-05-14T00:09:45.8042174Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\executable\\execload.c": "2026-05-16T05:07:40.3384186Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\socket\\socket.c": "2026-05-17T15:46:49.0362209Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\drivers\\socket\\sockets.c": "2026-05-17T12:41:14.5122016Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\tools\\tools.c": "2026-05-17T15:03:03.5059957Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\boot.c": "2026-05-17T23:06:20.2894694Z",
+  "C:\\GitHub\\BlockyOS\\src\\Boot\\UEFI\\bthelper.c": "2026-05-15T19:01:27.606384Z"
 }

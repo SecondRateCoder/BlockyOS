@@ -1,41 +1,41 @@
 param(
-    [string]$LayoutJson,
-    [string]$OutputImage,
-    [string]$LogFile,
-    [switch]$Verbose,
-    [switch]$IsDrive,
-    [switch]$Help
+	[string]$LayoutJson,
+	[string]$OutputImage,
+	[string]$LogFile,
+	[switch]$Verbose,
+	[switch]$IsDrive,
+	[switch]$Help
 )
 
 function Pad-Array{
-    param(
-        [array]$Array,
-        [int]$Size,
-        $PadValue = $null
-    )
+	param(
+		[array]$Array,
+		[int]$Size,
+		$PadValue = $null
+	)
 
-    if($Array.Count -lt $Size){$Array += ,$PadValue * ($Size - $Array.Count)}
-    return $Array
+	if($Array.Count -lt $Size){$Array += ,$PadValue * ($Size - $Array.Count)}
+	return $Array
 }
 
 function Compute-CRC32{
-    param([byte[]]$Data)
+	param([byte[]]$Data)
 
-    $table = @(0..255 | ForEach-Object{
-        $crc = $_
-        for($i=0; $i -lt 8; $i++){
-            if($crc -band 1){$crc = (0xEDB88320 -bxor ($crc -shr 1))
-            }else{$crc = ($crc -shr 1)}
-        }
-        $crc
-    })
+	$table = @(0..255 | ForEach-Object{
+		$crc = $_
+		for($i=0; $i -lt 8; $i++){
+			if($crc -band 1){$crc = (0xEDB88320 -bxor ($crc -shr 1))
+			}else{$crc = ($crc -shr 1)}
+		}
+		$crc
+	})
 
-    $crc32 = 0xFFFFFFFF
-    foreach($b in $Data){
-        $crc32 = ($crc32 -shr 8) -bxor $table[($crc32 -bxor $b) -band 0xFF]
-    }
+	$crc32 = 0xFFFFFFFF
+	foreach($b in $Data){
+		$crc32 = ($crc32 -shr 8) -bxor $table[($crc32 -bxor $b) -band 0xFF]
+	}
 
-    return (-bnot $crc32) -band 0xFFFFFFFF
+	return (-bnot $crc32) -band 0xFFFFFFFF
 }
 
 # ============================================================
@@ -46,68 +46,67 @@ function Show-Help{
 GPT/MBR Disk Builder
 
 SYNOPSIS
-    Creates a GPT disk image (with protective MBR) or formats a real drive
-    using a JSON partition layout.
+	Creates a GPT disk image (with protective MBR) or formats a real drive
+	using a JSON partition layout.
 
 USAGE
-    # Build disk image
-    .\GPT.ps1 -LayoutJson layout.json -OutputImage disk.img
+	# Build disk image
+	.\GPT.ps1 -LayoutJson layout.json -OutputImage disk.img
 
-    # Format physical drive (DANGEROUS)
-    .\GPT.ps1 -LayoutJson layout.json -OutputImage \\.\PhysicalDrive2 -IsDrive
+	# Format physical drive (DANGEROUS)
+	.\GPT.ps1 -LayoutJson layout.json -OutputImage \\.\PhysicalDrive2 -IsDrive
 
 JSON FORMAT
 {
   "partitions": [
-    {
-      "name": "EFI",
-      "size": 33554432,
-      "type": "<GUID>",
-      "attributes": ["efi-boot", "system"],
-      "give": ["fit", "grow"]
-    }
+	{
+	  "name": "EFI",
+	  "size": 33554432,							In 512-byte Blocks
+	  "type": "<GUID>",
+	  "attributes": ["efi-boot", "system"],
+	  "give": ["fit", "grow"]
+	}
   ]
 }
 
 SUPPORTED PARTITION ATTRIBUTES
-    system           : Required for platform to function (bit 0)
-    required         : Required for OS (bit 0)
-    firmware-ignore  : Firmware should ignore this partition (bit 1)
-    legacy-boot      : Legacy BIOS bootable (bit 2)
-    efi-boot         : EFI/boot partition (treated as system)
-    readonly         : Read-only partition (bit 48)
-    hidden           : Hidden partition (bit 49)
-    0xHEXVALUE       : Custom hex attribute value
+	system           : Required for platform to function (bit 0)
+	required         : Required for OS (bit 0)
+	firmware-ignore  : Firmware should ignore this partition (bit 1)
+	legacy-boot      : Legacy BIOS bootable (bit 2)
+	efi-boot         : EFI/boot partition (treated as system)
+	readonly         : Read-only partition (bit 48)
+	hidden           : Hidden partition (bit 49)
+	0xHEXVALUE       : Custom hex attribute value
 
 SUPPORTED "give" DIRECTIVES
-    fit     : If partition causes overflow, shrink to fit remaining available space
-    grow    : Expand partition to fill all remaining available space (only one partition)
-    fit+grow: First fit if needed, then grow to fill remaining space
+	fit     : If partition causes overflow, shrink to fit remaining available space
+	grow    : Expand partition to fill all remaining available space (only one partition)
+	fit+grow: First fit if needed, then grow to fill remaining space
 
 PARAMETERS
-    -LayoutJson   Path to JSON layout
-    -OutputImage           Path to disk image or \\.\PhysicalDriveX
-    -IsDrive               Write directly to a real drive (DANGEROUS)
-    -LogFile               Log output
-    -Verbose               Verbose logging
-    -Help                  Show this help
-    -ProtectiveMBR         File Path to a Protective MBR Binary
+	-LayoutJson   		   	Path to JSON layout
+	-OutputImage           	Path to disk image or \\.\PhysicalDriveX
+	-IsDrive               	Write directly to a real drive (DANGEROUS)
+	-LogFile               	Log output
+	-Verbose               	Verbose logging
+	-Help                  	Show this help
+	-ProtectiveMBR         	File Path to a Protective MBR Binary
 
 "@
 }
 
 function LBA-2-CHS{
-    param(
-        [uint64]$LBA,
-        [byte]$HeadsPerCylinder = 255,
-        [byte]$SectorsPerTrack = 63
-    )
-
-    return [pscustomobject]@{
-        cylinder    = $LBA / ($HeadsPerCylinder * $SectorsPerTrack)
-        head        = ($LBA / $SectorsPerTrack) % $HeadsPerCylinder
-        sector      = ($LBA % $SectorsPerTrack) + 1
-    }
+	param(
+		[uint64]$LBA,
+		[byte]$HeadsPerCylinder = 255,
+		[byte]$SectorsPerTrack = 63
+	)
+	return [pscustomobject]@{
+		cylinder    = [math]::Min([math]::Floor($LBA / ($HeadsPerCylinder * $SectorsPerTrack)), 255)
+		head        = [math]::Min([math]::Floor(($LBA / $SectorsPerTrack) % $HeadsPerCylinder), 255)
+		sector      = [math]::Min([math]::Floor(($LBA % $SectorsPerTrack) + 1), 255)
+	}
 }
 
 function New-ProtectiveMBRFromJson{
@@ -363,6 +362,8 @@ function Normalize-Give{
 # ============================================================
 # DISK LAYOUT COMPUTATION (INITIAL)
 # ============================================================
+$diskGuid = [Guid]$layout.disk.type
+
 $sectorSize     = 512
 $firstUsableLBA = 2048
 $currentLBA     = $firstUsableLBA
@@ -385,7 +386,7 @@ $lastEndInitial = ($parts | Sort-Object endLBA -Descending)[0].endLBA
 $entryCount       = $parts.Count
 $entrySize        = 128
 $entriesPerSector = $sectorSize / $entrySize
-$entrySectors     = [math]::Ceiling($entryCount / $entriesPerSector)
+$entrySectors     = [math]::Ceiling($entryCount / $entriesPerSector)    
 
 # Base disk sectors (before "grow"): partitions + backup GPT area
 $diskSectorsBase = [uint64]($lastEndInitial + 1 + $entrySectors + 1)
@@ -495,7 +496,6 @@ if($IsDrive){
         exit 1
     }
 }
-# $bw = New-Object System.IO.BinaryWriter($fs.BaseStream)
 
 
 function Seek-Bytes{
@@ -506,17 +506,6 @@ function Seek-Bytes{
 # ============================================================
 # WRITE PROTECTIVE MBR
 # ============================================================
-# Log "Writing protective MBR"
-
-# $ProtectiveMBR = New-ProtectiveMBRFromJson -JsonPath $LayoutJson
-
-# # Partition entry 0: type EE, start LBA 1, size = min(totalSectors-1, 0xFFFFFFFF)
-# # CHS fields left as 0/FF (standard "large disk" encoding)
-# $ProtectiveMBR[446 + 4] = 0xEE
-# # [BitConverter]::GetBytes([uint32]1).CopyTo($ProtectiveMBR, 454)
-# # [BitConverter]::GetBytes([uint32][math]::Min($totalSectors - 1, 0xFFFFFFFF)).CopyTo($ProtectiveMBR, 458)
-# Seek-Bytes 0
-# $fs.Write($ProtectiveMBR)
 Log "Writing protective MBR"
 
 # Create a clean 512-byte buffer
@@ -545,61 +534,6 @@ $fs.Write($ProtectiveMBR)
 # ============================================================
 # GPT HEADER + ENTRIES HELPERS
 # ============================================================
-$diskGuid = [Guid]::NewGuid()
-
-# function Write-GptHeader{
-#     param(
-#         [UInt64]$HeaderLBA,
-#         [UInt64]$BackupLBA,
-#         [UInt64]$EntriesLBA,
-#         [UInt64]$FirstUsableLBA,
-#         [UInt64]$LastUsableLBA,
-#         [UInt32]$EntryCount,
-#         [UInt32]$EntrySize,
-#         [Guid]$DiskGuid
-#     )
-
-#     $hdr = New-Object byte[] 512
-
-#     # Signature "EFI PART"
-#     [Text.Encoding]::ASCII.GetBytes("EFI PART").CopyTo($hdr,0)
-
-#     # Revision 1.0
-#     [BitConverter]::GetBytes(0x00010000).CopyTo($hdr,8)
-
-#     # Header size
-#     [BitConverter]::GetBytes(92).CopyTo($hdr,12)
-
-#     # CRC32 (0 for now)
-#     # 16-19 reserved
-
-#     # Current LBA
-#     [BitConverter]::GetBytes($HeaderLBA).CopyTo($hdr,24)
-
-#     # Backup LBA
-#     [BitConverter]::GetBytes($BackupLBA).CopyTo($hdr,32)
-
-#     # First usable LBA
-#     [BitConverter]::GetBytes($FirstUsableLBA).CopyTo($hdr,40)
-
-#     # Last usable LBA
-#     [BitConverter]::GetBytes($LastUsableLBA).CopyTo($hdr,48)
-
-#     # Disk GUID
-#     $DiskGuid.ToByteArray().CopyTo($hdr,56)
-
-#     # Partition entries starting LBA
-#     [BitConverter]::GetBytes($EntriesLBA).CopyTo($hdr,72)
-
-#     # Number of partition entries
-#     [BitConverter]::GetBytes($EntryCount).CopyTo($hdr,80)
-
-#     # Size of each entry
-#     [BitConverter]::GetBytes($EntrySize).CopyTo($hdr,84)
-
-#     # CRC32 of partition array (0 for now)
-#     return $hdr
-# }
 function Write-GptHeader {
     param(
         [UInt64]$HeaderLBA,
@@ -622,6 +556,7 @@ function Write-GptHeader {
 
     # CRC32 placeholder (will be overwritten)
     [BitConverter]::GetBytes($HeaderCRC32).CopyTo($hdr,16)
+    [BitConverter]::GetBytes([UINT32]0x0).CopyTo($hdr,20)
 
     [BitConverter]::GetBytes($HeaderLBA).CopyTo($hdr,24)
     [BitConverter]::GetBytes($BackupLBA).CopyTo($hdr,32)
@@ -639,44 +574,6 @@ function Write-GptHeader {
     return $hdr
 }
 
-
-# function Write-GptEntries{
-#     param(
-#         [UInt64]$LBA,
-#         [array]$Parts,
-#         [int]$EntrySize,
-#         [int]$SectorSize
-#     )
-
-#     Seek-Bytes ($LBA * $SectorSize)
-
-#     foreach($p in $Parts){
-#         $entry = New-Object byte[] $EntrySize
-
-#         # Type GUID
-#         ([Guid]$p.type).ToByteArray().CopyTo($entry,0)
-
-#         # Unique GUID
-#         ([Guid]::NewGuid()).ToByteArray().CopyTo($entry,16)
-
-#         # Start / End LBA
-#         [BitConverter]::GetBytes([UInt64]$p.startLBA).CopyTo($entry,32)
-#         [BitConverter]::GetBytes([UInt64]$p.endLBA).CopyTo($entry,40)
-
-#         # Attributes
-#         [BitConverter]::GetBytes([UInt64]$p.attributesValue).CopyTo($entry,48)
-
-#         # Name (UTF-16LE)
-#         $nameBytes = [Text.Encoding]::Unicode.GetBytes([string]$p.name)
-#         $maxNameBytes = $EntrySize - 56
-#         if($nameBytes.Length -gt $maxNameBytes){
-#             $nameBytes = $nameBytes[0..($maxNameBytes-1)]
-#         }
-#         $nameBytes.CopyTo($entry,56)
-
-#         $fs.Write($entry)
-#     }
-# }
 function Write-GptEntries{
     param(
         [UInt64]$LBA,
@@ -692,7 +589,7 @@ function Write-GptEntries{
         $entry = New-Object byte[] $EntrySize
 
         ([Guid]$p.type).ToByteArray().CopyTo($entry,0)
-        ([Guid]::NewGuid()).ToByteArray().CopyTo($entry,16)
+        ([Guid]$p.unique).ToByteArray().CopyTo($entry,16)
         [BitConverter]::GetBytes([UInt64]$p.startLBA).CopyTo($entry,32)
         [BitConverter]::GetBytes([UInt64]$p.endLBA).CopyTo($entry,40)
         [BitConverter]::GetBytes([UInt64]$p.attributesValue).CopyTo($entry,48)
@@ -726,10 +623,11 @@ function Write-GptEntries{
     return ,$padded
 }
 
-
 # ============================================================
 # WRITE PRIMARY GPT
 # ============================================================
+$diskGuid = [Guid]::NewGuid()
+
 $primaryHeaderLBA  = 1
 $primaryEntriesLBA = 2
 

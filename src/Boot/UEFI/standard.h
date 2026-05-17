@@ -1,6 +1,10 @@
-#define __ia32__
-#undef __x86_64__
+#pragma once
 
 #include "efi.h"
+#include "guid.h"
 #include "efilib.h"
-// #include "kernel/lib/stdlib.h"
+
+#include "drivers/socket/socket.h"
+#include "tools/tools.h"
+
+#define BOOT_OPTION_ATTR (LOAD_OPTION_ACTIVE)

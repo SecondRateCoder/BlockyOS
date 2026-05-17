@@ -51,10 +51,10 @@
             "includePath": [
                 "${workspaceFolder}/",
                 "${workspaceFolder}/src/",
-                "${workspaceFolder}/compile/toolchain/build/gnu-efi-4.0.4/x86_64/include/efi",
-                "${workspaceFolder}/compile/toolchain/build/gnu-efi-4.0.4/x86_64/include/efi/legacy",
-                "${workspaceFolder}/compile/toolchain/build/gnu-efi-4.0.4/x86_64/include/efi/protocol",
-                "${workspaceFolder}/compile/toolchain/build/gnu-efi-4.0.4/x86_64/include/efi/x86_64"
+                "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi",
+                "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi/legacy",
+                "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi/protocol",
+                "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64"
             ],
             "mergeConfigurations": true
         },

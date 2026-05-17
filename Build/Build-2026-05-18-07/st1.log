@@ -1,0 +1,2 @@
+nasm -f bin C:\GitHub\BlockyOS\src\boot\Legacy\stage1\boot.asm -o C:\GitHub\BlockyOS\Build\Build-2026-05-18-07\objs\boot1.bin
+

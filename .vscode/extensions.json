@@ -9,6 +9,11 @@
         "zixuanwang.linkerscript",
         "whiteout2.x86",
         "brandonfowler.exe-runner",
+<<<<<<< Updated upstream
         "github.codespaces"
+=======
+        "eamodio.gitlens",
+        "tomoki1207.pdf"
+>>>>>>> Stashed changes
     ]
 }

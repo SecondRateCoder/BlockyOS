@@ -50,4 +50,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 *.img
-*/compile/toolchain/prebuild/**
+/compile/toolchain/prebuild/**
+**/gnu-efi/**
+
+!/compile/toolchain/gnu-efi-build/**/*.o
+!/compile/toolchain/gnu-efi-build/**/*.a

@@ -1,23 +1,29 @@
 {
+	"disk": {
+		"type": "EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000"
+	},
 	"partitions": [
 		{
-			"name": "Boot",
+			"name": "BOOT",
 			"size": 268435456,
-			"type": "c12a7328-f81f-11d2-ba4b-00a0c93ec93b",
+			"type": "c12a7328-f81f-11d2-b88b-00a0c93ec93b",
+			"unique": "c129a328-f81f-11d2-b88b-00a0c93ec93b",
 			"attributes": ["efi-boot", "readonly"],
 			"give": []
 		},
 		{
-			"name": "Root",
+			"name": "ROOT",
 			"size": 1073741800,
 			"type": "EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000",
+			"unique": "EBD033A2-B9E5-4433-A02D-B4B8D3D3F000",
 			"attributes": ["required"],
 			"give": ["fit"]
 		},
 		{
-			"name": "Test",
+			"name": "TEST",
 			"size": 24,
-			"type": "EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000",
+			"type": "EBD0A0A2-B9E5-4433-A02D-B4B8D3D5A900",
+			"unique": "EBF0A0A2-B9F5-4433-A02D-B4B8D3D5A900",
 			"attributes": [],
 			"give": []
 		}
