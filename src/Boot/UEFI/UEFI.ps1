@@ -43,7 +43,7 @@ $CARGS = @(
 	'-fno-stack-protector', '-fno-stack-check', '-ffreestanding', 
 	'-fPIC', '-maccumulate-outgoing-args', '-mno-red-zone', '-fno-omit-frame-pointer',
 	"-m$(if($ARCHITECTURE -eq 'x86_64'){'64'}else{'32'})",
-	'-D', "$(if($ARCHITECTURE -eq 'x86_64'){'__x86_64__'}else{'__ia32__', '-D', 'EFI32'})", '-D', '__DEBUG__'
+	'-D', "$(if($ARCHITECTURE -eq 'x86_64'){'__x86_64__'}else{'__ia32__', '-D', 'EFI32'})", '-D', '__DEBUG__', '-D', '__CUSTMEM_FUNC__'
 )
 if($ENABLEDEBUGGABLE){$CARGS += '-D', 'EFI_DEBUG', '-g', '-Og'}
 if($ENABLENTEMULATOR){$CARGS += '-D', 'EFI_NT_EMULATOR'}

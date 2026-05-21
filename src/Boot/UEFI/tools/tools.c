@@ -1,34 +1,33 @@
 #include "tools.h"
 
 CHAR16 *_GUIDtoSTR(EFI_GUID guid){
-    CHAR16 *bf = AllocatePool(sizeof(CHAR16) * 64);
+    CHAR16 *bf = __calloc(64, sizeof(CHAR16));
     GuidToString(bf, &guid);
     return bf;
 }
 void prGUID(EFI_GUID guid){
-    CHAR16 *bf = AllocatePool(sizeof(CHAR16) * 64);
-    GuidToString(bf, &guid);
+    CHAR16 *bf = _GUIDtoSTR(guid);
     Print(L"{%s}", bf);
-    FreePool(bf);
+    __free(bf);
 }
 
 BOOLEAN strcheck(char *s, char c){
-	for(size_t cc = 0; cc < __strlen(s); ++cc){
+	for(UINTN cc = 0; cc < __strlen(s); ++cc){
 		if(s[cc] == c){return TRUE;}
 	}
 	return FALSE;
 }
 
 INT64 strchecki(char *s, char c){
-	for(size_t cc = 0; cc < __strlen(s); ++cc){
+	for(UINTN cc = 0; cc < __strlen(s); ++cc){
 		if(c == s[cc]){return cc;}
 	}
 	return -1;
 }
 
-void *__memdup(void *mem, size_t s){
-	void *out = AllocatePool(s);
-	__memcpy(out, mem, s);
+void *__memdup(void *mem, UINTN s){
+	void *out = __calloc(1, s);
+    if(out){__memcpy(out, mem, s);}
 	return out;
 }
 
@@ -45,15 +44,15 @@ UINT64 __getfcode(char *s_){
 	blake2b_update(&hashstate, s, __strlen(s));
 	blake2b_final(&hashstate, &hash, sizeof(UINT64));
 	hash &= 0x3FFFFFFFFFF;
-    FreePool(s);
+    __free(s);
 	return hash;
 }
 
-char *readbuf(size_t s, CHAR16 *prefix){
+char *readbuf(UINTN s, CHAR16 *prefix){
     Print(prefix);
 	char *out = __calloc(s + 1, sizeof(char));
 	if(out){
-		size_t i = 0;
+		UINTN i = 0;
 		for(; i < s; ++i){
             EFI_INPUT_KEY key;
             if(!EFI_ERROR(uefi_call_wrapper(gST->ConIn->ReadKeyStroke, 2, gST->ConIn, &key))){
@@ -82,10 +81,8 @@ strtok_t *strtok_i(char *in, char *delims, UINT32 enables){
 
 char *strtok_k(strtok_t *tstate){
     if(!tstate || !tstate->dup || !tstate->delims){return NULL;}
-
     char *s = tstate->tok;
     if (!s){s = tstate->dup;}
-
     /* Skip leading delimiters */
     s += __strspn(s, tstate->delims);
     if(*s == '\0'){
@@ -113,7 +110,6 @@ char *strtok_k(strtok_t *tstate){
                 }
             }
         }
-
         /* === FLAG: ForceDifferentBorderingDelims === */
         if(tstate->flags & strtok__ForceDifferentBorderingDelims){
             if(sdel == edel){
@@ -122,17 +118,13 @@ char *strtok_k(strtok_t *tstate){
                 return strtok_k(tstate);
             }
         }
-
         /* === FLAG: ForceStartingDelim (high word OR) === */
         if (tstate->flags & strtok__ForceStartingDelim){sdel |= (char)(strtok__ForceStartingDelim >> 24);}
-
         /* === FLAG: ForceEndingDelim (low word OR) === */
         if (tstate->flags & strtok__ForceEndingDelim){edel |= (char)(strtok__ForceEndingDelim & 0xFF);}
-
         /* Store delimiters */
         tstate->sdelim = sdel;
         tstate->edelim = edel;
-
         /* Null‑terminate token */
         *s = '\0';
         tstate->tok = s + 1;
@@ -148,10 +140,9 @@ char *strtok_k(strtok_t *tstate){
 
 
 void strtok_d(strtok_t *tstate){
-	FreePool(tstate->dup);
-	FreePool(tstate->delims);
-	FreePool(tstate->tok);
-	FreePool(tstate);
+	__free(tstate->dup);
+	__free(tstate->delims);
+	__free(tstate);
 }
 
 EFI_STATUS trng__(void *buffer, UINTN size){
@@ -200,7 +191,7 @@ BOOLEAN match_rec(const char *p, const char *s){
 
 GPTeNSTR *makeGPTeNSTR(char *str){
 	GPTeNSTR *out = __calloc(sizeof(GPTeNSTR), 1);
-	for(size_t cc = 0; cc < __min(__strlen(str), GPTeNAMELEN); ++cc){
+	for(UINTN cc = 0; cc < __min(__strlen(str), GPTeNAMELEN); ++cc){
 		(*out)[cc] = str[cc];
 	}
 	return out;
@@ -209,7 +200,7 @@ GPTeNSTR *makeGPTeNSTR(char *str){
 BOOLEAN __pattmatch(const char *pattern, const char *str){
     // Preprocess pattern to handle escapes
     UINT64 len = __strlen(pattern);
-    char *proc = AllocatePool(len + 1);
+    char *proc = __calloc(1, len + 1);
     UINT64 i = 0, j = 0;
     while(pattern[i]){
         if(pattern[i] == '\\' && pattern[i+1]){
@@ -220,19 +211,22 @@ BOOLEAN __pattmatch(const char *pattern, const char *str){
     proc[j] = 0;
 
     BOOLEAN result = match_rec(proc, str);
-    FreePool(proc);
+    __free(proc);
     return result;
 }
 
-void *__realloc(void *memory, UINT64 currSize, UINT64 nSize){
+void *__realloc_(void *memory, UINT64 currSize, UINT64 nSize){
+#ifdef __DEBUG__
+    Print(L"\nRe-Allocating %llu bytes to %llu bytes", currSize, nSize);
+#endif
 #ifndef __CUSTMEM_FUNC__
     return ReallocatePool(currSize, nSize, memory);
 #else
     if(nSize != currSize){
-        void *out = AllocatePool(nSize);
+        void *out = __calloc(1, nSize);
         if(out){
             __memcpy(out, memory, (nSize > currSize? nSize: (currSize - nSize)));
-            FreePool(memory);
+            __free(memory);
         }
         return out;
     }
@@ -240,17 +234,26 @@ void *__realloc(void *memory, UINT64 currSize, UINT64 nSize){
 #endif
 }
 
-void  *__calloc(UINT64 nLen, UINT64 nSize){
+void  *__calloc_(UINT64 nLen, UINT64 nSize){
+#ifdef __DEBUG__
+    Print(L"\nAllocating %llu item(s) of %llu bytes", nLen, nSize);
+#endif
 #ifndef __CUSTMEM_FUNC__
     return AllocateZeroPool(nSize * nLen);
 #else
     void *out = AllocatePool(nLen * nSize);
-    __memset(out, 0, nSize * nLen);
+#ifdef __DEBUG__
+    Print(L"    Out Buffer: %p", out);
+#endif
+    if(out){__memset(out, 0, nSize * nLen);}
     return out;
 #endif
 }
 
 void __memset(void *dst, UINT8 val, UINT64 len){
+#ifdef __DEBUG__
+    Print(L"\nSetting %llu bytes to %u", len, val);
+#endif
 #ifndef __CUSTMEM_FUNC__
     SetMem(dst, val, len);
 #else
@@ -258,7 +261,20 @@ void __memset(void *dst, UINT8 val, UINT64 len){
 #endif
 }
 
+void __safecopy(void *dst, void *src, UINT64 len){
+#ifdef __DEBUG__
+    Print(L"\nPerforming Safe-Copy");
+#endif
+    void *dup = __memdup(src, len);
+    __memcpy(dst, dup, len);
+    __free(dup);
+    return;
+}
+
 void __memcpy(void * __restrict__ dst, void * __restrict__ src, UINT64 len){
+#ifdef __DEBUG__
+    Print(L"\nCopying %llu bytes", len);
+#endif
 #ifndef __CUSTMEM_FUNC__
     CopyMem(dst, src, len);
 #else
@@ -275,11 +291,7 @@ UINT64 __strlen(char *s){
     return out;
 }
 
-char *__strdup(char *s){
-    char *out = AllocatePool(__strlen(s));
-    __memcpy(out, s, __strlen(s));
-    return out;
-}
+char *__strdup(char *s){return __memdup(s, __strlen(s) + 1);}
 
 UINT64 __strspn(const char *s, const char *reject){
     const char *p;
@@ -293,6 +305,9 @@ UINT64 __strspn(const char *s, const char *reject){
 }
 
 UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len){
+#ifdef __DEBUG__
+    Print(L"\nComparing %llu bytes", len);
+#endif
 #ifndef __CUSTMEM_FUNC__
     return CompareMem(a, b, len);
 #else
@@ -302,33 +317,12 @@ UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len){
         if(pa[len - 1] != pb[len - 1]){break;}
         len--;
     }
-    return len;   // 0 == equal, non‑zero == different
+    #endif
+#ifdef __DEBUG__
+Print(L"\nmemcmp Return %a", len ? "FALSE": "TRUE");
 #endif
+    return len;   // 0 == equal, non‑zero == different
 }
-
-// EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID){
-//     EFI_STATUS Status;
-//     EFI_LOADED_IMAGE_PROTOCOL *lImage = NULL;
-//     EFI_GUID LoadedImageProtocolGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
-//     Status = gBS->HandleProtocol(Image, &LoadedImageProtocolGuid, (void**)&lImage);
-//     if(EFI_ERROR(Status)){
-// #ifdef __DEBUG__
-//         Print(L"\nHandleProtocol(LoadedImage) failed: %r\n", Status);
-// #endif
-//         return Status;
-//     }
-//     EFI_BLOCK_IO_PROTOCOL *Blk;
-//     EFI_GUID BlockIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID;
-//     Status = gBS->HandleProtocol(lImage->DeviceHandle, &BlockIoGuid, (void **)&Blk);
-//     if(EFI_ERROR(Status)){
-// #ifdef __DEBUG__
-//         Print(L"\nHandleProtocol(BlockIo) failed: %r\n", Status);
-// #endif
-//         return Status;
-//     }
-//     *MediaID = Blk->Media->MediaId;
-//     return EFI_SUCCESS;
-// }
 EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID){
 #ifdef __DEBUG__
     Print(L"\nGetting Drive Media ID");

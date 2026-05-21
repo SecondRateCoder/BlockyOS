@@ -15,7 +15,8 @@ enumdef(socket_retFLAG, uint16_t){
 	__noerr = 0x0,
 	__incompatible_arg = 0x1,
 	__noimpl_socketfunc = 0x2,
-	__noexist = 0x4
+	__noexist = 0x4,
+	__undeferr = 0x8,
 };
 
 #define socketreterr(ret, ndata)	(!(((ret).errout == __noerr) && (ret).data && ((ret).nData == (ndata))))

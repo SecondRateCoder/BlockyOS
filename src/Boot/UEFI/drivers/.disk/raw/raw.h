@@ -56,10 +56,10 @@ void setblocksize(rawenv re, UINT32 new);
 
 rawenv startup(EFI_GUID GUID, EFI_GUID altGUID, UINT32 configuredBlockSize);
 
-EFI_STATUS writebytes(rawenv re, UINT64 byteOffset, void *buffer, UINTN byteCount);
-void writeblocks(rawenv re, void *buffer, LBA pos, UINTN bytes);
+void writebytes(rawenv re, void *data, UINTN bytepos, UINTN nbytes);
+void *writeblocks(rawenv re, void *data, LBA pos, UINTN bytes);
 
-void *readbytes(rawenv re, UINT64 byteOffset, UINTN byteCount);
+void *readbytes(rawenv re, LBA pos, UINT16 offset, UINTN nbytes);
 void *readblocks(rawenv re, LBA pos, UINTN bytes);
 
 void dispose(rawenv re);

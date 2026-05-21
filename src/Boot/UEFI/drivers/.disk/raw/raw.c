@@ -1,92 +1,92 @@
 #include "raw.h"
 
 EFI_HANDLE FindDiskHandleByGUID(EFI_GUID TargetGUID, EFI_GUID AltGUID){
-    EFI_STATUS status;
-    EFI_HANDLE *handles = NULL;
-    UINTN nHandles = 0;
+	EFI_STATUS status;
+	EFI_HANDLE *handles = NULL;
+	UINTN nHandles = 0;
 	EFI_GUID BlkIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID, DskIoGuid = EFI_DISK_IO_PROTOCOL_GUID;
-    status = uefi_call_wrapper(
+	status = uefi_call_wrapper(
 		gBS->LocateHandleBuffer, 5,
-        ByProtocol, &BlkIoGuid,
-        NULL, &nHandles, &handles
-    );
+		ByProtocol, &BlkIoGuid,
+		NULL, &nHandles, &handles
+	);
 #ifdef __DEBUG__
 	Print(L"\nnHandles:	%llu", nHandles);
 #endif
-    if(EFI_ERROR(status)){return NULL;}
-    for(UINTN i = 0; i < nHandles; i++){
-        EFI_BLOCK_IO_PROTOCOL *blk = NULL;
-        EFI_DISK_IO_PROTOCOL  *dsk = NULL;
-        EFI_STATUS status = uefi_call_wrapper(gBS->HandleProtocol, 3, handles[i], &BlkIoGuid, (void**)&blk);
-        status |= uefi_call_wrapper(gBS->HandleProtocol, 3, handles[i], &DskIoGuid,  (void**)&dsk);
+	if(EFI_ERROR(status)){return NULL;}
+	for(UINTN i = 0; i < nHandles; i++){
+		EFI_BLOCK_IO_PROTOCOL *blk = NULL;
+		EFI_DISK_IO_PROTOCOL  *dsk = NULL;
+		EFI_STATUS status = uefi_call_wrapper(gBS->HandleProtocol, 3, handles[i], &BlkIoGuid, (void**)&blk);
+		status |= uefi_call_wrapper(gBS->HandleProtocol, 3, handles[i], &DskIoGuid,  (void**)&dsk);
 #ifdef __DEBUG__
 		Print(
-			L"\nHandle %u: BlockSize=%u, LastBlock=%u, LogicalPartition? = %a, MediaId=%u:    Status=%llu", 
+			L"\nHandle %u: BlockSize=%u,    LastBlock=%u,    LogicalPartition? = %a,    MediaId=%u,    Status=%llu", 
 			i, blk->Media->BlockSize, blk->Media->LastBlock, blk->Media->LogicalPartition? "TRUE": "FALSE", blk->Media->MediaId, (status & ~0xF000000000000000)
 		);
 #endif
 		if(!blk || !dsk || !blk->Media->MediaPresent){continue;}
-        UINTN blockSize = blk->Media->BlockSize;
-        miniGPT *hdr = AllocateZeroPool(blockSize);
-        status = uefi_call_wrapper(
+		UINTN blockSize = blk->Media->BlockSize;
+		miniGPT *hdr = __calloc(blockSize, 1);
+		status = uefi_call_wrapper(
 			dsk->ReadDisk, 5, 
-            dsk, blk->Media->MediaId,
-            blockSize * 1, blockSize, hdr
-        );
-        if(EFI_ERROR(status) || (CompareMem(hdr->sig, GPTsig, 8) != 0)){
+			dsk, blk->Media->MediaId,
+			blockSize * 1, blockSize, hdr
+		);
+		if(EFI_ERROR(status) || (__memcmp(hdr->sig, GPTsig, 8) != 0)){
 #ifdef __DEBUG__
 			Print(L"\nInvalid Sig");
 #endif
-            FreePool(hdr);
-            continue;
-        }
+			__free(hdr);
+			continue;
+		}
 #ifdef __DEBUG__
 		Print(L"\n    Target-GUID={");prGUID(TargetGUID);Print(L"}    Disk-GUID={");prGUID(hdr->dGUID);Print(L"}");
 #endif
-		if(CompareMem(&hdr->dGUID, &TargetGUID, sizeof(EFI_GUID)) || CompareMem(&hdr->dGUID, &AltGUID, sizeof(EFI_GUID))){
+		if(__memcmp(&hdr->dGUID, &TargetGUID, sizeof(EFI_GUID)) || __memcmp(&hdr->dGUID, &AltGUID, sizeof(EFI_GUID))){
 #ifdef __DEBUG__
 			Print(L"\nFound Handle");
 #endif
 			EFI_HANDLE found = handles[i];
-			FreePool(hdr);
-			FreePool(handles);
+			__free(hdr);
+			__free(handles);
 			return found;
 		}
-        UINTN entriesSize = hdr->nPartEntries * hdr->partEntrySize;
-        GPTentry *entries = AllocateZeroPool(entriesSize);
-        status = uefi_call_wrapper(
+		UINTN entriesSize = hdr->nPartEntries * hdr->partEntrySize;
+		GPTentry *entries = __calloc(entriesSize, 1);
+		status = uefi_call_wrapper(
 			dsk->ReadDisk, 5, 
-            dsk, blk->Media->MediaId,
-            hdr->partEntryLoc * blockSize,
-            entriesSize, entries
-        );
-        if(EFI_ERROR(status)){
-            FreePool(entries);
-            FreePool(hdr);
-            continue;
-        }
-        for(UINTN e = 0; e < hdr->nPartEntries; e++){
-            GPTentry *p = (GPTentry *)(((UINT8 *)entries) + (e * hdr->partEntrySize));
+			dsk, blk->Media->MediaId,
+			hdr->partEntryLoc * blockSize,
+			entriesSize, entries
+		);
+		if(EFI_ERROR(status)){
+			__free(entries);
+			__free(hdr);
+			continue;
+		}
+		for(UINTN e = 0; e < hdr->nPartEntries; e++){
+			GPTentry *p = (GPTentry *)(((UINT8 *)entries) + (e * hdr->partEntrySize));
 #ifdef __DEBUG__
 			Print(L"\n    Target-GUID={");prGUID(TargetGUID);Print(L"}    Partition-Unique-GUID={");prGUID(p->uGUID);Print(L"}    Partition-GUID={");prGUID(p->GUID);Print(L"}");
 #endif
-            if(CompareMem(&p->uGUID, &TargetGUID, sizeof(EFI_GUID)) || CompareMem(&p->GUID, &TargetGUID, sizeof(EFI_GUID)) || 
-				CompareMem(&p->uGUID, &AltGUID, sizeof(EFI_GUID)) || CompareMem(&p->GUID, &AltGUID, sizeof(EFI_GUID))){
+			if(__memcmp(&p->uGUID, &TargetGUID, sizeof(EFI_GUID)) || __memcmp(&p->GUID, &TargetGUID, sizeof(EFI_GUID)) || 
+				__memcmp(&p->uGUID, &AltGUID, sizeof(EFI_GUID)) || __memcmp(&p->GUID, &AltGUID, sizeof(EFI_GUID))){
 #ifdef __DEBUG__
 				Print(L"\nFound Handle");
 #endif
-                EFI_HANDLE found = handles[i];
-                FreePool(entries);
-                FreePool(hdr);
-                FreePool(handles);
-                return found;
-            }
-        }
-        FreePool(entries);
-        FreePool(hdr);
-    }
-    FreePool(handles);
-    return NULL;
+				EFI_HANDLE found = handles[i];
+				__free(entries);
+				__free(hdr);
+				__free(handles);
+				return found;
+			}
+		}
+		__free(entries);
+		__free(hdr);
+	}
+	__free(handles);
+	return NULL;
 }
 
 void DisableVerbose(rawenv re){
@@ -104,18 +104,18 @@ void EnableVerbose(rawenv re){
 UINT32 getblocksize(rawenv re){return re->ConfBlock;}
 void setblocksize(rawenv re, UINT32 new){
 	re->ConfBlock = new;
-	re->CalcBlock = (new + re->RealBlock - 1) / re->RealBlock;
+	re->CalcBlock = safediv__((new + re->RealBlock - 1), re->RealBlock);
 }
 
 rawenv startup(EFI_GUID GUID, EFI_GUID altGUID, UINT32 configuredBlockSize){
 #ifdef __DEBUG__
-	Print(L"\n[%a:%u : Parent:%p] >>   ConfBlockSize: %u    Starting Disk Env ID: ", 
-		__FILE__, __LINE__, __builtin_return_address(0), configuredBlockSize
+	Print(L"\n[Parent:%p] >>   ConfBlockSize: %u    Starting Disk Env ID: ", 
+		__builtin_return_address(0), configuredBlockSize
 	);
 	prGUID(GUID);
 #endif
 	EFI_STATUS status = 0;
-	rawenv re = AllocatePool(sizeof(rawenv_t));
+	rawenv re = __calloc(1, sizeof(rawenv_t));
 #ifdef __DEBUG__
 	re->EnableVerbose = TRUE;
 #endif
@@ -129,7 +129,7 @@ rawenv startup(EFI_GUID GUID, EFI_GUID altGUID, UINT32 configuredBlockSize){
 				.Blk = Blk,
 				.isPart = Blk->Media->LogicalPartition,
 				.GUID = GUID,
-				.CalcBlock = ((configuredBlockSize + Blk->Media->BlockSize - 1) / Blk->Media->BlockSize),
+				.CalcBlock = safediv__((configuredBlockSize + Blk->Media->BlockSize - 1), Blk->Media->BlockSize),
 				.RealBlock = Blk->Media->BlockSize,
 				.ConfBlock = configuredBlockSize,
 				.handle = handle
@@ -149,122 +149,134 @@ rawenv startup(EFI_GUID GUID, EFI_GUID altGUID, UINT32 configuredBlockSize){
 #ifdef __DEBUG__
 			Print(L"\nBlock IO Protocol Error    %llu", status & 0xF000000000000000);
 #endif
-			FreePool(re);
+			__free(re);
 		}
 	}else{
 #ifdef __DEBUG__
 		Print(L"\nHandle Not Found Error");
 #endif
-		FreePool(re);
+		__free(re);
 	}
 	return NULL;
 }
 
 void *readblocks(rawenv re, LBA pos, UINTN bytes){
-	if(re){
-		UINTN nAccBlocks = ((bytes * re->CalcBlock) / re->ConfBlock) + (((bytes * re->CalcBlock * re->RealBlock) / re->ConfBlock) != 0);
+    if(!re){
 #ifdef __DEBUG__
-		Print(L"\n[Parent:%p] >> Reading [%u bytes(s)->%u block(s)] from LBA[%u->(%u)]", 
-			__builtin_return_address(0), bytes, nAccBlocks, pos, pos * re->CalcBlock
-		);
+		Print(L"\nDisk Interface does not exist");
 #endif
-		EFI_STATUS status = -1;
-		void *out = AllocatePool(nAccBlocks * re->RealBlock);
-		if(out){
-			status = uefi_call_wrapper(
-				re->Blk->ReadBlocks, 5, re->Blk, re->Blk->Media->MediaId, 
-				pos, nAccBlocks * re->RealBlock, out
-			);
-			if(EFI_ERROR(status)){
-#ifdef __DEBUG__
-				Print(L"    Read ERROR %u:%r", status & ~0x8000000000000000, status);
-#endif
-				FreePool(out);
-				return NULL;
-			}
-#ifdef __DEBUG__
-			Print(L"    Read Success");
-#endif
-			return out;
-		}else{
-#ifdef __DEBUG__
-			Print(L"    Read ERROR: Could Not allocate Buffer");
-#endif
-		}
+		return NULL;
 	}
-	return NULL;
-}
 
-void writeblocks(rawenv re, void *buffer, LBA pos, UINTN bytes){
-	if(re){
-		UINTN nAccBlocks = ((bytes * re->CalcBlock) / re->ConfBlock) + (((bytes * re->CalcBlock * re->RealBlock) / re->ConfBlock) != 0);
+    UINTN blockBytes = re->RealBlock * re->CalcBlock;
+    UINTN nBlocks    = safediv__((bytes + blockBytes - 1), re->RealBlock);
+    UINTN allocSize  = nBlocks * re->RealBlock;
 #ifdef __DEBUG__
-		Print(L"\n[Parent:%p] >> Writing [%u bytes(s)->%u block(s)] to LBA[%u->(%u)]", 
-			__builtin_return_address(0), bytes, nAccBlocks, pos, pos * re->CalcBlock
-		);
+	Print(L"\nReading Bytes\n[Parent:%p] >> Reading [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
+		__builtin_return_address(0), bytes, nBlocks, pos, pos * re->RealBlock * re->CalcBlock, pos + nBlocks, (pos + nBlocks) * re->RealBlock * re->CalcBlock);
 #endif
-		EFI_STATUS status = EFI_ERROR_MASK;
-		void *dup = AllocatePool(nAccBlocks * re->RealBlock);
-		Print(L"    Allocate");
-		if(dup){
-			__memcpy(dup, buffer, bytes);
-			Print(L"    Memcpy");
-			status = uefi_call_wrapper(
-				re->Blk->WriteBlocks, 5, re->Blk, re->Blk->Media->MediaId, 
-				pos, nAccBlocks * re->RealBlock, dup
-			);
-			Print(L"    Write");
-			FreePool(dup);
-		}else{Print(L"    Failed to allocate Write-Buffer");}
-		// status = uefi_call_wrapper(
-		// 	re->Blk->WriteBlocks, 5, re->Blk, re->Blk->Media->MediaId, 
-		// 	pos, nAccBlocks * re->RealBlock, buffer
-		// );
+    void *data = __calloc(1, allocSize);
+    if(!data){return NULL;}
+
+    EFI_STATUS status = uefi_call_wrapper(
+        re->Blk->ReadBlocks, 5, re->Blk,
+        re->Blk->Media->MediaId,
+        pos * re->CalcBlock, allocSize, data
+    );
 #ifdef __DEBUG__
-		Print(L"    Write %a:%u:%r", (EFI_ERROR(status)? "ERROR": "..."), status & ~0x8000000000000000, status);
+    	Print(L"    Read %a:%u:%r", (EFI_ERROR(status)? "ERROR": "..."), status & ~0x8000000000000000, status);
+#endif
+    if(EFI_ERROR(status)){
+        __free(data);
+        return NULL;
+    }
+    return data;
+}
+// void *readblocks(rawenv re, LBA pos, UINTN bytes){
+// 	if(!re){
+// #ifdef __DEBUG__
+// 		Print(L"\nDisk Interface does not exist");
+// #endif
+// 		return NULL;
+// 	}
+// 	UINTN nBlocks = safediv__((bytes + (re->RealBlock * re->CalcBlock) - 1), re->RealBlock);
+// 	void *data = __calloc(1, bytes);
+// #ifdef __DEBUG__
+// 	Print(L"\nReading Bytes\n[Parent:%p] >> Reading [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
+// 		__builtin_return_address(0), bytes, nBlocks, pos, pos * re->RealBlock * re->CalcBlock, pos + nBlocks, (pos + nBlocks) * re->RealBlock * re->CalcBlock);
+// #endif
+// 	if(data){
+// 		EFI_STATUS status = uefi_call_wrapper(
+// 			re->Blk->ReadBlocks, 5, re->Blk, 
+// 			re->Blk->Media->MediaId, 
+// 			pos * re->CalcBlock, nBlocks * re->RealBlock, data
+// 		);
+// 		if(EFI_ERROR(status)){__free(data);	data = NULL;}
+// #ifdef __DEBUG__
+//     	Print(L"    Read %a:%u:%r", (EFI_ERROR(status)? "ERROR": "..."), status & ~0x8000000000000000, status);
+// #endif
+// 		return data;
+// 	}else{
+// #ifdef __DEBUG__
+// 		Print(L"    ERROR: Failed to Allocate Read Buffer");
+// #endif
+// 	}
+// 	return NULL;
+// }
+void *writeblocks(rawenv re, void *data, LBA pos, UINTN bytes){
+	if(!re){
+#ifdef __DEBUG__
+		Print(L"\nDisk Interface does not exist");
+#endif
+		return NULL;
+	}
+	EFI_STATUS status;
+	UINTN nBlocks = safediv__((bytes + (re->RealBlock * re->CalcBlock) - 1), re->RealBlock);
+	void *buf = __calloc(nBlocks, re->RealBlock);
+#ifdef __DEBUG__
+	Print(L"\nWriting Bytes\n[Parent:%p] >> Writing [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
+			__builtin_return_address(0), bytes, nBlocks, pos, pos * re->RealBlock * re->CalcBlock, pos + nBlocks, (pos + nBlocks) * re->RealBlock * re->CalcBlock);
+#endif
+	if(buf){
+		__memcpy(buf, data, bytes);
+		status = uefi_call_wrapper(
+			re->Blk->WriteBlocks, 5, re->Blk, 
+			re->Blk->Media->MediaId, 
+			pos * re->CalcBlock, nBlocks * re->RealBlock, buf
+		);
+	}else{
+#ifdef __DEBUG__
+        Print(L"    Failed to allocate Write-Buffer");
 #endif
 	}
+#ifdef __DEBUG__
+    Print(L"    Write %a:%u:%r", (EFI_ERROR(status)? "ERROR": "..."), status & ~0x8000000000000000, status);
+#endif
 }
 
-void *readbytes(rawenv re, UINT64 byteOffset, UINTN byteCount){
-    if(!re || byteCount == 0){return NULL;}
-    UINT32 block = re->RealBlock;
-	
-    UINT64 startBlock = byteOffset / block;
-    UINT64 endBlock   = (byteOffset + byteCount - 1) / block;
-    UINTN  nBlocks    = (endBlock - startBlock) + 1;
-
-    void *blkData = readblocks(re, startBlock, nBlocks);
-    if(!blkData){return NULL;}
-
-    UINT64 offsetInBlock = byteOffset % block;
-    void *out = AllocatePool(byteCount);
-    if(!out){FreePool(blkData);    return NULL;}
-
-    CopyMem(out, (UINT8*)blkData + offsetInBlock, byteCount);
-    FreePool(blkData);
-    return out;
+void writebytes(rawenv re, void *data, UINTN bytepos, UINTN nbytes){
+#ifdef __DEBUG__
+    Print(L"\n[Parent:%p] >> Writing [%u bytes(s)] to LBA[%llu-%llu]",
+          __builtin_return_address(0), nbytes, safediv__(bytepos * re->CalcBlock, re->ConfBlock), safediv__((bytepos + nbytes) * re->CalcBlock, re->ConfBlock));
+#endif
+	void *rdata = readblocks(re, safediv__(bytepos * re->CalcBlock, re->ConfBlock), nbytes);
+	UINTN byteoffset = (bytepos * re->CalcBlock) % re->ConfBlock;
+	__memcpy(rdata + byteoffset, data, nbytes);
+	writeblocks(re, rdata, safediv__(bytepos * re->CalcBlock, re->ConfBlock), nbytes);
 }
 
-EFI_STATUS writebytes(rawenv re, UINT64 byteOffset, void *buffer, UINTN byteCount){
-    if(!re || !buffer || byteCount == 0){return EFI_INVALID_PARAMETER;}
-    UINT32 block = re->RealBlock;
-
-    UINT64 startBlock = byteOffset / block;
-    UINT64 endBlock   = (byteOffset + byteCount - 1) / block;
-    UINTN  nBlocks    = (endBlock - startBlock) + 1;
-
-    void *blkData = readblocks(re, startBlock, nBlocks);
-    if(!blkData){return EFI_DEVICE_ERROR;}
-
-    UINT64 offsetInBlock = byteOffset % block;
-    CopyMem((UINT8*)blkData + offsetInBlock, buffer, byteCount);
-
-    EFI_STATUS status = EFI_SUCCESS;
-    writeblocks(re, blkData, startBlock, nBlocks);
-
-    FreePool(blkData);
-    return status;
+void *readbytes(rawenv re, LBA pos, UINT16 offset, UINTN nbytes){
+#ifdef __DEBUG__
+    Print(L"\n[Parent:%p] >> Writing [%u bytes(s)] to LBA[%llu:%u-%llu]",
+          __builtin_return_address(0), nbytes, safediv__(pos * re->CalcBlock, re->ConfBlock), offset, safediv__((pos + nbytes) * re->CalcBlock, re->ConfBlock));
+#endif
+	void *rdata = readblocks(re, safediv__((pos + safediv__(offset, re->ConfBlock)) * re->CalcBlock, re->ConfBlock), nbytes);
+	__safecopy(rdata, rdata + safediv__(offset, re->ConfBlock) + (offset % re->ConfBlock), nbytes);
+	__memset(
+		rdata + safediv__(offset, re->ConfBlock) + (offset % re->ConfBlock) + nbytes, 
+		0, ((nbytes + (re->RealBlock * re->CalcBlock) - 1) * re->RealBlock) - nbytes
+	);
+	return rdata;
 }
 
 void dispose(rawenv re){
@@ -273,5 +285,5 @@ void dispose(rawenv re){
 #endif
 	EFI_GUID BlkIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID;
 	uefi_call_wrapper(gBS->CloseProtocol, 3, &BlkIoGuid, re->handle, NULL);
-	FreePool(re);
+	__free(re);
 }

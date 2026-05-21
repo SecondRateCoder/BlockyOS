@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Utils",
+            "name": "Debug FS-Utils",
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "Build Utils",
@@ -34,8 +34,7 @@
                 "focus": false,
                 "panel": "shared"
             }
-        },
-        {
+        }, {
             "name": "Debug run.ps1",
             "type": "PowerShell",
             "request": "launch",

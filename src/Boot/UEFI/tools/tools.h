@@ -10,6 +10,10 @@
 
 #include "src/Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
+#define SAFEOP(A, B, CompAOp, CompA, CompBOp, CompB, Comp, OP, Alt)    (((A CompAOp CompA) Comp (B CompBOp CompB))? (A OP B): Alt)
+
+#define safediv__(A, B)     SAFEOP((A), (B), ||, TRUE, !=, 0, &&, /, 1)
+
 #define GUIDPRINT16 L"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"
 #define GUIDPRINT "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"
 CHAR16 *_GUIDtoSTR(EFI_GUID guid);
@@ -24,7 +28,7 @@ typedef cword_t GPTeNSTR[GPTeNAMELEN];
 
 #define __min(a, b) ((a) > (b)? (b): (a))
 #define __max(a, b) ((a) < (b)? (b): (a))
-#define abs(n) ((n) < 0? -(n): (n))
+#define abs(n) (((INTN)(n)) < 0? -(n): (n))
 
 #define PATHSEP '/'
 #define PATHnoSEP '\\'
@@ -37,20 +41,35 @@ typedef cword_t GPTeNSTR[GPTeNAMELEN];
 #define flagset(v, f)   (v |= f)
 #define flagunset(v, f) (v &= ~f)
 
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+
+static inline VOID IoWrite8Inline(UINT16 Port, UINT8 Value){
+    __asm__ __volatile__ (
+        "outb %0, %1"
+        :
+        : "a"(Value), "Nd"(Port)
+    );}
+#ifdef __DEBUG__
+const EFI_PHYSICAL_ADDRESS DebugPort = 0x402;
+#define BUFDEFPRINT(mem, nbytes, countername)	for(UINTN countername = 0; countername < abs(nbytes); ++countername){IoWrite8Inline(DebugPort, ((uint8_t *)mem)[countername]);}
+#else
+#define BUFDEFPRINT(...)
+#endif
 typedef struct __efiDevNode{
-    CHAR16 *nodeName;
-    // This Node.
-    EFI_DEVICE_PATH *local;
-    // Protocol-Specific Data
-    UINT8 protocolData[32];
-    struct local__{
-        // A ptr to the Parent Node, NULL if is the Parent.
-        struct __efiDevNode *parent;
-        // The #N of Children.
-        UINT32 nChildren;
-        // The Children of this Node.
-        struct __efiDevNode **children;
-    }local__;
+	CHAR16 *nodeName;
+	// This Node.
+	EFI_DEVICE_PATH *local;
+	// Protocol-Specific Data
+	UINT8 protocolData[32];
+	struct local__{
+		// A ptr to the Parent Node, NULL if is the Parent.
+		struct __efiDevNode *parent;
+		// The #N of Children.
+		UINT32 nChildren;
+		// The Children of this Node.
+		struct __efiDevNode **children;
+	}local__;
 }__efiDevNode;
 
 #define __efiIsFinal(node)      ((node)->local__.children == NULL)
@@ -90,9 +109,9 @@ BOOLEAN isdigit(char c);
 
 BOOLEAN strcheck(char *s, char c);
 INT64 strchecki(char *s, char c);
-void *__memdup(void *mem, UINT64 s);
+void *__memdup(void *mem, UINTN s);
 UINT64 __getfcode(char *s_);
-char *readbuf(size_t s, CHAR16 *prefix);
+char *readbuf(UINTN s, CHAR16 *prefix);
 EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID);
 EFI_STATUS ValidateImageHandle(EFI_HANDLE Image);
 
@@ -112,11 +131,32 @@ char *__strdup(char *s);
 UINT64 __strspn(const char *s, const char *reject);
 
 void __memset(void *dst, UINT8 val, UINT64 len);
+void __safecopy(void *dst, void *src, UINT64 len);
 void __memcpy(void * __restrict__ dst, void * __restrict__ src, UINT64 len);
 UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len);
 
-void  *__calloc(UINT64 nLen, UINT64 nSize);
-void *__realloc(void *memory, UINT64 currSize, UINT64 nSize);
+#ifdef __DEBUG__
+#define __free(buffer)  \
+	Print(L"\n[%s:%u]   Freeing Buffer    %p", (L"" __FILE__), __LINE__, buffer);   \
+	FreePool(buffer);
+#else
+#define __free(buffer)  \
+	FreePool(buffer);
+#endif
+
+#ifdef __DEBUG__
+#define __calloc(nlen, nsize)		__calloc_(nlen, nsize);				Print(L"\n[%s:%u]", (L"" __FILE__), __LINE__);
+#else
+#define __calloc(nlen, nsize)		__calloc_(nlen, nsize);
+#endif
+void  *__calloc_(UINT64 nLen, UINT64 nSize);
+
+#ifdef __DEBUG__
+#define __realloc(mem, nlen, nsize) __realloc_(mem, nlen, nsize);	Print(L"    [%s:%u]", (L"" __FILE__), __LINE__);
+#else
+#define __realloc(mem, nlen, nsize)	__realloc_(mem, nlen, nsize);
+#endif
+void *__realloc_(void *memory, UINT64 currSize, UINT64 nSize);
 
 BOOLEAN IsPartition(EFI_DEVICE_PATH *Dp);
 EFI_DEVICE_PATH *GetDevicePath(EFI_HANDLE Handle);

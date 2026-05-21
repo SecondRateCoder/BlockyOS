@@ -27,13 +27,13 @@ void main(uint32_t largs, char **arg){
 	fhandle *handle = fsloadh(fr, "ripping/attempt\0", "Ffc");
 	__fdirrefresh(dir);
 	printf("\n\nFtest Output: %s\n\n", (__ftest(handle) ? "TRUE": "FALSE"));
-	conf_fsblock *finfo_ = _freadinfo(handle);		__fprint_info(finfo_);		free(finfo_);
+	meta_fsblock *finfo_ = _freadinfo(handle);		__fprint_info(finfo_);		free(finfo_);
 	fsuloadh(handle);
 
 	dirrunner *dr = __dirr_init(dir, "***");
 	unhandle *uh;
 	while((uh = __dirr(dr))){
-		conf_fsblock *fb;
+		meta_fsblock *fb;
 		if(uh->dir){
 			fb = _dreadinfo(uh->dhandle_);			__fuloaddir(uh->dhandle_);
 		}else{fb = _freadinfo(uh->fhandle_);		fsuloadh(uh->fhandle_);}
