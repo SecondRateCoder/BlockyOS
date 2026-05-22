@@ -51,7 +51,7 @@ Mkfile.old
 dkms.conf
 *.img
 /compile/toolchain/prebuild/**
-**/gnu-efi/**
+/gnu-efi/**
 /edk2/**
 
 !/compile/toolchain/gnu-efi-build/**/*.o
