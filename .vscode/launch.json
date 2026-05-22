@@ -92,7 +92,7 @@
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}\\compile\\intermid.ps1",
-            "args": ["-run", "qemu", "-imagetype", "release"],
+            "args": ["-run", "qemu", "-imagetype", "default/debug"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",
