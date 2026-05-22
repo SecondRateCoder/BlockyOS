@@ -18,11 +18,11 @@ mouse: enabled=1
 magic_break: enabled=1
 port_e9_hack: enabled=1, all_rings=1
 
-log: C:\GitHub\BlockyOS\Build\Build-2026-05-22-59\bochs.log
+log: C:\GitHub\BlockyOS\Build\Build-2026-05-22-05\bochs.log
 iodebug: all_rings=1
 
-romimage: file=C:\GitHub\BlockyOS\compile\toolchain\uefi\release\OVMF_CODE.fd
+romimage: file=C:\GitHub\BlockyOS\compile\toolchain\uefi\default\debug\OVMF_CODE.fd
 vgaromimage: file=C:\msys64\mingw64\share\bochs\VGABIOS-lgpl-latest-cirrus.bin
 ata0: enabled=1, ioaddr1=0x1F0, ioaddr2=0x3F0, irq=14
-ata0-master: type=disk, path="C:\GitHub\BlockyOS\Build\Build-2026-05-22-59\disk.img", mode=flat, status=inserted, translation=lba
+ata0-master: type=disk, path="C:\GitHub\BlockyOS\Build\Build-2026-05-22-05\disk.img", mode=flat, status=inserted, translation=lba
 
