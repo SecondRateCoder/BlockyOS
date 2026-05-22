@@ -36,7 +36,7 @@ static uint32_t rva_to_file_offset(uint32_t rva, IMAGE_SECTION_HEADER *secs, uin
 	return 0;
 }
 
-static int convert_pe_to_exec(const char *inpath, const char *outpath){
+int convert_pe(const char *inpath, const char *outpath){
 	filebuf fb = {0};
 	if(read_file(inpath, &fb) != 0){
 		fprintf(stderr, "Failed to read %s\n", inpath);
@@ -83,8 +83,8 @@ static int convert_pe_to_exec(const char *inpath, const char *outpath){
 		// We still can emit sections, but no relocations
 	}
 	// Prepare output file
-	FILE *out = fopen(outpath, "wb");
-	if (!out) {
+	FILE *out = fopen(outpath, "wb+");
+	if(!out){
 		fprintf(stderr, "Failed to open %s\n", outpath);
 		free(base);
 		return -1;
@@ -93,8 +93,8 @@ static int convert_pe_to_exec(const char *inpath, const char *outpath){
 	// [exech][execsectionref * N][section data...][reloc sections...]
 	exech hdr;
 	memset(&hdr, 0, sizeof(hdr));
-	memcpy(hdr.magic,        "MYEXECFMT\0\0\0\0\0\0\0", 16);
-	memcpy(hdr.versionmagic, "VER1\0\0\0\0\0\0\0\0\0\0\0", 16);
+	memcpy(hdr.magic.MAGIC,        "MYEXECFMT\0\0\0\0\0\0\0", 16);
+	memcpy(hdr.vermagic.MAGIC, "VER1\0\0\0\0\0\0\0\0\0\0\0", 16);
 	hdr.attributes = 0;
 	hdr.imageBase  = nt->OptionalHeader.ImageBase;
 	// For each PE section we create one data section + one reloc section
@@ -127,15 +127,15 @@ static int convert_pe_to_exec(const char *inpath, const char *outpath){
 		s->confBASE   = nt->OptionalHeader.ImageBase + secs[i].VirtualAddress;
 		s->bOffset = (uint64_t)ftell(out);
 		s->nBytes  = secs[i].SizeOfRawData;
-		if (s->nBytes && secs[i].PointerToRawData &&
-			secs[i].PointerToRawData + s->nBytes <= size) {
+		if (s->nBytes && secs[i].PointerToRawData && secs[i].PointerToRawData + s->nBytes <= size){
+
 			fwrite(base + secs[i].PointerToRawData, 1, s->nBytes, out);
 		}
 		sec_index++;
 	}
 	// Emit relocation sections (one per original section)
 	// We will scan the base relocation table and bucket entries by section.
-	my_reloc_entry **rel_buckets = (my_reloc_entry **)calloc(nsecs, sizeof(my_reloc_entry *));
+	reloc **rel_buckets = (reloc **)calloc(nsecs, sizeof(reloc *));
 	size_t *rel_counts = (size_t *)calloc(nsecs, sizeof(size_t));
 	size_t *rel_caps = (size_t *)calloc(nsecs, sizeof(size_t));
 	if(reloc_off && reloc_size){
@@ -143,12 +143,12 @@ static int convert_pe_to_exec(const char *inpath, const char *outpath){
 		uint32_t end = reloc_off + reloc_size;
 		while (off + sizeof(IMAGE_BASE_RELOCATION) <= end) {
 			IMAGE_BASE_RELOCATION *blk = (IMAGE_BASE_RELOCATION *)(base + off);
-			if (blk->SizeOfBlock == 0) break;
+			if(blk->SizeOfBlock == 0){break;}
 			uint32_t page_rva = blk->VirtualAddress;
 			uint32_t block_sz = blk->SizeOfBlock;
 			uint32_t entries_off = off + sizeof(IMAGE_BASE_RELOCATION);
 			uint32_t entries_end = off + block_sz;
-			while(entries_off + 2 <= entries_end){
+			while((entries_off + 2) <= entries_end){
 				uint16_t entry = *(uint16_t *)(base + entries_off);
 				entries_off += 2;
 				uint16_t type   = (entry >> 12) & 0xF;
@@ -169,7 +169,7 @@ static int convert_pe_to_exec(const char *inpath, const char *outpath){
 							// Append to bucket si
 							if (rel_counts[si] == rel_caps[si]) {
 								size_t newcap = rel_caps[si] ? rel_caps[si] * 2 : 16;
-								my_reloc_entry *nb = (my_reloc_entry *)realloc(rel_buckets[si], newcap * sizeof(my_reloc_entry));
+								reloc *nb = (reloc *)realloc(rel_buckets[si], newcap * sizeof(reloc));
 								if(!nb){
 									fclose(out);
 									free(base);
@@ -183,7 +183,7 @@ static int convert_pe_to_exec(const char *inpath, const char *outpath){
 								rel_buckets[si] = nb;
 								rel_caps[si]    = newcap;
 							}
-							my_reloc_entry *re = &rel_buckets[si][rel_counts[si]++];
+							reloc *re = &rel_buckets[si][rel_counts[si]++];
 							re->byteLoc  = sec_off;
 							re->ptrSize  = 8; // DIR64
 							re->type     = (uint8_t)type;
@@ -202,17 +202,13 @@ static int convert_pe_to_exec(const char *inpath, const char *outpath){
 		memset(s, 0, sizeof(*s));
 		char name[9] = {0};
 		memcpy(name, secs[i].Name, 8);
-		snprintf(s->path, EXECSECRTIONREFPATHLEN, "rel.%s", name);
+		snprintf(s->path, EXECSECRTIONREFPATHLEN, RELPREFIX"%s", name);
 		s->attributes = __reloctable;
 		s->parameter  = 0;
 		s->confBASE   = 0;
 		s->bOffset = (uint64_t)ftell(out);
-		s->nBytes  = (uint64_t)(rel_counts[i] * sizeof(my_reloc_entry));
-
-		if(s->nBytes && rel_buckets[i]){
-			fwrite(rel_buckets[i], sizeof(my_reloc_entry), rel_counts[i], out);
-		}
-
+		s->nBytes  = (uint64_t)(rel_counts[i] * sizeof(reloc));
+		if(s->nBytes && rel_buckets[i]){fwrite(rel_buckets[i], sizeof(reloc), rel_counts[i], out);}
 		sec_index++;
 	}
 	// Rewrite header + section table
@@ -228,4 +224,82 @@ static int convert_pe_to_exec(const char *inpath, const char *outpath){
 	free(sectab);
 	free(base);
 	return 0;
+}
+
+void dump_exec(const char *path){
+	FILE *f = fopen(path, "rb");
+	if(!f){
+		printf("Cannot open file: %s\n", path);
+		return;
+	}
+	// Read header prefix (fixed size)
+	exech hdr;
+	if(fread(&hdr, 1, sizeof(exech), f) != sizeof(exech)){
+		printf("File too small or invalid\n");
+		fclose(f);
+		return;
+	}
+
+	printf("\n=== EXEC HEADER ===");
+	printf("\nMagic:          %.16s", hdr.magic.MAGIC);
+	printf("\nVersion Magic:  %.16s", hdr.vermagic.MAGIC);
+	printf("\nAttributes:     0x%llx", (unsigned long long)hdr.attributes);
+	printf("\nImage Base:     0x%llx", (unsigned long long)hdr.imageBase);
+	printf("\n\n#n Sections:       %u", hdr.nSections);
+	// Read section table
+	size_t sectab_size = hdr.nSections * sizeof(execsectionref);
+	execsectionref *sects = malloc(sectab_size);
+	if(!sects){
+		printf("\nOOM");
+		fclose(f);
+		return;
+	}
+	if(fread(sects, 1, sectab_size, f) != sectab_size){
+		printf("\nFailed to read section table");
+		free(sects);
+		fclose(f);
+		return;
+	}
+	printf("\n=== SECTION TABLE ===");
+	for (uint16_t i = 0; i < hdr.nSections; ++i) {
+		execsectionref *s = &sects[i];
+		printf("\n[%02u] Path: %-16s  Attr: 0x%08x  Param: %u", i, s->path, s->attributes, s->parameter);
+		printf(
+			"\n\tOffset: 0x%llx  Size: %llu bytes  Base: 0x%llx",
+			(unsigned long long)s->bOffset, (unsigned long long)s->nBytes,
+			(unsigned long long)s->confBASE
+		);
+	}
+	printf("\n");
+	// Dump section contents
+	printf("\n=== SECTION DATA ===");
+	for (uint16_t i = 0; i < hdr.nSections; ++i) {
+		execsectionref *s = &sects[i];
+		printf("\n-- Section %u (%s) --\n", i, s->path);
+		printf("\nSize: %llu bytes", (unsigned long long)s->nBytes);
+		if(s->nBytes == 0){printf("(empty)\n");		continue;}
+		// Seek to section data
+		if(fseek(f, (long)s->bOffset, SEEK_SET) != 0){
+			printf("\n\tERROR: Cannot seek to section data");
+			continue;
+		}
+		uint8_t *buf = malloc(s->nBytes);
+		if(!buf){printf("\n\tOOM");	continue;}
+		if(fread(buf, 1, s->nBytes, f) != s->nBytes){
+			printf("  ERROR: Failed to read section data\n");
+			free(buf);
+			continue;
+		}
+		// Hex dump (first 256 bytes max)
+		size_t dump_len = s->nBytes < 256 ? s->nBytes : 256;
+		for(size_t j = 0; j < dump_len; j += 16){
+			printf("  %04zx: ", j);
+			for(size_t k = 0; k < 16 && j + k < dump_len; ++k){printf("%02x ", buf[j + k]);}
+			printf("\n");
+		}
+		if(s->nBytes > 256){printf("  ... (%llu bytes total)\n", (unsigned long long)s->nBytes);}
+		free(buf);
+	}
+	free(sects);
+	fclose(f);
 }

@@ -66,7 +66,7 @@ $args_qemu = @(
 	'-m', '2048',
 	# '-accel', "$(if($IsLinux){'kvm'}elseif($IsMacOS){'hvf'}elseif($IsWindows){'whpx'}else{'tcg'})",
 	'-machine', 'q35',
-	'-smp', '2',
+	'-smp', '4',
 	'-net', 'none',
 	'-serial', 'stdio',
 	'-L', $firmwarefolder,
@@ -80,11 +80,14 @@ $args_qemu = @(
 if($enablevars){$args_qemu += '-drive', "if=pflash,format=raw,file=$($ovmfvars)"}
 if($imagetype -eq 'debug'){$args_qemu += '-gdb', "tcp::$($gdbRemote)", '-S'}
 $BOCHSFILE = "
-cpu: model=corei7_ivy_bridge_3770k, count=2, reset_on_triple_fault=1
+cpu: model=corei7_ivy_bridge_3770k, ips=10000000, count=4, reset_on_triple_fault=1
 boot: disk
 memory: guest=1024, host=1024
 config_interface: win32config
 display_library: sdl
+
+cpu: ignore_bad_msrs=1
+magic_break: enabled=1
 
 sound: driver=default
 speaker: enabled=1, mode=sound
@@ -92,7 +95,6 @@ e1000: enabled=1
 pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=e1000
 vga: extension=cirrus, update_freq=60, realtime=1
 mouse: enabled=1
-
 
 magic_break: enabled=1
 port_e9_hack: enabled=1, all_rings=1
@@ -384,7 +386,7 @@ if($run){
 	Log-Write "$($QEMUOUT -join "`n")"
 }elseif($runbochs){
 	$env:Path += $Build
-	Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $B6uild "\bx_enh_dbg.ini")
+	Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $Build "\bx_enh_dbg.ini")
 	Log-Write -Msg "$($BOCHS) -f $($BOCHSRC) -q -dbglog $($debuggerlog);`n`n $(Get-Content $BOCHSRC)" -color Blue
 	& $BOCHS '-f' $BOCHSRC '-q' '-dbglog' $($debuggerlog)
 	Copy-Item -Path (Join-Path $Build "\bx_enh_dbg.ini") -Destination (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini")

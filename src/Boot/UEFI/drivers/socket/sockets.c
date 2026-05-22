@@ -1,7 +1,10 @@
-#include "socket.h"
+#include "sockets.h"
 
 
-socket_ret __fhandle_sckwrite(socket_t * socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...){
+socket_ret __attribute__((used, noinline, visibility("default"), optimize("O0"))) __fhandle_sckwrite(socket_t * socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...){
+#ifdef __DEBUG__
+	Print(L"\nSocket Write");
+#endif
 	unhandle *uh = (unhandle *)socket->persistent;
 	if(!uh->dir){
 		_fseek(uh->fhandle_, posBYTES);
@@ -14,7 +17,10 @@ socket_ret __fhandle_sckwrite(socket_t * socket, void *data, UINTN posBYTES, UIN
 	}
 	return socketret__noimpl;
 }
-socket_ret __fhandle_sckread(socket_t * socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...){
+socket_ret __attribute__((used, noinline, visibility("default"), optimize("O0"))) __fhandle_sckread(socket_t * socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...){
+#ifdef __DEBUG__
+	Print(L"\nSocket Read");
+#endif
 	unhandle *uh = (unhandle *)socket->persistent;
 	if(!uh->dir){
 		_fseek(uh->fhandle_, posBYTES);
@@ -29,15 +35,21 @@ socket_ret __fhandle_sckread(socket_t * socket, UINTN posBYTES, UINTN readBYTES,
 	}
 	return socketret__noimpl;
 }
-socket_ret __fhandle_sckclose(socket_t * socket, UINTN nARGbytes, ...){
+socket_ret __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi)) __fhandle_sckclose(socket_t * socket, UINTN nARGbytes, ...){
+#ifdef __DEBUG__
+	Print(L"\nSocket Close");
+#endif
 	if(((unhandle *)socket->persistent)->dir){
 		__fuloaddir(((unhandle *)socket->persistent)->dhandle_);
 	}else{fsuloadh(((unhandle *)socket->persistent)->fhandle_);}
 	__free(socket);
 	return socketret_noerr_empty;
 }
-socket_ret __fhandle_sckOPENchild(socket_t * socket, UINTN nARGbytes, va_list args){// Handle-Handle
-	if(nARGbytes > 8){
+socket_ret __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi)) __fhandle_sckOPENchild(socket_t * socket, UINTN nARGbytes, va_list args){// Handle-Handle
+#ifdef __DEBUG__
+	Print(L"\nSocket Open");
+#endif
+	if(nARGbytes > (sizeof(void *) * 2)){
 		char *childPATH = va_arg(args, char *);
 		if(((unhandle *)socket->persistent)->dir){
 			dirhandle *dh = ((unhandle *)socket->persistent)->dhandle_;
@@ -58,13 +70,13 @@ socket_ret __fhandle_sckOPENchild(socket_t * socket, UINTN nARGbytes, va_list ar
 			socket_t *socket = __calloc(1, sizeof(socket_t));
 			*socket = (socket_t){
                 .persistent = (void *)uh,
-				.close = (socketCLOSE)__fhandle_sckclose,
-				.open = (socketOPENchild)__fhandle_sckOPENchild,
-                .read = (socketREAD)__fhandle_sckread,
-                .write = (socketWRITE)__fhandle_sckwrite,
+				.close = (socketCLOSE *)__fhandle_sckclose,
+				.open = (socketOPENchild *)__fhandle_sckOPENchild,
+                .read = (socketREAD *)__fhandle_sckread,
+                .write = (socketWRITE *)__fhandle_sckwrite,
 				.raw = {
-					.read = (socketREADraw)__fhandle_sckread,
-					.write = (socketWRITEraw)__fhandle_sckwrite
+					.read = (socketREADraw *)__fhandle_sckread,
+					.write = (socketWRITEraw *)__fhandle_sckwrite
 				},
 			};
 			return (socket_ret){
@@ -76,9 +88,12 @@ socket_ret __fhandle_sckOPENchild(socket_t * socket, UINTN nARGbytes, va_list ar
 	}
 	return socketret__noimpl;
 }
-socket_ret __froot_sckread(socket_t * socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...){return socketret__noimpl;}
-socket_ret __froot_sckwrite(socket_t * socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...){return socketret__noimpl;}
-socket_ret __froot_sckclose(socket_t * socket, UINTN nARGbytes, ...){
+socket_ret __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi)) __froot_sckread(socket_t * socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...){return socketret__noimpl;}
+socket_ret __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi)) __froot_sckwrite(socket_t * socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...){return socketret__noimpl;}
+socket_ret __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi)) __froot_sckclose(socket_t * socket, UINTN nARGbytes, ...){
+#ifdef __DEBUG__
+	Print(L"\nSocket Close");
+#endif
 	conf_fsroot *root = (conf_fsroot *)socket->persistent;
 	__free(root->root);
 	__free(root->clusterbuffer.clusterMap);
@@ -89,7 +104,10 @@ socket_ret __froot_sckclose(socket_t * socket, UINTN nARGbytes, ...){
 		.errout = __noerr
 	};
 }
-socket_ret __froot_sckOPENchild(socket_t * socket, UINTN nARGbytes, ...){
+socket_ret __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi)) __froot_sckOPENchild(socket_t * socket, UINTN nARGbytes, ...){
+#ifdef __DEBUG__
+	Print(L"\nSocket Open");
+#endif
 	fsblock *__ffind(conf_fsroot *root, char *path);
 	if(nARGbytes >= 8){
 		va_list args;
@@ -110,11 +128,14 @@ socket_ret __froot_sckOPENchild(socket_t * socket, UINTN nARGbytes, ...){
 	}
 	return (socket_ret){__incompatible_arg, 0, NULL};
 }
-socket_ret *__froot_sckopen(UINT32 ignore, UINTN nARGbytes, va_list *args){
+socket_ret * __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi)) __froot_sckopen(UINT32 ignore, UINTN nARGbytes, va_list *args){
+#ifdef __DEBUG__
+	Print(L"\nSocket Open");
+#endif
 #ifdef __DEBUG__
 	Print(L"    Opening FS Socket");
 #endif
-	socket_ret *sret = AllocatePool(sizeof(socket_ret));
+	socket_ret *sret = __calloc(1, sizeof(socket_ret));
 	if(nARGbytes < sizeof(EFI_GUID)){
 		*sret = (socket_ret){.errout = __incompatible_arg, .data = NULL, .nData = 0};
 		return sret;
@@ -125,13 +146,13 @@ socket_ret *__froot_sckopen(UINT32 ignore, UINTN nARGbytes, va_list *args){
 		socket_t *socket = __calloc(1, sizeof(socket_t));
 		*socket = (socket_t){
 			.persistent = (void *)root,
-			.close = (socketCLOSE)__froot_sckclose,
-			.open = (socketOPENchild)__froot_sckOPENchild,
-			.read = (socketREAD)__froot_sckread,
-			.write = (socketWRITE)__froot_sckwrite,
+			.close = (socketCLOSE *)__froot_sckclose,
+			.open = (socketOPENchild *)__froot_sckOPENchild,
+			.read = (socketREAD *)__froot_sckread,
+			.write = (socketWRITE *)__froot_sckwrite,
 			.raw = {
-				.read = (socketREADraw)__froot_sckread,
-				.write = (socketWRITEraw)__froot_sckwrite
+				.read = (socketREADraw *)__froot_sckread,
+				.write = (socketWRITEraw *)__froot_sckwrite
 			}
 		};
 		*sret = (socket_ret){

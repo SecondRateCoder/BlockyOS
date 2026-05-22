@@ -3,7 +3,6 @@
 #include "efi.h"
 #include "efilib.h"
 
-#include "src/Boot/UEFI/standard.h"
 #include "src/Boot/UEFI/tools/tools.h"
 #include "src/Boot/UEFI/drivers/.disk/fs/frat.h"
 #include "src/Boot/UEFI/drivers/.disk/raw/raw.h"
@@ -34,24 +33,26 @@ typedef struct socket_ret{
 socket_ret socketopen(UINT32 driver, UINTN nARGbytes, ...);
 
 /// @brief Unique to each driver
-typedef socket_ret *(*socketOPEN)(UINT32 device, UINTN nARGbytes, va_list *args);
+typedef volatile socket_ret *(FUNCAPI *socketOPEN)(UINT32 device, UINTN nARGbytes, va_list *args);
 
 /// @brief Unique to each socket.
-typedef socket_ret (*socketOPENchild)(struct socket_t * socket, UINTN nARGbytes, ...);
-typedef socket_ret (*socketCLOSE)(struct socket_t * socket, UINTN nARGbytes, ...);
-typedef socket_ret (*socketREADraw)(struct socket_t * socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...);
-typedef socket_ret (*socketWRITEraw)(struct socket_t * socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...);
+typedef volatile socket_ret (FUNCAPI *socketOPENchild)(struct socket_t * socket, UINTN nARGbytes, ...);
+typedef volatile socket_ret (FUNCAPI *socketCLOSE)(struct socket_t * socket, UINTN nARGbytes, ...);
+typedef volatile socket_ret (FUNCAPI *socketREADraw)(struct socket_t * socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...);
+typedef volatile socket_ret (FUNCAPI *socketWRITEraw)(struct socket_t * socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...);
 typedef socketREADraw socketREAD;
 typedef socketWRITEraw socketWRITE;
 
+#define socketfunc(func)	((__typeof__(*func))(func))
+
 typedef struct socket_t{
 	void *persistent;
-	socketREAD read;
-	socketWRITE write;
+	socketREAD *read;
+	socketWRITE *write;
 	struct raw{
-		socketREADraw read;
-		socketWRITEraw write;
+		socketREADraw *read;
+		socketWRITEraw *write;
 	}raw;
-	socketOPENchild open;
-	socketCLOSE close;
+	socketOPENchild *open;
+	socketCLOSE *close;
 }socket_t;

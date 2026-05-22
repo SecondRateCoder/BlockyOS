@@ -372,3 +372,13 @@ EFI_DEVICE_PATH *GetDevicePath(EFI_HANDLE Handle){
     if(EFI_ERROR(Status)){return NULL;}
     return Dp;
 }
+
+VOID RestartSystem(){
+    // ResetType = EfiResetCold → full hardware reset
+    // ResetStatus = EFI_SUCCESS
+    // DataSize = 0, ResetData = NULL → no message passed to firmware
+    uefi_call_wrapper(gRT->ResetSystem, 4, EfiResetCold, EFI_SUCCESS, 0, NULL);
+
+    // Execution should never reach here
+    for(;;);
+}

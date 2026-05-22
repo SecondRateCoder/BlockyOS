@@ -1,10 +1,4 @@
-source edksetup.sh && make -C BaseTools
-
-build -a X64 -t GCC -p OvmfPkg/OvmfPkgX64.dsc -b DEBUG && mkdir -p ./uefi/default/debug/ && cp ./Build/OvmfX64/DEBUG_GCC/FV/OVMF_CODE.fd ./uefi/default/debug/OVMF_CODE.fd && cp ./Build/OvmfX64/DEBUG_GCC/FV/OVMF_VARS.fd ./uefi/default/debug/OVMF_VARS.fd
-rm -rf Build/OvmfX64/
-build -a X64 -t GCC -p OvmfPkg/OvmfPkgX64.dsc -b RELEASE && mkdir -p ./uefi/default/ && cp Build/OvmfX64/RELEASE_GCC/FV/OVMF_CODE.fd uefi/default/OVMF_CODE.fd && cp Build/OvmfX64/RELEASE_GCC/FV/OVMF_VARS.fd uefi/default/OVMF_VARS.fd
-rm -rf Build/OvmfX64/
-build -a X64 -t GCC -p OvmfPkg/OvmfPkgX64.dsc -b DEBUG -D SECURE_BOOT_ENABLE=TRUE -D OVMF_ENABLE_COMBINED_FD=TRUE -D FD_SIZE_2MB && mkdir -p ./uefi/debug/secboot && cp Build/OvmfX64/DEBUG_GCC/FV/OVMF_CODE.fd uefi/debug/secboot/OVMF_CODE.fd && cp Build/OvmfX64/DEBUG_GCC/FV/OVMF_VARS.fd uefi/debug/secboot/OVMF_VARS.fd
-rm -rf Build/OvmfX64/
-build -a X64 -t GCC -p OvmfPkg/OvmfPkgX64.dsc -b RELEASE -D SECURE_BOOT_ENABLE=TRUE -D OVMF_ENABLE_COMBINED_FD=TRUE -D FD_SIZE_2MB && mkdir -p ./uefi/release/secboot/ && cp Build/OvmfX64/RELEASE_GCC/FV/OVMF_CODE.fd uefi/release/secboot/OVMF_CODE.fd && cp Build/OvmfX64/RELEASE_GCC/FV/OVMF_VARS.fd uefi/release/secboot/OVMF_VARS.fd
-rm -rf Build/OvmfX64/
+null packetmover readable log file
+net IF = xl0
+MAC address = fe:fd:de:ad:be:ef
+--

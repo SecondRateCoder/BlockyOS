@@ -254,10 +254,7 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 			// Read and verify ROOTS
 			fsblock *f = largeroot->clusterbuffer.clusterMap + i;
 #ifdef __DEBUG__
-			Print(
-				L"\n    #%llu    F-CODE: %llu    Attributes: %u    Index: %u",
-				i, f->fcode, f->attr, f->index
-			);
+			// Print(L"\n    #%llu    F-CODE: %llu    Attributes: %u    Index: %u", i, f->fcode, f->attr, f->index);
 #endif
 			if(f->fcode != 0){
 				if(flagcheck(f->attr, __fsmetadatacluster) && f->fcode != 0){
@@ -337,7 +334,7 @@ void __fcreate(conf_fsroot *root, char *path, char *flags){
 			__fdiradd(dhandle, fb);
 			__fuloaddir(dhandle);
 		}
-		char *_path = AllocatePool(__strlen(path) + 2);
+		char *_path = __calloc(1, __strlen(path) + 2);
 		*_path = '\\';
 		__memcpy(_path + 1, path, __strlen(path) + 1);
 		__finit(root, fb, _path);
@@ -377,7 +374,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 	Print(L"\nInitialising File MetaData: ./%a", path);
 #endif
 	LBA loc = getloc(root, fb);
-	void *block = AllocatePool(root->root->confBlockSize);
+	void *block = __calloc(1, root->root->confBlockSize);
 	meta_fsblock *metadata = (meta_fsblock *)block;
 	EFI_TIME time;
 	if(EFI_ERROR(gRT->GetTime(&time, NULL))){time = (EFI_TIME){0};}
@@ -463,8 +460,7 @@ void __fpush1(conf_fsroot *root, fsblock *fb, UINTN i, void *buffer){
 		fsblock *fb_ = __ffindhi(root, fb->fcode, i);
 		if((fb_ = __ffindhi(root, fb->fcode, i)) == NULL){
 			fb_ = __faddr(root, fb);
-			if(fb_){
-				loc = getloc(root, fb_);
+			if(fb_){loc = getloc(root, fb_);
 			}else{return;}
 		}else{loc = getloc(root, fb_);}
 	}else{
@@ -489,7 +485,7 @@ dirhandle *__floaddir(conf_fsroot *root, char *path, char *args){
 #ifdef __DEBUG__
 	Print(L"\nMounting Dir [%a] with Args: \"%a\"", path, args);
 #endif
-	dirhandle *out = AllocatePool(sizeof(dirhandle));
+	dirhandle *out = __calloc(1, sizeof(dirhandle));
 	out->root = root;
 	out->path = __strdup(path);
 	out->file = __ffind(root, path);
@@ -572,7 +568,7 @@ fhandle *fsloadh(conf_fsroot *root, char *path, char *args){
 	// 		if(finfo->fcode){return fsloadh(root, path, args);}
 	// 	}
 	// }
-	fhandle *out = AllocatePool(sizeof(fhandle));
+	fhandle *out = __calloc(1, sizeof(fhandle));
 	out->file = __ffind(root, path);
 	out->root = root;
 	out->progress = 0;
@@ -619,6 +615,25 @@ void __fupdatetstamp(conf_fsroot *root, fsblock *file, BOOLEAN wt){
 		writeblocks(re, finfo, loc, 1);
 	}
 	dispose(re);
+}
+
+UINTN __fsize(fhandle *fh){
+	UINTN size = 0;
+	for(UINTN cc = 0; cc < (fh->root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
+		size += (
+			!flagcheck((fh->root->clusterbuffer.clusterMap + cc)->attr, __fsmetadatacluster) &&
+			((fh->root->clusterbuffer.clusterMap + cc)->fcode == fh->file->fcode) 
+			? fh->root->root->confBlockSize: 0
+		);
+	}
+	return size;
+}
+UINTN __dsize(dirhandle *dh){
+	UINTN size = 0;
+	for(UINTN cc = 0; cc < ((dh->loadedblocks * dh->root->root->confBlockSize) / sizeof(diritem)); ++cc){
+		size += (((dh->dirarray + cc)->local != 0) ? dh->root->root->confBlockSize: 0);
+	}
+	return size;
 }
 
 meta_fsblock *_dreadinfo(dirhandle *handle){return __freadinfo(handle->root, handle->file);}
@@ -727,7 +742,7 @@ BOOLEAN __ftest(fhandle *h){
 	Print(L"\nPerforming File Test. Code: %llu", h->file->fcode);
 #endif
 	BOOLEAN out = TRUE;
-	void *_block = AllocatePool(h->root->root->confBlockSize);
+	void *_block = __calloc(1, h->root->root->confBlockSize);
 	trng__(_block, h->root->root->confBlockSize);
 	_fseek(h, 1);
 	_fwrite(h, h->root->root->confBlockSize, _block);
@@ -766,7 +781,7 @@ unhandle *__fdirlist(dirhandle *dir, UINTN *index){
 				__memcpy(temp + __strlen(dir->path) + (*finfo->name != '/'), finfo->name, __strlen(finfo->name) + 1);
 				temp[__strlen(dir->path)] = PATHSEP;
 				__free(finfo);
-				unhandle *out = AllocatePool(sizeof(unhandle));
+				unhandle *out = __calloc(1, sizeof(unhandle));
 				if((out->dir = flagcheck(fb->attr, __fsdirectory))){
 					out->dhandle_ = __floaddir(dir->root, temp, "");
 				}else{out->fhandle_ = fsloadh(dir->root, temp, "f");}

@@ -130,12 +130,12 @@ EFI_DEVICE_PATH *getDevPath(EFI_DEVICE_PATH *dPath, UINT32 dType, UINT32 sType){
 __efiDevNode **loadDNodes(UINTN *nNodes){
 	EFI_GUID dPathGUID = EFI_DEVICE_PATH_PROTOCOL_GUID;
 	EFI_HANDLE *handles = NULL;		UINTN nHandles = 0;
-	__efiDevNode **dNodes = NULL;	(*nNodes) = 0;
+	__efiDevNode **dnodes = NULL;	(*nNodes) = 0;
 #ifdef __DEBUG__
 	Print(L"\nLoading Device Tree");
 #endif
 	if(!EFI_ERROR(uefi_call_wrapper(gBS->LocateHandleBuffer, 5, AllHandles, NULL, NULL, &nHandles, &handles))){
-		dNodes = AllocatePool(sizeof(__efiDevNode *) * nHandles);
+		dnodes = AllocatePool(sizeof(__efiDevNode *) * nHandles);
 		EFI_STATUS status;
 #ifdef __DEBUG__
 		Print(L"\n");
@@ -145,9 +145,9 @@ __efiDevNode **loadDNodes(UINTN *nNodes){
 			status = uefi_call_wrapper(gBS->HandleProtocol, 3, handles[cc], &dPathGUID, (void **)&dPath);
 			if(!EFI_ERROR(status)){
 				// DebugDevicePath(dPath);
-				dNodes[*nNodes] = BuildDeviceTree(dPath);
-				if(dNodes[*nNodes]){
-					Print(L"Call #%llu    \"%s\"\n", cc, dNodes[*nNodes]->nodeName);
+				dnodes[*nNodes] = BuildDeviceTree(dPath);
+				if(dnodes[*nNodes]){
+					Print(L"Call #%llu    \"%s\"\n", cc, dnodes[*nNodes]->nodeName);
 					(*nNodes)++;
 				}else{
 #ifdef __DEBUG__
@@ -166,9 +166,168 @@ __efiDevNode **loadDNodes(UINTN *nNodes){
 #endif
 	}
 	__free(handles);
-	dNodes = ReallocatePool(sizeof(__efiDevNode *) * nHandles, sizeof(__efiDevNode *) * (*nNodes), dNodes);
+	dnodes = ReallocatePool(sizeof(__efiDevNode *) * nHandles, sizeof(__efiDevNode *) * (*nNodes), dnodes);
 #ifdef __DEBUG__
 		Print(L"\nReturning Expanded Node Tree");
 #endif
-	return dNodes;
+	return dnodes;
+}
+
+EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSize, UINT32 *descVersion){
+#ifdef __DEBUG__
+	Print(L"\nGetting the Memory Map");
+#endif
+	EFI_STATUS status;
+	EFI_MEMORY_DESCRIPTOR *map = NULL;
+	*mapSize = 0;
+
+	// First call: get required size
+	status = uefi_call_wrapper(gBS->GetMemoryMap, 5, mapSize, map, mapKey, descSize, descVersion);
+	if(status != EFI_BUFFER_TOO_SMALL){return NULL;}
+	
+	// Allocate extra space (UEFI spec recommends padding)
+	*mapSize += 2 * (*descSize);
+	status = uefi_call_wrapper(gBS->AllocatePool, 3, EfiLoaderData, *mapSize, (void **)&map);
+	if(EFI_ERROR(status)){return NULL;}
+
+	// Second call: actual memory map
+	status = uefi_call_wrapper(gBS->GetMemoryMap, 5, mapSize, map, mapKey, descSize, descVersion);
+	if(EFI_ERROR(status)){
+		gBS->FreePool(map);
+		return NULL;
+	}
+#ifdef __DEBUG__
+	Print(L"=== UEFI Memory Map (%u entries) ===\n", (*mapSize) / (*descSize));
+	Print(L"Descriptor Size: %llu, #n Items: %llu  Version: %u\n\n", *mapSize, (*mapSize) / (*descSize), *descVersion);
+	for(UINTN cc = 0; cc < ((*mapSize) / (*descSize)); ++cc){
+		Print(
+			L"[%llu] %s  Start: 0x%lx  Pages: %llu  Size: %llu KB\n",
+			cc,
+			EfiMemoryTypeToStr(map[cc].Type),
+			map[cc].PhysicalStart,
+			map[cc].NumberOfPages,
+			map[cc].NumberOfPages * 4
+		);
+	}
+#endif
+	return map;
+}
+
+static CHAR16 *EfiMemoryTypeToStr(UINT32 type){
+	switch(type){
+		case EfiReservedMemoryType:      return L"EfiReservedMemoryType";
+		case EfiLoaderCode:              return L"EfiLoaderCode";
+		case EfiLoaderData:              return L"EfiLoaderData";
+		case EfiBootServicesCode:        return L"EfiBootServicesCode";
+		case EfiBootServicesData:        return L"EfiBootServicesData";
+		case EfiRuntimeServicesCode:     return L"EfiRuntimeServicesCode";
+		case EfiRuntimeServicesData:     return L"EfiRuntimeServicesData";
+		case EfiConventionalMemory:      return L"EfiConventionalMemory";
+		case EfiUnusableMemory:          return L"EfiUnusableMemory";
+		case EfiACPIReclaimMemory:       return L"EfiACPIReclaimMemory";
+		case EfiACPIMemoryNVS:           return L"EfiACPIMemoryNVS";
+		case EfiMemoryMappedIO:          return L"EfiMemoryMappedIO";
+		case EfiMemoryMappedIOPortSpace: return L"EfiMemoryMappedIOPortSpace";
+		case EfiPalCode:                 return L"EfiPalCode";
+		case EfiPersistentMemory:        return L"EfiPersistentMemory";
+		default:                         return L"Unknown";
+	}
+}
+
+__bootinfo *gatherbootinfo(){
+	__bootinfo *out = __calloc(1, sizeof(__bootinfo));
+	out->devices.devices = loadDNodes(&out->devices.nnodes);
+	out->memory.desc = GetMemoryMap(&out->memory.descSize, &out->memory.mapKey, &out->memory.descItemSize, &out->memory.descVersion);
+	out->memory.nDescs = out->memory.descSize / out->memory.descItemSize;
+	__memset(out->bootentry.BootEntryName, 0, sizeof(out->bootentry.BootEntryName));
+	out->bootentry.BootEntryCode = CreateBootEntry(&rootDesc.guid, &rootDesc.uGuid, (CHAR16 *)out->bootentry.BootEntryName);
+	if(out->bootentry.BootEntryCode != 1){RestartSystem();}
+	return out;
+}
+
+// Return codes:
+// 0 = Error
+// 1 = Already Exists
+// 2 = Added
+UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarName){
+	EFI_STATUS Status;
+	UINTN BootIndex = 0;
+	CHAR16 BootVar[12];
+	UINT8 *Existing = NULL;
+	UINTN ExistingSize = 0;
+
+	// 1. Scan Boot0000 → BootFFFF for existing entry
+	for (BootIndex = 0; BootIndex < 0xFFFF; BootIndex++){
+		SPrint(BootVar, sizeof(BootVar), L"Boot%04X", BootIndex);
+
+		ExistingSize = 0;
+		Existing = NULL;
+
+		Status = uefi_call_wrapper(
+			RT->GetVariable, 5, BootVar, BootGuid,
+			NULL, &ExistingSize, NULL
+		);
+
+		if(Status == EFI_BUFFER_TOO_SMALL){
+			// Entry exists → return "already exists"
+			StrCpy(OutBootVarName, BootVar);
+			return 1;
+		}
+	}
+
+	// Find first free Boot#### index
+	for(BootIndex = 0; BootIndex < 0xFFFF; BootIndex++){
+		SPrint(BootVar, sizeof(BootVar), L"Boot%04X", BootIndex);
+		ExistingSize = 0;
+		Status = uefi_call_wrapper(
+			RT->GetVariable, 5, BootVar, BootGuid,
+			NULL, &ExistingSize, NULL
+		);
+		if(Status == EFI_NOT_FOUND){break;}
+	}
+	if(BootIndex >= 0xFFFF){return 0;}
+	StrCpy(OutBootVarName, BootVar);
+
+	// Build the EFI_LOAD_OPTION buffer manually
+	CHAR16 Description[] = BOOTDESC16;
+	UINTN DescLen = (StrLen(Description) + 1) * sizeof(CHAR16);
+
+	// Build a simple FilePath: a vendor device path with AltGuid
+	struct{
+		EFI_DEVICE_PATH_PROTOCOL Header;
+		EFI_GUID Guid;
+		UINT8 EndNode[4];
+	}__attribute__((packed)) DevPath = {
+		.Header = { 0x04, 0x0C, sizeof(EFI_DEVICE_PATH_PROTOCOL) + sizeof(EFI_GUID), 0 },
+		.Guid = *AltGuid,
+		.EndNode = { 0x7F, 0xFF, 0x04, 0x00 }
+	};
+
+	UINT16 FilePathLen = sizeof(DevPath);
+	UINTN TotalSize = sizeof(MY_LOAD_OPTION) + DescLen + FilePathLen;
+	UINT8 *Buffer = AllocatePool(TotalSize);
+	if(!Buffer){return 0;}
+
+	MY_LOAD_OPTION *Opt = (MY_LOAD_OPTION*)Buffer;
+	Opt->Attributes = 0x00000001; // ACTIVE
+	Opt->FilePathListLength = FilePathLen;
+
+	UINT8 *Ptr = Buffer + sizeof(MY_LOAD_OPTION);
+
+	// Copy Description
+	__memcpy(Ptr, Description, DescLen);
+	Ptr += DescLen;
+
+	// Copy Device Path
+	__memcpy(Ptr, &DevPath, FilePathLen);
+
+	// Write Boot#### variable
+	Status = uefi_call_wrapper(
+		RT->SetVariable, 5, BootVar, BootGuid,
+		EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+		TotalSize, Buffer
+	);
+	FreePool(Buffer);
+	if(EFI_ERROR(Status)){return 0;}
+	return 2;
 }
