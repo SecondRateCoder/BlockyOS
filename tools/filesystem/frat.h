@@ -64,7 +64,7 @@ typedef struct fsblock{
 }__attribute__((packed)) fsblock;
 
 /// @brief This is the expanded block of FileInfo
-typedef struct conf_fsblock{
+typedef struct meta_fsblock{
 	char fsig[8];
 	size_t headerversion;
 	// uint8_t coremeta[32];
@@ -75,7 +75,7 @@ typedef struct conf_fsblock{
 		   writetime,
 		   accessdate,
 		   writedate;
-}conf_fsblock;
+}meta_fsblock;
 
 typedef struct fsroot{
 	uint32_t confBlockSize;
@@ -172,8 +172,8 @@ dirhandle *__fgetparent(conf_fsroot *root, char *path);
 bool __ftest(fhandle *h);
 void __fuloaddir(dirhandle *handle);
 dirhandle *__floaddir(conf_fsroot *root, char *path, char *args);
-conf_fsblock *_dreadinfo(dirhandle *handle);
-conf_fsblock *_freadinfo(fhandle *handle);
+meta_fsblock *_dreadinfo(dirhandle *handle);
+meta_fsblock *_freadinfo(fhandle *handle);
 fsblock *__faddr(conf_fsroot *root, fsblock *family);
 void _fseek(fhandle *handle, size_t progress);
 void _fseeko(fhandle *handle, ssize_t progress);
@@ -193,4 +193,4 @@ dirrunner *__dirr_init(dirhandle *handle, char *patternmatcher);
 unhandle *__dirr(dirrunner *dr);
 void __dirr_free(dirrunner *dr);
 
-void __fprint_info(conf_fsblock *finfo);
+void __fprint_info(meta_fsblock *finfo);

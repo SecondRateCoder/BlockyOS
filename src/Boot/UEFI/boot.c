@@ -18,10 +18,13 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	Print(L"Sanity Check[0]\nDEBUG: %p; %p", Image, Table);
 	Print(L"\nGUID:");	prGUID((EFI_GUID)EFI_ZERO_GUID);
 #endif
+	// Initialise GNU-EFI
 	libinit(Image, Table);
-	socket_t *fs = NULL;
+	// Initialise Hardware Device Tree
 	UINTN nNodes = 0;	UINT32 ntries = 3;
 	__efiDevNode **dNodes = loadDNodes(&nNodes);
+	// Open FrAT Socket
+	socket_t *fs = NULL;
 	do{
 		socket_ret socket = socketopen(0, sizeof(UINT32) + (sizeof(EFI_GUID) * 2), (UINT32)0, rootDesc.guid, rootDesc.uGuid);
 		if(socket.errout == __noerr){
@@ -34,7 +37,7 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 				fs = (socket_t *)tmp->data;
 				Print(L"\nMounted FRaT Socket!");
 			}else{
-				FreePool(socket.data);
+				__free(socket.data);
 #ifdef __DEBUG__
 				Print(L"\nFailed to open FS Socket");
 #endif
@@ -46,12 +49,13 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 		}
 		GPTeNSTR *str = makeGPTeNSTR(rootDesc.name);
 		formatpart(rootDesc.guid, rootDesc.uGuid, *str, __FS_DEFAULTBLOCKSIZE, 5, 1, 0);
-		FreePool(str);
+		__free(str);
 		ntries--;
 	}while(fs == NULL && ntries);
 	if(fs == NULL){Print(L"Failed to retrieve FS Socket");}
 #ifdef __DEBUG__
 	Print(L"\nRetrieved Expanded Node Tree");
 #endif
-	return EFI_ABORTED;
+	
+	return EFI_SUCCESS;
 }

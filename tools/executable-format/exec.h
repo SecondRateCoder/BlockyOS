@@ -1,30 +1,48 @@
+#pragma once
+
 #include <stdio.h>
 #include <stdint.h>
-#include <stddef.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
-#include <ctype.h>
-#include <inttypes.h>
-#include "ref/blake2.h"
 
-#define __FINALSTAGE 10
-#define __PATHlen 16
+#pragma pack(push, 1)
 
-typedef union __SYMMAGIC{
-	char MAGIC[8];
-	size_t MAGICINT;
-}__SYMMAGIC;
+#define EXECSECRTIONREFPATHLEN 16
 
-typedef struct __SYMREF{
-	__SYMMAGIC signature;
-	size_t byteOFFSET;
-	uint8_t ptrSIZE;
-}__SYMREF, __RELOCtable[];
+typedef uint32_t __execsecref_attributes_t;
 
-typedef struct __EXECFSitem{
-	char path[32];
-	size_t firstBYTE, lastBYTE;
-	uint16_t __attributes;
-}__EXECFSitem;
+enum {
+    __noliveload  = 0x1,
+    __noload      = 0x2,
+    __required    = 0x4,
+    __noreloc     = 0x8,
+    __reloctable  = 0x10,
+};
 
+typedef struct {
+    char   path[EXECSECRTIONREFPATHLEN];
+    __execsecref_attributes_t attributes;
+    uint32_t parameter;
+    uint64_t bOffset;   // file offset of section data
+    uint64_t nBytes;    // size of section data
+    uint64_t confBASE;  // preferred base (optional)
+} execsectionref;
+
+typedef struct {
+    char magic[16];        // exechmagic
+    char versionmagic[16]; // exechvermagic
+    uint64_t attributes;
+    uint64_t imageBase;
+    uint16_t nSections;
+    // followed by execsectionref[nSections]
+} exech;
+
+// Simple relocation entry in our format
+typedef struct {
+    uint64_t byteLoc;   // offset within section
+    uint8_t  ptrSize;   // 8 for DIR64
+    uint8_t  type;      // original PE type (e.g. IMAGE_REL_BASED_DIR64)
+    uint16_t reserved;
+} my_reloc_entry;
+
+#pragma pack(pop)

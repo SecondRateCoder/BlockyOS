@@ -6,6 +6,8 @@
 #include "src/Boot/UEFI/tools/tools.h"
 
 #define FRATSIG "FRAT_FILESYSTEM"
+#define FRATSIG_LEN (sizeof(FRATSIG) - 1)
+#define FRATSIGLEN STR((FRATSIG_LEN))
 #define FRATBLOCKSIG "FRATROOT"
 #define FRAT_PROGLIMIT 2
 #define __FS_DEFAULTBLOCKSIZE 512
@@ -15,11 +17,14 @@
 #define CLUSTERMAPOFFSET(nLogSectors) (LOGBLOCKOFFSET + (nLogSectors) + 1)
 #define DATAFIRSTOFFSET(nLogSectors, nClusterSectors) (CLUSTERMAPOFFSET(nLogSectors) + (nClusterSectors) + 1)
 #define DATAFIRST(root)	((root)->loc + DATAFIRSTOFFSET(root->logblocks.nLogSectors, root->clusterbuffer.nClusterSectors))
-#define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors)	(((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * sizeof(fsblock))
-#define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize)	\
-((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) - 						\
-(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) / (confSectorSize)) + ((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) % (confSectorSize)) != 0)	\
-) / confSectorSize)
+
+// #define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors)	(((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * sizeof(fsblock))
+// #define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize)	\
+// safediv__((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) - 						\
+// safediv__(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors), (confSectorSize)) + ((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) % (confSectorSize)) != 0)	\
+// ), confSectorSize)
+#define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) ( ((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * (UINTN)sizeof(fsblock) )
+#define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize) (safediv__(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) + ((confSectorSize) - 1), (confSectorSize)))
 
 enumdef(fsattribute, UINT8){
 	__fsfile = 		0x0000,
@@ -46,11 +51,11 @@ typedef struct fsblock{
 	UINTN fcode        : 42;
 	UINTN attr			: 16;
 	// UINT32 logalias;
-	UINT32 index;
+	UINTN index;
 }__attribute__((packed)) fsblock;
 
 /// @brief This is the expanded block of FileInfo
-typedef struct conf_fsblock{
+typedef struct meta_fsblock{
 	char fsig[8];
 	UINTN headerversion;
 	// uint8_t coremeta[32];
@@ -61,15 +66,15 @@ typedef struct conf_fsblock{
 		   writetime,
 		   accessdate,
 		   writedate;
-}conf_fsblock;
+}meta_fsblock;
 
 #define MAKEVERSION(MAJOR, MINOR)	{(UINT32)(MAJOR), (UINT32)(MINOR)}
 typedef struct fsroot{
+	char signature[sizeof(FRATSIG)];
 	UINT32 confLogSectors,
 			confBlockSize,
 			confClusterSize;
 	UINT32 verCode[2];
-	char signature[sizeof(FRATSIG)];
 }__attribute__((packed)) fsroot;
 
 typedef struct conf_fsroot{
@@ -154,14 +159,14 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path);
 
 void fsuloadh(fhandle *handle);
 fhandle *fsloadh(conf_fsroot *root, char *path, char *args);
-void _fpush1(fhandle *handle, void *buffer);
-void *_fread1(fhandle *handle);
+UINTN _fwrite(fhandle *handle, UINTN nbytes, const void *data);
+UINTN _fread(fhandle *h, UINTN nbytes, void **dataout);
 dirhandle *__fgetparent(conf_fsroot *root, char *path);
 BOOLEAN __ftest(fhandle *h);
 void __fuloaddir(dirhandle *handle);
 dirhandle *__floaddir(conf_fsroot *root, char *path, char *args);
-conf_fsblock *_dreadinfo(dirhandle *handle);
-conf_fsblock *_freadinfo(fhandle *handle);
+meta_fsblock *_dreadinfo(dirhandle *handle);
+meta_fsblock *_freadinfo(fhandle *handle);
 fsblock *__faddr(conf_fsroot *root, fsblock *family);
 void _fseek(fhandle *handle, UINTN progress);
 void _fseeko(fhandle *handle, INTN progress);
@@ -181,6 +186,6 @@ dirrunner *__dirr_init(dirhandle *handle, char *patternmatcher);
 unhandle *__dirr(dirrunner *dr);
 void __dirr_free(dirrunner *dr);
 
-void __fprint_info(conf_fsblock *finfo);
+void __fprint_info(meta_fsblock *finfo);
 
 LBA getloc(conf_fsroot *root, fsblock *fb);

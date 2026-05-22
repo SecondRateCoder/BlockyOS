@@ -34,7 +34,7 @@ BOOLEAN checkdisk(EFI_GUID GUID, EFI_GUID altGUID){
 	);
 #endif
 	if(!__memcmp(gpt->sig, "EFI PART", 8)){out = TRUE;}else{out = FALSE;}
-	FreePool(block);
+	__free(block);
 	dispose(re);
 #ifdef __DEBUG__
 	Print(L"\nGPT Exists? %a", ((out == true)? "TRUE": "FALSE"));
@@ -56,16 +56,16 @@ partdim loadpart(EFI_GUID GUID, EFI_GUID altGUID, GPTeNSTR name){
 		for(UINT32 i = 0; i < gpt->nPartEntries; i++){
 			if(!__memcmp(name, ge[i].name, GPTeNAMESIZE)){
 				partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
-				FreePool(gpt);
-				FreePool(ge);
+				__free(gpt);
+				__free(ge);
 #ifdef __DEBUG__
 				Print(L"\n[%s:%u]  >>  Found Partition: %llu:%llu", (L"" __FILE__), __LINE__, out.base, out.high);
 #endif
 				return out;
 			}
 		}
-		FreePool(gpt);
-		FreePool(ge);
+		__free(gpt);
+		__free(ge);
 	}
 #ifdef __DEBUG__
 	Print(L"\n[%s:%u]  >>  Found No Partition named: %a", (L"" __FILE__), __LINE__, gptname);
@@ -86,6 +86,7 @@ void formatpart(
 #endif
 	partdim part = loadpart(GUID, altGUID, name);
 	if(!part.high){return;}
+	rawenv re = startup(GUID, altGUID, confBlockSize);
 #ifdef __DEBUG__
 	Print(
 		L"\n[%s:%u]  >>  Format Target: %llu:%llu -> %llu LBAs"
@@ -101,18 +102,19 @@ void formatpart(
 		confLogSectors, confLogSectors * sizeof(fslogitem)
 	);
 #endif
-	rawenv re = startup(GUID, altGUID, confBlockSize);
 
 	// Root-Block
-	void *block = AllocatePool(confBlockSize * confLogSectors);
-	__memset(block, 0, confBlockSize * confLogSectors);
-	*((fsroot *)block) = (fsroot){
+	void *block = __calloc(confLogSectors, confBlockSize);
+	// ZeroMem(block, confBlockSize * confLogSectors);
+	fsroot *fr = block;
+	*fr = (fsroot){
 		.confLogSectors = confLogSectors,
 		.confBlockSize = confBlockSize,
 		.confClusterSize = CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize),
 		.verCode = MAKEVERSION(verMAJOR, verMINOR),
-	};	// Reset all Info
-	__memcpy(((fsroot *)block)->signature, FRATSIG, sizeof(FRATSIG));
+	};
+	// Write FSROOT
+	__memcpy(fr->signature, FRATSIG, sizeof(FRATSIG));
 	writeblocks(re, block, part.base + FRATROOTOFFSET, sizeof(fsroot));
 
 	// Log-Block
@@ -120,11 +122,11 @@ void formatpart(
 	writeblocks(re, block, part.base + LOGBLOCKOFFSET, confBlockSize * confLogSectors);
 
 	// Cluster-Map
-	FreePool(block);
-	block = AllocatePool(CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize));
-	__memset(block, 0, CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize));
+	__free(block);
+	block = __calloc(CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize), confBlockSize);
+	// __memset(block, 0, CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
 	writeblocks(re, block, part.base + CLUSTERMAPOFFSET(confLogSectors), CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
-	FreePool(block);
+	__free(block);
 	dispose(re);
 #ifdef __DEBUG__
 	Print(L"\n[%s:%u]  >>  Formatted Partition", (L"" __FILE__), __LINE__);
@@ -145,11 +147,11 @@ partdim queryparttablefs(miniGPT *gpt, rawenv re){
 #endif
 		if(queryfs(re, ge[i].sLBA)){
 			partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
-			FreePool(ge);
+			__free(ge);
 			return out;
 		}
 	}
-	FreePool(ge);
+	__free(ge);
 	return (partdim){0, 0};
 }
 
@@ -160,21 +162,34 @@ BOOLEAN queryfs(rawenv re, LBA partbase){
 	// Check that a FileSystem exists at the bytebase.
 	BOOLEAN out = 0;
 	fsroot *fr = (fsroot *)readblocks(re, partbase + FRATROOTOFFSET, sizeof(fsroot));
+	Print(
+		L"\nFS-Root Blob:"
+		L"\n    Version: [%u:%u]"
+		L"\n    Sig: %.16a"
+		L"\n    Configured Log Sectors: %u"
+		L"\n    Configured Block Size: %u"
+		L"\n    Configured Cluster-Map Size: %u",
+		fr->verCode[0], fr->verCode[1], 
+		fr->signature, fr->confLogSectors, 
+		fr->confBlockSize, fr->confClusterSize
+	);
 	if(!__memcmp(fr->signature, FRATSIG, sizeof(FRATSIG))){
 #ifdef __DEBUG__
 		Print(
-			L"\n[%s:%u]  >>  FS:"
+			L"\n[%s:%u]  >>  FS Found at [%llu]:"
 			L"\n	Version-Code: [%u:%u]"
 			L"\n	Configured Block-Size: %u"
 			L"\n	Configured Cluster-Size: %u"
 			L"\n	Configured # of Log-Sectors: %u"
 			L"\n	Configured Log-Size: %u", 
-			(L"" __FILE__),__LINE__, fr->verCode[0], fr->verCode[1], 
+			(L"" __FILE__), __LINE__, partbase, fr->verCode[0], fr->verCode[1], 
 			fr->confBlockSize, fr->confClusterSize, fr->confLogSectors, fr->confLogSectors * sizeof(fslogitem)
 		);
 #endif
-		FreePool(fr);		return TRUE;
-	}else{FreePool(fr);		return FALSE;}
+		out = TRUE;
+	}else{out = FALSE;}
+	__free(fr);
+	return out;
 }
 
 conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
@@ -188,11 +203,11 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 		void *block = readblocks(re, GPT_LBA, sizeof(miniGPT));
 		miniGPT *gpt = (miniGPT *)block;
 		if((partition = queryparttablefs(gpt, re)).high){
-			FreePool(gpt);
-		}else{FreePool(gpt);    return NULL;}
+			__free(gpt);
+		}else{__free(gpt);    return NULL;}
 #ifdef __DEBUG__
 		Print(
-			L"\n[%s:%u]  >>  Found Mountable Partition: %llu:%llu -> %llu", 
+			L"\n[%s:%u]  >>  Found Formatted Partition: %llu:%llu -> %llu", 
 			(L"" __FILE__),__LINE__, partition.base, partition.high, partition.high - partition.base
 		);
 #endif
@@ -213,7 +228,7 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 		);
 #endif
 		setblocksize(re, fsroot_->confBlockSize);
-		conf_fsroot *largeroot = AllocatePool(sizeof(conf_fsroot));
+		conf_fsroot *largeroot = __calloc(1, sizeof(conf_fsroot));
 		*largeroot = (conf_fsroot){
 			.loc = 0,
 			.root = fsroot_,
@@ -223,7 +238,7 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 				.nLogSectors = fsroot_->confLogSectors
 			},
 			.clusterbuffer = {
-				.nClusterSectors = partition.base + CLUSTERMAPOFFSET(fsroot_->confLogSectors),
+				.nClusterSectors = safediv__(fsroot_->confClusterSize, fsroot_->confBlockSize),
 				.clusterSize = fsroot_->confClusterSize,
 				.clusterMap = readblocks(re, partition.base + CLUSTERMAPOFFSET(fsroot_->confLogSectors), fsroot_->confClusterSize)
 			},
@@ -231,27 +246,35 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 			.altGUID = altGUID
 		};
 #ifdef __DEBUG__
-		Print(
-			L"\n    "
-		);
-		Print(L"Verifying FS Root Items");
+		BUFDEFPRINT(largeroot->clusterbuffer.clusterMap, fsroot_->confClusterSize, cc);
+		Print(L"\n    Verifying FS Root Items #items: %llu", (UINTN)(fsroot_->confClusterSize / sizeof(fsblock)));
 		DisableVerbose(re);
 #endif
-		for(UINTN i = 0; i < largeroot->clusterbuffer.clusterSize; ++i){
+		for(UINTN i = 0; i < (fsroot_->confClusterSize / sizeof(fsblock)); ++i){
 			// Read and verify ROOTS
 			fsblock *f = largeroot->clusterbuffer.clusterMap + i;
+#ifdef __DEBUG__
+			Print(
+				L"\n    #%llu    F-CODE: %llu    Attributes: %u    Index: %u",
+				i, f->fcode, f->attr, f->index
+			);
+#endif
 			if(f->fcode != 0){
 				if(flagcheck(f->attr, __fsmetadatacluster) && f->fcode != 0){
-					conf_fsblock *temp = readblocks(re, getloc(largeroot, f), sizeof(conf_fsblock));
+					meta_fsblock *temp = readblocks(re, getloc(largeroot, f), sizeof(meta_fsblock));
 					if(__memcmp(temp->fsig, FRATBLOCKSIG, 8)){
 #ifdef __DEBUG__
-						Print(L"\n[%s:%u]  >>  ERROR!\nCorrupted FileSystem Root Block\nERASING ENTRY!!", (L"" __FILE__), __LINE__);
+						Print(
+							L"\n[%s:%u]  >>  ERROR!    Corrupted FileSystem Root Block    ERASING ENTRY!!"
+							L"\n    %llu:%u:%u", 
+							(L"" __FILE__), __LINE__, f->fcode, f->attr, f->index
+						);
 #endif
 						__memset(temp, 0, 512);
 						f->fcode = 0;
-						writeblocks(re, temp, getloc(largeroot, f), 1);
+						writeblocks(re, temp, getloc(largeroot, f), sizeof(meta_fsblock));
 					}
-					FreePool(temp);
+					__free(temp);
 				}
 			}
 		}
@@ -343,7 +366,7 @@ fsblock *__faddr(conf_fsroot *root, fsblock *family){
 #endif
 		rawenv re = startup(root->GUID, root->altGUID, root->root->confBlockSize);
 		writeblocks(re, bl0, loc, 1);
-		FreePool(bl0);
+		__free(bl0);
 		dispose(re);
 	}
 	return fb;
@@ -355,7 +378,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 #endif
 	LBA loc = getloc(root, fb);
 	void *block = AllocatePool(root->root->confBlockSize);
-	conf_fsblock *metadata = (conf_fsblock *)block;
+	meta_fsblock *metadata = (meta_fsblock *)block;
 	EFI_TIME time;
 	if(EFI_ERROR(gRT->GetTime(&time, NULL))){time = (EFI_TIME){0};}
 	char *name;
@@ -366,7 +389,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 			}else if(!isascii(path[i])){path[i] = 0;}
 		}
 	}
-	*metadata = (conf_fsblock){
+	*metadata = (meta_fsblock){
 		.accessdate = time.Year,
 		.writedate = 0,
 		.accesstime = (time.Hour * 3600) + (time.Minute * 60) + time.Second,
@@ -389,7 +412,10 @@ void *__fread1(conf_fsroot *root, fsblock *fb, UINTN index){
 		fsblock *fb_ = NULL;
 		for(UINTN cc = 0; cc <root->clusterbuffer.clusterSize; ++cc){
 			if(root->clusterbuffer.clusterMap[cc].fcode == fb->fcode){
-				if(index == root->clusterbuffer.clusterMap[cc].index){fb_ = root->clusterbuffer.clusterMap + cc;    break;}
+				if(
+					(index <= (root->clusterbuffer.clusterMap[cc].index * root->root->confBlockSize) + root->root->confBlockSize) && 
+					(index >= root->clusterbuffer.clusterMap[cc].index)
+				){fb_ = root->clusterbuffer.clusterMap + cc;    break;}
 			}
 		}
 		if(fb_ == NULL){return NULL;}
@@ -475,8 +501,8 @@ dirhandle *__floaddir(conf_fsroot *root, char *path, char *args){
 	}
 	if(flagcheck(out->file->attr, __fsdirectory)){__fdirrefresh(out);
 	}else{
-		FreePool(out->path);
-		FreePool(out);
+		__free(out->path);
+		__free(out);
 		return NULL;
 	}
 	return out;
@@ -496,13 +522,18 @@ void __fuloaddir(dirhandle *handle){
 	fsblock *f = NULL;
 	do{
 		f = __ffindhi(handle->root, handle->file->fcode, entry);
-		if(f){writeblocks(re, handle->dirarray + (getblocksize(re) * (entry - 1)), handle->root->loc + 2 + handle->root->clusterbuffer.nClusterSectors + (((UINTN)f - (UINTN)handle->root->clusterbuffer.clusterMap) / sizeof(fsblock)), 1);}
+		if(f){writeblocks(
+			re, handle->dirarray + (getblocksize(re) * (entry - 1)), 
+			handle->root->loc + 2 + handle->root->clusterbuffer.nClusterSectors + 
+			safediv__(((UINTN)f - (UINTN)handle->root->clusterbuffer.clusterMap), sizeof(fsblock)), 
+			1);
+		}
 		entry++;
 	}while(f);
 	dispose(re);
-	FreePool(handle->dirarray);
-	FreePool(handle->path);
-	FreePool(handle);
+	__free(handle->dirarray);
+	__free(handle->path);
+	__free(handle);
 }
 
 void __fdirrefresh(dirhandle *handle){
@@ -520,8 +551,8 @@ void __fdirrefresh(dirhandle *handle){
 			handle->dirarray = __realloc(handle->dirarray, handle->loadedblocks * getblocksize(re), getblocksize(re) * (blockprogress + 1));
 			void *temp = readblocks(re, getloc(handle->root, fb), handle->root->root->confBlockSize);
 			__memcpy(handle->dirarray + (getblocksize(re) * blockprogress), temp, getblocksize(re));
-			FreePool(temp);
-			for(UINTN cc = 0; cc < getblocksize(re) / sizeof(diritem); ++cc){if(handle->dirarray[cc].local == 0){exit_ = TRUE;	break;}}
+			__free(temp);
+			for(UINTN cc = 0; cc < safediv__(getblocksize(re), sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0){exit_ = TRUE;	break;}}
 			blockprogress++;
 		}else if(!fb){exit_ = TRUE;}
 	}while(!exit_);
@@ -557,12 +588,12 @@ void fsuloadh(fhandle *handle){
 	writeblocks(re, handle->root->root, handle->root->loc, 1);
 	// Flush cluster Array/Buffer
 	writeblocks(re, handle->root->clusterbuffer.clusterMap, handle->root->loc + CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors), handle->root->clusterbuffer.nClusterSectors);
-	FreePool(handle);
+	__free(handle);
 	dispose(re);
 }
 
 
-conf_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
+meta_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 #ifdef __DEBUG__
 	Print(L"\nReading File Info.\tRoot: %llu", fb->fcode);
 #endif
@@ -575,7 +606,7 @@ conf_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 
 void __fupdatetstamp(conf_fsroot *root, fsblock *file, BOOLEAN wt){
 	rawenv re = startup(root->GUID, root->altGUID, root->root->confBlockSize);
-	conf_fsblock *finfo = __freadinfo(root, file);
+	meta_fsblock *finfo = __freadinfo(root, file);
 	LBA loc = getloc(root, file);
 	EFI_TIME time;
 	if(!EFI_ERROR(gST->RuntimeServices->GetTime(&time, NULL))){
@@ -590,28 +621,69 @@ void __fupdatetstamp(conf_fsroot *root, fsblock *file, BOOLEAN wt){
 	dispose(re);
 }
 
-conf_fsblock *_dreadinfo(dirhandle *handle){return __freadinfo(handle->root, handle->file);}
-conf_fsblock *_freadinfo(fhandle *handle){return __freadinfo(handle->root, handle->file);}
+meta_fsblock *_dreadinfo(dirhandle *handle){return __freadinfo(handle->root, handle->file);}
+meta_fsblock *_freadinfo(fhandle *handle){return __freadinfo(handle->root, handle->file);}
 
 void _fseek(fhandle *handle, UINTN progress){handle->progress = progress;}
 void _fseeko(fhandle *handle, INTN progress){handle->progress += progress;}
 
-void _fpush1(fhandle *handle, void *buffer){
-	// Update TimeStamp
-	__fupdatetstamp(handle->root, handle->file, TRUE);
-	if(!flagcheck((__ffindh(handle->root, handle->file->fcode))->attr, __fsreadonly)){
-		__fpush1(handle->root, handle->file, handle->progress, buffer);
-	}
+UINTN _fwrite(fhandle *handle, UINTN nbytes, const void *data){
+    if(!handle || !data || nbytes == 0){return 0;}
+    UINTN blkSize = handle->root->root->confBlockSize;
+    UINT64 pos    = handle->progress;      // byte offset in file
+    UINTN left    = nbytes;
+    UINTN written = 0;
+    __fupdatetstamp(handle->root, handle->file, TRUE);
+    if(flagcheck((__ffindh(handle->root, handle->file->fcode))->attr, __fsreadonly)){return 0;}
+    while(left > 0){
+        UINT64 blkIndex   = pos / blkSize;
+        UINTN  blkOffset  = (UINTN)(pos % blkSize);
+        UINTN  chunk      = blkSize - blkOffset;
+        if(chunk > left){chunk = left;}
+        void *blk = __fread1(handle->root, handle->file, blkIndex);
+        if(!blk){
+            blk = __calloc(1, blkSize);
+            if(!blk){break;}
+        }
+        __safecopy(blk + blkOffset, data + written, chunk);
+        __fpush1(handle->root, handle->file, blkIndex, blk);
+        __free(blk);
+        written      += chunk;
+        pos          += chunk;
+        left         -= chunk;
+    }
+    handle->progress = pos;
+    return nbytes - left;
 }
+UINTN _fread(fhandle *h, UINTN nbytes, void **dataout){
+    UINT32 bsize = h->root->root->confBlockSize;
+    UINTN progress = h->progress;
 
-void *_fread1(fhandle *handle){
-#ifdef __DEBUG__
-	Print(L"\nReading 1 Block from Block: %llu", getloc(handle->root, handle->file));
-#endif
-	// Update TimeStamp
-	__fupdatetstamp(handle->root, handle->file, TRUE);
-	void *buffer = __fread1(handle->root, handle->file, handle->progress);
-	return buffer;
+    UINTN remaining = nbytes;
+    UINTN written = 0;
+
+	__fupdatetstamp(h->root, h->file, false);
+
+    void *out = __calloc(1, nbytes);
+    if(!out){return 0;}
+    while(remaining > 0){
+        UINTN block_index = progress / bsize;
+        UINTN offset      = progress % bsize;
+        UINTN chunk = bsize - offset;
+
+        void *blk = __fread1(h->root, h->file, block_index);
+        if(!blk){break;}
+        if(chunk > remaining){chunk = remaining;}
+
+        __memcpy(out + written, blk + offset, chunk);
+        __free(blk);
+        written  += chunk;
+        progress += chunk;
+        remaining -= chunk;
+    }
+    h->progress = progress;
+    *dataout = out;
+    return nbytes - remaining;
 }
 
 dirhandle *__fgetparent(conf_fsroot *root, char *path){
@@ -621,7 +693,7 @@ dirhandle *__fgetparent(conf_fsroot *root, char *path){
 	for(; cc > 0; --cc){if(dup[cc] == PATHSEP || dup[cc] == PATHnoSEP){dup[cc] = '\0';	break;}}
 	if(cc == 0){return NULL;}
 	dirhandle *out = __floaddir(root, dup, "dc");
-	FreePool(dup);
+	__free(dup);
 	return out;
 }
 
@@ -658,9 +730,10 @@ BOOLEAN __ftest(fhandle *h){
 	void *_block = AllocatePool(h->root->root->confBlockSize);
 	trng__(_block, h->root->root->confBlockSize);
 	_fseek(h, 1);
-	_fpush1(h, _block);
+	_fwrite(h, h->root->root->confBlockSize, _block);
 	_fseeko(h, -1);
-	void *__block = _fread1(h);
+	void *__block = NULL;
+	_fread(h, h->root->root->confBlockSize, &__block);
 	if(__block){
 		Print(L"\n");
 		for(UINTN cc = 0; cc < h->root->root->confBlockSize; ++cc){
@@ -673,31 +746,31 @@ BOOLEAN __ftest(fhandle *h){
 #endif
 			}
 		}
-	   FreePool(__block);
+	   __free(__block);
 	}
-	FreePool(_block);
+	__free(_block);
 	return out;
 }
 
 unhandle *__fdirlist(dirhandle *dir, UINTN *index){
 	__fdirrefresh(dir);
-	if((((*index) * sizeof(diritem)) / dir->root->root->confBlockSize) < dir->loadedblocks){
+	if(safediv__(((*index) * sizeof(diritem)), dir->root->root->confBlockSize) < dir->loadedblocks){
 		diritem *ditem = dir->dirarray + (*index);
 		(*index)++;
 		fsblock *fb = __ffindh(dir->root, ditem->fcode);
 		if(fb){
 			if(fb->fcode == ditem->fcode && (fb->fcode != 0)){
-				conf_fsblock *finfo = __freadinfo(dir->root, fb);
+				meta_fsblock *finfo = __freadinfo(dir->root, fb);
 				char *temp = __strdup(dir->path);
 				temp = __realloc(temp, __strlen(dir->path), __strlen(temp) + __strlen(finfo->name) + 2);
 				__memcpy(temp + __strlen(dir->path) + (*finfo->name != '/'), finfo->name, __strlen(finfo->name) + 1);
 				temp[__strlen(dir->path)] = PATHSEP;
-				FreePool(finfo);
+				__free(finfo);
 				unhandle *out = AllocatePool(sizeof(unhandle));
 				if((out->dir = flagcheck(fb->attr, __fsdirectory))){
 					out->dhandle_ = __floaddir(dir->root, temp, "");
 				}else{out->fhandle_ = fsloadh(dir->root, temp, "f");}
-				FreePool(temp);
+				__free(temp);
 				return out;
 			}else{
 				// Remove Entry
@@ -722,9 +795,9 @@ dirrunner *__dirr_init(dirhandle *handle, char *patternmatcher){
 	dr->dir_stack = __calloc(dr->stack_size, sizeof(dirhandle*));
 	dr->idx_stack = __calloc(dr->stack_size, sizeof(UINTN));
 	if(!dr->dir_stack || !dr->idx_stack){
-		FreePool(dr->dir_stack);
-		FreePool(dr->idx_stack);
-		FreePool(dr);
+		__free(dr->dir_stack);
+		__free(dr->idx_stack);
+		__free(dr);
 		return NULL;
 	}
 	dr->dir_stack[0] = handle;
@@ -733,10 +806,10 @@ dirrunner *__dirr_init(dirhandle *handle, char *patternmatcher){
 }
 
 static BOOLEAN __dirr_matches(dirrunner *dr, unhandle *item){
-	conf_fsblock *info = item->dir ? _dreadinfo(item->dhandle_) : _freadinfo(item->fhandle_);
+	meta_fsblock *info = item->dir ? _dreadinfo(item->dhandle_) : _freadinfo(item->fhandle_);
 	if(!info){return FALSE;}
 	BOOLEAN match = __pattmatch(dr->pattmatcher, info->name);
-	FreePool(info);
+	__free(info);
 	return match;
 }
 
@@ -767,9 +840,9 @@ void __dirr_free(dirrunner *dr){
 	for(UINTN cc = 0; cc < dr->stack_depth; ++cc){
 		if(dr->dir_stack[cc]){if(cc > 0){__fuloaddir(dr->dir_stack[cc]);}}
 	}
-	FreePool(dr->dir_stack);
-	FreePool(dr->idx_stack);
-	FreePool(dr);
+	__free(dr->dir_stack);
+	__free(dr->idx_stack);
+	__free(dr);
 }
 
 unhandle *__dirr(dirrunner *dr){
@@ -800,18 +873,18 @@ unhandle *__dirr(dirrunner *dr){
 		BOOLEAN matches = __dirr_matches(dr, item);
 		if(item->dir){
 			if(!__dirr_push(dr, item->dhandle_)){
-				FreePool(item);
+				__free(item);
 				return NULL;
 			}
 		}
 		if(matches){return item;}
-		FreePool(item);
+		__free(item);
 	}
 
 	return NULL;
 }
 
-void __fprint_info(conf_fsblock *finfo){
+void __fprint_info(meta_fsblock *finfo){
 	Print(
 		L"\nFile Info:"
 		L"\nSignature: %.8s"
@@ -830,16 +903,16 @@ void __fprint_info(conf_fsblock *finfo){
 		(flagcheck(finfo->attributes, __fsdirectory) ? "TRUE": "FALSE"), (flagcheck(finfo->attributes, __fsfile) ? "TRUE": "FALSE"), 
 		(flagcheck(finfo->attributes, __fsreadonly) ? "TRUE": "FALSE"), 
 		finfo->name, 
-		(UINT32)(finfo->accesstime / 3600), 
-		(UINT32)((finfo->accesstime % 3600) / 60),
+		(UINT32)(safediv__(finfo->accesstime, 3600)), 
+		(UINT32)(safediv__((finfo->accesstime % 3600), 60)),
 		(UINT32)(finfo->accesstime % 60), 
-		(UINT32)(finfo->writetime / 3600), 
-		(UINT32)((finfo->writetime % 3600) / 60),
+		(UINT32)(safediv__(finfo->writetime, 3600)), 
+		(UINT32)(safediv__((finfo->writetime % 3600), 60)),
 		(UINT32)(finfo->writetime % 60), 
 		finfo->accessdate, finfo->writedate
 	);
 }
 
 LBA getloc(conf_fsroot *root, fsblock *fb){
-	return DATAFIRST(root) + (((UINTN)fb - (UINTN)root->clusterbuffer.clusterMap) / sizeof(fsblock));
+	return DATAFIRST(root) + safediv__(((UINTN)fb - (UINTN)root->clusterbuffer.clusterMap), sizeof(fsblock));
 }

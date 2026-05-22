@@ -132,7 +132,7 @@ conf_fsroot *fmount(char *path){
 			fsblock *f = largeroot->clusterbuffer.clusterMap + i;
 			if(f->fcode != 0){
 				if(flagcheck(f->attr, __fsmetadatacluster) && f->fcode != 0){
-					conf_fsblock *temp = readblock(re, largeroot->loc + 2 + largeroot->clusterbuffer.clusterSectors + (((size_t)f - (size_t)largeroot->clusterbuffer.clusterMap) / sizeof(fsblock)), 1);
+					meta_fsblock *temp = readblock(re, largeroot->loc + 2 + largeroot->clusterbuffer.clusterSectors + (((size_t)f - (size_t)largeroot->clusterbuffer.clusterMap) / sizeof(fsblock)), 1);
 					if(memcmp(temp->fsig, FRATBLOCKSIG, 8)){
 						printf("\nERROR!\nCorrupted FileSystem Root Block\nERASING ENTRY!!");
 						memset(temp, 0, 512);
@@ -239,7 +239,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 #endif
 	LBA loc = getloc(root, fb);
 	void *block = malloc(getblocksize());
-	conf_fsblock *metadata = (conf_fsblock *)block;
+	meta_fsblock *metadata = (meta_fsblock *)block;
 	time_t t = time(NULL);
 	struct tm *truetime = localtime(&t);
 	char *name;
@@ -250,7 +250,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 			}else if(!isascii(path[i])){path[i] = 0;}
 		}
 	}
-	*metadata = (conf_fsblock){
+	*metadata = (meta_fsblock){
 		.accessdate = truetime->tm_yday,
 		.writedate = 0,
 		.accesstime = (truetime->tm_hour * 3600) + (truetime->tm_min * 60) + truetime->tm_sec,
@@ -466,7 +466,7 @@ void fsuloadh(fhandle *handle){
 }
 
 
-conf_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
+meta_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 #ifdef __DEBUG__
 	printf("\nReading File Info.\tRoot: %zu", fb->fcode);
 #endif
@@ -479,7 +479,7 @@ conf_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 
 void __fupdatetstamp(conf_fsroot *root, fsblock *file, bool wt){
 	rawenv *re = startup(ppath);
-	conf_fsblock *finfo = __freadinfo(root, file);
+	meta_fsblock *finfo = __freadinfo(root, file);
 	LBA loc = getloc(root, file);
 	time_t t = time(NULL);
 	struct tm *truetime = localtime(&t);
@@ -491,8 +491,8 @@ void __fupdatetstamp(conf_fsroot *root, fsblock *file, bool wt){
 	dispose(re);
 }
 
-conf_fsblock *_dreadinfo(dirhandle *handle){return __freadinfo(handle->root, handle->file);}
-conf_fsblock *_freadinfo(fhandle *handle){return __freadinfo(handle->root, handle->file);}
+meta_fsblock *_dreadinfo(dirhandle *handle){return __freadinfo(handle->root, handle->file);}
+meta_fsblock *_freadinfo(fhandle *handle){return __freadinfo(handle->root, handle->file);}
 
 void _fseek(fhandle *handle, size_t progress){handle->progress = progress;}
 void _fseeko(fhandle *handle, ssize_t progress){handle->progress += progress;}
@@ -606,7 +606,7 @@ unhandle *__fdirlist(dirhandle *dir, size_t *index){
 		fsblock *fb = __ffindh(dir->root, ditem->fcode);
 		if(fb){
 			if(fb->fcode == ditem->fcode && (fb->fcode != 0)){
-				conf_fsblock *finfo = __freadinfo(dir->root, fb);
+				meta_fsblock *finfo = __freadinfo(dir->root, fb);
 				char *temp = strdup(dir->path);
 				temp = realloc(temp, strlen(temp) + strlen(finfo->name) + 2);
 				memcpy(temp + strlen(dir->path) + (*finfo->name != '/'), finfo->name, strlen(finfo->name) + 1);
@@ -652,7 +652,7 @@ dirrunner *__dirr_init(dirhandle *handle, char *patternmatcher){
 }
 
 static bool __dirr_matches(dirrunner *dr, unhandle *item){
-	conf_fsblock *info = item->dir ? _dreadinfo(item->dhandle_) : _freadinfo(item->fhandle_);
+	meta_fsblock *info = item->dir ? _dreadinfo(item->dhandle_) : _freadinfo(item->fhandle_);
 	if(!info){return false;}
 	bool match = __pattmatch(dr->pattmatcher, info->name);
 	free(info);
@@ -730,7 +730,7 @@ unhandle *__dirr(dirrunner *dr){
 	return NULL;
 }
 
-void __fprint_info(conf_fsblock *finfo){
+void __fprint_info(meta_fsblock *finfo){
 	printf(
 		"\nFile Info:"
 		"\nSignature: %.8s"

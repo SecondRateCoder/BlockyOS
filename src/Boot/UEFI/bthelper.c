@@ -53,7 +53,7 @@ void DebugDevicePath(EFI_DEVICE_PATH *ROOT){
 	while(!IsDevicePathEnd(ROOT)){
 		CHAR16 *C16 = DescribeDeviceNode(ROOT);
 		Print(L"%s  ", C16);
-		FreePool(C16);
+		__free(C16);
 		ROOT = NextDevicePathNode(ROOT);
 	}
 	Print(L"  ]");
@@ -165,7 +165,7 @@ __efiDevNode **loadDNodes(UINTN *nNodes){
 		Print(L"\nError Getting Handles");
 #endif
 	}
-	FreePool(handles);
+	__free(handles);
 	dNodes = ReallocatePool(sizeof(__efiDevNode *) * nHandles, sizeof(__efiDevNode *) * (*nNodes), dNodes);
 #ifdef __DEBUG__
 		Print(L"\nReturning Expanded Node Tree");
