@@ -10,6 +10,8 @@
 
 #include "src/Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
+#define FUNCAPI __attribute__((ms_abi))
+
 #define SAFEOP(A, B, CompAOp, CompA, CompBOp, CompB, Comp, OP, Alt)    (((A CompAOp CompA) Comp (B CompBOp CompB))? (A OP B): Alt)
 
 #define safediv__(A, B)     SAFEOP((A), (B), ||, TRUE, !=, 0, &&, /, 1)
@@ -51,7 +53,7 @@ static inline VOID IoWrite8Inline(UINT16 Port, UINT8 Value){
         : "a"(Value), "Nd"(Port)
     );}
 #ifdef __DEBUG__
-const EFI_PHYSICAL_ADDRESS DebugPort = 0x402;
+extern const EFI_PHYSICAL_ADDRESS DebugPort;
 #define BUFDEFPRINT(mem, nbytes, countername)	for(UINTN countername = 0; countername < abs(nbytes); ++countername){IoWrite8Inline(DebugPort, ((uint8_t *)mem)[countername]);}
 #else
 #define BUFDEFPRINT(...)
@@ -72,6 +74,14 @@ typedef struct __efiDevNode{
 	}local__;
 }__efiDevNode;
 
+typedef struct {
+    UINT32 Attributes;
+    UINT16 FilePathListLength;
+    // CHAR16 Description[];          // variable length
+    // EFI_DEVICE_PATH_PROTOCOL[];   // variable length
+    // OptionalData[];               // variable length
+} MY_LOAD_OPTION;
+
 #define __efiIsFinal(node)      ((node)->local__.children == NULL)
 #define __efiIsFirst(node)      ((node)->local__.parent == NULL)
 #define __efiStepDown(node)     (!__efiIsFinal(node)? *((node)->local__.children): NULL)
@@ -84,6 +94,8 @@ EFI_DEVICE_PATH *getDevPath(EFI_DEVICE_PATH *dPath, UINT32 dType, UINT32 sType);
 void DebugDevicePath(EFI_DEVICE_PATH *ROOT);
 CHAR16 *DescribeDeviceNode(EFI_DEVICE_PATH *Node);
 __efiDevNode *BuildDeviceTree(EFI_DEVICE_PATH *Path);
+static CHAR16 *EfiMemoryTypeToStr(UINT32 type);
+EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSize, UINT32 *descVersion);
 
 enumdef(strtokflags, uint32_t){
 	strtok__ForceSameBorderingDelims = 0x1,
@@ -162,3 +174,5 @@ BOOLEAN IsPartition(EFI_DEVICE_PATH *Dp);
 EFI_DEVICE_PATH *GetDevicePath(EFI_HANDLE Handle);
 
 GPTeNSTR *makeGPTeNSTR(char *str);
+
+VOID RestartSystem();

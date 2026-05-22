@@ -142,6 +142,8 @@ typedef struct dirrunner{
 }dirrunner;
 
 LBA getloc(conf_fsroot *root, fsblock *fb);
+UINTN __fsize(fhandle *fh);
+UINTN __dsize(dirhandle *dh);
 
 BOOLEAN checkdisk(EFI_GUID GUID, EFI_GUID altGUID);
 partdim queryparttablefs(miniGPT *gpt, rawenv re);

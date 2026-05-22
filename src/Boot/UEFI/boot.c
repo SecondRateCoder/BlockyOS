@@ -1,5 +1,7 @@
 #include "standard.h"
 
+const EFI_PHYSICAL_ADDRESS DebugPort = 0x402;
+
 void libinit(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 #ifdef __DEBUG__
 	Print(L"\nIntitialising GNU-EFI");
@@ -21,8 +23,8 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	// Initialise GNU-EFI
 	libinit(Image, Table);
 	// Initialise Hardware Device Tree
-	UINTN nNodes = 0;	UINT32 ntries = 3;
-	__efiDevNode **dNodes = loadDNodes(&nNodes);
+	UINT32 ntries = 3;
+	__bootinfo *bootout = gatherbootinfo();
 	// Open FrAT Socket
 	socket_t *fs = NULL;
 	do{
@@ -52,10 +54,28 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 		__free(str);
 		ntries--;
 	}while(fs == NULL && ntries);
-	if(fs == NULL){Print(L"Failed to retrieve FS Socket");}
+	if(fs == NULL){Print(L"\nFailed to retrieve FS Socket");}
+	else{Print(L"\nGot FS Socket");}
+
+	// Load the Executable
+#ifdef __DEBUG__
+	Print(L"\nfs->open ptr = %p", fs->open);
+	UINT8 *p = (UINT8 *)fs->open;
+	// BUFDEFPRINT(p, 64, cc);
+#endif
+	socket_ret ret = socketfunc(fs->open)(fs, sizeof(char *) * 2, KERNELEXE, "f");
+	if(flagcheck(ret.errout, __noerr)){
+		socket_t *exe = ret.data;
+		meta_fsblock *metadata = _freadinfo((fhandle *)exe->persistent);
+		void *loadin = __calloc(1, __fsize((fhandle *)exe->persistent));
+		kernelmain main = (kernelmain)__resolve((socket_t *)ret.data, loadin);
+		uefi_call_wrapper(gBS->ExitBootServices, 2, Image, bootout->memory.mapKey);
+		main(bootout);
+	}
+
 #ifdef __DEBUG__
 	Print(L"\nRetrieved Expanded Node Tree");
 #endif
 	
-	return EFI_SUCCESS;
+	return EFI_ABORTED;
 }

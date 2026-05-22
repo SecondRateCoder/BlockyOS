@@ -2,10 +2,44 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug EXEC-Utils",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask": "Build EXEC Utils",
+            "program": "${workspaceFolder}//tools//executable-format//exechandler.exe",
+            "args": [
+                "${workspaceFolder}\\tools\\executable-format\\test\\test.exe",
+                "${workspaceFolder}\\tools\\executable-format\\output-1.exe"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        }, {
             "name": "Debug FS-Utils",
             "type": "cppdbg",
             "request": "launch",
-            "preLaunchTask": "Build Utils",
+            "preLaunchTask": "Build FS Utils",
             "program": "${workspaceFolder}//tools//filesystem//fs.exe",
             "args": [
                 "${workspaceFolder}/Build/temp/image.img"
@@ -58,7 +92,7 @@
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}\\compile\\intermid.ps1",
-            "args": ["-run", "qemu", "-imagetype", "default"],
+            "args": ["-run", "qemu", "-imagetype", "release"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",

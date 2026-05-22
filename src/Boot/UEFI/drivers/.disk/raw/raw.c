@@ -283,7 +283,5 @@ void dispose(rawenv re){
 #ifdef __DEBUG__
 	Print(L"\nClosing Disk Interface >> {");prGUID(re->GUID);Print(L"}");
 #endif
-	EFI_GUID BlkIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID;
-	uefi_call_wrapper(gBS->CloseProtocol, 3, &BlkIoGuid, re->handle, NULL);
 	__free(re);
 }

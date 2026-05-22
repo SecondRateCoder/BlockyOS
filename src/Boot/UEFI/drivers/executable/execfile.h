@@ -1,14 +1,22 @@
+#pragma once
+
 #include "efi.h"
 #include "efilib.h"
 
 #include "src/Boot/UEFI/drivers/socket/socket.h"
 #include "src/Boot/UEFI/tools/tools.h"
 
+void *__resolve(socket_t *socket, void *newbase);
+
 #define DEFAULTSECLOADSIZE (4 * (1024 * 1024))   // 4Mb
 #define DEFAULTSECLOADMAX  (32 * (1024 * 1024))  // 32Mb
 #define MAGICDEF(name, nItems) typedef union name{char MAGIC[nItems];    UINTN MAGICINT[nItems / sizeof(UINTN)];}name;
 #define EXECSECRTIONREFPATHLEN 16
 #define offsetcalc(sym, base) ((ptrdiff_t)((char *)(sym) - (char *)(base)))
+#define SYMPREFIX ".sym."
+#define RELOCPREFIX ".rel."
+#define FIND_RELOC(sec, hdr) srchSecWithPrefix(hdr, sec, RELOCPREFIX)
+#define FIND_SYMTAB(sec, hdr) srchSecWithPrefix(hdr, sec, SYMPREFIX)
 
 MAGICDEF(SYMMAGIC, 8);
 typedef struct symref{
@@ -19,6 +27,12 @@ typedef struct symref{
 }symref;
 bufdef(symimporttable, symref, UINTN);
 
+typedef struct symdecl{
+	symref symbol;                          // Declared symbol info
+	char   parent[EXECSECRTIONREFPATHLEN];  // Owning section/path
+}symdecl;
+bufdef(symexttable, symdecl, UINTN);
+
 // Unsupported yet.
 typedef struct symsharein{
 	char export[256];
@@ -27,13 +41,8 @@ typedef struct symsharein{
 typedef struct symshareout{
 	char export[256];
 	symexttable exports;
-}symexternal;
+}syminternal;
 
-typedef struct symdecl{
-	symref symbol;                          // Declared symbol info
-	char   parent[EXECSECRTIONREFPATHLEN];  // Owning section/path
-}symdecl;
-bufdef(symexttable, symdecl, UINTN);
 
 enumdef(__execsecref_attributes_t, UINT32){
 	__noliveload  = 0x1,
@@ -69,6 +78,7 @@ typedef struct exech{
 	UINTN          attributes;
 	UINTN          imageBase;
 	UINT16         nSections;
+	symref	loadin;
 	// For loader use only
 	execsectionref *sections;
 }exech;

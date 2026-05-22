@@ -39,16 +39,18 @@ $CARGS = @(
 	'-I', (Join-Path (Get-Location) "compile\toolchain\prebuild\include\"), '-I',"$($EFIPARENT)include\efi\legacy\",
 	'-I', "$($EFIPARENT)include\efi\$(if($ARCHITECTURE -eq 'x86_64'){'x86_64'}else{'ia32'})\", 
 	'-fno-strict-aliasing', '-fno-stack-protector', '-fno-stack-check',
-	'-fdiagnostics-color=always', '-fshort-wchar',
-	'-fno-stack-protector', '-fno-stack-check', '-ffreestanding', 
+	'-fdiagnostics-color=always', '-fshort-wchar', '-fno-inline', '-fno-toplevel-reorder',
+	'-ffunction-sections', '-fdata-sections', '-fno-delete-null-pointer-checks',
+	'-fno-stack-protector', '-fno-stack-check', '-ffreestanding', '-fno-lto',
 	'-fPIC', '-maccumulate-outgoing-args', '-mno-red-zone', '-fno-omit-frame-pointer',
 	"-m$(if($ARCHITECTURE -eq 'x86_64'){'64'}else{'32'})",
 	'-D', "$(if($ARCHITECTURE -eq 'x86_64'){'__x86_64__'}else{'__ia32__', '-D', 'EFI32'})", '-D', '__DEBUG__', '-D', '__CUSTMEM_FUNC__'
 )
 if($ENABLEDEBUGGABLE){$CARGS += '-D', 'EFI_DEBUG', '-g', '-Og'}
 if($ENABLENTEMULATOR){$CARGS += '-D', 'EFI_NT_EMULATOR'}
-# if($ARCHITECTURE -eq 'x86_64'){$CARGS += '-D', '__x86_64__', '-D', 'HAVE_USE_MS_ABI'}
-if($ARCHITECTURE -eq 'x86_64'){$CARGS += '-D', '__x86_64__'}
+if($ARCHITECTURE -eq 'x86_64'){
+	$CARGS += '-D', '__x86_64__'#, '-D', 'HAVE_USE_MS_ABI'
+}
 elseif($ARCHITECTURE -eq 'x86'){$CARGS += '-D', 'EFI32', '-D', '__ia32__'}
 
 

@@ -1,0 +1,1263 @@
+===== Step 1: Compile Bootloaders =====
+===== Step 1.1: Compile Legacy BootLoader Blob =====
+Legacy bootloader compiled: C:\GitHub\BlockyOS\Build\Build-2026-05-22-59\boot-part\legacyblob.bin
+===== Step 1.2: Compile UEFI BootLoader Blob =====
+UEFI bootloader compiled: C:\GitHub\BlockyOS\Build\Build-2026-05-22-59\boot-part\efi\boot\bootx64.efi
+===== Step 2: Create Disk Layout (GPT) =====
+Creating GPT disk: C:\GitHub\BlockyOS\Build\Build-2026-05-22-59\disk.img
+===== Step 3: Format Boot Partition (FAT32) =====
+Formatting boot partition with FAT32...
+Boot partition formatted successfully
+===== Step 4: Validating Image =====
+Double-verifying Image
+Command:  qemu-system-x86_64 -vga std -cpu qemu64 -m 2048 -machine q35 -smp 4 -net none -serial stdio -L C:\GitHub\BlockyOS\compile\toolchain\uefi\release -drive if=pflash,format=raw,readonly=on,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\release\OVMF_CODE.fd -drive unit=0,file=C:\GitHub\BlockyOS\Build\Build-2026-05-22-59\disk.img,format=raw,if=none,id=maindrive -device virtio-blk-pci,drive=maindrive -debugcon file:C:\GitHub\BlockyOS\Build\Build-2026-05-22-59\debugger.log -global isa-debugcon.iobase=0x402 -usb -usbdevice keyboard -usbdevice mouse -display sdl -vga cirrus -drive if=pflash,format=raw,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\release\OVMF_VARS.fd 
+[2J[001;001H[=3h[2J[001;001H[2J[001;001H[8;031;100t[2J[001;001H[2J[001;001H[8;056;240t[2J[001;001HBdsDxe: loading Boot0002 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
+BdsDxe: starting Boot0002 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
+Sanity Check[0]
+DEBUG: 0x7E83D618; 0x7F5EC018
+GUID:
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7A8018
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7A8018
+Intitialising GNU-EFI
+Post GNU-EFI Init
+Allocating 1 item(s) of 136 bytes    Out Buffer: 0x7E7A8018
+Setting 136 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\bthelper.c:238]
+Loading Device Tree
+Call Error#0: 3    Call Error#1: 3    
+Loading Node    ??    [Media(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #2    "Media(Unknown)"
+Call Error#3: 3    Call Error#4: 3    Call Error#5: 3    Call Error#6: 3    Call Error#7: 3    Call Error#8: 3    Call Error#9: 3    
+Loading Node    ??    [MemMap(FFC00000-FFC83FFF)]Call #10    "MemMap(FFC00000-FFC83FFF)"
+Call Error#11: 3    Call Error#12: 3    Call Error#13: 3    Call Error#14: 3    Call Error#15: 3    Call Error#16: 3    Call Error#17: 3    Call Error#18: 3    Call Error#19: 3    Call Error#20: 3    Call Error#21: 3    Call Error#22: 3    Call Error#23: 3    Call Error#24: 3    Call Error#25: 3    Call Error#26: 3    Call Error#27: 3    Call Error#28: 3    Call Error#29: 3    Call Error#30: 3    Call Error#31: 3    Call Error#32: 3    Call Error#33: 3    Call Error#34: 3    Call Error#35: 3    Call Error#36: 3    Call Error#37: 3    Call Error#38: 3    Call Error#39: 3    Call Error#40: 3    Call Error#41: 3    Call Error#42: 3    Call Error#43: 3    Call Error#44: 3    Call Error#45: 3    Call Error#46: 3    Call Error#47: 3    Call Error#48: 3    Call Error#49: 3    Call Error#50: 3    
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]Call #51    "ACPI(HID=0A0341D0    UID=00000000)"
+Call Error#52: 3    Call Error#53: 3    Call Error#54: 3    Call Error#55: 3    Call Error#56: 3    Call Error#57: 3    Call Error#58: 3    Call Error#59: 3    Call Error#60: 3    Call Error#61: 3    Call Error#62: 3    Call Error#63: 3    Call Error#64: 3    Call Error#65: 3    Call Error#66: 3    Call Error#67: 3    Call Error#68: 3    Call Error#69: 3    Call Error#70: 3    Call Error#71: 3    Call Error#72: 3    Call Error#73: 3    
+Loading Node    ??    [Hardware(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #74    "Hardware(Unknown)"
+Call Error#75: 3    Call Error#76: 3    Call Error#77: 3    
+Loading Node    ??    [Hardware(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #78    "Hardware(Unknown)"
+
+Loading Node    ??    [Hardware(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #79    "Hardware(Unknown)"
+Call Error#80: 3    Call Error#81: 3    Call Error#82: 3    Call Error#83: 3    
+Loading Node    ??    [Hardware(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #84    "Hardware(Unknown)"
+Call Error#85: 3    Call Error#86: 3    Call Error#87: 3    Call Error#88: 3    Call Error#89: 3    Call Error#90: 3    Call Error#91: 3    Call Error#92: 3    Call Error#93: 3    Call Error#94: 3    Call Error#95: 3    Call Error#96: 3    Call Error#97: 3    Call Error#98: 3    Call Error#99: 3    Call Error#100: 3    Call Error#101: 3    Call Error#102: 3    Call Error#103: 3    Call Error#104: 3    Call Error#105: 3    Call Error#106: 3    Call Error#107: 3    Call Error#108: 3    Call Error#109: 3    Call Error#110: 3    Call Error#111: 3    Call Error#112: 3    Call Error#113: 3    Call Error#114: 3    Call Error#115: 3    Call Error#116: 3    Call Error#117: 3    Call Error#118: 3    Call Error#119: 3    Call Error#120: 3    Call Error#121: 3    Call Error#122: 3    Call Error#123: 3    Call Error#124: 3    Call Error#125: 3    Call Error#126: 3    Call Error#127: 3    Call Error#128: 3    Call Error#129: 3    Call Error#130: 3    Call Error#131: 3    Call Error#132: 3    Call Error#133: 3    Call Error#134: 3    Call Error#135: 3    Call Error#136: 3    Call Error#137: 3    Call Error#138: 3    
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(0,0)]Call #139    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(1,0)]Call #140    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(2,0)]Call #141    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,0)]Call #142    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,1)]Call #143    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,2)]Call #144    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,7)]Call #145    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]Call #146    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,2)]Call #147    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,3)]Call #148    "ACPI(HID=0A0341D0    UID=00000000)"
+Call Error#149: 3    
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(1,0)]
+Loading Node    ??    [ACPI(HID=80010100    UID=0004FF7F)]Call #150    "ACPI(HID=0A0341D0    UID=00000000)"
+Call Error#151: 3    Call Error#152: 3    
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=050141D0    UID=00000000)]Call #153    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=050141D0    UID=00000001)]Call #154    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=030341D0    UID=00000000)]Call #155    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=050141D0    UID=00000000)]
+Loading Node    ??    [Messaging(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #156    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=050141D0    UID=00000000)]
+Loading Node    ??    [Messaging(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #157    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,7)]
+Loading Node    ??    [USB(Port 0)]Call #158    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,7)]
+Loading Node    ??    [USB(Port 1)]Call #159    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(2,0)]
+Loading Node    ??    [HD(Part 1    Start 800    End 80000)]Call #160    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(2,0)]
+Loading Node    ??    [HD(Part 2    Start 80800    End 200000)]Call #161    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(2,0)]
+Loading Node    ??    [HD(Part 3    Start 280800    End 1)]Call #162    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,2)]
+Loading Node    ??    [SATA(Port 2    PM 65535    Lun 0)]Call #163    "ACPI(HID=0A0341D0    UID=00000000)"
+Call Error#164: 3    
+[C:\GitHub\BlockyOS\src\Boot\UEFI\bthelper.c:168]   Freeing Buffer    0x7E7A1018
+Returning Expanded Node Tree
+Getting the Memory Map=== UEFI Memory Map (98 entries) ===
+Descriptor Size: 4704, #n Items: 98  Version: 1
+
+[0] EfiConventionalMemory  Start: 0x0  Pages: 135  Size: 540 KB
+[1] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[2] Unknown  Start: 0x0  Pages: 557056  Size: 2228224 KB
+[3] Unknown  Start: 0xF  Pages: 7  Size: 28 KB
+[4] EfiReservedMemoryType  Start: 0x700  Pages: 0  Size: 0 KB
+[5] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[6] EfiConventionalMemory  Start: 0x808000  Pages: 3  Size: 12 KB
+[7] EfiReservedMemoryType  Start: 0xA  Pages: 0  Size: 0 KB
+[8] Unknown  Start: 0x0  Pages: 8437760  Size: 33751040 KB
+[9] EfiRuntimeServicesData  Start: 0xF  Pages: 6  Size: 24 KB
+[10] EfiReservedMemoryType  Start: 0x1  Pages: 0  Size: 0 KB
+[11] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[12] EfiACPIMemoryNVS  Start: 0x814000  Pages: 236  Size: 944 KB
+[13] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[14] Unknown  Start: 0x0  Pages: 24641536  Size: 98566144 KB
+[15] Unknown  Start: 0xF  Pages: 4  Size: 16 KB
+[16] EfiReservedMemoryType  Start: 0x20  Pages: 0  Size: 0 KB
+[17] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[18] EfiLoaderCode  Start: 0x7E088000  Pages: 45  Size: 180 KB
+[19] EfiReservedMemoryType  Start: 0x7  Pages: 0  Size: 0 KB
+[20] Unknown  Start: 0x0  Pages: 2114830336  Size: 8459321344 KB
+[21] EfiRuntimeServicesData  Start: 0xF  Pages: 4  Size: 16 KB
+[22] EfiReservedMemoryType  Start: 0x6BD  Pages: 0  Size: 0 KB
+[23] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[24] EfiConventionalMemory  Start: 0x7E7A1000  Pages: 1  Size: 4 KB
+[25] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[26] Unknown  Start: 0x0  Pages: 2121957376  Size: 8487829504 KB
+[27] EfiLoaderCode  Start: 0xF  Pages: 4  Size: 16 KB
+[28] EfiReservedMemoryType  Start: 0xB5  Pages: 0  Size: 0 KB
+[29] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[30] EfiBootServicesData  Start: 0x7E867000  Pages: 3  Size: 12 KB
+[31] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[32] Unknown  Start: 0x0  Pages: 2122776576  Size: 8491106304 KB
+[33] EfiLoaderCode  Start: 0xF  Pages: 3  Size: 12 KB
+[34] EfiReservedMemoryType  Start: 0xB  Pages: 0  Size: 0 KB
+[35] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[36] EfiBootServicesCode  Start: 0x7E87D000  Pages: 7  Size: 28 KB
+[37] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[38] Unknown  Start: 0x0  Pages: 2122862592  Size: 8491450368 KB
+[39] Unknown  Start: 0xF  Pages: 4  Size: 16 KB
+[40] EfiReservedMemoryType  Start: 0x1  Pages: 0  Size: 0 KB
+[41] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[42] EfiBootServicesData  Start: 0x7E89F000  Pages: 1  Size: 4 KB
+[43] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[44] Unknown  Start: 0x0  Pages: 2123456512  Size: 8493826048 KB
+[45] EfiBootServicesCode  Start: 0xF  Pages: 3  Size: 12 KB
+[46] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[47] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[48] EfiBootServicesCode  Start: 0x7E922000  Pages: 41  Size: 164 KB
+[49] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[50] Unknown  Start: 0x0  Pages: 2123710464  Size: 8494841856 KB
+[51] EfiACPIMemoryNVS  Start: 0xF  Pages: 4  Size: 16 KB
+[52] EfiReservedMemoryType  Start: 0x7  Pages: 0  Size: 0 KB
+[53] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[54] EfiBootServicesData  Start: 0x7E997000  Pages: 1  Size: 4 KB
+[55] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[56] Unknown  Start: 0x0  Pages: 2124152832  Size: 8496611328 KB
+[57] EfiLoaderData  Start: 0xF  Pages: 3  Size: 12 KB
+[58] EfiReservedMemoryType  Start: 0xA  Pages: 0  Size: 0 KB
+[59] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[60] EfiBootServicesCode  Start: 0x7E9D7000  Pages: 41  Size: 164 KB
+[61] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[62] Unknown  Start: 0x0  Pages: 2126516224  Size: 8506064896 KB
+[63] EfiUnusableMemory  Start: 0xF  Pages: 4  Size: 16 KB
+[64] EfiReservedMemoryType  Start: 0x9  Pages: 0  Size: 0 KB
+[65] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[66] EfiBootServicesData  Start: 0x7EC27000  Pages: 5  Size: 20 KB
+[67] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[68] Unknown  Start: 0x0  Pages: 2126811136  Size: 8507244544 KB
+[69] EfiBootServicesCode  Start: 0xF  Pages: 3  Size: 12 KB
+[70] EfiReservedMemoryType  Start: 0x6  Pages: 0  Size: 0 KB
+[71] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[72] EfiBootServicesCode  Start: 0x7EC55000  Pages: 37  Size: 148 KB
+[73] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[74] Unknown  Start: 0x0  Pages: 2127032320  Size: 8508129280 KB
+[75] EfiPalCode  Start: 0xF  Pages: 4  Size: 16 KB
+[76] EfiReservedMemoryType  Start: 0x2A  Pages: 0  Size: 0 KB
+[77] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[78] EfiBootServicesData  Start: 0x7ECCF000  Pages: 1  Size: 4 KB
+[79] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[80] Unknown  Start: 0x0  Pages: 2127413248  Size: 8509652992 KB
+[81] EfiRuntimeServicesCode  Start: 0xF  Pages: 3  Size: 12 KB
+[82] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[83] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[84] EfiBootServicesCode  Start: 0x7ECE9000  Pages: 5  Size: 20 KB
+[85] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[86] Unknown  Start: 0x0  Pages: 2131697664  Size: 8526790656 KB
+[87] Unknown  Start: 0xF  Pages: 4  Size: 16 KB
+[88] EfiReservedMemoryType  Start: 0x1  Pages: 0  Size: 0 KB
+[89] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[90] EfiBootServicesData  Start: 0x7F111000  Pages: 1  Size: 4 KB
+[91] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[92] Unknown  Start: 0x0  Pages: 2131853312  Size: 8527413248 KB
+[93] Unknown  Start: 0xF  Pages: 6  Size: 24 KB
+[94] EfiReservedMemoryType  Start: 0x100  Pages: 0  Size: 0 KB
+[95] Unknown  Start: 0x0  Pages: -9223372036854775793  Size: 60 KB
+[96] EfiReservedMemoryType  Start: 0x7F6ED000  Pages: 128  Size: 512 KB
+[97] EfiReservedMemoryType  Start: 0x9  Pages: 0  Size: 0 KB
+
+Setting 64 bytes to 0
+Copying 44 bytes
+Copying 24 bytes[2J[001;001H[=3h[2J[001;001H[2J[001;001H[8;031;100t[2J[001;001H[2J[001;001H[8;056;240t[2J[001;001HBdsDxe: loading Boot0002 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
+BdsDxe: starting Boot0002 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
+Sanity Check[0]
+DEBUG: 0x7E84C618; 0x7F5EC018
+GUID:
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B7018
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B7018
+Intitialising GNU-EFI
+Post GNU-EFI Init
+Allocating 1 item(s) of 136 bytes    Out Buffer: 0x7E7B7018
+Setting 136 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\bthelper.c:238]
+Loading Device Tree
+Call Error#0: 3    Call Error#1: 3    
+Loading Node    ??    [Media(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #2    "Media(Unknown)"
+Call Error#3: 3    Call Error#4: 3    Call Error#5: 3    Call Error#6: 3    Call Error#7: 3    Call Error#8: 3    Call Error#9: 3    
+Loading Node    ??    [MemMap(FFC00000-FFC83FFF)]Call #10    "MemMap(FFC00000-FFC83FFF)"
+Call Error#11: 3    Call Error#12: 3    Call Error#13: 3    Call Error#14: 3    Call Error#15: 3    Call Error#16: 3    Call Error#17: 3    Call Error#18: 3    Call Error#19: 3    Call Error#20: 3    Call Error#21: 3    Call Error#22: 3    Call Error#23: 3    Call Error#24: 3    Call Error#25: 3    Call Error#26: 3    Call Error#27: 3    Call Error#28: 3    Call Error#29: 3    Call Error#30: 3    Call Error#31: 3    Call Error#32: 3    Call Error#33: 3    Call Error#34: 3    Call Error#35: 3    Call Error#36: 3    Call Error#37: 3    Call Error#38: 3    Call Error#39: 3    Call Error#40: 3    Call Error#41: 3    Call Error#42: 3    Call Error#43: 3    Call Error#44: 3    Call Error#45: 3    Call Error#46: 3    Call Error#47: 3    Call Error#48: 3    Call Error#49: 3    Call Error#50: 3    
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]Call #51    "ACPI(HID=0A0341D0    UID=00000000)"
+Call Error#52: 3    Call Error#53: 3    Call Error#54: 3    Call Error#55: 3    Call Error#56: 3    Call Error#57: 3    Call Error#58: 3    Call Error#59: 3    Call Error#60: 3    Call Error#61: 3    Call Error#62: 3    Call Error#63: 3    Call Error#64: 3    Call Error#65: 3    Call Error#66: 3    Call Error#67: 3    Call Error#68: 3    Call Error#69: 3    Call Error#70: 3    Call Error#71: 3    Call Error#72: 3    Call Error#73: 3    
+Loading Node    ??    [Hardware(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #74    "Hardware(Unknown)"
+Call Error#75: 3    Call Error#76: 3    Call Error#77: 3    
+Loading Node    ??    [Hardware(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #78    "Hardware(Unknown)"
+
+Loading Node    ??    [Hardware(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #79    "Hardware(Unknown)"
+Call Error#80: 3    Call Error#81: 3    Call Error#82: 3    Call Error#83: 3    
+Loading Node    ??    [Hardware(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #84    "Hardware(Unknown)"
+Call Error#85: 3    Call Error#86: 3    Call Error#87: 3    Call Error#88: 3    Call Error#89: 3    Call Error#90: 3    Call Error#91: 3    Call Error#92: 3    Call Error#93: 3    Call Error#94: 3    Call Error#95: 3    Call Error#96: 3    Call Error#97: 3    Call Error#98: 3    Call Error#99: 3    Call Error#100: 3    Call Error#101: 3    Call Error#102: 3    Call Error#103: 3    Call Error#104: 3    Call Error#105: 3    Call Error#106: 3    Call Error#107: 3    Call Error#108: 3    Call Error#109: 3    Call Error#110: 3    Call Error#111: 3    Call Error#112: 3    Call Error#113: 3    Call Error#114: 3    Call Error#115: 3    Call Error#116: 3    Call Error#117: 3    Call Error#118: 3    Call Error#119: 3    Call Error#120: 3    Call Error#121: 3    Call Error#122: 3    Call Error#123: 3    Call Error#124: 3    Call Error#125: 3    Call Error#126: 3    Call Error#127: 3    Call Error#128: 3    Call Error#129: 3    Call Error#130: 3    Call Error#131: 3    Call Error#132: 3    Call Error#133: 3    Call Error#134: 3    Call Error#135: 3    Call Error#136: 3    Call Error#137: 3    Call Error#138: 3    
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(0,0)]Call #139    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(1,0)]Call #140    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(2,0)]Call #141    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,0)]Call #142    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,1)]Call #143    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,2)]Call #144    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,7)]Call #145    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]Call #146    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,2)]Call #147    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,3)]Call #148    "ACPI(HID=0A0341D0    UID=00000000)"
+Call Error#149: 3    
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(1,0)]
+Loading Node    ??    [ACPI(HID=80010100    UID=0004FF7F)]Call #150    "ACPI(HID=0A0341D0    UID=00000000)"
+Call Error#151: 3    Call Error#152: 3    
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=050141D0    UID=00000000)]Call #153    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=050141D0    UID=00000001)]Call #154    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=030341D0    UID=00000000)]Call #155    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=050141D0    UID=00000000)]
+Loading Node    ??    [Messaging(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #156    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,0)]
+Loading Node    ??    [ACPI(HID=050141D0    UID=00000000)]
+Loading Node    ??    [Messaging(Unknown)]
+[WARNING] Zero-length device path node, aborting walkCall #157    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,7)]
+Loading Node    ??    [USB(Port 0)]Call #158    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(29,7)]
+Loading Node    ??    [USB(Port 1)]Call #159    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(2,0)]
+Loading Node    ??    [HD(Part 1    Start 800    End 80000)]Call #160    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(2,0)]
+Loading Node    ??    [HD(Part 2    Start 80800    End 200000)]Call #161    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(2,0)]
+Loading Node    ??    [HD(Part 3    Start 280800    End 1)]Call #162    "ACPI(HID=0A0341D0    UID=00000000)"
+
+Loading Node    ??    [ACPI(HID=0A0341D0    UID=00000000)]
+Loading Node    ??    [PCI(31,2)]
+Loading Node    ??    [SATA(Port 2    PM 65535    Lun 0)]Call #163    "ACPI(HID=0A0341D0    UID=00000000)"
+Call Error#164: 3    
+[C:\GitHub\BlockyOS\src\Boot\UEFI\bthelper.c:168]   Freeing Buffer    0x7E7B0018
+Returning Expanded Node Tree
+Getting the Memory Map=== UEFI Memory Map (98 entries) ===
+Descriptor Size: 4704, #n Items: 98  Version: 1
+
+[0] EfiConventionalMemory  Start: 0x0  Pages: 135  Size: 540 KB
+[1] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[2] Unknown  Start: 0x0  Pages: 557056  Size: 2228224 KB
+[3] Unknown  Start: 0xF  Pages: 7  Size: 28 KB
+[4] EfiReservedMemoryType  Start: 0x700  Pages: 0  Size: 0 KB
+[5] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[6] EfiConventionalMemory  Start: 0x808000  Pages: 3  Size: 12 KB
+[7] EfiReservedMemoryType  Start: 0xA  Pages: 0  Size: 0 KB
+[8] Unknown  Start: 0x0  Pages: 8437760  Size: 33751040 KB
+[9] EfiRuntimeServicesData  Start: 0xF  Pages: 6  Size: 24 KB
+[10] EfiReservedMemoryType  Start: 0x1  Pages: 0  Size: 0 KB
+[11] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[12] EfiACPIMemoryNVS  Start: 0x814000  Pages: 236  Size: 944 KB
+[13] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[14] Unknown  Start: 0x0  Pages: 24641536  Size: 98566144 KB
+[15] Unknown  Start: 0xF  Pages: 4  Size: 16 KB
+[16] EfiReservedMemoryType  Start: 0x20  Pages: 0  Size: 0 KB
+[17] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[18] EfiLoaderCode  Start: 0x7E088000  Pages: 45  Size: 180 KB
+[19] EfiReservedMemoryType  Start: 0x7  Pages: 0  Size: 0 KB
+[20] Unknown  Start: 0x0  Pages: 2114830336  Size: 8459321344 KB
+[21] EfiRuntimeServicesData  Start: 0xF  Pages: 4  Size: 16 KB
+[22] EfiReservedMemoryType  Start: 0x6CC  Pages: 0  Size: 0 KB
+[23] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[24] EfiConventionalMemory  Start: 0x7E7B0000  Pages: 1  Size: 4 KB
+[25] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[26] Unknown  Start: 0x0  Pages: 2122018816  Size: 8488075264 KB
+[27] EfiLoaderCode  Start: 0xF  Pages: 4  Size: 16 KB
+[28] EfiReservedMemoryType  Start: 0xA6  Pages: 0  Size: 0 KB
+[29] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[30] EfiBootServicesData  Start: 0x7E867000  Pages: 3  Size: 12 KB
+[31] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[32] Unknown  Start: 0x0  Pages: 2122776576  Size: 8491106304 KB
+[33] EfiLoaderCode  Start: 0xF  Pages: 3  Size: 12 KB
+[34] EfiReservedMemoryType  Start: 0xB  Pages: 0  Size: 0 KB
+[35] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[36] EfiBootServicesCode  Start: 0x7E87D000  Pages: 7  Size: 28 KB
+[37] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[38] Unknown  Start: 0x0  Pages: 2122862592  Size: 8491450368 KB
+[39] Unknown  Start: 0xF  Pages: 4  Size: 16 KB
+[40] EfiReservedMemoryType  Start: 0x1  Pages: 0  Size: 0 KB
+[41] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[42] EfiBootServicesData  Start: 0x7E89F000  Pages: 1  Size: 4 KB
+[43] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[44] Unknown  Start: 0x0  Pages: 2123456512  Size: 8493826048 KB
+[45] EfiBootServicesCode  Start: 0xF  Pages: 3  Size: 12 KB
+[46] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[47] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[48] EfiBootServicesCode  Start: 0x7E922000  Pages: 41  Size: 164 KB
+[49] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[50] Unknown  Start: 0x0  Pages: 2123710464  Size: 8494841856 KB
+[51] EfiACPIMemoryNVS  Start: 0xF  Pages: 4  Size: 16 KB
+[52] EfiReservedMemoryType  Start: 0x7  Pages: 0  Size: 0 KB
+[53] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[54] EfiBootServicesData  Start: 0x7E997000  Pages: 1  Size: 4 KB
+[55] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[56] Unknown  Start: 0x0  Pages: 2124152832  Size: 8496611328 KB
+[57] EfiLoaderData  Start: 0xF  Pages: 3  Size: 12 KB
+[58] EfiReservedMemoryType  Start: 0xA  Pages: 0  Size: 0 KB
+[59] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[60] EfiBootServicesCode  Start: 0x7E9D7000  Pages: 41  Size: 164 KB
+[61] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[62] Unknown  Start: 0x0  Pages: 2126516224  Size: 8506064896 KB
+[63] EfiUnusableMemory  Start: 0xF  Pages: 4  Size: 16 KB
+[64] EfiReservedMemoryType  Start: 0x9  Pages: 0  Size: 0 KB
+[65] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[66] EfiBootServicesData  Start: 0x7EC27000  Pages: 5  Size: 20 KB
+[67] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[68] Unknown  Start: 0x0  Pages: 2126811136  Size: 8507244544 KB
+[69] EfiBootServicesCode  Start: 0xF  Pages: 3  Size: 12 KB
+[70] EfiReservedMemoryType  Start: 0x6  Pages: 0  Size: 0 KB
+[71] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[72] EfiBootServicesCode  Start: 0x7EC55000  Pages: 37  Size: 148 KB
+[73] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[74] Unknown  Start: 0x0  Pages: 2127032320  Size: 8508129280 KB
+[75] EfiPalCode  Start: 0xF  Pages: 4  Size: 16 KB
+[76] EfiReservedMemoryType  Start: 0x2A  Pages: 0  Size: 0 KB
+[77] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[78] EfiBootServicesData  Start: 0x7ECCF000  Pages: 1  Size: 4 KB
+[79] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[80] Unknown  Start: 0x0  Pages: 2127413248  Size: 8509652992 KB
+[81] EfiRuntimeServicesCode  Start: 0xF  Pages: 3  Size: 12 KB
+[82] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[83] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[84] EfiBootServicesCode  Start: 0x7ECE9000  Pages: 5  Size: 20 KB
+[85] EfiReservedMemoryType  Start: 0x4  Pages: 0  Size: 0 KB
+[86] Unknown  Start: 0x0  Pages: 2131697664  Size: 8526790656 KB
+[87] Unknown  Start: 0xF  Pages: 4  Size: 16 KB
+[88] EfiReservedMemoryType  Start: 0x1  Pages: 0  Size: 0 KB
+[89] Unknown  Start: 0x0  Pages: 15  Size: 60 KB
+[90] EfiBootServicesData  Start: 0x7F111000  Pages: 1  Size: 4 KB
+[91] EfiReservedMemoryType  Start: 0x3  Pages: 0  Size: 0 KB
+[92] Unknown  Start: 0x0  Pages: 2131853312  Size: 8527413248 KB
+[93] Unknown  Start: 0xF  Pages: 6  Size: 24 KB
+[94] EfiReservedMemoryType  Start: 0x100  Pages: 0  Size: 0 KB
+[95] Unknown  Start: 0x0  Pages: -9223372036854775793  Size: 60 KB
+[96] EfiReservedMemoryType  Start: 0x7F6ED000  Pages: 128  Size: 512 KB
+[97] EfiReservedMemoryType  Start: 0x9  Pages: 0  Size: 0 KB
+
+Setting 64 bytes to 0
+Opening Socket    Driver: 0  nARGS: 36
+Socket Open    Opening FS Socket
+Allocating 1 item(s) of 24 bytes    Out Buffer: 0x7E0DEA18
+Setting 24 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c:138]
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:197]  >>  Mounting FS Root: [
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE198
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0000-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE198]    [
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE198
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{00000020-0000-0000-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE198]
+Verifying Disk GPT
+[Parent:0x7E0937DC] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE198
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0000-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE198
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE198
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0000-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E0DE298
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E1E4E98
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7E0937F6] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+GPT Dump:
+    Sig: "EFI PART"
+    Rev: 65536
+    Header-Size: 92
+    Header Checksum: 3919468051
+    localLBA: 1
+    altLBA: 2623490
+    firstUsable: 2048
+    lastUsable: 2623488
+    Disk-GUID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518
+    Partition-Table: 2
+    # of Partition-Entries: 3
+    Partition-Entry Size: 128
+    Partition-Table Checksum: 801556421
+Comparing 8 bytes
+memcmp Return TRUE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:37]   Freeing Buffer    0x7E0DE298
+Closing Disk Interface >> {
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0000-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:286]   Freeing Buffer    0x7E0DE198
+GPT Exists? TRUE
+[Parent:0x7E09458C] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0000-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE198
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0000-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E0DE298
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E84C418
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7E0945A6] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:138]  >>  Querying Part Table
+Reading Bytes
+[Parent:0x7E09413E] >> Reading [384 bytes(s)->1 block(s)] to LBA[2(1024)-3(1536)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0018
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:146]  >>  GPT-Entry: BOOT{2048:526335 -> 524287}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:160]  >>  Querying FS at 2048
+Reading Bytes
+[Parent:0x7E094363] >> Reading [36 bytes(s)->1 block(s)] to LBA[2048(1048576)-2049(1049088)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0D18
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+FS-Root Blob:
+    Version: [0:524288]
+    Sig:      ├½<┬ÉBLOCKYOS
+    Configured Log Sectors: 2
+    Configured Block Size: 63488
+    Configured Cluster-Map Size: 16711743
+Comparing 16 bytes
+memcmp Return FALSE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:191]   Freeing Buffer    0x7E7B0D18
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:146]  >>  GPT-Entry: ROOT{526336:2623487 -> 2097151}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:160]  >>  Querying FS at 526336
+Reading Bytes
+[Parent:0x7E094363] >> Reading [36 bytes(s)->1 block(s)] to LBA[526336(269484032)-526337(269484544)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0D18
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+FS-Root Blob:
+    Version: [0:0]
+    Sig:                 
+    Configured Log Sectors: 0
+    Configured Block Size: 0
+    Configured Cluster-Map Size: 0
+Comparing 16 bytes
+memcmp Return FALSE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:191]   Freeing Buffer    0x7E7B0D18
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:146]  >>  GPT-Entry: TEST{2623488:2623488 -> 0}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:160]  >>  Querying FS at 2623488
+Reading Bytes
+[Parent:0x7E094363] >> Reading [36 bytes(s)->1 block(s)] to LBA[2623488(1343225856)-2623489(1343226368)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0D18
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+FS-Root Blob:
+    Version: [0:0]
+    Sig:                 
+    Configured Log Sectors: 0
+    Configured Block Size: 0
+    Configured Cluster-Map Size: 0
+Comparing 16 bytes
+memcmp Return FALSE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:191]   Freeing Buffer    0x7E7B0D18
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:154]   Freeing Buffer    0x7E7B0018
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:207]   Freeing Buffer    0x7E0DE298
+[C:\GitHub\BlockyOS\src\Boot\UEFI\boot.c:42]   Freeing Buffer    0x7E0DEA18
+Failed to open FS Socket
+Allocating 72 item(s) of 1 bytes    Out Buffer: 0x7E0DEA18
+Setting 72 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:193]
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:85]  >>  Formatting Partition:    ROOT
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:49]  >>  Loading Partition:    ROOT
+Verifying Disk GPT
+[Parent:0x7E0937DC] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE618
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E0DE298
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E9D6698
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7E0937F6] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+GPT Dump:
+    Sig: "EFI PART"
+    Rev: 65536
+    Header-Size: 92
+    Header Checksum: 3919468051
+    localLBA: 1
+    altLBA: 2623490
+    firstUsable: 2048
+    lastUsable: 2623488
+    Disk-GUID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518
+    Partition-Table: 2
+    # of Partition-Entries: 3
+    Partition-Entry Size: 128
+    Partition-Table Checksum: 801556421
+Comparing 8 bytes
+memcmp Return TRUE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:37]   Freeing Buffer    0x7E0DE298
+Closing Disk Interface >> {
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:286]   Freeing Buffer    0x7E0DE618
+GPT Exists? TRUE
+[Parent:0x7E093A39] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE618
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E0DE298
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E84C018
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7E093A53] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+Reading Bytes
+[Parent:0x7E093A7E] >> Reading [384 bytes(s)->1 block(s)] to LBA[2(1024)-3(1536)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0018
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+Closing Disk Interface >> {
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:286]   Freeing Buffer    0x7E0DE618
+Comparing 72 bytes
+memcmp Return FALSE
+Comparing 72 bytes
+memcmp Return TRUE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:59]   Freeing Buffer    0x7E0DE298
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:60]   Freeing Buffer    0x7E7B0018
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:62]  >>  Found Partition: 526336:2623487
+[Parent:0x7E093D70] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE618
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E0DE298
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E9D6698
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:98]  >>  Format Target: 526336:2623487 -> 2097151 LBAs
+    Version-Code: [1:0]
+    Configured Block-Size: 512
+    Configured Cluster-Size: 65536
+    Configured # of Log-Sectors: 5
+    Configured Log-Size: 70
+Allocating 5 item(s) of 512 bytes    Out Buffer: 0x7E7B0018
+Setting 2560 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:107]
+Copying 16 bytes
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E0DE298
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:235]
+Writing Bytes
+[Parent:0x7E093F1E] >> Writing [36 bytes(s)->1 block(s)] to LBA[526336(269484032)-526337(269484544)]
+Copying 36 bytes    Write ...:0:
+Setting 2560 bytes to 0
+Allocating 5 item(s) of 512 bytes    Out Buffer: 0x7E0DB018
+Setting 2560 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:235]
+Writing Bytes
+[Parent:0x7E093F5F] >> Writing [2560 bytes(s)->5 block(s)] to LBA[526337(269484544)-526342(269487104)]
+Copying 2560 bytes    Write ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:125]   Freeing Buffer    0x7E7B0018
+Allocating 65536 item(s) of 512 bytes    Out Buffer: 0x7C087018
+Setting 33554432 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:126]
+Allocating 65536 item(s) of 512 bytes    Out Buffer: 0x79B3B018
+Setting 33554432 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:235]
+Writing Bytes
+[Parent:0x7E09407C] >> Writing [33554432 bytes(s)->65536 block(s)] to LBA[526343(269487616)-591879(303042048)]
+Copying 33554432 bytes    Write ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:129]   Freeing Buffer    0x7C087018
+Closing Disk Interface >> {
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:286]   Freeing Buffer    0x7E0DE618
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:132]  >>  Formatted Partition
+[C:\GitHub\BlockyOS\src\Boot\UEFI\boot.c:54]   Freeing Buffer    0x7E0DEA18
+Opening Socket    Driver: 0  nARGS: 36
+Socket Open    Opening FS Socket
+Allocating 1 item(s) of 24 bytes    Out Buffer: 0x7E0DEA18
+Setting 24 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c:138]
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:197]  >>  Mounting FS Root: [
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0010-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518]    [
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{00000020-0000-0000-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518]
+Verifying Disk GPT
+[Parent:0x7E0937DC] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0010-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE618
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E0DBA98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0010-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E0DBA98
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E9D6698
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7E0937F6] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E0DBA98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+GPT Dump:
+    Sig: "EFI PART"
+    Rev: 65536
+    Header-Size: 92
+    Header Checksum: 3919468051
+    localLBA: 1
+    altLBA: 2623490
+    firstUsable: 2048
+    lastUsable: 2623488
+    Disk-GUID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518
+    Partition-Table: 2
+    # of Partition-Entries: 3
+    Partition-Entry Size: 128
+    Partition-Table Checksum: 801556421
+Comparing 8 bytes
+memcmp Return TRUE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:37]   Freeing Buffer    0x7E0DBA98
+Closing Disk Interface >> {
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0010-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:286]   Freeing Buffer    0x7E0DE618
+GPT Exists? TRUE
+[Parent:0x7E09458C] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0010-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE618
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E0DBA98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0010-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E0DE518
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E0DE518}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E0DBA98
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E7B8818
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7E0945A6] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E0DBA98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:138]  >>  Querying Part Table
+Reading Bytes
+[Parent:0x7E09413E] >> Reading [384 bytes(s)->1 block(s)] to LBA[2(1024)-3(1536)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0018
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:146]  >>  GPT-Entry: BOOT{2048:526335 -> 524287}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:160]  >>  Querying FS at 2048
+Reading Bytes
+[Parent:0x7E094363] >> Reading [36 bytes(s)->1 block(s)] to LBA[2048(1048576)-2049(1049088)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0D18
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+FS-Root Blob:
+    Version: [0:524288]
+    Sig:      ├½<┬ÉBLOCKYOS
+    Configured Log Sectors: 2
+    Configured Block Size: 63488
+    Configured Cluster-Map Size: 16711743
+Comparing 16 bytes
+memcmp Return FALSE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:191]   Freeing Buffer    0x7E7B0D18
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:146]  >>  GPT-Entry: ROOT{526336:2623487 -> 2097151}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:160]  >>  Querying FS at 526336
+Reading Bytes
+[Parent:0x7E094363] >> Reading [36 bytes(s)->1 block(s)] to LBA[526336(269484032)-526337(269484544)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0D18
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+FS-Root Blob:
+    Version: [1:0]
+    Sig:  FRAT_FILESYSTEM
+    Configured Log Sectors: 5
+    Configured Block Size: 512
+    Configured Cluster-Map Size: 65536
+Comparing 16 bytes
+memcmp Return TRUE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:185]  >>  FS Found at [526336]:
+	Version-Code: [1:0]
+	Configured Block-Size: 512
+	Configured Cluster-Size: 65536
+	Configured # of Log-Sectors: 5
+	Configured Log-Size: 70
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:191]   Freeing Buffer    0x7E7B0D18
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:150]   Freeing Buffer    0x7E7B0018
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:206]   Freeing Buffer    0x7E0DBA98
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:211]  >>  Found Formatted Partition: 526336:2623487 -> 2097151
+Reading Bytes
+[Parent:0x7E09465E] >> Reading [36 bytes(s)->1 block(s)] to LBA[526336(269484032)-526337(269484544)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E0DBA98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:224]  >>  Root: 526336:2623487 -> 2097151 LBAs
+	Version-Code: [1:0]
+	Configured Block-Size: 512
+	Configured Cluster-Size: 65536
+	Configured # of Log-Sectors: 65536
+	Configured Log-Size: 5
+Allocating 1 item(s) of 96 bytes    Out Buffer: 0x7E0DE518
+Setting 96 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:231]
+Reading Bytes
+[Parent:0x7E0947FE] >> Reading [2560 bytes(s)->5 block(s)] to LBA[526337(269484544)-526342(269487104)]
+Allocating 1 item(s) of 2560 bytes    Out Buffer: 0x7E7B0018
+Setting 2560 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+Reading Bytes
+[Parent:0x7E094865] >> Reading [65536 bytes(s)->128 block(s)] to LBA[526343(269487616)-526471(269553152)]
+Allocating 1 item(s) of 65536 bytes    Out Buffer: 0x7E0CA018
+Setting 65536 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+    Verifying FS Root Items #items: 4096
+Closing Disk Interface >> {
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{7E0DED98-0000-0010-0000-000000000000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:286]   Freeing Buffer    0x7E0DE618
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE618
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c:146]
+Opened FS Socket
+Mounted FRaT Socket!
+Allocating 72 item(s) of 1 bytes    Out Buffer: 0x7E7B0F98
+Setting 72 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:193]
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:85]  >>  Formatting Partition:    ROOT
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:49]  >>  Loading Partition:    ROOT
+Verifying Disk GPT
+[Parent:0x7E0937DC] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE218
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E7B0A98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E7B0A98
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E7B8818
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7E0937F6] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0A98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+GPT Dump:
+    Sig: "EFI PART"
+    Rev: 65536
+    Header-Size: 92
+    Header Checksum: 3919468051
+    localLBA: 1
+    altLBA: 2623490
+    firstUsable: 2048
+    lastUsable: 2623488
+    Disk-GUID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98
+    Partition-Table: 2
+    # of Partition-Entries: 3
+    Partition-Entry Size: 128
+    Partition-Table Checksum: 801556421
+Comparing 8 bytes
+memcmp Return TRUE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:37]   Freeing Buffer    0x7E7B0A98
+Closing Disk Interface >> {
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:286]   Freeing Buffer    0x7E0DE218
+GPT Exists? TRUE
+[Parent:0x7E093A39] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE218
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E7B0A98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E7B0A98
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E7C3518
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7E093A53] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0A98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+Reading Bytes
+[Parent:0x7E093A7E] >> Reading [384 bytes(s)->1 block(s)] to LBA[2(1024)-3(1536)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E0C9018
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:178]    Read ...:0:
+Closing Disk Interface >> {
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:286]   Freeing Buffer    0x7E0DE218
+Comparing 72 bytes
+memcmp Return FALSE
+Comparing 72 bytes
+memcmp Return TRUE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:59]   Freeing Buffer    0x7E7B0A98
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:60]   Freeing Buffer    0x7E0C9018
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:62]  >>  Found Partition: 526336:2623487
+[Parent:0x7E093D70] >>   ConfBlockSize: 512    Starting Disk Env ID: 
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98
+Allocating 1 item(s) of 56 bytes    Out Buffer: 0x7E0DE218
+Setting 56 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:118]
+nHandles:	5
+Handle 0: BlockSize=512,    LastBlock=2623490,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7E7B0A98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:30]
+Comparing 8 bytes
+memcmp Return TRUE
+    Target-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}    Disk-GUID={
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{385D1F16-2F27-4775-975C-C435E1672715}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}
+Comparing 16 bytes
+memcmp Return FALSE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:51]   Freeing Buffer    0x7E7B0A98
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:52]   Freeing Buffer    0x7E7B8818
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:98]  >>  Format Target: 526336:2623487 -> 2097151 LBAs
+    Version-Code: [1:0]
+    Configured Block-Size: 512
+    Configured Cluster-Size: 65536
+    Configured # of Log-Sectors: 5
+    Configured Log-Size: 70
+Allocating 5 item(s) of 512 bytes    Out Buffer: 0x7E0C9018
+Setting 2560 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:107]
+Copying 16 bytes
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7E7B0A98
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:235]
+Writing Bytes
+[Parent:0x7E093F1E] >> Writing [36 bytes(s)->1 block(s)] to LBA[526336(269484032)-526337(269484544)]
+Copying 36 bytes    Write ...:0:
+Setting 2560 bytes to 0
+Allocating 5 item(s) of 512 bytes    Out Buffer: 0x7E0C8018
+Setting 2560 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:235]
+Writing Bytes
+[Parent:0x7E093F5F] >> Writing [2560 bytes(s)->5 block(s)] to LBA[526337(269484544)-526342(269487104)]
+Copying 2560 bytes    Write ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:125]   Freeing Buffer    0x7E0C9018
+Allocating 65536 item(s) of 512 bytes    Out Buffer: 0x7C087018
+Setting 33554432 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:126]
+Allocating 65536 item(s) of 512 bytes    Out Buffer: 0x77B3A018
+Setting 33554432 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:235]
+Writing Bytes
+[Parent:0x7E09407C] >> Writing [33554432 bytes(s)->65536 block(s)] to LBA[526343(269487616)-591879(303042048)]
+Copying 33554432 bytes    Write ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:129]   Freeing Buffer    0x7C087018
+Closing Disk Interface >> {
+Allocating 64 item(s) of 2 bytes    Out Buffer: 0x7E7B0E98
+Setting 128 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:4]{EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:11]   Freeing Buffer    0x7E7B0E98}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:286]   Freeing Buffer    0x7E0DE218
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:132]  >>  Formatted Partition
+[C:\GitHub\BlockyOS\src\Boot\UEFI\boot.c:54]   Freeing Buffer    0x7E7B0F98
+Got FS Socket
+fs->open ptr = 0x221DE!!!! X64 Exception Type - 0E(#PF - Page-Fault)  CPU Apic ID - 00000000 !!!!
+ExceptionData - 0000000000000000  I:0 R:0 U:0 W:0 P:0 PK:0 SS:0 SGX:0
+RIP  - 00000000000A640F, CS  - 0000000000000038, RFLAGS - 0000000000010286
+RAX  - 00000000000066B0, RCX - 000000007FE666B0, RDX - 000000007E0DE618
+RBX  - 00F0D3D3B8B42DA0, RSP - 000000007FE66648, RBP - 000000007FE66730
+RSI  - 000000007E0B2B56, RDI - 00000000000221DE
+R8   - 0000000000000010, R9  - 000000007E0B2B56, R10 - 000000007E0C7198
+R11  - 000000007E84C398, R12 - 0000000000026E80, R13 - 000000007E84C618
+R14  - 000000007F5EC018, R15 - 0000000000000000
+DS   - 0000000000000030, ES  - 0000000000000030, FS  - 0000000000000030
+GS   - 0000000000000030, SS  - 0000000000000030
+CR0  - 0000000080010033, CR2 - FFFFFFFF9800FF48, CR3 - 000000007F801000
+CR4  - 0000000000000668, CR8 - 0000000000000000
+DR0  - 0000000000000000, DR1 - 0000000000000000, DR2 - 0000000000000000
+DR3  - 0000000000000000, DR6 - 00000000FFFF0FF0, DR7 - 0000000000000400
+GDTR - 000000007F5D8000 0000000000000057, LDTR - 0000000000000000
+IDTR - 000000007BB5AF58 0000000000000FFF,   TR - 0000000000000048
+FXSAVE_STATE - 000000007F5D7460
+!!!! Can't find image information. !!!!
