@@ -53,7 +53,7 @@ if(-not (Test-Path $firmwarefolder)){
 	exit 1
 }
 
-$ovmfcode = Join-Path $firmwarefolder 'OVMF_CODE.fd'
+$ovmfcode = Join-Path $firmwarefolder 'OVMF.fd'
 $ovmfvars = Join-Path $firmwarefolder 'OVMF_VARS.fd'
 # if($enablevarsbackup){
 #     Copy-Item -Path (Join-Path (Get-Location) "compile/toolchain/uefi/vars-backup/$(if($imagetype -eq 'debug'){'DEBUG'}else{'RELEASE'})x64_OVMF_VARS.fd") -Destination $ovmfvars}

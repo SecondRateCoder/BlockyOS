@@ -41,21 +41,24 @@ $CARGS = @(
 	'-fno-strict-aliasing', '-fno-stack-protector', '-fno-stack-check',
 	'-fdiagnostics-color=always', '-fshort-wchar', '-fno-inline', '-fno-toplevel-reorder',
 	'-ffunction-sections', '-fdata-sections', '-fno-delete-null-pointer-checks',
-	'-fno-stack-protector', '-fno-stack-check', '-ffreestanding', '-fno-lto',
-	'-fPIC', '-maccumulate-outgoing-args', '-mno-red-zone', '-fno-omit-frame-pointer',
+	'-ffreestanding', '-fno-lto',
+	# '-fPIE', '-symbolic',
+	'-pie', '-shared',
+	# '-fno-pic', 
+	'-maccumulate-outgoing-args', '-fno-omit-frame-pointer',
 	"-m$(if($ARCHITECTURE -eq 'x86_64'){'64'}else{'32'})",
-	'-D', "$(if($ARCHITECTURE -eq 'x86_64'){'__x86_64__'}else{'__ia32__', '-D', 'EFI32'})", '-D', '__DEBUG__', '-D', '__CUSTMEM_FUNC__'
+	'-D', "$(if($ARCHITECTURE -eq 'x86_64'){'__x86_64__', '-mno-red-zone'}else{'__ia32__', '-D', 'EFI32'})", 
+	'-D', '__DEBUG__', '-D', '__CUSTMEM_FUNC__'
 )
-if($ENABLEDEBUGGABLE){$CARGS += '-D', 'EFI_DEBUG', '-g', '-Og'}
+# if($ENABLEDEBUGGABLE){$CARGS += '-D', 'EFI_DEBUG', '-g', '-Og'}
 if($ENABLENTEMULATOR){$CARGS += '-D', 'EFI_NT_EMULATOR'}
-if($ARCHITECTURE -eq 'x86_64'){
-	$CARGS += '-D', '__x86_64__'#, '-D', 'HAVE_USE_MS_ABI'
-}
-elseif($ARCHITECTURE -eq 'x86'){$CARGS += '-D', 'EFI32', '-D', '__ia32__'}
+# if($ARCHITECTURE -eq 'x86_64'){$CARGS += '-D', '__x86_64__'}
+# elseif($ARCHITECTURE -eq 'x86'){$CARGS += '-D', 'EFI32', '-D', '__ia32__'}
 
 
 $LARGSU = @(
-	'-shared', 
+	'-shared',
+	'-Wl,--relocatable', '-Wl,--emit-relocs',
 	'-Bsymbolic', '-nostdlib',
 	"-Wl,-Map,$($MAPFILE)", 
 	"-Wl,-T,$($EFIPARENT)lib/elf_$($ARCHITECTURE)_efi.lds",
@@ -68,12 +71,14 @@ $LARGSL = @('-l', 'efi', '-l', 'gnuefi')
 
 $OBJCOPYARGS = @(
 	'-w',
+	# '-j .text', '-j .sdata', '-j .data', '-j .rodata', '-j .reloc', '-j .reloc.*',
 	'-j', '.text', '-j', 
 	'.sdata', '-j', '.data', '-j', '.rodata', 
-	'-j', '.dynamic', '-j', '.dynsym',
+	# '-j', '.dynamic', '-j', '.dynsym',
 	'-j', '.rel', '-j', '.rel.*', 
-	'-j', '.rela', '-j', '.rela.*', 
+	'-j', '.rela', '-j', '.rela.*'
 	'-j', '.reloc'
+	# '--remove-section=.comment', '--remove-section=.debug_*', '--remove-section=.rela.debug_*'
 )
 if($ENABLEDEBUGGABLE){
 	$OBJCOPYARGS += '-j', '.debug_*', '-j', '.comment', '-j', '.debug_pubtypes',
