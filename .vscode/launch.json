@@ -2,12 +2,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug Build-Suite",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/tools/build-suite/build.ps1",
+            "args": [
+                "-SHELLSCRIPT", "${file}"
+            ],
+        }, {
             "name": "Debug EXEC-Utils",
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "Build EXEC Utils",
             "program": "${workspaceFolder}//tools//executable-format//exechandler.exe",
             "args": [
+                "-d",
                 "${workspaceFolder}\\tools\\executable-format\\test\\test.exe",
                 "${workspaceFolder}\\tools\\executable-format\\output-1.exe"
             ],
@@ -22,10 +31,13 @@
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
-                },
-                {
+                }, {
                     "description": "Set Disassembly Flavor to Intel",
                     "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }, { 
+                    "description": "Enable Back-Stepping",
+                    "text": "-exec console \"record full\"",
                     "ignoreFailures": true
                 }
             ],
@@ -41,9 +53,7 @@
             "request": "launch",
             "preLaunchTask": "Build FS Utils",
             "program": "${workspaceFolder}//tools//filesystem//fs.exe",
-            "args": [
-                "${workspaceFolder}/Build/temp/image.img"
-            ],
+            "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -59,6 +69,10 @@
                 {
                     "description": "Set Disassembly Flavor to Intel",
                     "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }, { 
+                    "description": "Enable Back-Stepping",
+                    "text": "record full",
                     "ignoreFailures": true
                 }
             ],

@@ -10,6 +10,7 @@
 #define FRATSIGLEN STR((FRATSIG_LEN))
 #define FRATBLOCKSIG "FRATROOT"
 #define FRAT_PROGLIMIT 2
+#define __FS_DEFAULTLOGSECTORS 5
 #define __FS_DEFAULTBLOCKSIZE 512
 
 #define FRATROOTOFFSET (0)
@@ -20,11 +21,11 @@
 
 // #define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors)	(((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * sizeof(fsblock))
 // #define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize)	\
-// safediv__((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) - 						\
-// safediv__(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors), (confSectorSize)) + ((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) % (confSectorSize)) != 0)	\
+// __safediv((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) - 						\
+// __safediv(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors), (confSectorSize)) + ((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) % (confSectorSize)) != 0)	\
 // ), confSectorSize)
 #define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) ( ((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * (UINTN)sizeof(fsblock) )
-#define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize) (safediv__(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) + ((confSectorSize) - 1), (confSectorSize)))
+#define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize) (__safediv(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) + ((confSectorSize) - 1), (confSectorSize)))
 
 enumdef(fsattribute, UINT8){
 	__fsfile = 		0x0000,
@@ -88,7 +89,8 @@ typedef struct conf_fsroot{
 	}logblocks;
 	struct clusterbuffer{
 		UINTN clusterSize,
-		 	nClusterSectors;
+		 	nClusterSectors,
+			nClusterItems;
 		fsblock *clusterMap;	// The Cluster-Map
 	}clusterbuffer;
 }conf_fsroot;
@@ -97,6 +99,7 @@ typedef struct fhandle{
 	conf_fsroot *root;
 	fsblock *file;
 	UINTN progress;
+	char *path;
 }fhandle;
 
 typedef struct diritem{
@@ -159,14 +162,14 @@ void formatpart(
 void __finit(conf_fsroot *root, fsblock *fb, char *path);
 
 
-void fsuloadh(fhandle *handle);
-fhandle *fsloadh(conf_fsroot *root, char *path, char *args);
+void fuloadh(fhandle *handle);
+fhandle *floadh(conf_fsroot *root, char *path, char *args);
 UINTN _fwrite(fhandle *handle, UINTN nbytes, const void *data);
 UINTN _fread(fhandle *h, UINTN nbytes, void **dataout);
 dirhandle *__fgetparent(conf_fsroot *root, char *path);
 BOOLEAN __ftest(fhandle *h);
-void __fuloaddir(dirhandle *handle);
-dirhandle *__floaddir(conf_fsroot *root, char *path, char *args);
+void fuloaddir(dirhandle *handle);
+dirhandle *floadhdir(conf_fsroot *root, char *path, char *args);
 meta_fsblock *_dreadinfo(dirhandle *handle);
 meta_fsblock *_freadinfo(fhandle *handle);
 fsblock *__faddr(conf_fsroot *root, fsblock *family);

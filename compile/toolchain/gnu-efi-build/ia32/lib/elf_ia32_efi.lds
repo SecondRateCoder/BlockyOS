@@ -87,6 +87,7 @@ SECTIONS
     *(.data.rel.local)
     *(.data.rel.ro)
     *(.data.rel*)
+    *(.rela.reloc)
   }
   . = ALIGN(4096);
   .rel.plt : { *(.rel.plt) }
@@ -105,10 +106,6 @@ SECTIONS
   .dynstr   : { *(.dynstr) }
   . = ALIGN(4096);
   . = DATA_SEGMENT_END (.);
-  /DISCARD/ :
-  {
-    *(.rel.reloc)
-    *(.note.GNU-stack)
-  }
+  /DISCARD/ : { *(.note.GNU-stack) }
   .comment 0 : { *(.comment) }
 }

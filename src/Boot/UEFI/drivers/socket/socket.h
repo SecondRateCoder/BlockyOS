@@ -8,6 +8,8 @@
 #include "src/Boot/UEFI/drivers/.disk/raw/raw.h"
 #include "src/Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
+#define socketfuncprefix// __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi))
+
 struct socket_t;
 
 enumdef(socket_retFLAG, uint16_t){
@@ -33,17 +35,18 @@ typedef struct socket_ret{
 socket_ret socketopen(UINT32 driver, UINTN nARGbytes, ...);
 
 /// @brief Unique to each driver
-typedef volatile socket_ret *(FUNCAPI *socketOPEN)(UINT32 device, UINTN nARGbytes, va_list *args);
+typedef volatile socket_ret *(socketfuncprefix *socketOPEN)(UINT32 device, UINTN nARGbytes, va_list *args);
 
 /// @brief Unique to each socket.
-typedef volatile socket_ret (FUNCAPI *socketOPENchild)(struct socket_t * socket, UINTN nARGbytes, ...);
-typedef volatile socket_ret (FUNCAPI *socketCLOSE)(struct socket_t * socket, UINTN nARGbytes, ...);
-typedef volatile socket_ret (FUNCAPI *socketREADraw)(struct socket_t * socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...);
-typedef volatile socket_ret (FUNCAPI *socketWRITEraw)(struct socket_t * socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...);
+typedef volatile socket_ret (socketfuncprefix *socketOPENchild)(struct socket_t * socket, UINTN nARGbytes, ...);
+typedef volatile socket_ret (socketfuncprefix *socketCLOSE)(struct socket_t * socket, UINTN nARGbytes, ...);
+typedef volatile socket_ret (socketfuncprefix *socketREADraw)(struct socket_t * socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...);
+typedef volatile socket_ret (socketfuncprefix *socketWRITEraw)(struct socket_t * socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...);
 typedef socketREADraw socketREAD;
 typedef socketWRITEraw socketWRITE;
 
 #define socketfunc(func)	((__typeof__(*func))(func))
+// #define socketfunc(func)	func
 
 typedef struct socket_t{
 	void *persistent;

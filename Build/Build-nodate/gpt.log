@@ -1,0 +1,23 @@
+=== GPT/MBR Driver Session ===
+[2026-06-30 22:20:23] [INFO] Driver started
+[2026-06-30 22:20:23] [INFO] Loaded 3 partition definitions
+[2026-06-30 22:20:23] [INFO] Computed disk layout:
+[2026-06-30 22:20:23] [INFO]   First usable LBA : 2048
+[2026-06-30 22:20:23] [INFO]   Last usable LBA  : 2623488
+[2026-06-30 22:20:23] [INFO]   Total sectors    : 2623491
+[2026-06-30 22:20:23] [INFO]   Entry sectors    : 1
+[2026-06-30 22:20:23] [INFO] Creating disk image: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
+[2026-06-30 22:20:23] [INFO] Writing protective MBR
+[2026-06-30 22:20:23] [INFO] >> [SEEK] Offset=0 Origin=Begin  (Caller: GPT.ps1: line 503)
+[2026-06-30 22:20:23] [INFO] >> ([WRITE] Position=0  Count=512  Caller GPT.ps1: line 532)
+[2026-06-30 22:20:23] [INFO] Writing primary GPT header and entries
+[2026-06-30 22:20:23] [INFO] >> [SEEK] Offset=1024 Origin=Begin  (Caller: GPT.ps1: line 503)
+[2026-06-30 22:20:23] [INFO] >> ([WRITE] Position=1024  Count=384  Caller GPT.ps1: line 621)
+[2026-06-30 22:20:23] [INFO] >> [SEEK] Offset=512 Origin=Begin  (Caller: GPT.ps1: line 503)
+[2026-06-30 22:20:23] [INFO] >> ([WRITE] Position=512  Count=512  Caller GPT.ps1: line 665)
+[2026-06-30 22:20:24] [INFO] Writing backup GPT header and entries
+[2026-06-30 22:20:24] [INFO] >> [SEEK] Offset=1343226368 Origin=Begin  (Caller: GPT.ps1: line 503)
+[2026-06-30 22:20:24] [INFO] >> ([WRITE] Position=1343226368  Count=384  Caller GPT.ps1: line 621)
+[2026-06-30 22:20:24] [INFO] >> [SEEK] Offset=1343226880 Origin=Begin  (Caller: GPT.ps1: line 503)
+[2026-06-30 22:20:38] [INFO] >> ([WRITE] Position=1343226880  Count=512  Caller GPT.ps1: line 693)
+[2026-06-30 22:20:38] [INFO] Disk build complete

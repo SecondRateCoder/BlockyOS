@@ -10,11 +10,24 @@
 
 #include "src/Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
+#ifdef __DEBUG__
+#define DEBUGPRINT		Print
+#else
+// Make sure the Define consumes the data.
+#define DEBUGPRINT(...)
+#endif
+
+#ifdef __DEBUG__
+#define DEBUGDO			if(true)
+#else
+#define DEBUGDO			if(false)
+#endif
+
+
 #define FUNCAPI __attribute__((ms_abi))
 
-#define SAFEOP(A, B, CompAOp, CompA, CompBOp, CompB, Comp, OP, Alt)    (((A CompAOp CompA) Comp (B CompBOp CompB))? (A OP B): Alt)
-
-#define safediv__(A, B)     SAFEOP((A), (B), ||, TRUE, !=, 0, &&, /, 1)
+#define SAFEOP(A, B, CompAOp, CompA, CompBOp, CompB, Comp, OP, Alt) (((A) CompAOp (CompA)) Comp ((B) CompBOp (CompB)) ? ((A) OP (B)) : (Alt))
+#define __safediv(A, B) SAFEOP((A), (B), ||, TRUE, !=, 0, &&, /, 1)
 
 #define GUIDPRINT16 L"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"
 #define GUIDPRINT "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"
@@ -176,3 +189,6 @@ EFI_DEVICE_PATH *GetDevicePath(EFI_HANDLE Handle);
 GPTeNSTR *makeGPTeNSTR(char *str);
 
 VOID RestartSystem();
+
+void *sysbase(EFI_HANDLE Image);
+void *getptr(void *ptr);

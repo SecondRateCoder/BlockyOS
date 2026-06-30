@@ -1,39 +1,30 @@
 #pragma once
 
+#include "ref/blake2.h"
 #include "raw.h"
 
-#define FRATSIG "FRAT_FILESYSTEM USABLE"
+#define FRATSIG "FRAT_FILESYSTEM"
+#define FRATSIG_LEN (sizeof(FRATSIG) - 1)
+#define FRATSIGLEN STR((FRATSIG_LEN))
 #define FRATBLOCKSIG "FRATROOT"
 #define FRAT_PROGLIMIT 2
+#define __FS_DEFAULTFORMATEDVERSION "1:0"
+#define __FS_DEFAULTLOGSECTORS 5
+#define __FS_DEFAULTBLOCKSIZE 512
 
-typedef struct miniGPT{
-	char sig[8];
-	uint32_t rev;
-	uint32_t hSize;
-	uint32_t hChecksum;
-	uint32_t r;
-	LBA localLBA;
-	LBA alternateLBA;
-	LBA fUsable;
-	LBA lUsable;
-	size_t dGUID[2];
-	LBA partEntryLoc;
-	uint32_t nPartEntries;
-	uint32_t partEntrySize;
-}__attribute__((packed)) miniGPT;
+#define FRATROOTOFFSET (0)
+#define LOGBLOCKOFFSET (FRATROOTOFFSET + 1)
+#define CLUSTERMAPOFFSET(nLogSectors) (LOGBLOCKOFFSET + (nLogSectors) + 1)
+#define DATAFIRSTOFFSET(nLogSectors, nClusterSectors) (CLUSTERMAPOFFSET(nLogSectors) + (nClusterSectors) + 1)
+#define DATAFIRST(root)	((root)->loc + DATAFIRSTOFFSET(root->logblocks.nLogSectors, root->clusterbuffer.nClusterSectors))
 
-typedef uint16_t cword_t;
-#define GPTeNAMESIZE 72
-#define GPTeNAMELEN (GPTeNAMESIZE / sizeof(cword_t))
-typedef cword_t GPTeNSTR[GPTeNAMELEN];
-typedef struct GPTentry{
-	size_t GUID[2];
-	size_t uGUID[2];
-	LBA sLBA;
-	LBA eLBA;
-	size_t attr;
-	GPTeNSTR name;
-}__attribute__((packed)) GPTentry;
+// #define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors)	(((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * sizeof(fsblock))
+// #define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize)	\
+// __safediv((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) - 						\
+// __safediv(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors), (confSectorSize)) + ((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) % (confSectorSize)) != 0)	\
+// ), confSectorSize)
+#define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) ( ((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * (size_t)sizeof(fsblock) )
+#define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize) (__safediv(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) + ((confSectorSize) - 1), (confSectorSize)))
 
 enumdef(fsattribute, uint8_t){
 	__fsfile = 		0x0000,
@@ -60,7 +51,7 @@ typedef struct fsblock{
 	size_t fcode        : 42;
 	size_t attr			: 16;
 	// uint32_t logalias;
-	uint32_t index;
+	size_t index;
 }__attribute__((packed)) fsblock;
 
 /// @brief This is the expanded block of FileInfo
@@ -77,37 +68,37 @@ typedef struct meta_fsblock{
 		   writedate;
 }meta_fsblock;
 
+#define MAKEVERSION(MAJOR, MINOR)	{(uint32_t)(MAJOR), (uint32_t)(MINOR)}
 typedef struct fsroot{
-	uint32_t confBlockSize;
-	uint32_t confClusterSize;
-	size_t verCode[2];
-	char signature[22];
+	char signature[sizeof(FRATSIG)];
+	uint32_t confLogSectors,
+			confBlockSize,
+			confClusterSize;
+	uint32_t verCode[2];
 }__attribute__((packed)) fsroot;
 
 typedef struct conf_fsroot{
+	_GUID GUID, altGUID;
+	char *path;
 	fsroot *root;
-	size_t logLBA;
 	LBA loc;
 	uint32_t lastClusterAlloc;
-	struct clusterBuffer{
-		LBA clusterLBA;
-		size_t clusterSize;    // Number of entries (not sectors!)
-		size_t nClusterSectors; // Number of sectors for writeblock
-		fsblock *clusterMap;
-	}clusterBuffer;
+	struct logblocks{
+		uint32_t nLogSectors;
+		fslogitem *logBlock;	// The Log Block
+	}logblocks;
+	struct clusterbuffer{
+		size_t clusterSize,
+		 	nClusterSectors;
+		fsblock *clusterMap;	// The Cluster-Map
+	}clusterbuffer;
 }conf_fsroot;
 
 typedef struct fhandle{
 	conf_fsroot *root;
 	fsblock *file;
 	size_t progress;
-	uint8_t progresslimit;
-	struct handlecache{
-		ssize_t progresstimestamp;
-		// 1 means read, 0 means write.
-		int8_t rw;
-		void *block;
-	}handlecache[4];
+	char *path;
 }fhandle;
 
 typedef struct diritem{
@@ -129,6 +120,7 @@ typedef struct unhandle{
 	union{
 		dirhandle *dhandle_;
 		fhandle *fhandle_;
+		void *__notype;
 	};
 }unhandle;
 
@@ -152,26 +144,32 @@ typedef struct dirrunner{
 }dirrunner;
 
 LBA getloc(conf_fsroot *root, fsblock *fb);
+size_t __fsize(fhandle *fh);
+size_t __dsize(dirhandle *dh);
 
 bool checkdisk(char *path);
-LBA *queryparttablefs(miniGPT *gpt, rawenv *re);
-bool queryfs(rawenv *re, LBA base);
+partdim queryparttablefs(miniGPT *gpt, rawenv re);
+bool queryfs(rawenv re, LBA base);
 conf_fsroot *fmount(char *path);
-LBA *loadpart(GPTeNSTR name);
-void formatpart(GPTeNSTR name);
-GPTeNSTR *makeGPTeNSTR(char *str);
-
+partdim loadpart(char *path, GPTeNSTR name);
+void formatpart(
+	char *path,
+	GPTeNSTR name, 
+	uint32_t confBlockSize, uint32_t confLogSectors, 
+	uint32_t verMAJOR, uint32_t verMINOR
+);
 void __finit(conf_fsroot *root, fsblock *fb, char *path);
 
 
-void fsuloadh(fhandle *handle);
-fhandle *fsloadh(conf_fsroot *root, char *path, char *args);
-void _fpush1(fhandle *handle, void *buffer);
-void *_fread1(fhandle *handle);
+void fuloadh(fhandle *handle);
+fhandle *floadh(conf_fsroot *root, char *path, char *args);
+void __fcreate(conf_fsroot *root, char *path, char *flags);
+size_t _fwrite(fhandle *handle, size_t nbytes, const void *data);
+size_t _fread(fhandle *h, size_t nbytes, void **dataout);
 dirhandle *__fgetparent(conf_fsroot *root, char *path);
 bool __ftest(fhandle *h);
-void __fuloaddir(dirhandle *handle);
-dirhandle *__floaddir(conf_fsroot *root, char *path, char *args);
+void fuloaddir(dirhandle *handle);
+dirhandle *floadhdir(conf_fsroot *root, char *path, char *args);
 meta_fsblock *_dreadinfo(dirhandle *handle);
 meta_fsblock *_freadinfo(fhandle *handle);
 fsblock *__faddr(conf_fsroot *root, fsblock *family);
@@ -194,3 +192,7 @@ unhandle *__dirr(dirrunner *dr);
 void __dirr_free(dirrunner *dr);
 
 void __fprint_info(meta_fsblock *finfo);
+
+LBA getloc(conf_fsroot *root, fsblock *fb);
+
+void fuloadroot(conf_fsroot *fr);

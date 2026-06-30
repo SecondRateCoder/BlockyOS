@@ -43,9 +43,7 @@ typedef struct rawenv_t{
     EFI_BLOCK_IO *Blk;
     EFI_GUID GUID;
     UINT32 CalcBlock, ConfBlock, RealBlock;
-#ifdef __DEBUG__
     bool EnableVerbose;
-#endif
 }rawenv_t, *rawenv;
 
 void EnableVerbose(rawenv re);
@@ -57,7 +55,7 @@ void setblocksize(rawenv re, UINT32 new);
 rawenv startup(EFI_GUID GUID, EFI_GUID altGUID, UINT32 configuredBlockSize);
 
 void writebytes(rawenv re, void *data, UINTN bytepos, UINTN nbytes);
-void *writeblocks(rawenv re, void *data, LBA pos, UINTN bytes);
+void writeblocks(rawenv re, void *data, LBA pos, UINTN bytes);
 
 void *readbytes(rawenv re, LBA pos, UINT16 offset, UINTN nbytes);
 void *readblocks(rawenv re, LBA pos, UINTN bytes);

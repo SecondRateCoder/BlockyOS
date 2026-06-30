@@ -20,7 +20,8 @@ param(
 	[int]$SectorSize = 512,
 	[string]$imagetype = 'default',
 	[switch]$enablevars,
-	[switch]$nocompile
+	[switch]$nocompile,
+    [string[]]$SHELLSCRIPTS
 )
 $GCC = 'gcc'
 # $NASM = ${env:NASM}
@@ -39,6 +40,8 @@ $DiskConfigJson = Join-Path (Get-Location) 'compile\disk-config.json'
 $GPTScript = Join-Path (Get-Location) 'compile\emu\GPT.ps1'
 $FSScript = Join-Path (Get-Location) 'compile\emu\FS.ps1'
 
+$SHELLDRIVER = Join-Path (Get-Location) 'tools/build-suite/build.ps1'
+
 $BOCHSRC = Join-Path $Build '.bochsrc'
 $BOCHSLOG = Join-Path $Build 'bochs.log'
 $debuglog = Join-Path $Build 'emudebug.log'
@@ -53,7 +56,7 @@ if(-not (Test-Path $firmwarefolder)){
 	exit 1
 }
 
-$ovmfcode = Join-Path $firmwarefolder 'OVMF.fd'
+$ovmfcode = Join-Path $firmwarefolder "OVMF$(if($imagetype -notmatch "default"){'_CODE'}).fd"
 $ovmfvars = Join-Path $firmwarefolder 'OVMF_VARS.fd'
 # if($enablevarsbackup){
 #     Copy-Item -Path (Join-Path (Get-Location) "compile/toolchain/uefi/vars-backup/$(if($imagetype -eq 'debug'){'DEBUG'}else{'RELEASE'})x64_OVMF_VARS.fd") -Destination $ovmfvars}
@@ -66,7 +69,7 @@ $args_qemu = @(
 	'-m', '2048',
 	# '-accel', "$(if($IsLinux){'kvm'}elseif($IsMacOS){'hvf'}elseif($IsWindows){'whpx'}else{'tcg'})",
 	'-machine', 'q35',
-	'-smp', '4',
+	'-smp', '2',
 	'-net', 'none',
 	'-serial', 'stdio',
 	'-L', $firmwarefolder,
@@ -80,7 +83,7 @@ $args_qemu = @(
 if($enablevars){$args_qemu += '-drive', "if=pflash,format=raw,file=$($ovmfvars)"}
 if($imagetype -eq 'debug'){$args_qemu += '-gdb', "tcp::$($gdbRemote)", '-S'}
 $BOCHSFILE = "
-cpu: model=corei7_ivy_bridge_3770k, ips=10000000, count=4, reset_on_triple_fault=1
+cpu: model=corei7_ivy_bridge_3770k, ips=10000000, count=2, reset_on_triple_fault=1
 boot: disk
 memory: guest=1024, host=1024
 config_interface: win32config
@@ -296,23 +299,6 @@ function Handle-PadToken {
 	}catch{Log-Write -color Red -Msg "Handle-PadToken error: $($_.Exception.Message)"}
 }
 
-function Compile-Watcom{
-	param([string]$src, [string[]]$wargs)
-	$argList = @()
-	$out = Join-Path $Objdir "$([System.IO.Path]::GetFileNameWithoutExtension($src)).bin"
-	if($wargs){$argList += $wargs -split '\s+'}
-	# produce an output object/exe; adjust flags to your toolchain (wcc/wcl usage may differ)
-	$argList += @($src, "-fo=$($out)")
-	Log-Write -color Yellow -Msg ("WATCOM: " + $WATCOM + " " + ($argList -join ' '))
-	$proc = & $WCC @argList 2>&1
-	if($LASTEXITCODE -ne 0){
-		Log-Write -color Red -Msg ("WATCOM failed: " + ($proc -join "`n"))
-		Img-Push -data (Get-Item -Path $src)
-		return $false
-	}
-	return $true
-}
-
 (Prepare)
 
 if(-not $nocompile){
@@ -335,35 +321,53 @@ if(-not $nocompile){
 	Log-Write -color Green "UEFI bootloader compiled: $UEFIBootBlob"
 }
 
-Log-Write -color Cyan "===== Step 2: Create Disk Layout (GPT) ====="
-if(Test-Path $Image){Remove-Item $Image -Force}
-if(-not (Test-Path $DiskConfigJson)){
-	Log-Write -color Red -Msg "Disk config not found: $DiskConfigJson"
-	exit 1
+Log-Write -color Cyan "===== Step 2: Validate or Create Disk Layout (GPT) ====="
+$needRebuild = $true
+if(Test-Path $Image){
+	Log-Write -color Yellow "Validating existing disk image: $($Image)"
+	& (Join-Path (Get-Location) '/compile/emu/ValiGPT.ps1') -ImagePath $Image -Verbose
+	if($LASTEXITCODE -eq 0){
+		Log-Write -color Green "GPT is healthy. Skipping GPT rebuild."
+		$needRebuild = $false
+	}else{Log-Write -color Red "GPT Incorrection detected. Rebuilding GPT..."}
+}else{Log-Write -color Yellow "Disk image not found. Creating a new GPT disk..."}
+
+if($needRebuild){
+	if(Test-Path $Image){Remove-Item $Image -Force}
+	if(-not (Test-Path $DiskConfigJson)){
+		Log-Write -color Red -Msg "Disk config not found: $DiskConfigJson"
+		exit 1
+	}
+	Log-Write -color Yellow "Creating GPT disk: $($Image)"
+	(& $GPTScript -LayoutJson $DiskConfigJson -OutputImage $Image -LogFile (Join-Path $Build "gpt.log") -Verbose)
 }
-Log-Write -color Yellow "Creating GPT disk: $($Image)"
-(& $GPTScript -LayoutJson $DiskConfigJson -OutputImage $Image -LogFile (Join-Path $Build "gpt.log") -Verbose)
 
 Log-Write -color Cyan "===== Step 3: Format Boot Partition (FAT32) ====="
 if(Test-Path $FSScript){
 	Log-Write -color Yellow "Formatting boot partition with FAT32..."
 	try{
 		# (Copy-Item $ovmfshell (Join-Path $BootPartitionDir 'SHELL.efi'))
-		(& $FSScript -PartitionName 'Boot' -FileSystemType 'FAT32' -PartitionFlag 'efi-boot' -DiskImage $Image -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs.log") -Verbose)
+		(& $FSScript -PartitionName  'Boot' -FileSystemType 'FAT32' -PartitionFlag 'efi-boot' -DiskImage $Image -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs.log") -Verbose)
 		Log-Write -color Green "Boot partition formatted successfully"
 	}catch{Log-Write -color Yellow "FS.ps1 formatting encountered an issue: $_";    throw ''}
-
-	
 }else{Log-Write -color Yellow "FS.ps1 not found at $FSScript, skipping FAT32 formatting"}
 
 Log-Write -color Cyan "===== Step 4: Validating Image ====="
-& (Join-Path (Get-Location) '/compile/emu/ValiGPT.ps1') -ImagePath $Image -Verbose
-Log-Write 'Double-verifying Image' -color Blue
 & (Join-Path (Get-Location) '/compile/emu/ValiGPT.ps1') -ImagePath $Image -Verbose
 
 # $GDISKOUT = & 'wsl' 'gdisk' (($Image -replace "\\",'/') -replace "C:/",'/mnt/c/')
 # Log-Write "$($GDISKOUT -join "`n")"
 
+
+# Optimise by Using ShortCut
+if($broadimage){New-Item -Path (Join-Path (Get-Location) '/Build/temp/image.img') -ItemType SymbolicLink -Value $Image}
+
+# Run Shell Scripts
+foreach($PATH in $SHELLSCRIPTS){
+    if(Test-Path $PATH){
+        & $SHELLDRIVER -SHELLSCRIPT $PATH
+    }
+}
 if($run){
 	Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ') "
 	$QEMUOUT = ""
@@ -391,6 +395,3 @@ if($run){
 	& $BOCHS '-f' $BOCHSRC '-q' '-dbglog' $($debuggerlog)
 	Copy-Item -Path (Join-Path $Build "\bx_enh_dbg.ini") -Destination (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini")
 }
-
-# Optimise by Using ShortCut
-if($broadimage){New-Item -Path (Join-Path (Get-Location) '/Build/temp/image.img') -ItemType SymbolicLink -Value $Image}

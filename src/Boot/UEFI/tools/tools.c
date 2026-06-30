@@ -6,9 +6,9 @@ CHAR16 *_GUIDtoSTR(EFI_GUID guid){
     return bf;
 }
 void prGUID(EFI_GUID guid){
-    CHAR16 *bf = _GUIDtoSTR(guid);
-    Print(L"{%s}", bf);
-    __free(bf);
+    CHAR16 bf[64] = {0};
+    GuidToString(bf, &guid);
+    Print(L"%s", bf);
 }
 
 BOOLEAN strcheck(char *s, char c){
@@ -40,9 +40,21 @@ UINT64 __getfcode(char *s_){
 	}
 	UINT64 hash;
 	blake2b_state hashstate;
+// #ifdef __DEBUG__
+//     Print(L"\nInitialising Blake2 Enviroment");
+// #endif
 	blake2b_init(&hashstate, sizeof(UINT64));
-	blake2b_update(&hashstate, s, __strlen(s));
+// #ifdef __DEBUG__
+//     Print(L"\nUpdating Blake2 Enviroment");
+// #endif
+    blake2b_update(&hashstate, s, __strlen(s));
+// #ifdef __DEBUG__
+//     Print(L"\nFinalising Blake2 Enviroment");
+// #endif
 	blake2b_final(&hashstate, &hash, sizeof(UINT64));
+// #ifdef __DEBUG__
+//     Print(L"\nFinalised Blake2 Enviroment");
+// #endif
 	hash &= 0x3FFFFFFFFFF;
     __free(s);
 	return hash;
@@ -216,9 +228,7 @@ BOOLEAN __pattmatch(const char *pattern, const char *str){
 }
 
 void *__realloc_(void *memory, UINT64 currSize, UINT64 nSize){
-#ifdef __DEBUG__
-    Print(L"\nRe-Allocating %llu bytes to %llu bytes", currSize, nSize);
-#endif
+    DEBUGPRINT(L"\nRe-Allocating %llu bytes to %llu bytes", currSize, nSize);
 #ifndef __CUSTMEM_FUNC__
     return ReallocatePool(currSize, nSize, memory);
 #else
@@ -235,25 +245,19 @@ void *__realloc_(void *memory, UINT64 currSize, UINT64 nSize){
 }
 
 void  *__calloc_(UINT64 nLen, UINT64 nSize){
-#ifdef __DEBUG__
-    Print(L"\nAllocating %llu item(s) of %llu bytes", nLen, nSize);
-#endif
+    DEBUGPRINT(L"\nAllocating %llu item(s) of %llu bytes", nLen, nSize);
 #ifndef __CUSTMEM_FUNC__
     return AllocateZeroPool(nSize * nLen);
 #else
     void *out = AllocatePool(nLen * nSize);
-#ifdef __DEBUG__
-    Print(L"    Out Buffer: %p", out);
-#endif
+    DEBUGPRINT(L"    Out Buffer: %p", out);
     if(out){__memset(out, 0, nSize * nLen);}
     return out;
 #endif
 }
 
 void __memset(void *dst, UINT8 val, UINT64 len){
-#ifdef __DEBUG__
-    Print(L"\nSetting %llu bytes to %u", len, val);
-#endif
+    DEBUGPRINT(L"\nSetting %llu bytes to %u", len, val);
 #ifndef __CUSTMEM_FUNC__
     SetMem(dst, val, len);
 #else
@@ -262,9 +266,7 @@ void __memset(void *dst, UINT8 val, UINT64 len){
 }
 
 void __safecopy(void *dst, void *src, UINT64 len){
-#ifdef __DEBUG__
-    Print(L"\nPerforming Safe-Copy");
-#endif
+    DEBUGPRINT(L"\nPerforming Safe-Copy");
     void *dup = __memdup(src, len);
     __memcpy(dst, dup, len);
     __free(dup);
@@ -272,9 +274,7 @@ void __safecopy(void *dst, void *src, UINT64 len){
 }
 
 void __memcpy(void * __restrict__ dst, void * __restrict__ src, UINT64 len){
-#ifdef __DEBUG__
-    Print(L"\nCopying %llu bytes", len);
-#endif
+    DEBUGPRINT(L"\nCopying %llu bytes", len);
 #ifndef __CUSTMEM_FUNC__
     CopyMem(dst, src, len);
 #else
@@ -305,9 +305,7 @@ UINT64 __strspn(const char *s, const char *reject){
 }
 
 UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len){
-#ifdef __DEBUG__
-    Print(L"\nComparing %llu bytes", len);
-#endif
+    DEBUGPRINT(L"\nComparing %llu bytes", len);
 #ifndef __CUSTMEM_FUNC__
     return CompareMem(a, b, len);
 #else
@@ -318,31 +316,22 @@ UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len){
         len--;
     }
     #endif
-#ifdef __DEBUG__
-Print(L"\nmemcmp Return %a", len ? "FALSE": "TRUE");
-#endif
+    DEBUGPRINT(L"\nmemcmp Return %a", len ? "FALSE": "TRUE");
     return len;   // 0 == equal, non‑zero == different
 }
 EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID){
-#ifdef __DEBUG__
-    Print(L"\nGetting Drive Media ID");
-#endif
+    DEBUGPRINT(L"\nGetting Drive Media ID");
     EFI_STATUS Status;
     EFI_LOADED_IMAGE *LoadedImage = NULL;
     EFI_GUID LoadedImageProtocolGuid = LOADED_IMAGE_PROTOCOL;
     EFI_GUID BlockIoGuid = BLOCK_IO_PROTOCOL;
 
     Status = uefi_call_wrapper(BS->HandleProtocol, 3, Image, &LoadedImageProtocolGuid, (void**)&LoadedImage);
-#ifdef __DEBUG__
-    if(EFI_ERROR(Status)){Print(L"\nHandleProtocol(LoadedImage) = [%r:%u]\n", Status, Status);}
-#endif
+    DEBUGDO{if(EFI_ERROR(Status)){Print(L"\nHandleProtocol(LoadedImage) = [%r:%u]\n", Status, Status);}}
     if(EFI_ERROR(Status) || LoadedImage == NULL){return Status;}
     EFI_BLOCK_IO *Blk = NULL;
     Status = uefi_call_wrapper(BS->HandleProtocol, 3, LoadedImage->DeviceHandle, &BlockIoGuid, (void**)&Blk);
-#ifdef __DEBUG__
-    if(EFI_ERROR(Status)){Print(L"\nHandleProtocol(BlockIo) = [%r:%u]\n", Status, Status);}
-    
-#endif
+    DEBUGDO{if(EFI_ERROR(Status)){Print(L"\nHandleProtocol(BlockIo) = [%r:%u]\n", Status, Status);}}
     if(EFI_ERROR(Status) || Blk == NULL || Blk->Media == NULL){return Status;}
     *MediaID = Blk->Media->MediaId;
     return EFI_SUCCESS;
@@ -382,3 +371,20 @@ VOID RestartSystem(){
     // Execution should never reach here
     for(;;);
 }
+
+void *sysbase(EFI_HANDLE Image){
+	static void *out = 0x0;
+	if(Image){
+		EFI_LOADED_IMAGE *Protocol;
+		EFI_GUID LoadedImageGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
+		EFI_STATUS status = uefi_call_wrapper(
+			gBS->HandleProtocol, 3, 
+			Image, &LoadedImageGuid, (void **)&Protocol
+		);
+		if(!EFI_ERROR(status)){out = Protocol->ImageBase;}
+        DEBUGPRINT(L"\n Image Base: %p",  Protocol->ImageBase);
+	}
+	return out;
+}
+
+void *getptr(void *ptr){return (void *)((UINTN)(sysbase(NULL)) + (UINTN)ptr);}

@@ -1,0 +1,608 @@
+C:\GitHub\BlockyOS\tools\executable-format\exechandler.exe -d C:\GitHub\BlockyOS\tools\filesystem\fs.exe C:\GitHub\BlockyOS\tools\output-1.exe
+
+=== EXEC HEADER ===
+Magic:          MYEXECFMT
+Version Magic:  VER1
+Attributes:     0x0
+Image Base:     0x100000000001
+
+#n Sections:       38
+=== SECTION TABLE ===
+[00] Path: .text             Attr: 0x00000000  Param: 0
+	Offset: 0x9b2  Size: 126464 bytes  Base: 0x100000001001
+[01] Path: .data             Attr: 0x00000000  Param: 0
+	Offset: 0x1f7b2  Size: 3072 bytes  Base: 0x100000020001
+[02] Path: .rdata            Attr: 0x00000000  Param: 0
+	Offset: 0x203b2  Size: 12288 bytes  Base: 0x100000021001
+[03] Path: .pdata            Attr: 0x00000000  Param: 0
+	Offset: 0x233b2  Size: 3584 bytes  Base: 0x100000024001
+[04] Path: .xdata            Attr: 0x00000000  Param: 0
+	Offset: 0x241b2  Size: 3584 bytes  Base: 0x100000025001
+[05] Path: .bss              Attr: 0x00000000  Param: 0
+	Offset: 0x24fb2  Size: 0 bytes  Base: 0x100000026001
+[06] Path: .idata            Attr: 0x00000000  Param: 0
+	Offset: 0x24fb2  Size: 2560 bytes  Base: 0x100000027001
+[07] Path: .tls              Attr: 0x00000000  Param: 0
+	Offset: 0x259b2  Size: 512 bytes  Base: 0x100000028001
+[08] Path: .rsrc             Attr: 0x00000000  Param: 0
+	Offset: 0x25bb2  Size: 1536 bytes  Base: 0x100000029001
+[09] Path: .reloc            Attr: 0x00000000  Param: 0
+	Offset: 0x261b2  Size: 512 bytes  Base: 0x10000002a001
+[10] Path: /4                Attr: 0x00000000  Param: 0
+	Offset: 0x263b2  Size: 3072 bytes  Base: 0x10000002b001
+[11] Path: /19               Attr: 0x00000000  Param: 0
+	Offset: 0x26fb2  Size: 127488 bytes  Base: 0x10000002c001
+[12] Path: /31               Attr: 0x00000000  Param: 0
+	Offset: 0x461b2  Size: 22528 bytes  Base: 0x10000004c001
+[13] Path: /45               Attr: 0x00000000  Param: 0
+	Offset: 0x4b9b2  Size: 58880 bytes  Base: 0x100000052001
+[14] Path: /57               Attr: 0x00000000  Param: 0
+	Offset: 0x59fb2  Size: 14336 bytes  Base: 0x100000061001
+[15] Path: /70               Attr: 0x00000000  Param: 0
+	Offset: 0x5d7b2  Size: 1536 bytes  Base: 0x100000065001
+[16] Path: /81               Attr: 0x00000000  Param: 0
+	Offset: 0x5ddb2  Size: 14336 bytes  Base: 0x100000066001
+[17] Path: /97               Attr: 0x00000000  Param: 0
+	Offset: 0x615b2  Size: 36864 bytes  Base: 0x10000006a001
+[18] Path: /113              Attr: 0x00000000  Param: 0
+	Offset: 0x6a5b2  Size: 2048 bytes  Base: 0x100000073001
+[19] Path: .rel..text        Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[20] Path: .rel..data        Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[21] Path: .rel..rdata       Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[22] Path: .rel..pdata       Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[23] Path: .rel..xdata       Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[24] Path: .rel..bss         Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[25] Path: .rel..idata       Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[26] Path: .rel..tls         Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[27] Path: .rel..rsrc        Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[28] Path: .rel..reloc       Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[29] Path: .rel./4           Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[30] Path: .rel./19          Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[31] Path: .rel./31          Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[32] Path: .rel./45          Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[33] Path: .rel./57          Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[34] Path: .rel./70          Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[35] Path: .rel./81          Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[36] Path: .rel./97          Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+[37] Path: .rel./113         Attr: 0x00000010  Param: 0
+	Offset: 0x6adb2  Size: 0 bytes  Base: 0x0
+
+=== SECTION DATA ===
+-- Section 0 (.text) --
+
+Size: 126464 bytes  0000: c3 0f 1f 40 00 66 66 2e 0f 1f 84 00 00 00 00 00 
+  0010: 31 c9 e9 11 eb 01 00 66 0f 1f 84 00 00 00 00 00 
+  0020: 41 57 41 56 41 55 41 54 55 57 56 53 48 83 ec 58 
+  0030: 65 48 8b 04 25 30 00 00 00 48 8b 70 08 48 8b 1d 
+  0040: bc 22 02 00 48 8b 3d b5 62 02 00 eb 13 0f 1f 00 
+  0050: 48 39 c6 0f 84 af 00 00 00 b9 e8 03 00 00 ff d7 
+  0060: 31 c0 f0 48 0f b1 33 75 e7 45 31 f6 4c 8b 25 9d 
+  0070: 22 02 00 41 83 3c 24 01 0f 84 8f 03 00 00 45 8b 
+  0080: 1c 24 45 85 db 0f 84 b5 00 00 00 c7 05 6f 4f 02 
+  0090: 00 01 00 00 00 45 85 f6 0f 84 92 00 00 00 48 8b 
+  00a0: 05 bb 21 02 00 48 8b 00 48 85 c0 74 0c 45 31 c0 
+  00b0: ba 02 00 00 00 31 c9 ff d0 e8 72 e1 01 00 4c 8b 
+  00c0: 05 4b 4f 02 00 8b 0d 55 4f 02 00 4c 89 00 48 8b 
+  00d0: 15 43 4f 02 00 e8 57 2a 01 00 8b 0d 28 4f 02 00 
+  00e0: 85 c9 0f 84 1e 03 00 00 8b 15 16 4f 02 00 85 d2 
+  00f0: 74 26 48 83 c4 58 5b 5e 5f 5d 41 5c 41 5d 41 5e 
+  ... (126464 bytes total)
+
+-- Section 1 (.data) --
+
+Size: 3072 bytes  0000: 68 65 6c 70 00 00 00 00 2c 68 00 00 00 00 00 00 
+  0010: c0 23 02 40 01 00 00 00 09 50 01 40 01 00 00 00 
+  0020: 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 
+  0030: 2d 68 00 00 00 00 00 00 d8 23 02 40 01 00 00 00 
+  0040: 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00a0: 00 00 00 00 00 00 00 00 65 2e 73 79 6d 00 00 00 
+  00b0: 2c 73 00 00 00 00 00 00 10 24 02 40 01 00 00 00 
+  00c0: bf 60 01 40 01 00 00 00 00 00 00 00 00 00 00 00 
+  00d0: 03 00 00 00 00 00 00 00 2d 25 00 00 00 00 00 00 
+  00e0: 3a 24 02 40 01 00 00 00 08 00 00 00 00 00 00 00 
+  00f0: 2d 6e 00 00 00 00 00 00 4b 24 02 40 01 00 00 00 
+  ... (3072 bytes total)
+
+-- Section 2 (.rdata) --
+
+Size: 12288 bytes  0000: 08 c9 bc f3 67 e6 09 6a 3b a7 ca 84 85 ae 67 bb 
+  0010: 2b f8 94 fe 72 f3 6e 3c f1 36 1d 5f 3a f5 4f a5 
+  0020: d1 82 e6 ad 7f 52 0e 51 1f 6c 3e 2b 8c 68 05 9b 
+  0030: 6b bd 41 fb ab d9 83 1f 79 21 7e 13 19 cd e0 5b 
+  0040: 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 
+  0050: 0e 0a 04 08 09 0f 0d 06 01 0c 00 02 0b 07 05 03 
+  0060: 0b 08 0c 00 05 02 0f 0d 0a 0e 03 06 07 01 09 04 
+  0070: 07 09 03 01 0d 0c 0b 0e 02 06 05 0a 04 00 0f 08 
+  0080: 09 00 05 07 02 04 0a 0f 0e 01 0b 0c 06 08 03 0d 
+  0090: 02 0c 06 0a 00 0b 08 03 04 0d 07 05 0f 0e 01 09 
+  00a0: 0c 05 01 0f 0e 0d 04 0a 00 07 06 03 09 02 08 0b 
+  00b0: 0d 0b 07 0e 0c 01 03 09 05 00 0f 04 08 06 02 0a 
+  00c0: 06 0f 0e 09 0b 03 00 08 0c 02 0d 07 01 04 0a 05 
+  00d0: 0a 02 08 04 07 06 01 05 0f 0b 09 0e 03 0c 0d 00 
+  00e0: 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 
+  00f0: 0e 0a 04 08 09 0f 0d 06 01 0c 00 02 0b 07 05 03 
+  ... (12288 bytes total)
+
+-- Section 3 (.pdata) --
+
+Size: 3584 bytes  0000: 00 10 00 00 01 10 00 00 00 50 02 00 10 10 00 00 
+  0010: 17 10 00 00 04 50 02 00 20 10 00 00 18 14 00 00 
+  0020: 08 50 02 00 20 14 00 00 3d 14 00 00 20 50 02 00 
+  0030: 40 14 00 00 5d 14 00 00 40 50 02 00 60 14 00 00 
+  0040: 65 14 00 00 60 50 02 00 70 14 00 00 7c 14 00 00 
+  0050: 64 50 02 00 80 14 00 00 81 14 00 00 68 50 02 00 
+  0060: 90 14 00 00 47 15 00 00 6c 50 02 00 47 15 00 00 
+  0070: a6 15 00 00 78 50 02 00 a6 15 00 00 64 16 00 00 
+  0080: 84 50 02 00 64 16 00 00 80 16 00 00 90 50 02 00 
+  0090: 80 16 00 00 b4 16 00 00 98 50 02 00 b4 16 00 00 
+  00a0: cb 16 00 00 a4 50 02 00 cb 16 00 00 e6 16 00 00 
+  00b0: ac 50 02 00 e6 16 00 00 20 17 00 00 b4 50 02 00 
+  00c0: 20 17 00 00 6b 17 00 00 c0 50 02 00 6b 17 00 00 
+  00d0: cf 17 00 00 c8 50 02 00 cf 17 00 00 62 18 00 00 
+  00e0: d4 50 02 00 62 18 00 00 4b 19 00 00 e0 50 02 00 
+  00f0: 4b 19 00 00 d5 1a 00 00 ec 50 02 00 d5 1a 00 00 
+  ... (3584 bytes total)
+
+-- Section 4 (.xdata) --
+
+Size: 3584 bytes  0000: 01 00 00 00 01 00 00 00 01 10 09 00 10 a2 0c 30 
+  0010: 0b 60 0a 70 09 50 08 c0 06 d0 04 e0 02 f0 00 00 
+  0020: 09 04 01 00 04 42 00 00 70 fa 01 00 01 00 00 00 
+  0030: 24 14 00 00 37 14 00 00 50 8c 01 00 37 14 00 00 
+  0040: 09 04 01 00 04 42 00 00 70 fa 01 00 01 00 00 00 
+  0050: 44 14 00 00 57 14 00 00 50 8c 01 00 57 14 00 00 
+  0060: 01 00 00 00 01 00 00 00 01 00 00 00 01 08 03 05 
+  0070: 08 12 04 03 01 50 00 00 01 08 03 05 08 12 04 03 
+  0080: 01 50 00 00 01 08 03 05 08 12 04 03 01 50 00 00 
+  0090: 01 04 02 05 04 03 01 50 01 08 03 05 08 32 04 03 
+  00a0: 01 50 00 00 01 04 02 05 04 03 01 50 01 04 02 05 
+  00b0: 04 03 01 50 01 08 03 05 08 32 04 03 01 50 00 00 
+  00c0: 01 04 02 05 04 03 01 50 01 08 03 05 08 52 04 03 
+  00d0: 01 50 00 00 01 08 03 05 08 52 04 03 01 50 00 00 
+  00e0: 01 08 03 05 08 b2 04 03 01 50 00 00 01 0b 04 05 
+  00f0: 0b 01 1c 00 04 03 01 50 01 10 04 85 10 03 08 01 
+  ... (3584 bytes total)
+
+-- Section 5 (.bss) --
+
+Size: 0 bytes(empty)
+
+-- Section 6 (.idata) --
+
+Size: 2560 bytes  0000: 50 70 02 00 00 00 00 00 00 00 00 00 9c 78 02 00 
+  0010: a0 72 02 00 60 70 02 00 00 00 00 00 00 00 00 00 
+  0020: e4 78 02 00 b0 72 02 00 e0 70 02 00 00 00 00 00 
+  0030: 00 00 00 00 d0 79 02 00 30 73 02 00 00 00 00 00 
+  0040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0050: f0 74 02 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0060: 02 75 02 00 00 00 00 00 1a 75 02 00 00 00 00 00 
+  0070: 32 75 02 00 00 00 00 00 3e 75 02 00 00 00 00 00 
+  0080: 4e 75 02 00 00 00 00 00 62 75 02 00 00 00 00 00 
+  0090: 74 75 02 00 00 00 00 00 90 75 02 00 00 00 00 00 
+  00a0: a8 75 02 00 00 00 00 00 be 75 02 00 00 00 00 00 
+  00b0: dc 75 02 00 00 00 00 00 e4 75 02 00 00 00 00 00 
+  00c0: f2 75 02 00 00 00 00 00 04 76 02 00 00 00 00 00 
+  00d0: 14 76 02 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00e0: 2a 76 02 00 00 00 00 00 42 76 02 00 00 00 00 00 
+  00f0: 58 76 02 00 00 00 00 00 6e 76 02 00 00 00 00 00 
+  ... (2560 bytes total)
+
+-- Section 7 (.tls) --
+
+Size: 512 bytes  0000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  ... (512 bytes total)
+
+-- Section 8 (.rsrc) --
+
+Size: 1536 bytes  0000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 
+  0010: 18 00 00 00 18 00 00 80 00 00 00 00 00 00 00 00 
+  0020: 00 00 00 00 00 00 01 00 01 00 00 00 30 00 00 80 
+  0030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 
+  0040: 00 00 00 00 48 00 00 00 58 90 02 00 8f 04 00 00 
+  0050: 00 00 00 00 00 00 00 00 3c 3f 78 6d 6c 20 76 65 
+  0060: 72 73 69 6f 6e 3d 22 31 2e 30 22 20 65 6e 63 6f 
+  0070: 64 69 6e 67 3d 22 55 54 46 2d 38 22 20 73 74 61 
+  0080: 6e 64 61 6c 6f 6e 65 3d 22 79 65 73 22 3f 3e 0a 
+  0090: 3c 61 73 73 65 6d 62 6c 79 20 78 6d 6c 6e 73 3d 
+  00a0: 22 75 72 6e 3a 73 63 68 65 6d 61 73 2d 6d 69 63 
+  00b0: 72 6f 73 6f 66 74 2d 63 6f 6d 3a 61 73 6d 2e 76 
+  00c0: 31 22 20 6d 61 6e 69 66 65 73 74 56 65 72 73 69 
+  00d0: 6f 6e 3d 22 31 2e 30 22 3e 0a 20 20 3c 74 72 75 
+  00e0: 73 74 49 6e 66 6f 20 78 6d 6c 6e 73 3d 22 75 72 
+  00f0: 6e 3a 73 63 68 65 6d 61 73 2d 6d 69 63 72 6f 73 
+  ... (1536 bytes total)
+
+-- Section 9 (.reloc) --
+
+Size: 512 bytes  0000: 00 00 02 00 ac 00 00 00 10 a0 18 a0 38 a0 b8 a0 
+  0010: c0 a0 e0 a0 f8 a0 10 a1 60 a1 68 a1 88 a1 a0 a1 
+  0020: 08 a2 10 a2 30 a2 b0 a2 b8 a2 d8 a2 f0 a2 08 a3 
+  0030: 20 a3 38 a3 58 a3 00 a4 08 a4 a8 a4 b0 a4 d0 a4 
+  0040: e8 a4 00 a5 50 a5 58 a5 78 a5 f8 a5 00 a6 20 a6 
+  0050: 38 a6 50 a6 a0 a6 a8 a6 c8 a6 48 a7 50 a7 70 a7 
+  0060: 88 a7 a0 a7 b8 a7 f0 a7 f8 a7 18 a8 30 a8 48 a8 
+  0070: 60 a8 98 a8 a0 a8 c0 a8 d8 a8 f0 a8 08 a9 40 a9 
+  0080: 48 a9 68 a9 80 a9 98 a9 b0 a9 e8 a9 f0 a9 80 aa 
+  0090: f0 aa 00 ab 10 ab 20 ab 30 ab 40 ab 50 ab 58 ab 
+  00a0: 60 ab 68 ab 70 ab 80 ab 90 ab a0 ab 00 10 02 00 
+  00b0: 14 00 00 00 00 a1 20 a1 00 a2 20 a2 30 a2 40 a2 
+  00c0: 00 20 02 00 14 00 00 00 e0 aa 00 ab 08 ab 10 ab 
+  00d0: 18 ab 00 00 00 30 02 00 4c 00 00 00 00 a2 10 a2 
+  00e0: 20 a2 30 a2 40 a2 50 a2 60 a2 70 a2 80 a2 90 a2 
+  00f0: a0 a2 b0 a2 c0 a2 d0 a2 e0 a2 f0 a2 00 a3 10 a3 
+  ... (512 bytes total)
+
+-- Section 10 (/4) --
+
+Size: 3072 bytes  0000: 2c 00 00 00 02 00 00 00 00 00 08 00 00 00 00 00 
+  0010: 00 10 00 40 01 00 00 00 65 04 00 00 00 00 00 00 
+  0020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0030: 2c 00 00 00 02 00 96 28 00 00 08 00 00 00 00 00 
+  0040: 90 14 00 40 01 00 00 00 5a 5a 00 00 00 00 00 00 
+  0050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0060: 2c 00 00 00 02 00 c6 34 00 00 08 00 00 00 00 00 
+  0070: f0 6e 00 40 01 00 00 00 74 0c 00 00 00 00 00 00 
+  0080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  0090: 2c 00 00 00 02 00 f1 3f 00 00 08 00 00 00 00 00 
+  00a0: 70 7b 00 40 01 00 00 00 f3 43 00 00 00 00 00 00 
+  00b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00c0: 2c 00 00 00 02 00 7a 4b 00 00 08 00 00 00 00 00 
+  00d0: 70 bf 00 40 01 00 00 00 58 0c 00 00 00 00 00 00 
+  00e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+  00f0: 2c 00 00 00 02 00 db 56 00 00 08 00 00 00 00 00 
+  ... (3072 bytes total)
+
+-- Section 11 (/19) --
+
+Size: 127488 bytes  0000: 92 28 00 00 05 00 01 08 00 00 00 00 3c 47 4e 55 
+  0010: 20 43 39 39 20 31 36 2e 31 2e 30 20 2d 6d 36 34 
+  0020: 20 2d 6d 61 73 6d 3d 61 74 74 20 2d 6d 74 75 6e 
+  0030: 65 3d 67 65 6e 65 72 69 63 20 2d 6d 61 72 63 68 
+  0040: 3d 6e 6f 63 6f 6e 61 20 2d 67 20 2d 4f 32 20 2d 
+  0050: 73 74 64 3d 67 6e 75 39 39 20 2d 66 6e 6f 2d 62 
+  0060: 75 69 6c 74 69 6e 00 0c 19 00 00 00 00 00 00 00 
+  0070: 00 10 00 40 01 00 00 00 65 04 00 00 00 00 00 00 
+  0080: 00 00 00 00 08 01 06 63 68 61 72 00 26 84 00 00 
+  0090: 00 09 73 69 7a 65 5f 74 00 05 23 2c a0 00 00 00 
+  00a0: 08 08 07 6c 6f 6e 67 20 6c 6f 6e 67 20 75 6e 73 
+  00b0: 69 67 6e 65 64 20 69 6e 74 00 08 08 05 6c 6f 6e 
+  00c0: 67 20 6c 6f 6e 67 20 69 6e 74 00 09 75 69 6e 74 
+  00d0: 70 74 72 5f 74 00 05 4b 2c a0 00 00 00 09 77 63 
+  00e0: 68 61 72 5f 74 00 05 62 18 f2 00 00 00 26 dd 00 
+  00f0: 00 00 08 02 07 73 68 6f 72 74 20 75 6e 73 69 67 
+  ... (127488 bytes total)
+
+-- Section 12 (/31) --
+
+Size: 22528 bytes  0000: 01 0d 00 03 08 3a 21 02 3b 05 39 0b 49 13 38 0b 
+  0010: 00 00 02 0d 00 03 0e 3a 21 02 3b 05 39 0b 49 13 
+  0020: 38 0b 00 00 03 28 00 03 08 1c 0b 00 00 04 05 00 
+  0030: 49 13 00 00 05 0f 00 0b 21 08 49 13 00 00 06 49 
+  0040: 00 02 18 7e 18 00 00 07 16 00 03 08 3a 0b 3b 05 
+  0050: 39 0b 49 13 00 00 08 24 00 0b 0b 3e 0b 03 08 00 
+  0060: 00 09 16 00 03 08 3a 0b 3b 0b 39 0b 49 13 00 00 
+  0070: 0a 34 00 03 08 3a 0b 3b 0b 39 0b 49 13 3f 19 3c 
+  0080: 19 00 00 0b 48 01 7d 01 7f 13 01 13 00 00 0c 0d 
+  0090: 00 03 08 3a 0b 3b 0b 39 0b 49 13 38 0b 00 00 0d 
+  00a0: 48 00 7d 01 7f 13 00 00 0e 0d 00 03 08 3a 21 02 
+  00b0: 3b 05 39 0b 49 13 88 01 21 10 38 05 00 00 0f 2e 
+  00c0: 01 3f 19 03 08 3a 0b 3b 0b 39 0b 27 19 49 13 3c 
+  00d0: 19 01 13 00 00 10 0d 00 03 08 3a 21 02 3b 05 39 
+  00e0: 0b 49 13 88 01 21 10 38 0b 00 00 11 13 01 03 08 
+  00f0: 0b 0b 3a 21 02 3b 05 39 0b 01 13 00 00 12 21 00 
+  ... (22528 bytes total)
+
+-- Section 13 (/45) --
+
+Size: 58880 bytes  0000: 5c 04 00 00 05 00 08 00 9e 00 00 00 01 01 01 fb 
+  0010: 0e 0d 00 01 01 01 01 00 00 00 01 00 00 01 01 01 
+  0020: 1f 05 49 00 00 00 62 00 00 00 89 00 00 00 a5 00 
+  0030: 00 00 ca 00 00 00 02 01 1f 02 0f 16 f5 00 00 00 
+  0040: 01 fe 00 00 00 01 07 01 00 00 02 0f 01 00 00 03 
+  0050: 1d 01 00 00 02 26 01 00 00 02 30 01 00 00 02 3c 
+  0060: 01 00 00 02 46 01 00 00 02 57 01 00 00 02 64 01 
+  0070: 00 00 02 6d 01 00 00 04 78 01 00 00 02 8a 01 00 
+  0080: 00 02 91 01 00 00 02 99 01 00 00 02 aa 01 00 00 
+  0090: 02 b3 01 00 00 02 bb 01 00 00 02 c5 01 00 00 02 
+  00a0: ce 01 00 00 02 d6 01 00 00 02 05 01 00 09 02 00 
+  00b0: 10 00 40 01 00 00 00 03 c8 00 01 06 01 06 17 f6 
+  00c0: 05 03 13 05 01 06 2f 05 03 11 05 01 06 03 c7 00 
+  00d0: d6 05 05 f3 13 04 02 05 1e 03 99 d0 00 01 05 09 
+  00e0: 14 04 03 05 01 03 9b b5 7f 01 01 01 90 06 01 04 
+  00f0: 01 05 0b 00 02 04 01 03 ca 7a 01 05 05 06 4b 13 
+  ... (58880 bytes total)
+
+-- Section 14 (/57) --
+
+Size: 14336 bytes  0000: 14 00 00 00 ff ff ff ff 01 00 01 78 20 0c 07 08 
+  0010: a0 01 00 00 00 00 00 00 14 00 00 00 00 00 00 00 
+  0020: 00 10 00 40 01 00 00 00 01 00 00 00 00 00 00 00 
+  0030: 14 00 00 00 00 00 00 00 10 10 00 40 01 00 00 00 
+  0040: 07 00 00 00 00 00 00 00 6c 00 00 00 00 00 00 00 
+  0050: 20 10 00 40 01 00 00 00 f8 03 00 00 00 00 00 00 
+  0060: 42 0e 10 8f 02 42 0e 18 8e 03 42 0e 20 8d 04 42 
+  0070: 0e 28 8c 05 41 0e 30 86 06 41 0e 38 85 07 41 0e 
+  0080: 40 84 08 41 0e 48 83 09 44 0e a0 01 02 c6 0a 0e 
+  0090: 48 41 c3 0e 40 41 c4 0e 38 41 c5 0e 30 41 c6 0e 
+  00a0: 28 42 cc 0e 20 42 cd 0e 18 42 ce 0e 10 42 cf 0e 
+  00b0: 08 46 0b 00 00 00 00 00 1c 00 00 00 00 00 00 00 
+  00c0: 20 14 00 40 01 00 00 00 1d 00 00 00 00 00 00 00 
+  00d0: 44 0e 30 58 0e 08 00 00 1c 00 00 00 00 00 00 00 
+  00e0: 40 14 00 40 01 00 00 00 1d 00 00 00 00 00 00 00 
+  00f0: 44 0e 30 58 0e 08 00 00 14 00 00 00 00 00 00 00 
+  ... (14336 bytes total)
+
+-- Section 15 (/70) --
+
+Size: 1536 bytes  0000: 53 75 62 73 79 73 74 65 6d 00 43 68 65 63 6b 53 
+  0010: 75 6d 00 53 69 7a 65 4f 66 49 6d 61 67 65 00 42 
+  0020: 61 73 65 4f 66 43 6f 64 65 00 4d 69 6e 6f 72 53 
+  0030: 75 62 73 79 73 74 65 6d 56 65 72 73 69 6f 6e 00 
+  0040: 44 61 74 61 44 69 72 65 63 74 6f 72 79 00 53 69 
+  0050: 7a 65 4f 66 53 74 61 63 6b 43 6f 6d 6d 69 74 00 
+  0060: 49 6d 61 67 65 42 61 73 65 00 53 69 7a 65 4f 66 
+  0070: 43 6f 64 65 00 4d 61 6a 6f 72 4c 69 6e 6b 65 72 
+  0080: 56 65 72 73 69 6f 6e 00 53 69 7a 65 4f 66 48 65 
+  0090: 61 70 52 65 73 65 72 76 65 00 53 69 7a 65 4f 66 
+  00a0: 49 6e 69 74 69 61 6c 69 7a 65 64 44 61 74 61 00 
+  00b0: 53 69 7a 65 4f 66 53 74 61 63 6b 52 65 73 65 72 
+  00c0: 76 65 00 53 69 7a 65 4f 66 48 65 61 70 43 6f 6d 
+  00d0: 6d 69 74 00 4d 69 6e 6f 72 4c 69 6e 6b 65 72 56 
+  00e0: 65 72 73 69 6f 6e 00 5f 5f 65 6e 61 74 69 76 65 
+  00f0: 5f 73 74 61 72 74 75 70 5f 73 74 61 74 65 00 53 
+  ... (1536 bytes total)
+
+-- Section 16 (/81) --
+
+Size: 14336 bytes  0000: 44 3a 5c 57 5c 42 5c 73 72 63 5c 62 75 69 6c 64 
+  0010: 2d 4d 49 4e 47 57 36 34 00 44 3a 2f 57 2f 42 2f 
+  0020: 73 72 63 2f 6d 69 6e 67 77 2d 77 36 34 2f 6d 69 
+  0030: 6e 67 77 2d 77 36 34 2d 63 72 74 2f 63 72 74 2f 
+  0040: 63 72 74 65 78 65 2e 63 00 44 3a 2f 57 2f 42 2f 
+  0050: 73 72 63 2f 62 75 69 6c 64 2d 4d 49 4e 47 57 36 
+  0060: 34 00 44 3a 2f 57 2f 42 2f 73 72 63 2f 6d 69 6e 
+  0070: 67 77 2d 77 36 34 2f 6d 69 6e 67 77 2d 77 36 34 
+  0080: 2d 63 72 74 2f 63 72 74 00 44 3a 2f 4d 2f 6d 73 
+  0090: 79 73 36 34 2f 6d 69 6e 67 77 36 34 2f 69 6e 63 
+  00a0: 6c 75 64 65 00 44 3a 2f 4d 2f 6d 73 79 73 36 34 
+  00b0: 2f 6d 69 6e 67 77 36 34 2f 69 6e 63 6c 75 64 65 
+  00c0: 2f 70 73 64 6b 5f 69 6e 63 00 44 3a 2f 57 2f 42 
+  00d0: 2f 73 72 63 2f 6d 69 6e 67 77 2d 77 36 34 2f 6d 
+  00e0: 69 6e 67 77 2d 77 36 34 2d 63 72 74 2f 69 6e 63 
+  00f0: 6c 75 64 65 00 63 72 74 65 78 65 2e 63 00 63 72 
+  ... (14336 bytes total)
+
+-- Section 17 (/97) --
+
+Size: 36864 bytes  0000: 70 02 00 00 05 00 08 00 00 00 00 00 00 00 00 00 
+  0010: 00 00 00 00 04 3d 95 01 01 54 04 83 02 93 02 01 
+  0020: 54 04 ba 02 f3 02 01 54 04 8d 08 98 08 01 54 00 
+  0030: 01 00 00 00 00 00 00 00 04 3d 6c 02 30 9f 04 6c 
+  0040: 80 02 01 5e 04 83 02 93 02 02 30 9f 04 93 02 98 
+  0050: 08 01 5e 00 03 00 00 00 00 00 00 00 00 00 00 00 
+  0060: 00 00 00 00 00 00 01 00 00 00 00 00 00 00 04 3d 
+  0070: da 01 02 30 9f 04 da 01 f2 01 01 50 04 83 02 93 
+  0080: 02 02 30 9f 04 93 02 a0 02 01 50 04 a0 02 a7 02 
+  0090: 03 91 9c 7f 04 a7 02 e8 04 02 30 9f 04 e8 04 f7 
+  00a0: 04 01 50 04 e6 05 fe 05 01 50 04 e3 06 f7 06 02 
+  00b0: 30 9f 04 a1 07 b8 07 02 30 9f 04 d8 07 fc 07 02 
+  00c0: 30 9f 04 86 08 8c 08 01 50 04 8d 08 98 08 02 30 
+  00d0: 9f 00 04 01 04 30 39 03 08 30 9f 00 00 00 01 00 
+  00e0: 00 00 00 00 00 00 04 4d 60 01 54 04 60 95 01 01 
+  00f0: 54 04 83 02 93 02 01 54 04 ba 02 f3 02 01 54 04 
+  ... (36864 bytes total)
+
+-- Section 18 (/113) --
+
+Size: 2048 bytes  0000: 2e 00 00 00 05 00 08 00 00 00 00 00 04 a8 03 a0 
+  0010: 04 04 d8 07 f7 07 00 04 f0 05 d9 06 04 80 07 8c 
+  0020: 07 04 9a 07 a1 07 00 04 a0 06 b0 06 04 b9 06 d9 
+  0030: 06 00 52 00 00 00 05 00 08 00 00 00 00 00 04 de 
+  0040: 07 b2 0d 04 b7 0d f2 0d 00 04 e0 08 b2 0d 04 b7 
+  0050: 0d d4 0d 00 04 e4 1c de 23 04 e0 23 fd 23 00 04 
+  0060: aa 6c e8 6d 04 c3 71 c4 71 00 04 f2 8e 01 e5 90 
+  0070: 01 04 f2 90 01 f3 90 01 00 04 b0 92 01 e2 93 01 
+  0080: 04 ef 93 01 f0 93 01 00 8b 00 00 00 05 00 08 00 
+  0090: 00 00 00 00 04 c0 07 8e 09 04 84 0d 87 0d 00 04 
+  00a0: 8e 09 81 0a 04 87 0d 8a 0d 00 04 81 0a fb 0a 04 
+  00b0: 8a 0d 8d 0d 00 04 fb 0a f2 0b 04 8d 0d 8e 0d 00 
+  00c0: 04 f5 3a 81 3b 04 9c 3b ed 3d 00 04 b0 3f a0 40 
+  00d0: 04 a2 40 b8 40 00 04 e4 41 be 42 04 c0 42 d6 42 
+  00e0: 04 d8 42 ee 42 00 04 dc 4a b4 4b 04 b6 4b cc 4b 
+  00f0: 00 04 fc 4c dd 50 04 e2 50 f8 50 00 04 fd 50 97 
+  ... (2048 bytes total)
+
+-- Section 19 (.rel..text) --
+
+Size: 0 bytes(empty)
+
+-- Section 20 (.rel..data) --
+
+Size: 0 bytes(empty)
+
+-- Section 21 (.rel..rdata) --
+
+Size: 0 bytes(empty)
+
+-- Section 22 (.rel..pdata) --
+
+Size: 0 bytes(empty)
+
+-- Section 23 (.rel..xdata) --
+
+Size: 0 bytes(empty)
+
+-- Section 24 (.rel..bss) --
+
+Size: 0 bytes(empty)
+
+-- Section 25 (.rel..idata) --
+
+Size: 0 bytes(empty)
+
+-- Section 26 (.rel..tls) --
+
+Size: 0 bytes(empty)
+
+-- Section 27 (.rel..rsrc) --
+
+Size: 0 bytes(empty)
+
+-- Section 28 (.rel..reloc) --
+
+Size: 0 bytes(empty)
+
+-- Section 29 (.rel./4) --
+
+Size: 0 bytes(empty)
+
+-- Section 30 (.rel./19) --
+
+Size: 0 bytes(empty)
+
+-- Section 31 (.rel./31) --
+
+Size: 0 bytes(empty)
+
+-- Section 32 (.rel./45) --
+
+Size: 0 bytes(empty)
+
+-- Section 33 (.rel./57) --
+
+Size: 0 bytes(empty)
+
+-- Section 34 (.rel./70) --
+
+Size: 0 bytes(empty)
+
+-- Section 35 (.rel./81) --
+
+Size: 0 bytes(empty)
+
+-- Section 36 (.rel./97) --
+
+Size: 0 bytes(empty)
+
+-- Section 37 (.rel./113) --
+
+Size: 0 bytes(empty)
+,o -p /root/test.exe -a test -la fc
+[SHELL OUT]: FSFRAT DRIVER
+[SHELL OUT]: >> 
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:196]  >>  Mounting FS Root: [C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img]
+[SHELL OUT]: [Parent:00007ff7c631d8f9] >>  C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img  ConfBlockSize: 512    Starting Disk Env ID: 
+[SHELL OUT]: Verifying Disk GPT
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: GPT Dump:
+[SHELL OUT]:     Sig: "EFI PART"
+[SHELL OUT]:     Rev: 65536
+[SHELL OUT]:     Header-Size: 92
+[SHELL OUT]: [Parent:00007ff7c631d914] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+[SHELL OUT]:     localLBA: 1
+[SHELL OUT]:     altLBA: 2623490
+[SHELL OUT]:     firstUsable: 2048
+[SHELL OUT]:     Header Checksum: 4081705056
+[SHELL OUT]:     lastUsable: 2623488
+[SHELL OUT]:     Disk-GUID: 
+[SHELL OUT]:     # of Partition-Entries: 3
+[SHELL OUT]:     Partition-Table Checksum: 801556421
+[SHELL OUT]:     Partition-Entry Size: 128
+[SHELL OUT]: GPT Exists? true
+[SHELL OUT]: Closing Disk Interface >> {C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img}
+[SHELL OUT]: [Parent:00007ff7c631ee45] >>  C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img  ConfBlockSize: 512    Starting Disk Env ID: 
+[SHELL OUT]: [Parent:00007ff7c631ee66] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:137]  >>  Querying Part Table
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:145]  >>  GPT-Entry: BOOT{2048:526335 -> 524287}
+[SHELL OUT]: [Parent:00007ff7c631e6cd] >> Reading [384 bytes(s)->1 block(s)] to LBA[2(1024)-3(1536)]
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:159]  >>  Querying FS at 2048
+[SHELL OUT]:     Partition-Table: 2
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: [Parent:00007ff7c631eb5a] >> Reading [36 bytes(s)->1 block(s)] to LBA[2048(1048576)-2049(1049088)]
+[SHELL OUT]: FS-Root Blob:
+[SHELL OUT]:     Version: [0:524288]
+[SHELL OUT]:     Configured Log Sectors: 2
+[SHELL OUT]:     Sig: 
+[SHELL OUT]:     Configured Block Size: 0
+[SHELL OUT]:     Configured Cluster-Map Size: 16711743
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:145]  >>  GPT-Entry: ROOT{526336:2623487 -> 2097151}
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:159]  >>  Querying FS at 526336
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: [Parent:00007ff7c631eb5a] >> Reading [36 bytes(s)->1 block(s)] to LBA[526336(269484032)-526337(269484544)]
+[SHELL OUT]: FS-Root Blob:
+[SHELL OUT]:     Version: [1:0]
+[SHELL OUT]:     Sig: FRAT_FILESYSTEM
+[SHELL OUT]:     Configured Log Sectors: 5
+[SHELL OUT]:     Configured Block Size: 512
+[SHELL OUT]:     Configured Cluster-Map Size: 65536
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:184]  >>  FS Found at [526336]:
+[SHELL OUT]: 	Version-Code: [1:0]
+[SHELL OUT]: 	Configured Cluster-Size: 65536
+[SHELL OUT]: 	Configured # of Log-Sectors: 5
+[SHELL OUT]: 	Configured Block-Size: 512
+[SHELL OUT]: 	Configured Log-Size: 90
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:208]  >>  Found Formatted Partition: 526336:2623487 -> 2097151
+[SHELL OUT]: [Parent:00007ff7c631ef97] >> Reading [36 bytes(s)->1 block(s)] to LBA[526336(269484032)-526337(269484544)]
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:221]  >>  Root: 526336:2623487 -> 2097151 LBAs
+[SHELL OUT]: 	Version-Code: [1:0]
+[SHELL OUT]: 	Configured Block-Size: 512
+[SHELL OUT]: 	Configured Cluster-Size: 65536
+[SHELL OUT]: 	Configured # of Log-Sectors: 65536
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: 	Configured Log-Size: 5
+[SHELL OUT]: [Parent:00007ff7c631f2ba] >> Reading [2560 bytes(s)->5 block(s)] to LBA[526337(269484544)-526342(269487104)]
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: [Parent:00007ff7c631f336] >> Reading [65536 bytes(s)->128 block(s)] to LBA[526343(269487616)-526471(269553152)]
+[SHELL OUT]:     Verifying FS Root Items #items: 4096
+[SHELL OUT]: >> 
+[SHELL OUT]: Closing Disk Interface >> {C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img}
+[SHELL OUT]: Mounting File [/root/test.exe] with "f"
+[SHELL OUT]: Root is 0000020bd0a4a1c0
+[SHELL OUT]: >> 
+[SHELL OUT]: [Parent:00007ff7c6321519] >>  C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img  ConfBlockSize: 512    Starting Disk Env ID: 
+[SHELL OUT]: Writing Bytes
+[SHELL OUT]: [Parent:00007ff7c6321542] >> Writing [36 bytes(s)->1 block(s)] to LBA[0(0)-1(512)]
+[SHELL OUT]: Writing Bytes
+[SHELL OUT]: [Parent:00007ff7c6321579] >> Writing [65536 bytes(s)->128 block(s)] to LBA[7(3584)-135(69120)]
+[SHELL OUT]: Closing Disk Interface >> {C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img}

@@ -18,7 +18,7 @@ $_ARGS | ForEach-Object{$_ | ForEach-Object{($_ -split ' ') | ForEach-Object{$AR
 
 $GCCOUT = $null
 if($_ARGS -contains "-m32"){$GCCOUT = (& "$($TYPE)-$($IMAGE)" $ARGS_) 2>&1
-}else{$GCCOUT = (& "$($TYPE)-$($IMAGE)" '-nostdlib' '-nostartfiles' '-nodefaultlibs' $ARGS_) 2>&1}
+}else{$GCCOUT = (& "$($TYPE)-$($IMAGE)" $ARGS_) 2>&1}
 
 $env:COMPILER_PATH = $null
 $env:PATH = $envOLDPATH

@@ -1,8 +1,8 @@
 param(
     [Parameter(Mandatory=$true)]
     [string]$jsonpath,
-    [string]$bootPartName = "Boot",
-    [string]$rootPartName = "Root"
+    [string]$bootPartName = "BOOT",
+    [string]$rootPartName = "ROOT"
 )
 function Convert-ToEfiGuid{
     param(

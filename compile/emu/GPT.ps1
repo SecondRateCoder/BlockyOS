@@ -265,7 +265,7 @@ function New-LoggedFileStream{
         $caller = (Get-PSCallStack)[1].Location
         $abs = $this.BaseStream.Position
 
-        Log -Info "WARNING" -color Yellow ">> ([WRITE] Position=$abs  Count=$count  Caller=$caller)"
+        Log -Info "WARNING" -color Yellow ">> ([WRITE] Position=$abs  Count=$count  Caller $caller)"
 
         return $this.BaseStream.Write($buffer, $offset, $count)
     }

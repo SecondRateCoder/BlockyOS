@@ -19,10 +19,12 @@ $GCC = Join-Path (Get-Location) 'src/Boot/UEFI/gcc.ps1'
 $EFIPARENT = Join-Path (Get-Location) "compile\toolchain\gnu-efi-build\$($ARCHITECTURE)\"
 $BUILDDIR = Join-Path (Get-Location) "Build\Build-$($PREFIX)\"
 $OBJDIR = Join-Path $BUILDDIR 'objs/'
-$MAPFILE = Join-Path $BUILDDIR 'uefi-map.log'
+$MAPFILESRC = Join-Path $BUILDDIR 'uefi-src-map.log'
+$MAPFILEFINAL = Join-Path $BUILDDIR 'uefi-final-map.log'
 $LOGFILE = Join-Path $BUILDDIR 'uefi.log'
 $OFILES = @()
-$UEFIINTERMEDIATE = (Join-Path -Path $Objdir "blob.so")
+$UEFIINTERMEDIATESRC = (Join-Path -Path $Objdir "blob_1.so")
+$UEFIINTERMEDIATEFINAL = (Join-Path -Path $Objdir "blob_2.so")
 $UEFIBINARYBLOB = (Join-Path -Path $Objdir "blob.efi")
 $EMUUEFIBINARYDIR = (Join-Path -Path $EMUOUT "/EFI/BOOT/")
 $EMUUEFIBINARYBLOB = (Join-Path -Path $EMUUEFIBINARYDIR "/BOOTX64.EFI")
@@ -38,55 +40,49 @@ $CARGS = @(
 	'-I', "$(Get-Location)/src/", '-I', "$(Get-Location)/", '-I', "$($EFIPARENT)\include\efi\", 
 	'-I', (Join-Path (Get-Location) "compile\toolchain\prebuild\include\"), '-I',"$($EFIPARENT)include\efi\legacy\",
 	'-I', "$($EFIPARENT)include\efi\$(if($ARCHITECTURE -eq 'x86_64'){'x86_64'}else{'ia32'})\", 
-	'-fno-strict-aliasing', '-fno-stack-protector', '-fno-stack-check',
-	'-fdiagnostics-color=always', '-fshort-wchar', '-fno-inline', '-fno-toplevel-reorder',
-	'-ffunction-sections', '-fdata-sections', '-fno-delete-null-pointer-checks',
-	'-ffreestanding', '-fno-lto',
-	# '-fPIE', '-symbolic',
-	'-pie', '-shared',
-	# '-fno-pic', 
-	'-maccumulate-outgoing-args', '-fno-omit-frame-pointer',
+	'-fno-stack-protector', '-fno-stack-check',
+	'-fdiagnostics-color=always', '-fshort-wchar', 
+	'-ffreestanding', '-fPIC', '-O0',
+	'-maccumulate-outgoing-args', '-fno-omit-frame-pointer', 
 	"-m$(if($ARCHITECTURE -eq 'x86_64'){'64'}else{'32'})",
 	'-D', "$(if($ARCHITECTURE -eq 'x86_64'){'__x86_64__', '-mno-red-zone'}else{'__ia32__', '-D', 'EFI32'})", 
-	'-D', '__DEBUG__', '-D', '__CUSTMEM_FUNC__'
+	'-D', '__DEBUG__', 
+	'-D', '__CUSTMEM_FUNC__', '-D', 'NATIVE_LITTLE_ENDIAN'
 )
-# if($ENABLEDEBUGGABLE){$CARGS += '-D', 'EFI_DEBUG', '-g', '-Og'}
+if($ENABLEDEBUGGABLE){$CARGS += '-D', 'EFI_DEBUG', '-g', '-Og'}
 if($ENABLENTEMULATOR){$CARGS += '-D', 'EFI_NT_EMULATOR'}
 # if($ARCHITECTURE -eq 'x86_64'){$CARGS += '-D', '__x86_64__'}
 # elseif($ARCHITECTURE -eq 'x86'){$CARGS += '-D', 'EFI32', '-D', '__ia32__'}
 
 
 $LARGSU = @(
-	'-shared',
-	'-Wl,--relocatable', '-Wl,--emit-relocs',
-	'-Bsymbolic', '-nostdlib',
-	"-Wl,-Map,$($MAPFILE)", 
-	"-Wl,-T,$($EFIPARENT)lib/elf_$($ARCHITECTURE)_efi.lds",
+	'-nostdlib',
+	'-shared', '-Bsymbolic', 
+	'-Wl,--emit-relocs', '-Wl,--relocatable',
+	"-Wl,-Map,$($MAPFILESRC)", 
+	'-nostartfiles', '-nodefaultlibs'
+)
+$LARGSL = @(
+	'-shared', '-Bsymbolic', 
+	"-Wl,-T,$($EFIPARENT)lib/elf_$($ARCHITECTURE)_efi.lds", 
+	"-Wl,-Map,$($MAPFILEFINAL)", 
 	'-nostartfiles', '-nodefaultlibs',
-	"-L", "$($EFIPARENT)/lib/", 
-	"$($EFIPARENT)lib/crt0-efi-$($ARCHITECTURE).o"#, "$($EFIPARENT)lib/reloc_$($ARCHITECTURE).o"
+	"$($EFIPARENT)lib/crt0-efi-$($ARCHITECTURE).o", 
+	'-L', "$($EFIPARENT)/lib/", 
+	'-l', 'efi', '-l', 'gnuefi'
 )
-
-$LARGSL = @('-l', 'efi', '-l', 'gnuefi')
-
 $OBJCOPYARGS = @(
-	'-w',
-	# '-j .text', '-j .sdata', '-j .data', '-j .rodata', '-j .reloc', '-j .reloc.*',
-	'-j', '.text', '-j', 
-	'.sdata', '-j', '.data', '-j', '.rodata', 
-	# '-j', '.dynamic', '-j', '.dynsym',
-	'-j', '.rel', '-j', '.rel.*', 
-	'-j', '.rela', '-j', '.rela.*'
-	'-j', '.reloc'
-	# '--remove-section=.comment', '--remove-section=.debug_*', '--remove-section=.rela.debug_*'
+	'-j', '.text',
+    '-j', '.data', '-j', '.sdata', '-j', '.rodata',
+    '-j', '.dynamic', '-j', '.dynsym',
+    '-j', '.rel', '-j', '.rel.*',
+    '-j', '.rela', '-j', '.rela.*',
+    '-j', '.reloc',
+    '-O', "pei-$(if($ARCHITECTURE -eq 'x86_64'){'x86-64'}else{'i386'})", 
+	'--subsystem=10', $UEFIINTERMEDIATEFINAL, $UEFIBINARYBLOB
 )
-if($ENABLEDEBUGGABLE){
-	$OBJCOPYARGS += '-j', '.debug_*', '-j', '.comment', '-j', '.debug_pubtypes',
-		'-j', '.symtab', '-j', '.strtab', '-j', '.dynstr'
-}
-$OBJCOPYARGS += '-O', 'pei-x86-64', '--subsystem=10', $UEFIINTERMEDIATE, $UEFIBINARYBLOB
 
-function Get-TimestampCache {
+function Get-TimestampCache{
 	param(
 		[Parameter(Mandatory)]
 		[string]$JsonPath
@@ -270,10 +266,12 @@ Get-ChildItem -Path @((Join-Path (Get-Location) "src/Boot/UEFI/")) -Include @("*
 	$OFILES += $o
 }
 
-Log-Write "gcc $($LARGSU -join ' ') $($OFILES -join ' ') $($LARGSL -join ' ') -o $($UEFIINTERMEDIATE)" -color Blue
-$LDOUT = & $GCC -_ARGS @($LARGSU, $OFILES, $LARGSL, '-o', $UEFIINTERMEDIATE)
+Log-Write "gcc $($LARGSU -join ' ') $($OFILES -join ' ') -o $($UEFIINTERMEDIATESRC)" -color Blue
+$LDOUT = & $GCC -_ARGS @($LARGSU, $OFILES, '-o', $UEFIINTERMEDIATESRC)
+Log-Write "gcc $($UEFIINTERMEDIATESRC) $($LARGSL -join ' ') -o $($UEFIINTERMEDIATEFINAL)" -color Blue
+$LDOUT = & $GCC -_ARGS @($UEFIINTERMEDIATESRC, $LARGSL, '-o', $UEFIINTERMEDIATEFINAL)
 Log-Write "$($LDOUT -join "`n")"
-if(Test-Path $UEFIINTERMEDIATE){
+if(Test-Path $UEFIINTERMEDIATEFINAL){
 	try{Log-Write "$(& $OBJCOPY '-V')"}catch{
 		Log-Write -Msg "Objcopy not found: $OBJCOPY" -color Red
 		exit 1
@@ -288,5 +286,4 @@ if(Test-Path $UEFIBINARYBLOB){
 }
 
 (Copy-Item (Join-Path (Get-Location) 'src/Boot/UEFI/startup.sh') (Join-Path $EMUOUT 'startup.nsh'))
-
 (& objdump '-x' $UEFIBINARYBLOB) >> (Join-Path $BUILDDIR 'headerxdump.log')

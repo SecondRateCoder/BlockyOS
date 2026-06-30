@@ -1,9 +1,7 @@
 #include "standard.h"
 
 __efiDevNode *ProcessNode(EFI_DEVICE_PATH *Node, __efiDevNode *Parent){
-#ifdef __DEBUG__
-		Print(L"\nLoading Node");
-#endif
+		DEBUGPRINT(L"\nLoading Node");
 	__efiDevNode *New = AllocatePool(sizeof(__efiDevNode));
 	if(Parent){
 		Parent->local__.children = ReallocatePool(
@@ -25,9 +23,7 @@ __efiDevNode *ProcessNode(EFI_DEVICE_PATH *Node, __efiDevNode *Parent){
 		.nodeName = DescribeDeviceNode(Node)
 	};
 	CopyMem(New->protocolData, ((void *)Node) +  sizeof(EFI_DEVICE_PATH), DevicePathNodeLength(Node) - sizeof(EFI_DEVICE_PATH));
-#ifdef __DEBUG__
-	Print(L"    ??    [%s]", New->nodeName);
-#endif
+	DEBUGPRINT(L"    ??    [%s]", New->nodeName);
 	return New;
 }
 
@@ -131,15 +127,11 @@ __efiDevNode **loadDNodes(UINTN *nNodes){
 	EFI_GUID dPathGUID = EFI_DEVICE_PATH_PROTOCOL_GUID;
 	EFI_HANDLE *handles = NULL;		UINTN nHandles = 0;
 	__efiDevNode **dnodes = NULL;	(*nNodes) = 0;
-#ifdef __DEBUG__
-	Print(L"\nLoading Device Tree");
-#endif
+	DEBUGPRINT(L"\nLoading Device Tree");
 	if(!EFI_ERROR(uefi_call_wrapper(gBS->LocateHandleBuffer, 5, AllHandles, NULL, NULL, &nHandles, &handles))){
 		dnodes = AllocatePool(sizeof(__efiDevNode *) * nHandles);
 		EFI_STATUS status;
-#ifdef __DEBUG__
-		Print(L"\n");
-#endif
+		DEBUGPRINT(L"\n");
 		for(UINTN cc = 0; cc < nHandles; ++cc){
 			EFI_DEVICE_PATH *dPath = NULL;
 			status = uefi_call_wrapper(gBS->HandleProtocol, 3, handles[cc], &dPathGUID, (void **)&dPath);
@@ -149,34 +141,18 @@ __efiDevNode **loadDNodes(UINTN *nNodes){
 				if(dnodes[*nNodes]){
 					Print(L"Call #%llu    \"%s\"\n", cc, dnodes[*nNodes]->nodeName);
 					(*nNodes)++;
-				}else{
-#ifdef __DEBUG__
-					Print(L"Call Error #%llu    ", cc);
-#endif
-				}
-			}else{
-#ifdef __DEBUG__
-				Print(L"Call Error#%u: %llu    ", cc, status & ~((UINTN)0xF000000000000000));
-#endif
-			}
+				}else{DEBUGPRINT(L"Call Error #%llu    ", cc);}
+			}else{DEBUGPRINT(L"Call Error#%u: %llu    ", cc, status & ~((UINTN)0xF000000000000000));}
 		}
-	}else{
-#ifdef __DEBUG__
-		Print(L"\nError Getting Handles");
-#endif
-	}
+	}else{DEBUGPRINT(L"\nError Getting Handles");}
 	__free(handles);
 	dnodes = ReallocatePool(sizeof(__efiDevNode *) * nHandles, sizeof(__efiDevNode *) * (*nNodes), dnodes);
-#ifdef __DEBUG__
-		Print(L"\nReturning Expanded Node Tree");
-#endif
+	DEBUGPRINT(L"\nReturning Expanded Node Tree");
 	return dnodes;
 }
 
 EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSize, UINT32 *descVersion){
-#ifdef __DEBUG__
-	Print(L"\nGetting the Memory Map");
-#endif
+	DEBUGPRINT(L"\nGetting the Memory Map");
 	EFI_STATUS status;
 	EFI_MEMORY_DESCRIPTOR *map = NULL;
 	*mapSize = 0;
@@ -196,20 +172,18 @@ EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSi
 		gBS->FreePool(map);
 		return NULL;
 	}
-#ifdef __DEBUG__
-	Print(L"=== UEFI Memory Map (%u entries) ===\n", (*mapSize) / (*descSize));
-	Print(L"Descriptor Size: %llu, #n Items: %llu  Version: %u\n\n", *mapSize, (*mapSize) / (*descSize), *descVersion);
-	for(UINTN cc = 0; cc < ((*mapSize) / (*descSize)); ++cc){
-		Print(
-			L"[%llu] %s  Start: 0x%lx  Pages: %llu  Size: %llu KB\n",
+	DEBUGPRINT(L"=== UEFI Memory Map (%u entries) ===\n", __safediv(*mapSize, *descSize));
+	DEBUGPRINT(L"Descriptor Size: %llu, #n Items: %llu  Version: %u\n\n", *mapSize, __safediv(*mapSize, *descSize), *descVersion);
+	for(UINTN cc = 0; cc < __safediv(*mapSize, *descSize); ++cc){
+		DEBUGPRINT(
+			L"[%llu] %s:%u  Start: 0x%lx  Pages: %llu  Size: %llu KB\n",
 			cc,
-			EfiMemoryTypeToStr(map[cc].Type),
+			EfiMemoryTypeToStr(map[cc].Type),map[cc].Type,
 			map[cc].PhysicalStart,
 			map[cc].NumberOfPages,
 			map[cc].NumberOfPages * 4
 		);
 	}
-#endif
 	return map;
 }
 
@@ -236,12 +210,12 @@ static CHAR16 *EfiMemoryTypeToStr(UINT32 type){
 
 __bootinfo *gatherbootinfo(){
 	__bootinfo *out = __calloc(1, sizeof(__bootinfo));
-	out->devices.devices = loadDNodes(&out->devices.nnodes);
-	out->memory.desc = GetMemoryMap(&out->memory.descSize, &out->memory.mapKey, &out->memory.descItemSize, &out->memory.descVersion);
-	out->memory.nDescs = out->memory.descSize / out->memory.descItemSize;
 	__memset(out->bootentry.BootEntryName, 0, sizeof(out->bootentry.BootEntryName));
 	out->bootentry.BootEntryCode = CreateBootEntry(&rootDesc.guid, &rootDesc.uGuid, (CHAR16 *)out->bootentry.BootEntryName);
 	if(out->bootentry.BootEntryCode != 1){RestartSystem();}
+	out->devices.devices = loadDNodes(&out->devices.nnodes);
+	out->memory.desc = GetMemoryMap(&out->memory.descSize, &out->memory.mapKey, &out->memory.descItemSize, &out->memory.descVersion);
+	out->memory.nDescs = __safediv(out->memory.descSize, out->memory.descItemSize);
 	return out;
 }
 

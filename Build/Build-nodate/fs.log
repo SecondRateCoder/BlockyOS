@@ -1,0 +1,27 @@
+=== Partition FS Driver Session ===
+[2026-06-30 22:23:02] [INFO] Partition FS Driver Started
+[2026-06-30 22:23:02] [WARNING] >> [SEEK] Offset=512 Origin=Begin  (Caller: FS.ps1: line 180)
+[2026-06-30 22:23:02] [INFO] GPT detected: EntriesLBA=2, EntryCount=3, EntrySize=128
+[2026-06-30 22:23:02] [WARNING] >> [SEEK] Offset=1024 Origin=Begin  (Caller: FS.ps1: line 204)
+[2026-06-30 22:23:02] [INFO] Selected partition:
+[2026-06-30 22:23:02] [INFO]   Index   : 0
+[2026-06-30 22:23:02] [INFO]   Name    : BOOT
+[2026-06-30 22:23:02] [INFO]   Attr    : 0x0001000000000001
+[2026-06-30 22:23:02] [INFO]   StartLBA: 2048
+[2026-06-30 22:23:02] [INFO]   EndLBA  : 526335
+[2026-06-30 22:23:02] [INFO]   Size    : 268435456 bytes
+[2026-06-30 22:23:02] [INFO] Formatting as FAT32
+[2026-06-30 22:23:02] [INFO] Writing Boot Sector at: 1048576
+[2026-06-30 22:23:02] [WARNING] >> [SEEK] Offset=1048576 Origin=Begin  (Caller: FS.ps1: line 750)
+[2026-06-30 22:23:02] [WARNING] >> [WRITE] (Position=1048576  Count=512  Caller=FS.ps1: line 751)
+[2026-06-30 22:23:02] [INFO] Writing Backup Boot Sector at: 1051648
+[2026-06-30 22:23:02] [WARNING] >> [SEEK] Offset=1051648 Origin=Begin  (Caller: FS.ps1: line 755)
+[2026-06-30 22:23:02] [WARNING] >> [WRITE] (Position=1051648  Count=512  Caller=FS.ps1: line 756)
+[2026-06-30 22:23:02] [INFO] Writing FSINFO Sector...
+[2026-06-30 22:23:02] [WARNING] >> [SEEK] Offset=1049088 Origin=Begin  (Caller: FS.ps1: line 767)
+[2026-06-30 22:23:02] [WARNING] >> [WRITE] (Position=1049088  Count=512  Caller=FS.ps1: line 768)
+[2026-06-30 22:23:03] [WARNING] >> [SEEK] Offset=1064960 Origin=Begin  (Caller: FS.ps1: line 805)
+[2026-06-30 22:23:03] [WARNING] >> [WRITE] (Position=1064960  Count=2064896  Caller=FS.ps1: line 806)
+[2026-06-30 22:23:03] [WARNING] >> [SEEK] Offset=3129856 Origin=Begin  (Caller: FS.ps1: line 805)
+[2026-06-30 22:23:03] [WARNING] >> [WRITE] (Position=3129856  Count=2064896  Caller=FS.ps1: line 806)
+[2026-06-30 22:23:03] [INFO] Partition FS Driver Completed Successfully

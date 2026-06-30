@@ -4,9 +4,7 @@ extern socket_ret *__froot_sckopen(UINT32 device, UINTN nARGbytes, va_list *args
 static const UINTN nDrivers = 1;
 
 socket_ret socketopen(UINT32 driver, UINTN nARGbytes, ...){
-#ifdef __DEBUG__
-	Print(L"\nOpening Socket    Driver: %u  nARGS: %u", driver, nARGbytes);
-#endif
+	DEBUGPRINT(L"\nOpening Socket    Driver: %u  nARGS: %u", driver, nARGbytes);
 	va_list args;
 	va_start(args, nARGbytes);
 	if((driver < nDrivers)){

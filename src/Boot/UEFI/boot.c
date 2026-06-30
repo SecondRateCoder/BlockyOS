@@ -3,23 +3,18 @@
 const EFI_PHYSICAL_ADDRESS DebugPort = 0x402;
 
 void libinit(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
-#ifdef __DEBUG__
-	Print(L"\nIntitialising GNU-EFI");
-#endif
+	DEBUGPRINT(L"\nIntitialising GNU-EFI");
 	InitializeLib(Image, Table);
     if(!ST){ST = Table;}
     if(!BS){BS = Table->BootServices;}
     if(!RT){RT = Table->RuntimeServices;}
-#ifdef __DEBUG__
-	Print(L"\nPost GNU-EFI Init");
-#endif
+	sysbase(Image);
+	DEBUGPRINT(L"\nPost GNU-EFI Init");
 }
 
 EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
-#ifdef __DEBUG__
-	Print(L"Sanity Check[0]\nDEBUG: %p; %p", Image, Table);
-	Print(L"\nGUID:");	prGUID((EFI_GUID)EFI_ZERO_GUID);
-#endif
+	DEBUGPRINT(L"Sanity Check[0]\nDEBUG: %p; %p", Image, Table);
+	DEBUGDO{DEBUGPRINT(L"\nGUID:");	prGUID((EFI_GUID)EFI_ZERO_GUID);}
 	// Initialise GNU-EFI
 	libinit(Image, Table);
 	// Initialise Hardware Device Tree
@@ -33,22 +28,14 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 			// We have a Mounted FRaT Socket
 			socket_ret *tmp = (socket_ret *)socket.data;
 			if(tmp->errout == __noerr){
-#ifdef __DEBUG__
-				Print(L"\nOpened FS Socket");
-#endif
+			DEBUGPRINT(L"\nOpened FS Socket");
 				fs = (socket_t *)tmp->data;
 				Print(L"\nMounted FRaT Socket!");
 			}else{
 				__free(socket.data);
-#ifdef __DEBUG__
-				Print(L"\nFailed to open FS Socket");
-#endif
+				DEBUGPRINT(L"\nFailed to open FS Socket");
 			}
-		}else{
-#ifdef __DEBUG__
-			Print(L"\nFailed to open Socket");
-#endif
-		}
+		}else{DEBUGPRINT(L"\nFailed to open Socket");}
 		GPTeNSTR *str = makeGPTeNSTR(rootDesc.name);
 		formatpart(rootDesc.guid, rootDesc.uGuid, *str, __FS_DEFAULTBLOCKSIZE, 5, 1, 0);
 		__free(str);
@@ -58,24 +45,18 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	else{Print(L"\nGot FS Socket");}
 
 	// Load the Executable
-#ifdef __DEBUG__
-	Print(L"\nfs->open ptr = %p", fs->open);
-	UINT8 *p = (UINT8 *)fs->open;
-	// BUFDEFPRINT(p, 64, cc);
-#endif
-	socket_ret ret = socketfunc(fs->open)(fs, sizeof(char *) * 2, KERNELEXE, "f");
+	char *path = KERNELEXE, *loadargs = "f";
+	DEBUGPRINT(L"\n\nPath: %p:%a\nLoad-Args: %p:%a", path, path, loadargs, loadargs);
+	socket_ret ret = socketfunc(fs->open)(fs, sizeof(char *) * 2, path, loadargs);
 	if(flagcheck(ret.errout, __noerr)){
+		DEBUGPRINT(L"\nGot Executable File");
 		socket_t *exe = ret.data;
-		meta_fsblock *metadata = _freadinfo((fhandle *)exe->persistent);
-		void *loadin = __calloc(1, __fsize((fhandle *)exe->persistent));
+		void *loadin = __calloc(1, __fsize(((unhandle *)exe->persistent)->fhandle_));
+		DEBUGPRINT(L"\nResolving to Memory");
 		kernelmain main = (kernelmain)__resolve((socket_t *)ret.data, loadin);
+		DEBUGPRINT(L"\nExiting Boot Servies?");
 		uefi_call_wrapper(gBS->ExitBootServices, 2, Image, bootout->memory.mapKey);
 		main(bootout);
-	}
-
-#ifdef __DEBUG__
-	Print(L"\nRetrieved Expanded Node Tree");
-#endif
-	
+	}else{DEBUGPRINT(L"\nError opening Executable");}
 	return EFI_ABORTED;
 }

@@ -1,0 +1,58 @@
+
+[180:    :5:    :2:    :22:    :0:    :4]
+>> 
+,u -pp C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img -pt ROOT -bs 1024 -lb 10 -v 1:0
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:196]  >>  Mounting FS Root: [C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img]
+Verifying Disk GPT
+GPT Dump:
+    Sig: "EFI PART"
+    Rev: 65536
+    Header-Size: 92
+    Header Checksum: 4081705056
+    localLBA: 1
+    altLBA: 2623490
+    firstUsable: 2048
+    lastUsable: 2623488
+    Disk-GUID: 
+    Partition-Table: 2
+    # of Partition-Entries: 3
+    Partition-Entry Size: 128
+    Partition-Table Checksum: 801556421
+GPT Exists? true
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:137]  >>  Querying Part Table
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:145]  >>  GPT-Entry: BOOT{2048:526335 -> 524287}
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:159]  >>  Querying FS at 2048
+FS-Root Blob:
+    Version: [0:524288]
+    Sig: 
+    Configured Log Sectors: 2
+    Configured Block Size: 0
+    Configured Cluster-Map Size: 16711743
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:145]  >>  GPT-Entry: ROOT{526336:2623487 -> 2097151}
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:159]  >>  Querying FS at 526336
+FS-Root Blob:
+    Version: [1:0]
+    Sig: FRAT_FILESYSTEM
+    Configured Log Sectors: 5
+    Configured Block Size: 512
+    Configured Cluster-Map Size: 65536
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:184]  >>  FS Found at [526336]:
+	Version-Code: [1:0]
+	Configured Block-Size: 512
+	Configured Cluster-Size: 65536
+	Configured # of Log-Sectors: 5
+	Configured Log-Size: 90
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:208]  >>  Found Formatted Partition: 526336:2623487 -> 2097151
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:221]  >>  Root: 526336:2623487 -> 2097151 LBAs
+	Version-Code: [1:0]
+	Configured Block-Size: 512
+	Configured Cluster-Size: 65536
+	Configured # of Log-Sectors: 65536
+	Configured Log-Size: 5
+    Verifying FS Root Items #items: 4096
+>> 
+,o -p /root/test.exe -a test -la fc
+Mounting File [/root/test.exe] with "f"
+Root is 0000020bd0a4a1c0
+>> 
+exit

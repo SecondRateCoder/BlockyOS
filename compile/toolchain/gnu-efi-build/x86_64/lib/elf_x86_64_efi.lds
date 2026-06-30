@@ -95,6 +95,7 @@ SECTIONS
     *(.rela.fini_array*)
     *(.rela.ctors*)
     *(.rela.dtors*)
+    *(.rela.reloc)
   }
   . = ALIGN(4096);
   .rela.plt : { *(.rela.plt) }
@@ -105,10 +106,6 @@ SECTIONS
   . = ALIGN(4096);
   .dynstr   : { *(.dynstr) }
   . = ALIGN(4096);
-  .ignored.reloc :
-  {
-    *(.rela.reloc)
-    *(.note.GNU-stack)
-  }
+  .ignored.reloc : { *(.note.GNU-stack) }
   .comment 0 : { *(.comment) }
 }
