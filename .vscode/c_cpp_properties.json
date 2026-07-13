@@ -56,7 +56,8 @@
                 "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi/protocol",
                 "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64"
             ],
-            "mergeConfigurations": true
+            "mergeConfigurations": true,
+            "cppStandard": "c++17"
         },
         {
             "name": "GCC(Default)",

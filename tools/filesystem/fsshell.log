@@ -1,8 +1,10 @@
 
 [180:    :5:    :2:    :22:    :0:    :4]
 >> 
-,u -pp C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img -pt ROOT -bs 1024 -lb 10 -v 1:0
-[C:\GitHub\BlockyOS\tools\filesystem\frat.c:196]  >>  Mounting FS Root: [C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img]
+,u -pp C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img -pt ROOT -bs 1024 -lb 10 -v 1:0
+[2]: "Non-optional arg(s) not set"
+>> 
+c:196]  >>  Mounting FS Root: [C:\GitHub\BlockyOS\Build\Build-2026-05-26-41\disk.img]
 Verifying Disk GPT
 GPT Dump:
     Sig: "EFI PART"

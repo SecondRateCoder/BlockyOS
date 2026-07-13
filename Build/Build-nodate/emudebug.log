@@ -1057,3 +1057,26 @@ Formatting boot partition with FAT32...
 Boot partition formatted successfully
 ===== Step 4: Validating Image =====
 Double-verifying Image
+===== Step 1: Compile Bootloaders =====
+===== Step 1.1: Compile Legacy BootLoader Blob =====
+Legacy bootloader compiled: C:\GitHub\BlockyOS\Build\Build-nodate\boot-part\legacyblob.bin
+===== Step 1.2: Compile UEFI BootLoader Blob =====
+UEFI bootloader compiled: C:\GitHub\BlockyOS\Build\Build-nodate\boot-part\efi\boot\bootx64.efi
+===== Step 2: Validate or Create Disk Layout (GPT) =====
+Validating existing disk image: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
+GPT is healthy. Skipping GPT rebuild.
+===== Step 3: Format Boot Partition (FAT32) =====
+Formatting boot partition with FAT32...
+Boot partition formatted successfully
+===== Step 4: Validating Image =====
+Command:  qemu-system-x86_64 -vga std -cpu qemu64 -m 2048 -machine q35 -smp 2 -net none -serial stdio -L C:\GitHub\BlockyOS\compile\toolchain\uefi\default -drive if=pflash,format=raw,readonly=on,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\default\OVMF.fd -drive unit=0,file=C:\GitHub\BlockyOS\Build\Build-nodate\disk.img,format=raw,if=none,id=maindrive -device virtio-blk-pci,drive=maindrive -debugcon file:C:\GitHub\BlockyOS\Build\Build-nodate\debugger.log -global isa-debugcon.iobase=0x402 -usb -usbdevice keyboard -usbdevice mouse -display sdl -vga cirrus -drive if=pflash,format=raw,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\default\OVMF_VARS.fd 
+===== Step 1: Compile Bootloaders =====
+===== Step 1.1: Compile Legacy BootLoader Blob =====
+Legacy bootloader compiled: C:\GitHub\BlockyOS\Build\Build-nodate\boot-part\legacyblob.bin
+===== Step 1.2: Compile UEFI BootLoader Blob =====
+UEFI bootloader compiled: C:\GitHub\BlockyOS\Build\Build-nodate\boot-part\efi\boot\bootx64.efi
+===== Step 2: Validate or Create Disk Layout (GPT) =====
+Validating existing disk image: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
+GPT is healthy. Skipping GPT rebuild.
+===== Step 3: Format Boot Partition (FAT32) =====
+Formatting boot partition with FAT32...

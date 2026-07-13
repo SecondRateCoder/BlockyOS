@@ -1,268 +1,84 @@
-#include "execfile.h"
+#include "exec.h"
 
-static execsectionref srchSecWithPrefix(exech *header, const char sympath[EXECSECRTIONREFPATHLEN], const char *prefix){
-	char path[EXECSECRTIONREFPATHLEN] = {0};
-	size_t plen = AsciiStrLen(prefix);
-	if(plen >= EXECSECRTIONREFPATHLEN){plen = EXECSECRTIONREFPATHLEN - 1;}
-	__memcpy(path, prefix, plen);
-	__memcpy(path + plen, sympath, EXECSECRTIONREFPATHLEN - plen);
-	for(UINTN i = 0; i < header->nSections; i++){
-		if(__memcmp(path, header->sections[i].path, EXECSECRTIONREFPATHLEN) == 0){return header->sections[i];}
+static void *resolve_custom_image_base(socket_t *root, socket_t *file, char **args, size_t nArgs, resolveArgs *callArgs){
+	(void)root;
+	(void)args;
+	(void)nArgs;
+	(void)callArgs;
+
+	if(!file || !file->persistent){return NULL;}
+	unhandle *handle = (unhandle *)file->persistent;
+	if(!handle || !handle->fhandle_){return NULL;}
+
+	UINTN file_size = __fsize(handle->fhandle_);
+	if(file_size < sizeof(BExecHeader)){return NULL;}
+
+	void *file_data = __calloc(1, file_size);
+	if(!file_data){return NULL;}
+
+	UINTN read_bytes = _fread(handle->fhandle_, file_size, &file_data);
+	if(read_bytes != file_size){
+		__free(file_data);
+		return NULL;
 	}
-	return (execsectionref){0};
-}
 
-static symdecl srchSymbol(loadedsymbols *secs, UINTN nSecs, SYMMAGIC ref){
-	for(UINTN i = 0; i < nSecs; i++){
-		if(!secs[i].export.symexttable){continue;}
-		for(UINTN j = 0; j < secs[i].export.len; j++){
-			symdecl *d = &secs[i].export.symexttable[j];
-			if (__memcmp(d->symbol.magic.MAGICINT, ref.MAGICINT, sizeof(ref.MAGICINT)) == 0){return *d;}
+	BExecHeader *header = (BExecHeader *)file_data;
+	if(memcmp(header->JsonManifest, "BEXEC", 5) != 0){
+		__free(file_data);
+		return NULL;
+	}
+
+	const size_t section_table_size = sizeof(BExecHeader) + (header->nSections * sizeof(BExecFileItem));
+	size_t payload_offset = (section_table_size + 7u) & ~((size_t)7u);
+	BExecFileItem *sections = header->FileItems;
+	void *resolved_image = __calloc(1, file_size);
+	if(!resolved_image){
+		__free(file_data);
+		return NULL;
+	}
+
+	for(UINT64 i = 0; i < header->nSections; ++i){
+		if(sections[i].name[0] == '\0'){continue;}
+		if(sections[i].flags & BExecFlags__Resource){
+			// Mount Resource Section
+			continue;
 		}
+
+		if(__memcmp(sections[i].name, DLLPREFIX, strlen(DLLPREFIX)) == 0){
+			// Remember the DLL section and resolve the imported symbols from it later.
+			continue;
+		}
+
+		if(sections[i].flags & BExecFlags__RelocReference){
+			const uint8_t *reloc_bytes = (const uint8_t *)file_data + payload_offset;
+			const uint32_t *reloc_words = (const uint32_t *)reloc_bytes;
+			for(size_t j = 0; j < sections[i].nBytes / sizeof(uint32_t); ++j){
+				uint32_t target_index = reloc_words[j];
+				if(target_index < header->nSections){
+					if(sections[target_index].flags & BExecFlags__Resource){
+						// Mount Resource Section
+					}else if(__memcmp(sections[target_index].name, DLLPREFIX, strlen(DLLPREFIX)) == 0){
+						// Resolve the target symbol from the remembered DLL section.
+					}else if((sections[target_index].flags & BExecFlags__Executable) || (sections[target_index].flags & BExecFlags__Data)){
+						memcpy((uint8_t *)resolved_image + payload_offset, (const uint8_t *)file_data + payload_offset, sections[target_index].nBytes);
+					}
+				}
+			}
+			continue;
+		}
+
+		if((sections[i].flags & BExecFlags__Executable) || (sections[i].flags & BExecFlags__Data)){
+			memcpy((uint8_t *)resolved_image + payload_offset, (const uint8_t *)file_data + payload_offset, sections[i].nBytes);
+		}
+
+		payload_offset = (payload_offset + sections[i].nBytes + 7u) & ~((size_t)7u);
 	}
-	return (symdecl){0};
+
+	__free(file_data);
+	return resolved_image;
 }
 
-ptrdiff_t computeReloc(const loadedsymbols *targetSec, const loadedsymbols *declSec, const symdecl *decl){
-	// symbol absolute address = base of its section + offset
-	UINT8 *symbolAbs = (UINT8 *)declSec->data + decl->symbol.byteLoc;
-	// relocation site absolute address = base of target section + offset
-	UINT8 *relocAbs = (UINT8 *)targetSec->data + decl->symbol.byteLoc;
-	return (ptrdiff_t)(symbolAbs - relocAbs);
+void *resolve(socket_t *root, socket_t *file, char **args, size_t nArgs, resolveArgs *callArgs){
+	return resolve_custom_image_base(root, file, args, nArgs, callArgs);
 }
 
-static void *loadSection(socket_t *socket, execsectionref sectionref, bool fullLoad, UINTN *nLoaded){
-	if(fullLoad){*nLoaded = sectionref.nBytes;
-	}else{
-		if(flagcheck(sectionref.attributes, __noliveload)){
-			*nLoaded = sectionref.parameter ? sectionref.parameter : sectionref.nBytes;
-		}else{*nLoaded = DEFAULTSECLOADSIZE;}
-	}
-	if(*nLoaded == 0){return NULL;}
-
-	socket_ret ret = socketfunc(socket->raw.read)(socket, sectionref.bOffset, *nLoaded, 0);
-	if(!socketreterr(ret, *nLoaded)){return ret.data;}
-	return NULL;
-}
-void *__resolve(socket_t *socket, void *newbase){
-    // 1. Read header
-    socket_ret ret = socketfunc(socket->raw.read)(socket, 0, sizeof(exech), 0);
-    if(socketreterr(ret, sizeof(exech))){
-        Print(L"[exec] Failed to read header\n");
-        return NULL;
-    }
-    exech *header = ret.data;
-
-    // 2. Read section table
-    UINTN secTableSize = header->nSections * sizeof(execsectionref);
-    ret = socketfunc(socket->raw.read)(socket, sizeof(exech), secTableSize, 0);
-    if(socketreterr(ret, secTableSize)){
-        Print(L"[exec] Failed to read section table\n");
-        return NULL;
-    }
-    header->sections = ret.data;
-
-    // 3. Allocate loader structures
-    loadedsymbols *secs = __calloc(header->nSections, sizeof(loadedsymbols));
-    if(!secs){
-        Print(L"[exec] OOM allocating loader structures\n");
-        return NULL;
-    }
-    UINTN nLoaded = 0;
-
-    // 4. Load each section + its sym/reloc tables
-    for(UINTN i = 0; i < header->nSections; i++){
-        UINTN len = 0;
-        void *data = loadSection(
-            socket,
-            header->sections[i],
-            header->sections[i].nBytes < DEFAULTSECLOADMAX,
-            &len
-        );
-
-        if(!data){continue;}
-        secs[nLoaded].data    = data;
-        secs[nLoaded].len     = len;
-        secs[nLoaded].section = header->sections[i];
-
-        // Load symbol table
-        execsectionref symSec = srchSecWithPrefix(header, secs[nLoaded].section.path, SYMPREFIX);
-        if(symSec.nBytes > 0){
-            secs[nLoaded].export.symexttable =
-                loadSection(socket, symSec, true, &secs[nLoaded].export.len);
-        }
-
-        // Load relocation table
-        execsectionref relSec = srchSecWithPrefix(header, secs[nLoaded].section.path, RELOCPREFIX);
-        if(relSec.nBytes > 0){
-            secs[nLoaded].import.symimporttable =
-                loadSection(socket, relSec, true, &secs[nLoaded].import.len);
-        }
-        nLoaded++;
-    }
-
-    // 5. Resolve relocations
-    for(UINTN i = 0; i < nLoaded; i++){
-        symimporttable *imports = &secs[i].import;
-        if(!imports->symimporttable){continue;}
-
-        for(UINTN j = 0; j < imports->len; j++){
-            symref *imp = &imports->symimporttable[j];
-
-            // Find symbol declaration
-            symdecl decl = srchSymbol(secs, nLoaded, imp->magic);
-
-            // Test for an empty/invalid decl by checking magic bytes are zero
-            {
-                uint8_t zero_magic[sizeof(decl.symbol.magic.MAGIC)] = {0};
-                if(__memcmp(decl.symbol.magic.MAGIC, zero_magic, sizeof(zero_magic)) == 0){
-                    Print(L"[exec] Unresolved symbol in section %a\n", secs[i].section.path);
-                    __builtin_trap();
-                }
-            }
-
-            // Find section that owns the symbol
-            loadedsymbols *declSec = NULL;
-            for(UINTN k = 0; k < nLoaded; k++){
-                if(__memcmp(secs[k].section.path, decl.parent, EXECSECRTIONREFPATHLEN) == 0) {
-                    declSec = &secs[k];
-                    break;
-                }
-            }
-            if(!declSec){
-                Print(L"[exec] Symbol declared in unknown section\n");
-                __builtin_trap();
-            }
-
-            // Compute relocation:
-            //   symbolAbs = base_of_decl_section + symbol_offset
-            //   relocAbs  = base_of_target_section + relocation_offset
-            //   value     = symbolAbs - relocAbs
-            UINT8 *symbolAbs = (UINT8 *)declSec->data + decl.symbol.byteLoc;
-            UINT8 *relocAbs  = (UINT8 *)secs[i].data + imp->byteLoc;
-            ptrdiff_t rel = (ptrdiff_t)(symbolAbs - relocAbs);
-
-            // Bounds check
-            if(imp->byteLoc + imp->ptrSize > secs[i].len){
-                Print(L"[exec] Relocation out of bounds in section %a\n", secs[i].section.path);
-                __builtin_trap();
-            }
-
-            // Write relocation (unaligned-safe via CopyMem)
-            UINT8 *dst = (UINT8 *)secs[i].data + imp->byteLoc;
-            switch(imp->ptrSize){
-                case sizeof(UINT8): {
-                    UINT8 v = (UINT8)rel;
-                    CopyMem(dst, &v, sizeof(UINT8));
-                    break;
-                } case sizeof(UINT16): {
-                    UINT16 v = (UINT16)rel;
-                    CopyMem(dst, &v, sizeof(UINT16));
-                    break;
-                } case sizeof(UINT32): {
-                    UINT32 v = (UINT32)rel;
-                    CopyMem(dst, &v, sizeof(UINT32));
-                    break;
-                } case sizeof(UINT64): {
-                    UINT64 v = (UINT64)rel;
-                    CopyMem(dst, &v, sizeof(UINT64));
-                    break;
-                } default: {
-                    Print(L"[exec] Unsupported relocation size: %u\n", imp->ptrSize);
-                    __builtin_trap();
-                }
-            }
-        }
-    }
-
-    // Find and store the Main symbol (in header->loadin)
-    //  - Prefer any exported symbol with symattributes & __required
-    //  - Then try to match ASCII "main" in the SYMMAGIC bytes
-    //  - Then prefer first exported symbol in a .text (or text) section
-    //  - Fallback: synthesize a loadin pointing to offset 0 of first loaded section
-    symref chosen = {0};
-    bool found_main = false;
-
-    // Look for __required attribute
-    for(UINTN si = 0; si < nLoaded && !found_main; ++si){
-        if(!secs[si].export.symexttable){continue;}
-        for(UINTN ei = 0; ei < secs[si].export.len; ++ei){
-            symdecl *d = &secs[si].export.symexttable[ei];
-            if(d->symbol.symattributes & __required){
-                chosen = d->symbol;
-                found_main = true;
-                Print(L"[exec] Main symbol found by __required in section %a\n", secs[si].section.path);
-                break;
-            }
-        }
-    }
-
-    // Try to match ASCII "main" in magic bytes (case-sensitive)
-    if(!found_main){
-        const char want[] = "main";
-        for(UINTN si = 0; si < nLoaded && !found_main; ++si){
-            if(!secs[si].export.symexttable){continue;}
-            for(UINTN ei = 0; ei < secs[si].export.len; ++ei){
-                symdecl *d = &secs[si].export.symexttable[ei];
-                if(__memcmp(d->symbol.magic.MAGIC, want, sizeof(want) - 1) == 0){
-                    chosen = d->symbol;
-                    found_main = true;
-                    Print(L"[exec] Main symbol matched by name \"main\" in section %a\n", secs[si].section.path);
-                    break;
-                }
-            }
-        }
-    }
-
-    // Prefer first exported symbol in .text section
-    if(!found_main){
-        for(UINTN si = 0; si < nLoaded && !found_main; ++si){
-            // Accept ".text" or "text" (producer may omit dot)
-            if (__memcmp(secs[si].section.path, ".text", 5) != 0 && __memcmp(secs[si].section.path, "text", 4) != 0){continue;}
-            if(!secs[si].export.symexttable || secs[si].export.len == 0){continue;}
-            symdecl *d = &secs[si].export.symexttable[0];
-            chosen = d->symbol;
-            found_main = true;
-            DEBUGPRINT(L"[exec] Main symbol chosen as first export in .text section\n");
-            break;
-        }
-    }
-
-    // Any first exported symbol anywhere
-    if(!found_main){
-        for(UINTN si = 0; si < nLoaded && !found_main; ++si){
-            if(!secs[si].export.symexttable || secs[si].export.len == 0){continue;}
-            symdecl *d = &secs[si].export.symexttable[0];
-            chosen = d->symbol;
-            found_main = true;
-            DEBUGPRINT(L"[exec] Main symbol chosen as first available export in section %a\n", secs[si].section.path);
-            break;
-        }
-    }
-
-    // Fallback: synthesize a loadin pointing to offset 0 of first loaded section
-    if(!found_main){
-        if(nLoaded > 0){
-            chosen.byteLoc = 0;
-            chosen.ptrSize = sizeof(UINT64);
-            chosen.symattributes = __required;
-            __memset(chosen.magic.MAGIC, 0, sizeof(chosen.magic.MAGIC));
-            DEBUGPRINT(L"[exec] No exported symbols found; synthesizing loadin at offset 0 of first section\n");
-        }else{
-            DEBUGPRINT(L"[exec] No sections loaded; cannot determine main symbol\n");
-            __builtin_trap();
-        }
-    }
-
-    // Store chosen symbol into header->loadin
-    header->loadin = chosen;
-    DEBUGPRINT(L"[exec] Stored loadin: byteLoc=0x%llx ptrSize=%u attrs=0x%x\n",
-        (unsigned long long)chosen.byteLoc, (UINTN)chosen.ptrSize, (UINTN)chosen.symattributes);
-
-    // Clean up loader structures (keep section data alive; free the array)
-    __free(secs);
-
-    // Return entry point or first section
-    if(newbase){return newbase;}
-    return (nLoaded > 0) ? secs[0].data : NULL;
-}

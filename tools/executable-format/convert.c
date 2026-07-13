@@ -1,305 +1,166 @@
 #include "convert.h"
 
-typedef struct{uint8_t *data;		size_t size;}filebuf;
-
-static int read_file(const char *path, filebuf *out){
-	FILE *f = fopen(path, "rb");
-	if (!f){return -1;}
-	fseek(f, 0, SEEK_END);
-	long sz = ftell(f);
-	if(sz < 0){fclose(f);		return -1;}
-	fseek(f, 0, SEEK_SET);
-	uint8_t *buf = (uint8_t *)malloc((size_t)sz);
-	if(!buf){fclose(f);      return -1;}
-
-	if(fread(buf, 1, (size_t)sz, f) != (size_t)sz){
-		free(buf);
-		fclose(f);
-		return -1;
-	}
-	fclose(f);
-	out->data = buf;
-	out->size = (size_t)sz;
-	return 0;
-}
-
-static uint32_t rva_to_file_offset(uint32_t rva, IMAGE_SECTION_HEADER *secs, uint16_t nsecs){
-	for(uint16_t i = 0; i < nsecs; ++i){
-		uint32_t va   = secs[i].VirtualAddress;
-		uint32_t size = secs[i].Misc.VirtualSize ?
-						secs[i].Misc.VirtualSize : secs[i].SizeOfRawData;
-		if(rva >= va && rva < va + size){
-			uint32_t delta = rva - va;
-			return secs[i].PointerToRawData + delta;
+BeSectionFlags64 ConvertPeFlagsBe(PeSectionCharacteristics Characteristics){
+	switch(Characteristics){
+		textSectionCharacteristics:		return SDExecutableCode;
+		dataSectionCharacteristics:		return SDReadWritableData;
+		sdataSectionCharacteristics:
+		sbssSectionCharacteristics:
+		bssSectionCharacteristics:		return SDRandomStaticData;
+		edataSectionCharacteristics:	return SDRelocExport;
+		idataSectionCharacteristics:	return SDRelocImport;
+		xdataSectionCharacteristics:
+		pdataSectionCharacteristics:
+		rsrcSectionCharacteristics:	
+		rdataSectionCharacteristics:	return SDReadonlyData;
+		relocSectionCharacteristics:	return SDDiscardableReadOnlyData;
+		srdataSectionCharacteristics:	return SDRandomStaticReadonlyData;
+		default: {
+			BeSectionFlags64 out = 0;
+			if(flagcheck(Characteristics, PeSectionCharacteristics_CODE) || 
+				flagcheck(Characteristics, PeSectionCharacteristics_MEXECUTABLE)){flagset(out, SFExecutable);}
+			if(flagcheck(Characteristics, PeSectionCharacteristics_INITDATA)){flagset(out, SFInitData);}
+			if(flagcheck(Characteristics, PeSectionCharacteristics_UINITDATA)){flagset(out, SFUInitData);}
+			if(flagcheck(Characteristics, PeSectionCharacteristics_DISCARDABLE)){flaguset(out, SFPersistent);}
+			if(flagcheck(Characteristics, PeSectionCharacteristics_MSHARED)){flagset(out, SFSharable);}
+			if(flagcheck(Characteristics, PeSectionCharacteristics_MREADABLE)){flagset(out, SFReadable);}
+			if(flagcheck(Characteristics, PeSectionCharacteristics_MWRITABLE)){flagset(out, SFWritable);}
+			return out;
 		}
 	}
-	return 0;
 }
 
-int convert_pe(const char *inpath, const char *outpath){
-	filebuf fb = {0};
-	if(read_file(inpath, &fb) != 0){
-		fprintf(stderr, "Failed to read %s\n", inpath);
-		return -1;
-	}
-	uint8_t *base = fb.data;
-	size_t   size = fb.size;
-	if(size < sizeof(IMAGE_DOS_HEADER)){
-		fprintf(stderr, "File too small\n");
-		free(base);
-		return -1;
-	}
-	IMAGE_DOS_HEADER *dos = (IMAGE_DOS_HEADER *)base;
-	if(dos->e_magic != 0x5A4D){ // "MZ"
-		fprintf(stderr, "Not MZ\n");
-		free(base);
-		return -1;
-	}
-	if((size_t)dos->e_lfanew + sizeof(IMAGE_NT_HEADERS64) > size){
-		fprintf(stderr, "Invalid e_lfanew\n");
-		free(base);
-		return -1;
-	}
-	IMAGE_NT_HEADERS64 *nt = (IMAGE_NT_HEADERS64 *)(base + dos->e_lfanew);
-	if(nt->Signature != 0x00004550){ // "PE\0\0"
-		fprintf(stderr, "Not PE\n");
-		free(base);
-		return -1;
-	}
-	if(nt->OptionalHeader.Magic != 0x20B){ // PE32+
-		fprintf(stderr, "Not PE32+\n");
-		free(base);
-		return -1;
-	}
-	uint16_t nsecs = nt->FileHeader.NumberOfSections;
-	IMAGE_SECTION_HEADER *secs = (IMAGE_SECTION_HEADER *)((uint8_t *)&nt->OptionalHeader + nt->FileHeader.SizeOfOptionalHeader);
-	// Locate base relocation directory
-	IMAGE_DATA_DIRECTORY *reloc_dir = &nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC];
-	uint32_t reloc_rva  = reloc_dir->VirtualAddress;
-	uint32_t reloc_size = reloc_dir->Size;
-	uint32_t reloc_off = rva_to_file_offset(reloc_rva, secs, nsecs);
-	if (!reloc_off || reloc_size == 0) {
-		fprintf(stderr, "No base relocations\n");
-		// We still can emit sections, but no relocations
-	}
-	// Prepare output file
-	FILE *out = fopen(outpath, "wb+");
-	if(!out){
-		fprintf(stderr, "Failed to open %s\n", outpath);
-		free(base);
-		return -1;
-	}
-	// Emit:
-	// [exech][execsectionref * N][section data...][reloc sections...]
-	exech hdr;
-	memset(&hdr, 0, sizeof(hdr));
-	memcpy(hdr.magic.MAGIC,        "MYEXECFMT\0\0\0\0\0\0\0", 16);
-	memcpy(hdr.vermagic.MAGIC, "VER1\0\0\0\0\0\0\0\0\0\0\0", 16);
-	hdr.attributes = 0;
-	hdr.imageBase  = nt->OptionalHeader.ImageBase;
-	// For each PE section we create one data section + one reloc section
-	uint16_t n_data_secs  = nsecs;
-	uint16_t n_reloc_secs = nsecs; // one per section, may be empty
-	hdr.nSections = n_data_secs + n_reloc_secs;
-	// Reserve space for header + section table
-	long header_pos = ftell(out);
-	fwrite(&hdr, 1, sizeof(hdr), out);
-	execsectionref *sectab = (execsectionref *)calloc(hdr.nSections, sizeof(execsectionref));
-	if (!sectab) {
-		fclose(out);
-		free(base);
-		return -1;
-	}
-	// We'll fill sectab, then rewrite it after we know offsets
-	long sectab_pos = ftell(out);
-	fwrite(sectab, sizeof(execsectionref), hdr.nSections, out);
-	// Emit data sections
-	uint16_t sec_index = 0;
-	for(uint16_t i = 0; i < nsecs; ++i){
-		execsectionref *s = &sectab[sec_index];
-		memset(s, 0, sizeof(*s));
-		// Name
-		char name[9] = {0};
-		memcpy(name, secs[i].Name, 8);
-		snprintf(s->path, EXECSECRTIONREFPATHLEN, "%s", name);
-		s->attributes = 0;
-		s->parameter  = 0;
-		s->confBASE   = nt->OptionalHeader.ImageBase + secs[i].VirtualAddress;
-		s->bOffset = (uint64_t)ftell(out);
-		s->nBytes  = secs[i].SizeOfRawData;
-		if (s->nBytes && secs[i].PointerToRawData && secs[i].PointerToRawData + s->nBytes <= size){
+uint32_t GetAlignmentBe(uint64_t Number){
+	if((Number % 10) == 0){return 10;}else
+	if((Number % 9) == 0){return 9;}else
+	if((Number % 8) == 0){return 8;}else
+	if((Number % 7) == 0){return 7;}else
+	if((Number % 6) == 0){return 6;}else
+	if((Number % 5) == 0){return 5;}else
+	if((Number % 4) == 0){return 4;}else
+	if((Number % 3) == 0){return 3;}else
+	if((Number % 2) == 0){return 2;}else
+	if((Number % 1) == 0){return 1;}else
+	{return 0;}
+}
 
-			fwrite(base + secs[i].PointerToRawData, 1, s->nBytes, out);
-		}
-		sec_index++;
-	}
-	// Emit relocation sections (one per original section)
-	// We will scan the base relocation table and bucket entries by section.
-	reloc **rel_buckets = (reloc **)calloc(nsecs, sizeof(reloc *));
-	size_t *rel_counts = (size_t *)calloc(nsecs, sizeof(size_t));
-	size_t *rel_caps = (size_t *)calloc(nsecs, sizeof(size_t));
-	if(reloc_off && reloc_size){
-		uint32_t off = reloc_off;
-		uint32_t end = reloc_off + reloc_size;
-		while (off + sizeof(IMAGE_BASE_RELOCATION) <= end) {
-			IMAGE_BASE_RELOCATION *blk = (IMAGE_BASE_RELOCATION *)(base + off);
-			if(blk->SizeOfBlock == 0){break;}
-			uint32_t page_rva = blk->VirtualAddress;
-			uint32_t block_sz = blk->SizeOfBlock;
-			uint32_t entries_off = off + sizeof(IMAGE_BASE_RELOCATION);
-			uint32_t entries_end = off + block_sz;
-			while((entries_off + 2) <= entries_end){
-				uint16_t entry = *(uint16_t *)(base + entries_off);
-				entries_off += 2;
-				uint16_t type   = (entry >> 12) & 0xF;
-				uint16_t offset = entry & 0x0FFF;
-				if(type == IMAGE_REL_BASED_ABSOLUTE){continue;}// skip
+// void ConvertPeSection(char *in, char *out){
+// 	void *pheader = ReadPeExecutableHeader(in);
+// 	DecodePeExecutableHeader(pheader);
+// 	for(uint32_t sectioncc = 0; sectioncc < (POH->mMagic == Pe32? POH->mNumberOfRvaAndSizes: POHPlus->mNumberOfRvaAndSizes); ++sectioncc){
+// 		// Foreach Section
+// 		switch(STR8_TO_UINT64(PISHs[sectioncc].mName)){
+// 			case STR8_TO_UINT64(SpecialSectionN(0)): {
+				
+// 			}
+// 		}
+// 	}
+// }
 
-				if(type == IMAGE_REL_BASED_DIR64){
-					uint32_t rva = page_rva + offset;
-					// Find which section this RVA belongs to
-					for(uint16_t si = 0; si < nsecs; ++si){
-						uint32_t va   = secs[si].VirtualAddress;
-						uint32_t size_sec =
-							secs[si].Misc.VirtualSize ?
-							secs[si].Misc.VirtualSize :
-							secs[si].SizeOfRawData;
-						if(rva >= va && rva < va + size_sec){
-							uint32_t sec_off = rva - va;
-							// Append to bucket si
-							if (rel_counts[si] == rel_caps[si]) {
-								size_t newcap = rel_caps[si] ? rel_caps[si] * 2 : 16;
-								reloc *nb = (reloc *)realloc(rel_buckets[si], newcap * sizeof(reloc));
-								if(!nb){
-									fclose(out);
-									free(base);
-									free(sectab);
-									for (uint16_t k = 0; k < nsecs; ++k){free(rel_buckets[k]);}
-									free(rel_buckets);
-									free(rel_counts);
-									free(rel_caps);
-									return -1;
-								}
-								rel_buckets[si] = nb;
-								rel_caps[si]    = newcap;
-							}
-							reloc *re = &rel_buckets[si][rel_counts[si]++];
-							re->byteLoc  = sec_off;
-							re->ptrSize  = 8; // DIR64
-							re->type     = (uint8_t)type;
-							re->reserved = 0;
+// //	Convert the Pe-Executable Import Sections into Blocky-Executable Style Imports.
+void InitImportSection(
+	char *path, ExpandedPeExecutable *Image, 
+	SectionNameBe OutName, uint32_t BaseRelocationTableOffset
+){
+	uint64_t nbytes = sizeof(BeRelImportHeader);
+	uint32_t *nImportSymbols = calloc(Image->Format.imports.nImports, sizeof(uint32_t));
+	char **DLLPaths = calloc(Image->Format.imports.nImports, sizeof(char *)), ***ImportSymbols = calloc(Image->Format.imports.nImports, sizeof(char *));
+
+	for(uint32_t cc = 0; cc < Image->Format.imports.nImports; ++cc){
+		char *DLLName = GetAtRVAFromSectionDataPe(Image->Format.imports.imports[cc].NameRVA, ".idata", Image->Format.imports.imports, Image->Raw);
+		DLLPaths[cc] = strdup(PoolGetPath(DLLName));
+		nbytes += sizeof(BeRelImportDllRef) + strlen(DLLPaths[cc]) + 1;
+		ExpandedPeExecutable *DLLHeader = ExpandPeExecutableFormat(DLLPaths[cc]);
+		//*	Foreach Lookup/Address.
+		for(uint32_t cc_ = 0; (Image->Format.Optional.Pe32->mMagic == Pe32? 
+			Image->Format.imports.perImport.lookups.ImportLookups32[cc][cc_].Raw: 
+			Image->Format.imports.perImport.lookups.ImportLookups64[cc][cc_].Raw
+		) != 0; ++cc_){
+			if((cc_ % 10) == 0){
+				if(ImportSymbols[cc]){ImportSymbols[cc] = realloc(ImportSymbols[cc], (cc_ + 10) * sizeof(char **));
+				}else{ImportSymbols[cc] = calloc(10, sizeof(char **));}
+			}
+			uint32_t TargetOrdinal = 0;
+			if(Image->Format.Optional.Pe32->mMagic == Pe32? 
+				Image->Format.imports.perImport.lookups.ImportLookups32[cc][cc_].Bits.ImportByOrdinal: 
+				Image->Format.imports.perImport.lookups.ImportLookups64[cc][cc_].Bits.ImportByOrdinal
+			){
+				uint16_t Ordinal = (uint16_t)((Image->Format.Optional.Pe32->mMagic == Pe32? 
+					Image->Format.imports.perImport.lookups.ImportLookups32[cc][cc_].Bits.OrdinalNumberOrNameRVA: 
+					Image->Format.imports.perImport.lookups.ImportLookups64[cc][cc_].Bits.OrdinalNumberOrNameRVA
+				) & 0xFFFF);
+				//	Search for the Ordinal ID in Exports.
+				// We always Normalise the Ordinal IDs so this should all work Fine.
+				//	Foreach Export recover the Original Imported Name.
+				uint32_t OrdinalIndex;
+				for(uint32_t exportI = 0; exportI < DLLHeader->Format.exports.nExports; ++exportI){
+					OrdinalIndex = 0;
+					for(; OrdinalIndex < DLLHeader->Format.exports.exportEntries[exportI].mNNamePointers; ++OrdinalIndex){
+						if(DLLHeader->Format.exports.NormalisedOrdinalPointerRVAs[OrdinalIndex] == (Ordinal - DLLHeader->Format.exports.exportEntries[exportI].OrdinalBase)){
 							break;
 						}
 					}
-				}else{}// Other relocation types can be added here if needed
+				}
+				ImportSymbols[cc][cc_] = strdup(GetAtRVAFromSectionDataPe(DLLHeader->Format.exports.NamePointerRVAs[OrdinalIndex], ".edata", 
+					DLLHeader->Format.exports.exportEntries, DLLHeader->Raw
+				));
+			}else{
+				uint8_t *HintNameBlock = (uint8_t *)GetAtRVAFromSectionDataPe(
+					(Image->Format.Optional.Pe32->mMagic == Pe32? 
+						Image->Format.imports.perImport.lookups.ImportLookups32[cc][cc_].Bits.OrdinalNumberOrNameRVA: 
+						Image->Format.imports.perImport.lookups.ImportLookups64[cc][cc_].Bits.OrdinalNumberOrNameRVA
+					), ".idata", Image->Format.imports.imports, Image->Raw
+				);
+				if(HintNameBlock){ImportSymbols[cc][cc_] = strdup((char *)(HintNameBlock + 2));}
 			}
-			off += blk->SizeOfBlock;
+			nbytes += strlen(ImportSymbols[cc][cc_]);
+			nImportSymbols[cc]++;
 		}
+		free(DLLHeader);
 	}
-	// Now write relocation sections
-	for(uint16_t i = 0; i < nsecs; ++i){
-		execsectionref *s = &sectab[sec_index];
-		memset(s, 0, sizeof(*s));
-		char name[9] = {0};
-		memcpy(name, secs[i].Name, 8);
-		snprintf(s->path, EXECSECRTIONREFPATHLEN, RELPREFIX"%s", name);
-		s->attributes = __reloctable;
-		s->parameter  = 0;
-		s->confBASE   = 0;
-		s->bOffset = (uint64_t)ftell(out);
-		s->nBytes  = (uint64_t)(rel_counts[i] * sizeof(reloc));
-		if(s->nBytes && rel_buckets[i]){fwrite(rel_buckets[i], sizeof(reloc), rel_counts[i], out);}
-		sec_index++;
-	}
-	// Rewrite header + section table
-	fseek(out, header_pos, SEEK_SET);
-	fwrite(&hdr, 1, sizeof(hdr), out);
-	fseek(out, sectab_pos, SEEK_SET);
-	fwrite(sectab, sizeof(execsectionref), hdr.nSections, out);
-	fclose(out);
-	for(uint16_t i = 0; i < nsecs; ++i){free(rel_buckets[i]);}
-	free(rel_buckets);
-	free(rel_counts);
-	free(rel_caps);
-	free(sectab);
-	free(base);
-	return 0;
+	//*	Generate the Import Section
+	CreateImportSectionBe(
+		path, OutName, DLLPaths, ImportSymbols, nImportSymbols, 
+		Image->Format.imports.nImports, BaseRelocationTableOffset);
 }
 
-void dump_exec(const char *path){
-	FILE *f = fopen(path, "rb");
-	if(!f){
-		printf("Cannot open file: %s\n", path);
-		return;
-	}
-	// Read header prefix (fixed size)
-	exech hdr;
-	if(fread(&hdr, 1, sizeof(exech), f) != sizeof(exech)){
-		printf("File too small or invalid\n");
-		fclose(f);
-		return;
-	}
-
-	printf("\n=== EXEC HEADER ===");
-	printf("\nMagic:          %.16s", hdr.magic.MAGIC);
-	printf("\nVersion Magic:  %.16s", hdr.vermagic.MAGIC);
-	printf("\nAttributes:     0x%llx", (unsigned long long)hdr.attributes);
-	printf("\nImage Base:     0x%llx", (unsigned long long)hdr.imageBase);
-	printf("\n\n#n Sections:       %u", hdr.nSections);
-	// Read section table
-	size_t sectab_size = hdr.nSections * sizeof(execsectionref);
-	execsectionref *sects = malloc(sectab_size);
-	if(!sects){
-		printf("\nOOM");
-		fclose(f);
-		return;
-	}
-	if(fread(sects, 1, sectab_size, f) != sectab_size){
-		printf("\nFailed to read section table");
-		free(sects);
-		fclose(f);
-		return;
-	}
-	printf("\n=== SECTION TABLE ===");
-	for (uint16_t i = 0; i < hdr.nSections; ++i) {
-		execsectionref *s = &sects[i];
-		printf("\n[%02u] Path: %-16s  Attr: 0x%08x  Param: %u", i, s->path, s->attributes, s->parameter);
-		printf(
-			"\n\tOffset: 0x%llx  Size: %llu bytes  Base: 0x%llx",
-			(unsigned long long)s->bOffset, (unsigned long long)s->nBytes,
-			(unsigned long long)s->confBASE
-		);
-	}
-	printf("\n");
-	// Dump section contents
-	printf("\n=== SECTION DATA ===");
-	for (uint16_t i = 0; i < hdr.nSections; ++i) {
-		execsectionref *s = &sects[i];
-		printf("\n-- Section %u (%s) --\n", i, s->path);
-		printf("\nSize: %llu bytes", (unsigned long long)s->nBytes);
-		if(s->nBytes == 0){printf("(empty)\n");		continue;}
-		// Seek to section data
-		if(fseek(f, (long)s->bOffset, SEEK_SET) != 0){
-			printf("\n\tERROR: Cannot seek to section data");
-			continue;
-		}
-		uint8_t *buf = malloc(s->nBytes);
-		if(!buf){printf("\n\tOOM");	continue;}
-		if(fread(buf, 1, s->nBytes, f) != s->nBytes){
-			printf("  ERROR: Failed to read section data\n");
-			free(buf);
-			continue;
-		}
-		// Hex dump (first 256 bytes max)
-		size_t dump_len = s->nBytes < 256 ? s->nBytes : 256;
-		for(size_t j = 0; j < dump_len; j += 16){
-			printf("  %04zx: ", j);
-			for(size_t k = 0; k < 16 && j + k < dump_len; ++k){printf("%02x ", buf[j + k]);}
-			printf("\n");
-		}
-		if(s->nBytes > 256){printf("  ... (%llu bytes total)\n", (unsigned long long)s->nBytes);}
-		free(buf);
-	}
-	free(sects);
-	fclose(f);
-}
+// void *InitRelocSection(char *path, ExpandedPeExecutable *Image, void *BHeader, uint64_t *RawFPointer){
+// 	//*	Export the Reloc Section.
+// 	DecodeBeExecutableHeader(BHeader);
+// 	size_t nbytes = sizeof(BeRelocationHeader) + (Image->Format.reloc.nRelocationBlocks * sizeof(BeRelocationDirectory));
+// 	void *out = calloc(1, nbytes);
+// 	size_t peOffset = 0, beOffset = 0;
+// 	BeSectionDescriptor *relocSection = FindSectionBe(BHeader, ".reloc");
+// 	for(uint32_t cc = 0; cc < Image->Format.reloc.nRelocationBlocks; ++cc){
+// 		PeBaseRelocationBlock *relocations = (PeBaseRelocationBlock *)(Image->Format.reloc.data.Raw + peOffset);
+// 		RelativeVirtualOffset PageOffset = relocSection->bVirtualAddress + (*RawFPointer) + 
+// 			RvoToFileOffsetBe(relocations->PageRVA, relocSection);
+// 		((BeRelocationDirectory *)(out + sizeof(BeRelocationHeader)))[cc] = (BeRelocationDirectory){
+// 			.bNRelocationEntries = Image->Format.reloc.nRelocationEntriesPerBlock[cc], 
+// 			.bOffset = PageOffset, 
+// 			.bRelocationEntryTableRVO = relocSection->bVirtualAddress + 
+// 				RvoToFileOffsetBe((*RawFPointer) + nbytes, relocSection), 
+// 			.bSection = (((size_t)relocSection) - ((size_t)BSDs)) / sizeof(BeSectionDescriptor)
+// 		};
+// 		nbytes += (sizeof(BeRelocationDirectoryEntry) * Image->Format.reloc.nRelocationEntriesPerBlock[cc]);
+// 		out = realloc(out, nbytes);
+// 		for(uint32_t cc_ = 0; cc_ < Image->Format.reloc.nRelocationEntriesPerBlock[cc]; ++cc_){
+// 			((BeRelocationDirectoryEntry *)(out + nbytes))[cc] = (BeRelocationDirectoryEntry){
+// 				.Bits = {
+// 					.bOffset = PageOffset > (relocations->relocations[cc_].Offset + relocations->PageRVA)? 
+// 						PageOffset - (relocations->relocations[cc_].Offset + relocations->PageRVA):	
+// 						(relocations->relocations[cc_].Offset + relocations->PageRVA) - PageOffset,
+// 					.bType = (flagcheck(relocations->relocations[cc_].Type, PE_REL_ABSOLUTE)? BRETAbsolute: 0)	| 
+// 							// (flagcheck(relocations->relocations[cc_].Type, PE_REL_ABSOLUTE)? BRET16: 0)
+// 							(flagcheck(relocations->relocations[cc_].Type, PE_REL_HIGHLOW)? BRET32: 0)			|
+// 							(flagcheck(relocations->relocations[cc_].Type, PE_REL_HIGH)? BRET16High: 0)			|
+// 							(flagcheck(relocations->relocations[cc_].Type, PE_REL_LOW)? BRET16Low: 0)			|
+// 							(flagcheck(relocations->relocations[cc_].Type, PE_REL_DIR64)? BRET64: 0)
+// 				}
+// 			};
+// 		}
+// 		peOffset += relocations->BlockSize;
+// 	}
+// 	(*RawFPointer) += nbytes;
+// 	return out;
+// }

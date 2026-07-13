@@ -16,6 +16,6 @@
     }
 }
 
-PE2EXEC.MAKE -d 1 -i "C:\GitHub\BlockyOS\tools\filesystem\fs.exe" -o "C:\GitHub\BlockyOS\tools\output-1.exe"
+PE2EXEC.MAKE -i "C:\GitHub\BlockyOS\tools\filesystem\fs.exe" -o "C:\GitHub\BlockyOS\tools\output-1.exe" -d 1
 FSFRAT.OPEN -p "/root/test.exe" -a "test" -la "fc"
 FSFRAT.WRITE -pp "C:\GitHub\BlockyOS\tools\output-1.exe" -ia "%test%" -p 0 -n 0

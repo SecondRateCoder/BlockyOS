@@ -16,9 +16,9 @@
             "preLaunchTask": "Build EXEC Utils",
             "program": "${workspaceFolder}//tools//executable-format//exechandler.exe",
             "args": [
-                "-d",
-                "${workspaceFolder}\\tools\\executable-format\\test\\test.exe",
-                "${workspaceFolder}\\tools\\executable-format\\output-1.exe"
+                "${workspaceFolder}\\tools\\filesystem\\fs.exe",
+                "${workspaceFolder}\\tools\\output-1.exe", 
+                "-d", "-j", "{}"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

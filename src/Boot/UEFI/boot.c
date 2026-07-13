@@ -53,7 +53,7 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 		socket_t *exe = ret.data;
 		void *loadin = __calloc(1, __fsize(((unhandle *)exe->persistent)->fhandle_));
 		DEBUGPRINT(L"\nResolving to Memory");
-		kernelmain main = (kernelmain)__resolve((socket_t *)ret.data, loadin);
+		kernelmain main = (kernelmain)resolve(fs, (socket_t *)ret.data, NULL, 0, NULL);
 		DEBUGPRINT(L"\nExiting Boot Servies?");
 		uefi_call_wrapper(gBS->ExitBootServices, 2, Image, bootout->memory.mapKey);
 		main(bootout);

@@ -4,15 +4,12 @@
 #include "efilib.h"
 
 #include "src/Boot/UEFI/tools/tools.h"
-#include "src/Boot/UEFI/drivers/.disk/fs/frat.h"
-#include "src/Boot/UEFI/drivers/.disk/raw/raw.h"
-#include "src/Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
 #define socketfuncprefix// __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi))
 
 struct socket_t;
 
-enumdef(socket_retFLAG, uint16_t){
+enumdef(socket_retFLAG, UINT16){
 	__noerr = 0x0,
 	__incompatible_arg = 0x1,
 	__noimpl_socketfunc = 0x2,

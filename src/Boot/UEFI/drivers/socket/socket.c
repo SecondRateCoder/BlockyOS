@@ -1,6 +1,5 @@
 #include "socket.h"
-
-extern socket_ret *__froot_sckopen(UINT32 device, UINTN nARGbytes, va_list *args);
+#include "sockets.h"
 static const UINTN nDrivers = 1;
 
 socket_ret socketopen(UINT32 driver, UINTN nARGbytes, ...){

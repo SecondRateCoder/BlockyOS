@@ -192,3 +192,5 @@ VOID RestartSystem();
 
 void *sysbase(EFI_HANDLE Image);
 void *getptr(void *ptr);
+
+double __strtod(const char *str);

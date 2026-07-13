@@ -388,3 +388,35 @@ void *sysbase(EFI_HANDLE Image){
 }
 
 void *getptr(void *ptr){return (void *)((UINTN)(sysbase(NULL)) + (UINTN)ptr);}
+
+#include <stdio.h>
+
+double __strtod(const char *str){
+    double result = 0.0, divisor = 1.0;
+    int sign = 1, in_fraction = 0;
+    // Handle sign
+    if(*str == '-'){
+        sign = -1;
+        str++;
+    }else if(*str == '+'){
+        str++;
+    }
+    while(*str != '\0'){
+        if(*str == '.'){
+            in_fraction = 1;
+            str++;
+            continue;
+        }
+
+        // Check if character is a valid digit
+        if(*str >= '0' && *str <= '9'){
+            int digit = *str - '0';
+            if(!in_fraction){result = (result * 10.0) + digit;}else{
+                divisor *= 10.0;
+                result = result + (digit / divisor);
+            }
+        }else{break;}
+        str++;
+    }
+    return result * sign;
+}
