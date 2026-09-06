@@ -826,3 +826,5 @@ Write-Host "Partition formatted: $DiskImage (Partition '$PartitionName', Flag '$
 if ($Verbose -and $LogFile) {
 	Write-Host "Operations logged to: $LogFile"
 }
+
+exit 0

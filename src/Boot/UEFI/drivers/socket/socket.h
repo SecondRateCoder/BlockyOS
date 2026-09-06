@@ -3,13 +3,13 @@
 #include "efi.h"
 #include "efilib.h"
 
-#include "src/Boot/UEFI/tools/tools.h"
+#include "Boot/UEFI/tools/tools.h"
 
 #define socketfuncprefix// __attribute__((used, noinline, visibility("default"), optimize("O0"), ms_abi))
 
 struct socket_t;
 
-enumdef(socket_retFLAG, UINT16){
+enumdef(UINT16, socket_retFLAG){
 	__noerr = 0x0,
 	__incompatible_arg = 0x1,
 	__noimpl_socketfunc = 0x2,
@@ -32,27 +32,26 @@ typedef struct socket_ret{
 socket_ret socketopen(UINT32 driver, UINTN nARGbytes, ...);
 
 /// @brief Unique to each driver
-typedef volatile socket_ret *(socketfuncprefix *socketOPEN)(UINT32 device, UINTN nARGbytes, va_list *args);
+typedef volatile socket_ret (socketfuncprefix *socketOPEN)(UINT32 device, UINTN nARGbytes, va_list *args);
+typedef volatile socket_ret (socketfuncprefix *socketINFO)(struct socket_t *socket, UINT32 Property, UINT32 subProperty);
 
 /// @brief Unique to each socket.
-typedef volatile socket_ret (socketfuncprefix *socketOPENchild)(struct socket_t * socket, UINTN nARGbytes, ...);
-typedef volatile socket_ret (socketfuncprefix *socketCLOSE)(struct socket_t * socket, UINTN nARGbytes, ...);
-typedef volatile socket_ret (socketfuncprefix *socketREADraw)(struct socket_t * socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...);
-typedef volatile socket_ret (socketfuncprefix *socketWRITEraw)(struct socket_t * socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...);
+typedef volatile socket_ret (socketfuncprefix *socketOPENchild)(struct socket_t *socket, UINTN nARGbytes, ...);
+typedef volatile socket_ret (socketfuncprefix *socketCLOSE)(struct socket_t *socket, UINTN nARGbytes, ...);
+typedef volatile socket_ret (socketfuncprefix *socketREADraw)(struct socket_t *socket, UINTN posBYTES, UINTN readBYTES, UINTN nARGbytes, ...);
+typedef volatile socket_ret (socketfuncprefix *socketWRITEraw)(struct socket_t *socket, void *data, UINTN posBYTES, UINTN nBYTES, UINTN nARGbytes, ...);
 typedef socketREADraw socketREAD;
 typedef socketWRITEraw socketWRITE;
 
-#define socketfunc(func)	((__typeof__(*func))(func))
-// #define socketfunc(func)	func
-
 typedef struct socket_t{
 	void *persistent;
-	socketREAD *read;
-	socketWRITE *write;
+	socketINFO info;
+	socketREAD read;
+	socketWRITE write;
 	struct raw{
-		socketREADraw *read;
-		socketWRITEraw *write;
+		socketREADraw read;
+		socketWRITEraw write;
 	}raw;
-	socketOPENchild *open;
-	socketCLOSE *close;
+	socketOPENchild open;
+	socketCLOSE close;
 }socket_t;

@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -63,28 +64,4 @@ char* PoolGetPath(const char* fileSnippet){
     }
     // Completely unresolved across all pools
     return NULL; 
-}
-
-
-char *GenericError(char *str, uint32_t val){
-	typedef struct keyval{char *error; uint32_t alias;}keyval;
-	static keyval *errors = NULL;
-	static uint32_t nErrors = 0;
-	if(str && val){
-		if(errors){
-			nErrors++;
-			errors = realloc(errors, sizeof(keyval) * nErrors);
-		}else{
-			nErrors = 1;
-			errors = calloc(1, sizeof(keyval));
-		}
-		errors[nErrors - 1] = (keyval){.alias = val, .error = strdup(str)};
-		return (void *)0x1;
-	}else if(!str && val){
-		for(uint32_t cc = 0; cc < nErrors; ++cc){
-			if(val == errors[cc].alias){return errors[cc].error;}
-		}
-		return NULL;
-	}
-	return NULL;
 }

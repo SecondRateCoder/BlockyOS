@@ -38,7 +38,7 @@ typedef struct cmd_errout{
 	cmddesc_errtype errcode;
 }cmd_errout;
 
-typedef cmd_errout (* cmdfunc__)(size_t *buffer, void **persistent);
+typedef cmd_errout (* cmdfunc__)(uint64_t *buffer, void **persistent);
 
 typedef struct cmddesc{
 	const char cmd[8],
@@ -61,10 +61,10 @@ enumdef(symtype_e, uint32_t){
 	symtype_e__dirhandle,
 	symtype_e__unknowndata = ~(symtype_e__dirhandle | symtype_e__fhandle | symtype_e__string)
 };
-typedef struct __symref{char *alias;    void *data;     symtype_e type;		uint32_t nbytes;}__symref;
+typedef struct __symref{char *alias,		*data;     symtype_e type;		uint32_t nbytes;}__symref;
 bufdef(symrefbuffer, __symref, uint32_t);
 
 cmd_errout __shellparse(char *input);
 
 extern volatile cmddesc commands[];
-extern const size_t ncommands;
+extern const uint64_t ncommands;

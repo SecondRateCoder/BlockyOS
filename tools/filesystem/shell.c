@@ -8,7 +8,7 @@ symtype_e togglesymtype(symtype_e value, bool set){
 
 cmddesc *getcmd(char *cmd){
 	if(!cmd){return NULL;}
-	for(size_t cc = 0; cc < ncommands; ++cc){
+	for(uint64_t cc = 0; cc < ncommands; ++cc){
 		if(!memcmp(commands[cc].alias, cmd, __min(strlen(cmd), 8)) || 
 			!memcmp(commands[cc].cmd, cmd, __min(strlen(cmd), 8))
 		){return (commands + cc);}
@@ -17,8 +17,10 @@ cmddesc *getcmd(char *cmd){
 }
 
 void *resolvedata(char *src){
-	cmddesc *cd = getcmd("e.sym");
-	symrefbuffer *buffer = cd->persistent;
+	if(!src){return NULL;}
+	cmddesc *symcd = getcmd("e.sym");
+	if(!symcd || !symcd->persistent){return NULL;}
+	symrefbuffer *buffer = symcd->persistent;
 	if(buffer){
 		for(uint32_t cc = 0; cc < buffer->len; ++cc){
 			if(strstr(src, buffer->symrefbuffer[cc].alias)){
@@ -29,16 +31,19 @@ void *resolvedata(char *src){
 		}
 	}
 	return NULL;
+	if(!src || !*src){return NULL;}
 }
 
 cmd_errout __shellparse(char *input){
+	if(!input || !*input){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Empty command"};}
     strtok_t *tokstate = strtok_i(input, " \"", strtok__ForceSameBorderingDelims);
     char *tok = strtok_k(tokstate);
 	cmddesc *cd = getcmd(tok);
     if(cd && cd->func){
-        size_t *buffer = calloc(cd->flags.nflags, sizeof(size_t));
+		if(cd == getcmd("e.sym")){togglesymtype(symtype_e__unknowndata, true);}
+        uint64_t *buffer = calloc(cd->flags.nflags, sizeof(uint64_t));
 		while(tok = strtok_k(tokstate)){
-			for(size_t cc = 0; cc < cd->flags.nflags; ++cc){
+			for(uint64_t cc = 0; cc < cd->flags.nflags; ++cc){
 				if(!strcmp(tok, cd->flags.flags[cc].flag)){
 					switch(cd->flags.flags[cc].type){
 						case cmddescargtype__switch: {
@@ -72,11 +77,11 @@ cmd_errout __shellparse(char *input){
 							break;
 						} case cmddescargtype__string: {
 							char *temp = strtok_k(tokstate), *_temp = resolvedata(temp);
-							buffer[cc] = (size_t)(_temp ? _temp : temp);
+							buffer[cc] = (uint64_t)(_temp ? _temp : temp);
 							break;
 						} case cmddescargtype__longinteger: {
 							char *temp = strtok_ff(tokstate), *_temp = resolvedata(temp);
-							buffer[cc] = (size_t)(_temp ? _temp : temp);
+							buffer[cc] = (uint64_t)(_temp ? _temp : temp);
 							break;
 						}
 					}
@@ -106,31 +111,31 @@ char *flagtypetostr(cmddesc_argtype type){
 	}
 }
 
-cmd_errout __shellhelp(size_t *buffer, void **persistent){
+cmd_errout __shellhelp(uint64_t *buffer, void **persistent){
 	char *command = ((char *)buffer[0]);
 	if(!command){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
 	cmddesc *cd = getcmd(command);
 	if(cd){
-		dualprintf(logf, stdout, 
+		dualprintf(fs_logf, stdout, 
 			"\n[%llu]"
 			"\n\tCommand: %.8s"
 			"\n\tAlias: %.8s"
 			"\n\tFlags:",
-			((size_t)cd - (size_t)((void *)commands)) / sizeof(cmddesc), cd->cmd, cd->alias
+			((uint64_t)cd - (uint64_t)((void *)commands)) / sizeof(cmddesc), cd->cmd, cd->alias
 		);
 		for(uint8_t cc_ = 0; cc_ < cd->flags.nflags; ++cc_){
-			dualprintf(logf, stdout, 
+			dualprintf(fs_logf, stdout, 
 				"\n\t\t{%.3s\t:\t%s\t:\t%s}",
 				cd->flags.flags[cc_].flag,
 				flagtypetostr(cd->flags.flags[cc_].type),
 				cd->flags.flags[cc_].desc
 			);
 		}
-		dualprintf(logf, stdout, "\n\tDesc: %s", cd->desc);
+		dualprintf(fs_logf, stdout, "\n\tDesc: %s", cd->desc);
 		return (cmd_errout){.errcode = 0, .msg = ""};
 	}else if(!strncmp(command, "..", __min(strlen(command), 2))){
-		for(size_t cc = 0; cc < ncommands; ++cc){
-			dualprintf(logf, stdout, 
+		for(uint64_t cc = 0; cc < ncommands; ++cc){
+			dualprintf(fs_logf, stdout, 
 				"\n[%llu]"
 				"\n\tCommand: %.8s"
 				"\n\tAlias: %.8s"
@@ -138,21 +143,21 @@ cmd_errout __shellhelp(size_t *buffer, void **persistent){
 				cc, commands[cc].cmd, commands[cc].alias
 			);
 			for(uint8_t cc_ = 0; cc_ < commands[cc].flags.nflags; ++cc_){
-				dualprintf(logf, stdout, 
+				dualprintf(fs_logf, stdout, 
 					"\n\t\t{%.3s\t:\t%s\t:\t%s}",
 					commands[cc].flags.flags[cc_].flag,
 					flagtypetostr(commands[cc].flags.flags[cc_].type),
 					commands[cc].flags.flags[cc_].desc
 				);
 			}
-			dualprintf(logf, stdout, "\n\tDesc: %s", commands[cc].desc);
+			dualprintf(fs_logf, stdout, "\n\tDesc: %s", commands[cc].desc);
 		}
 		return (cmd_errout){.errcode = 0, .msg = ""};
 	}else if(!strncmp(command, "short", __min(strlen(command), 5))){
-		for(size_t cc = 0; cc < ncommands; ++cc){
-			dualprintf(logf, stdout, "\n [%llu]: %.8s(%.8s)\t", cc, commands[cc].cmd, commands[cc].alias);
+		for(uint64_t cc = 0; cc < ncommands; ++cc){
+			dualprintf(fs_logf, stdout, "\n [%llu]: %.8s(%.8s)\t", cc, commands[cc].cmd, commands[cc].alias);
 			for(uint8_t cc_ = 0; cc_ < commands[cc].flags.nflags; ++cc_){
-				dualprintf(logf, stdout, " %.3s(%s)", commands[cc].flags.flags[cc_].flag, flagtypetostr(commands[cc].flags.flags[cc_].type));
+				dualprintf(fs_logf, stdout, " %.3s(%s)", commands[cc].flags.flags[cc_].flag, flagtypetostr(commands[cc].flags.flags[cc_].type));
 			}
 		}
 		return (cmd_errout){.errcode = 0, .msg = ""};
@@ -160,7 +165,7 @@ cmd_errout __shellhelp(size_t *buffer, void **persistent){
 	return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Command does not exist"};
 }
 
-cmd_errout __shelldisk(size_t *buffer, void **persistent){
+cmd_errout __shelldisk(uint64_t *buffer, void **persistent){
 	// Initialise e.mount
 	char *path = ((char *)buffer[0]), *partition = ((char *)buffer[1]);
 	if(!path){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
@@ -171,70 +176,67 @@ cmd_errout __shelldisk(size_t *buffer, void **persistent){
 			uint32_t confblocksize = buffer[2], conflogblocks = buffer[3];
 			char *version = ((char *)buffer[4]);
 			// Verify all Items
-			if(!confblocksize){confblocksize = __FS_DEFAULTBLOCKSIZE;	dualprintf(logf, stdout, "\nEnabling default Block Size %u", __FS_DEFAULTBLOCKSIZE);}
-			if(!conflogblocks){conflogblocks = __FS_DEFAULTLOGSECTORS;	dualprintf(logf, stdout, "\nEnabling default Log Sectors %u", __FS_DEFAULTLOGSECTORS);}
-			if(!version){version = __FS_DEFAULTFORMATEDVERSION;			dualprintf(logf, stdout, "\nUsing Default Version: %s", __FS_DEFAULTFORMATEDVERSION);}
+			if(!confblocksize){confblocksize = __FS_DEFAULTBLOCKSIZE;	dualprintf(fs_logf, stdout, "\nEnabling default Block Size %u", __FS_DEFAULTBLOCKSIZE);}
+			if(!conflogblocks){conflogblocks = __FS_DEFAULTLOGSECTORS;	dualprintf(fs_logf, stdout, "\nEnabling default Log Sectors %u", __FS_DEFAULTLOGSECTORS);}
+			if(!version){version = __FS_DEFAULTFORMATEDVERSION;			dualprintf(fs_logf, stdout, "\nUsing Default Version: %s", __FS_DEFAULTFORMATEDVERSION);}
 			if(partition){
 				GPTeNSTR *str = makeGPTeNSTR(partition);
 				// Get Version
 				strtok_t *tstate = strtok_i(version, " :\"", 0);
-				uint32_t vermajor = strtoul(strtok_k(tstate), NULL, 10), 
-						verminor = strtoul(strtok_k(tstate), NULL, 10);
-				strtok_d(tstate);
-				formatpart(path, *str, confblocksize, conflogblocks, vermajor, verminor);
+                formatpart(path, *str, confblocksize, conflogblocks, 
+                    strtoul(strtok_k(tstate), NULL, 10), strtoul(strtok_k(tstate), NULL, 10));
+                strtok_d(tstate);
 				free(str);
 				cd->persistent = fmount(path);
-				if(!cd->persistent){
-					cmddesc *symcd = getcmd("e.sym");
-					symcd->func((size_t *)((char *[2]){"REALDISK", strdup(path)}), &symcd->persistent);
-					return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Failed to load Partition"};}
+				if(!cd->persistent){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Failed to load Partition"};}
 			}else{return (cmd_errout){.errcode  = cmddescerrtype_undefined_setting, .msg = "No Partition target was set."};}
 		}
 		cmddesc *symcd = getcmd("e.sym");
-		symcd->func((size_t *)((char *[2]){"REALDISK", strdup(path)}), &symcd->persistent);
+		togglesymtype(symtype_e__string, true);
+		char *diskpath = strdup(path);
+		uint64_t symargs[3] = {(uint64_t)"REALDISK", strlen(diskpath), (uint64_t)diskpath};
+		symcd->func(symargs, &symcd->persistent);
+		free(diskpath);
 		return (cmd_errout){.errcode = 0, .msg = ""};
 	}
 	return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Dependency \"e.mount\" is undefined"};
 }
 
-cmd_errout __shellcreate(size_t *buffer, void **persistent){
+cmd_errout __shellcreate(uint64_t *buffer, void **persistent){
 	// type:path:name
 	char *type = (char *)(buffer[0]), *path = (char *)(buffer[1]), *name = (char *)(buffer[2]);
-	dualprintf(logf, stdout, "\n%p:%s\t%p:%s\t%p:%s\t", type, type, path, path, name, name);
+	dualprintf(fs_logf, stdout, "\n%p:%s\t%p:%s\t%p:%s\t", type, type, path, path, name, name);
 	if(!type || !path || !name){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
 	char *typedup = strdup(type);
-	typedup = realloc(typedup, strlen(type) + 1);
-	typedup[strlen(type)] = 'c';	typedup[strlen(type) + 1] = '\0';
+	uint64_t typeLen = strlen(type);
+	typedup = realloc(typedup, typeLen + 2);
+	typedup[typeLen] = 'c';
+	typedup[typeLen + 1] = '\0';
 	// Initialise Persistent
 	// Use persistent in "e.mount"
-	cmddesc *symcd = getcmd("e.sym"), *mountcd = getcmd("e.mount");
-	if(symcd && mountcd){
-		togglesymtype(symtype_e__fhandle, true);		char *npath = strdup(path);
-		if(npath[strlen(path) - 1] == PATHSEP || npath[strlen(path) - 1] == PATHnoSEP){
-			npath = realloc(npath, strlen(path) + strlen(name));
-			memcpy(npath + strlen(path), name, strlen(name) + 1);
+	cmddesc *mountcd = getcmd("e.mount");
+	if(mountcd){
+		togglesymtype(symtype_e__fhandle, true);
+		char *npath = strdup(path);
+		uint64_t pathLen = strlen(path), nameLen = strlen(name);
+		if(npath[pathLen - 1] == PATHSEP || npath[pathLen - 1] == PATHnoSEP){
+			npath = realloc(npath, pathLen + nameLen + 1);
+			memcpy(npath + pathLen, name, nameLen + 1);
 		}else{
-			npath = realloc(npath, strlen(path) + strlen(name));
-			npath[strlen(path)] = PATHSEP;
-			memcpy(npath + strlen(path), name, strlen(name));
+			npath = realloc(npath, pathLen + nameLen + 2);
+			npath[pathLen] = PATHSEP;
+			memcpy(npath + pathLen + 1, name, nameLen + 1);
 		}
-		dualprintf(logf, stdout, "\n[\t%s]", npath);
-		if(mountcd->persistent){symcd->func((size_t *)((char *[]){name, (char *)sizeof(fhandle), (char *)floadh(mountcd->persistent, npath, typedup)}), &symcd->persistent);}
-	}else{free(typedup);	return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "\nError... Could not set Persistent"};}
+		dualprintf(fs_logf, stdout, "\n[\t%s]", npath);
+		if(mountcd->persistent){fuloadh(floadh(mountcd->persistent, npath, typedup));}
+	}else{free(typedup); return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "\nError... Could not set Persistent"};}
 	free(typedup);
 	return (cmd_errout){.errcode = 0, .msg = ""};
 }
 
-cmd_errout __shellflush(size_t *buffer, void **persistent){
-	for(size_t cc = 0; cc < ncommands; ++cc){
-		free(commands[cc].persistent);
-	}
-	return (cmd_errout){.errcode = 0, .msg = ""};
-}
-
-cmd_errout __shellsym(size_t *buffer, void **persistent){
-	size_t nbytes = buffer[2];
-	char *alias = (char *)(buffer[0]), *data = (char *)(buffer[1]);
+cmd_errout __shellsym(uint64_t *buffer, void **persistent){
+	uint64_t nbytes = buffer[1];
+	char *alias = (char *)(buffer[0]), *data = (char *)(buffer[2]);
 	if(!nbytes || !alias || !data){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
 	symrefbuffer *srb = *persistent;
 	if(!srb){srb = calloc(sizeof(symrefbuffer), 1);		*persistent = srb;		srb->len = 0;}
@@ -247,22 +249,45 @@ cmd_errout __shellsym(size_t *buffer, void **persistent){
 	}else{srb->symrefbuffer = calloc(sizeof(__symref), srb->len);}
 	srb->symrefbuffer[srb->len - 1] = (__symref){
 		.alias = calloc(strlen(alias) + 5, sizeof(char)),
-		.data = data,
+		.data = (togglesymtype(0, false) == symtype_e__string ? strdup(data) : data),
 		.type = togglesymtype(0, false),
-		.nbytes = (togglesymtype(0, false) == symtype_e__string? strlen(data): nbytes)
+		.nbytes = (togglesymtype(0, false) == symtype_e__string ? strlen(data) : nbytes)
 	};
 	togglesymtype(symtype_e__string, true);
 	snprintf(srb->symrefbuffer[srb->len - 1].alias, strlen(alias) + 5, "%%%s%%", alias);
 	return (cmd_errout){.errcode = 0, .msg = ""};
 }
 
-cmd_errout __shelldelete(size_t *buffer, void **persistent){
-	if(!(*buffer)){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
-	__ffremove(getcmd("e.mount")->persistent, resolvedata((char *)(*buffer)));
+cmd_errout __shellflush(uint64_t *buffer, void **persistent){
+	for(uint64_t cc = 0; cc < ncommands; ++cc){
+		if((uint64_t)(commands[cc].func) == (uint64_t)__shellsym){
+			symrefbuffer *srb = commands[cc].persistent;
+			if(srb){
+				for(uint32_t index = 0; index < srb->len; ++index){
+					free(srb->symrefbuffer[index].alias);
+					if(srb->symrefbuffer[index].type == symtype_e__string){
+						free(srb->symrefbuffer[index].data);
+					}
+				}
+				free(srb->symrefbuffer);
+				free(srb);
+			}
+			commands[cc].persistent = NULL;
+		}else{
+			free(commands[cc].persistent);
+			commands[cc].persistent = NULL;
+		}
+	}
 	return (cmd_errout){.errcode = 0, .msg = ""};
 }
 
-cmd_errout __shellopen(size_t *buffer, void **persistent){
+cmd_errout __shelldelete(uint64_t *buffer, void **persistent){
+	if(!(*buffer)){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
+	__ffremove(getcmd("e.mount")->persistent, (char *)*buffer);
+	return (cmd_errout){.errcode = 0, .msg = ""};
+}
+
+cmd_errout __shellopen(uint64_t *buffer, void **persistent){
 	// Attach Sym Handle
 	char *loadargs = ((char *)buffer[0]), *path = ((char *)buffer[1]), *alias = ((char *)buffer[2]);
 	if(!loadargs || !path || !alias){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
@@ -271,7 +296,7 @@ cmd_errout __shellopen(size_t *buffer, void **persistent){
 		// Disable string flag.
 		togglesymtype(symtype_e__fhandle, true);
 		fhandle *fh = floadh(mountcd->persistent, path, loadargs);
-		symcd->func((size_t *)((char *[3]){alias, (char *)(fh? fh: NULL), (char *)sizeof(fhandle)}), &symcd->persistent);
+		symcd->func((uint64_t *)((char *[3]){alias, (char *)sizeof(fhandle), (char *)(fh? fh: NULL)}), &symcd->persistent);
 		return(cmd_errout){.errcode = 0, .msg = ""};
 	}
 	return (cmd_errout){
@@ -280,20 +305,25 @@ cmd_errout __shellopen(size_t *buffer, void **persistent){
 	};
 }
 
-cmd_errout __shellclose(size_t *buffer, void **persistent){
+cmd_errout __shellclose(uint64_t *buffer, void **persistent){
 	// Attach Sym Handle
-	char *alias = ((char *)buffer[0]);
-	if(!alias){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
+	// char *alias = ((char *)buffer[0]);
+	// if(!alias){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
 	cmddesc *symcd = getcmd("e.sym");
 	if(symcd->persistent){
 		// Disable string flag.
-		fhandle *fh = resolvedata(alias);
-		if(fh){fuloadh(fh);
-		}else{return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Handle/Alias does not exist"};}
+		if(!symcd || !symcd->persistent){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Dependency e.sym has not been defined"};}
+		// char tmp[64] = {0};
+		// snprintf(tmp, 64, "%%%s%%", alias);
+		fhandle *fh = (void *)buffer[0];// (fhandle *)resolvedata(tmp);
+		if(fh){fuloadh(fh);}else{
+			return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Handle/Alias does not exist"};}
 		// Remove the Symbol.
+		if(!symcd || !symcd->persistent){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Dependency e.sym has not been defined"};}
 		for(uint32_t cc = 0; cc < ((symrefbuffer *)symcd->persistent)->len; ++cc){
-			if(memcmp(alias, ((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].alias, __min(strlen(((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].alias), strlen(alias)))){
-				memcpy(((symrefbuffer *)symcd->persistent)->symrefbuffer + cc, ((symrefbuffer *)symcd->persistent)->symrefbuffer + cc + 1, sizeof(__symref) * (((symrefbuffer *)symcd->persistent)->len - (cc + 1)));
+			if((uint64_t)fh == (uint64_t)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data){
+				memcpy(((symrefbuffer *)symcd->persistent)->symrefbuffer + cc, ((symrefbuffer *)symcd->persistent)->symrefbuffer + cc + 1, 
+					sizeof(__symref) * (((symrefbuffer *)symcd->persistent)->len - (cc + 1)));
 				((symrefbuffer *)symcd->persistent)->len--;
 				break;
 			}
@@ -303,27 +333,29 @@ cmd_errout __shellclose(size_t *buffer, void **persistent){
 	return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Dependency e.mount has not been defined"};
 }
 
-cmd_errout __shellread(size_t *buffer, void **persistent){
-	char *inalias = ((char *)buffer[0]), *outalias = ((char *)buffer[1]);
+cmd_errout __shellread(uint64_t *buffer, void **persistent){
+	void *inalias = (void *)buffer[0], *outalias = (void *)buffer[1];
 	if(!inalias || !outalias){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
-	size_t pos = buffer[2], nbytes = buffer[3];
-	fhandle *fh = resolvedata(inalias);
+	uint64_t pos = buffer[2], nbytes = buffer[3]? buffer[3]: __fsize((fhandle *)outalias);
+	fhandle *fh = outalias;
 	if(fh){
-		void *data = resolvedata(outalias);
-		if(data){free(data);}   data = NULL;
+		void *data = inalias, *temp = malloc(nbytes - pos);
+		// if(data){free(data);}   data = NULL;
 		_fseek(fh, pos);
-		if(nbytes == _fread(fh, nbytes, &data)){return (cmd_errout){.errcode = 0, .msg = ""};
+		if(nbytes == _fread(fh, nbytes, &temp)){
+			memcpy(data, temp, nbytes);		free(temp);
+			return (cmd_errout){.errcode = 0, .msg = ""};
 		}else{return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "Could not read all bytes"};}
 	}else{return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Output Alias does not exist"};}
 }
 
-cmd_errout __shellwrite(size_t *buffer, void **persistent){
-	char *inalias = ((char *)buffer[0]), *outalias = ((char *)buffer[1]);
+cmd_errout __shellwrite(uint64_t *buffer, void **persistent){
+	void *inalias = (void *)buffer[0], *outalias = (void *)buffer[1];
 	if(!inalias || !outalias){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
-	size_t pos = buffer[2], nbytes = buffer[3];
-	fhandle *fh = resolvedata(outalias);
+	uint64_t pos = buffer[2], nbytes = buffer[3];
+	fhandle *fh = outalias;
 	if(fh){
-		void *data = resolvedata(inalias);
+		void *data = inalias;
 		if(data){
 			_fseek(fh, pos);
 			if(nbytes == _fwrite(fh, nbytes, data)){return (cmd_errout){.errcode = 0, .msg = ""};
@@ -332,13 +364,22 @@ cmd_errout __shellwrite(size_t *buffer, void **persistent){
 	}else{return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Output Alias does not exist"};}
 }
 
-cmd_errout __shellfwrite(size_t *buffer, void **persistent){
+cmd_errout __shellfwrite(uint64_t *buffer, void **persistent){
 	char *parentpath = ((char *)buffer[0]);
 	fhandle *file = ((fhandle *)buffer[1]);
 	if(!parentpath || !file){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
-	size_t pos = buffer[2], nbytes = buffer[3];
-	cmddesc *mountcd = getcmd("e.mount");
+	uint64_t pos = buffer[2], nbytes = buffer[3];
+	// cmddesc *mountcd = getcmd("e.mount");
 	FILE *f = fopen(parentpath, "rb+");
+	if(!f){
+		char *_cwd = strdup(getcwd(NULL, 0));
+		uint64_t temp = strlen(_cwd);
+		_cwd = realloc(_cwd, !(_cwd[temp] == PATHSEP || _cwd[temp] == PATHnoSEP) + temp + strlen(parentpath) + 4);
+		if(!(_cwd[temp] == PATHSEP || _cwd[temp] == PATHnoSEP)){if(strcheck(_cwd, PATHSEP)){_cwd[temp] = PATHSEP;}else{_cwd[temp] = PATHnoSEP;}}
+		memcpy(_cwd + (_cwd[temp] == PATHSEP || _cwd[temp] == PATHnoSEP) + temp, parentpath, strlen(parentpath) + 1);
+		f = fopen(_cwd, "rb+");
+		free(_cwd);
+	}
 	if(f){
 		_fseek(file, pos);
 		if(!nbytes){fseek(f, 0, SEEK_END);	nbytes = ftell(f);		fseek(f, pos, SEEK_SET);}else{fseek(f, pos, SEEK_SET);}
@@ -351,12 +392,21 @@ cmd_errout __shellfwrite(size_t *buffer, void **persistent){
 	return (cmd_errout){.errcode = 0, .msg = ""};
 }
 
-cmd_errout __shellfread(size_t *buffer, void **persistent){
+cmd_errout __shellfread(uint64_t *buffer, void **persistent){
 	char *parentpath = ((char *)buffer[0]);
 	fhandle *file = ((fhandle *)buffer[1]);
 	if(!parentpath || !file){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
-	size_t pos = buffer[2], nbytes = buffer[3];
+	uint64_t pos = buffer[2], nbytes = buffer[3];
 	FILE *f = fopen(parentpath, "rb+");
+	if(!f){
+		char *_cwd = strdup(getcwd(NULL, 0));
+		uint64_t temp = strlen(_cwd);
+		_cwd = realloc(_cwd, (_cwd[temp] == PATHSEP || _cwd[temp] == PATHnoSEP? 0x00: 0x01) + temp + strlen(parentpath));
+		if(!(_cwd[temp] == PATHSEP || _cwd[temp] == PATHnoSEP)){_cwd[temp] = PATHSEP;}
+		memcpy(_cwd + (_cwd[temp] == PATHSEP || _cwd[temp] == PATHnoSEP? 0x00: 0x01) + temp, parentpath, strlen(parentpath));
+		f = fopen(_cwd, "rb+");
+		free(_cwd);
+	}
 	if(f){
 		fseek(f, pos, SEEK_SET);		_fseek(file, pos);
 		if(!nbytes){nbytes = __fsize(file);}
@@ -368,66 +418,73 @@ cmd_errout __shellfread(size_t *buffer, void **persistent){
 	return (cmd_errout){.errcode = 0, .msg = ""};
 }
 
-cmd_errout __shellsymdump(size_t *buffer, void **persistent){
-	char *inalias = ((char *)buffer[0]), *path = ((char *)buffer[1]);
+cmd_errout __shellsymdump(uint64_t *buffer, void **persistent){
+	void *inalias = (void *)buffer[0];
+	char *path = ((char *)buffer[1]);
 	if(!inalias || !path){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
-	size_t nbytes = buffer[2];
+	uint64_t nbytes = buffer[2];
 	FILE *f = fopen(path, "wb+");
 	if(f){
-		void *data = resolvedata(inalias);
+		void *data = inalias;
 		if(data){fwrite(data, 1, nbytes, f);		fclose(f);		return (cmd_errout){.errcode = 0, .msg = ""};
 		}else{return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "The Input Alias does not exist"};}
 	}else{return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "The Parent File-System item does not exist"};}
 }
 
-cmd_errout __shellsymprint(size_t *buffer, void **persistent){
+cmd_errout __shellsymprint(uint64_t *buffer, void **persistent){
 	char *symbol = ((char *)buffer[0]);
 	if(!symbol){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
+	cmddesc *symcd = getcmd("e.sym");
+	symrefbuffer *srefb = symcd? symcd->persistent : NULL;
+	if(!srefb){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "No Defined Symbols"};}
 	if(!strncmp(symbol, "..", __min(strlen(symbol), 2))){
-		cmddesc *symcd = getcmd("e.sym");
-		symrefbuffer *srefb = symcd->persistent;
-		if(srefb){
-			for(uint32_t cc = 0; cc < srefb->len; ++cc){
-				char *format = calloc(32, sizeof(char));
-				if(srefb->symrefbuffer[cc].type == symtype_e__string){
-					sprintf(format, "[%%u]\t{%%s:\t%%.%llus}", srefb->symrefbuffer[cc].nbytes);
-				}else{format = "[%u]\t{%s:\t%s}";}
-				dualprintf(logf, stdout, format, cc, srefb->symrefbuffer[cc].alias, ((srefb->symrefbuffer[cc].type == symtype_e__string)? srefb->symrefbuffer[cc].data: "Non-String Data"));
-				free(format);
+		for(uint32_t cc = 0; cc < srefb->len; ++cc){
+			char format[64];
+			if(srefb->symrefbuffer[cc].type == symtype_e__string){
+				snprintf(format, sizeof(format), "\n[%u]\t{%s:\t%.%llus}", cc, srefb->symrefbuffer[cc].alias, srefb->symrefbuffer[cc].nbytes);
+				dualprintf(fs_logf, stdout, format, cc, srefb->symrefbuffer[cc].alias, srefb->symrefbuffer[cc].data);
+			}else{
+				snprintf(format, sizeof(format), "\n[%u]\t{%s:\t%s}", cc, srefb->symrefbuffer[cc].alias, "Non-String Data");
+				dualprintf(fs_logf, stdout, format, cc, srefb->symrefbuffer[cc].alias, "Non-String Data");
 			}
-		}else{return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "No Defined Symbols"};}
-	}else{
-		// 	Bypass resolvedata
-		cmddesc *symcd = getcmd("e.sym");
-		symrefbuffer *srefb = symcd->persistent;
-		if(srefb){
-			for(uint32_t cc = 0; cc < srefb->len; ++cc){
-				if(memcmp(symbol, srefb->symrefbuffer[cc].alias, __min(strlen(srefb->symrefbuffer[cc].alias), strlen(symbol)))){
-					char *format = calloc(32, sizeof(char));
-					if(srefb->symrefbuffer[cc].type == symtype_e__string){
-						sprintf(format, "[%%u]\t{%%s:\t%%.%llus}", srefb->symrefbuffer[cc].nbytes);
-					}else{memcpy(format, "[%u]\t{%s:\t%s}", 14);}
-					dualprintf(logf, stdout, format, cc, srefb->symrefbuffer[cc].alias, ((srefb->symrefbuffer[cc].type == symtype_e__string)? srefb->symrefbuffer[cc].data: "Non-String Data"));
-					free(format);
-					return (cmd_errout){.errcode = 0, .msg = ""};
-				}
-			}
-		}else{return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Symbol does not exist"};}
+		}
+		return (cmd_errout){.errcode = 0, .msg = ""};
 	}
+	for(uint32_t cc = 0; cc < srefb->len; ++cc){
+		if(!strcmp(symbol, srefb->symrefbuffer[cc].alias) || !strcmp(symbol, srefb->symrefbuffer[cc].alias + 1) || !strncmp(symbol, srefb->symrefbuffer[cc].alias + 1, strlen(symbol))){
+			char format[64];
+			if(srefb->symrefbuffer[cc].type == symtype_e__string){
+				snprintf(format, sizeof(format), "[%u]\t{%s:\t%.%llus}", cc, srefb->symrefbuffer[cc].alias, srefb->symrefbuffer[cc].nbytes);
+				dualprintf(fs_logf, stdout, format, cc, srefb->symrefbuffer[cc].alias, srefb->symrefbuffer[cc].data);
+			}else{
+				snprintf(format, sizeof(format), "[%u]\t{%s:\t%s}", cc, srefb->symrefbuffer[cc].alias, "Non-String Data");
+				dualprintf(fs_logf, stdout, format, cc, srefb->symrefbuffer[cc].alias, "Non-String Data");
+			}
+			return (cmd_errout){.errcode = 0, .msg = ""};
+		}
+	}
+	return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Symbol not found"};
 }
 
-cmd_errout __shellexit(size_t *buffer, void **persistent){
+cmd_errout __shellexit(uint64_t *buffer, void **persistent){
 	cmddesc *mountcd = getcmd("e.mount"), *symcd = getcmd("e.sym");
+	if(!mountcd || !symcd || !symcd->persistent){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Dependency e.mount has not been defined"};}
 	for(uint32_t cc = 0; cc < ((symrefbuffer *)symcd->persistent)->len; ++cc){
 		switch(((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].type){
-			case symtype_e__fhandle: {fuloadh(((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);		continue;}
-			case symtype_e__dirhandle: {fuloaddir(((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);	continue;}
+			case symtype_e__fhandle: {fuloadh((fhandle *)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);		continue;}
+			case symtype_e__dirhandle: {fuloaddir((dirhandle *)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);	continue;}
 			default: {continue;}
 		}
 	}
 	fuloadroot(mountcd->persistent);
-	fclose(logf);
+	fclose(fs_logf);
 	exit(EXIT_SUCCESS);
+}
+
+cmd_errout __shellsync(uint64_t *buffer, void **persistent){
+	printf("\n__FRAT_SYNC__\n");
+	fflush(stdout);
+	return (cmd_errout){.errcode = 0, .msg = ""};
 }
 
 volatile cmddesc commands[] = {
@@ -523,7 +580,7 @@ volatile cmddesc commands[] = {
 		.persistent = NULL, .flags = {
 			.flags = {
 				{.flag = "-oa", .type = cmddescargtype__string, .desc = "The Input Alias"}, 
-				{.flag = "-ip", .type = cmddescargtype__string, .desc = "The Alias of the Item to Write to"},
+				{.flag = "-ia", .type = cmddescargtype__string, .desc = "The Alias of the Item to Write to"},
 				{.flag = "-p", .type = cmddescargtype__qword, .desc = "The Byte Position to read from"},
 				{.flag = "-n", .type = cmddescargtype__qword, .desc = "The #Bytes to read"},
 			}, .nflags = 4
@@ -549,10 +606,13 @@ volatile cmddesc commands[] = {
 			}, .nflags = 4
 		}
 	}, {
+		.cmd = "sync", .alias = ",sy", .desc = "Synchronize shell output", .func = __shellsync,
+		.persistent = NULL, .flags = {.flags = {0}, .nflags = 0}
+	}, {
 		.cmd = "exit", .alias = ",e", .desc = "Exit the Program", .func = __shellexit,
 		.persistent = NULL, .flags = {
 			.flags = {{0}, {0}, {0}, {0}, {0}}, .nflags = 0
 		}
 	}
 };
-const size_t ncommands = (sizeof(commands) / sizeof(cmddesc));
+const uint64_t ncommands = (sizeof(commands) / sizeof(cmddesc));

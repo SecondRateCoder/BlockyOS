@@ -1,0 +1,1813 @@
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000180000000                __image_base__ = 0x180000000
+                0x0000000000000000                __dll__ = 0x0
+                0x0000000180000000                __ImageBase = 0x180000000
+                0x0000000000001000                __section_alignment__ = 0x1000
+                0x0000000000000200                __file_alignment__ = 0x200
+                0x0000000000000004                __major_os_version__ = 0x4
+                0x0000000000000000                __minor_os_version__ = 0x0
+                0x0000000000000000                __major_image_version__ = 0x0
+                0x0000000000000000                __minor_image_version__ = 0x0
+                0x0000000000000005                __major_subsystem_version__ = 0x5
+                0x0000000000000002                __minor_subsystem_version__ = 0x2
+                0x0000000000000003                __subsystem__ = 0x3
+                0x0000000000200000                __size_of_stack_reserve__ = 0x200000
+                0x0000000000001000                __size_of_stack_commit__ = 0x1000
+                0x0000000000100000                __size_of_heap_reserve__ = 0x100000
+                0x0000000000001000                __size_of_heap_commit__ = 0x1000
+                0x0000000000000000                __loader_flags__ = 0x0
+                0x0000000000000160                __dll_characteristics__ = 0x160
+LOAD C:\GitHub\BlockyOS\compile\cache\asm.RNG.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.RNG.o
+LOAD C:\GitHub\BlockyOS\compile\cache\asm.GDT.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.GDT.o
+LOAD C:\GitHub\BlockyOS\compile\cache\asm.paging.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.paging.o
+LOAD C:\GitHub\BlockyOS\compile\cache\asm.SSE.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.SSE.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.memory.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.string.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.palloc.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.palloc(1).o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.mmalloc.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.math.o
+LOAD C:\GitHub\BlockyOS\compile\cache\asm.IO.o
+LOAD C:\GitHub\BlockyOS\compile\cache\asm.IDT.o
+LOAD C:\GitHub\BlockyOS\compile\cache\asm.ISR.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.ISR.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.ACPI.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.APIC.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.IOAPIC.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.LocalAPIC.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.LocalAPICTimer.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.hardware.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.blake2b-ref.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.blake2bp-ref.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.blake2s-ref.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.blake2sp-ref.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.blake2xb-ref.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.blake2xs-ref.o
+LOAD C:\GitHub\BlockyOS\compile\cache\c.PCIe.o
+LOAD C:\GitHub\BlockyOS\compile\cache\asm.UTILS.o
+LOAD C:/GitHub/BlockyOS/src/kernel/libcrt/alibcrt.def
+                0x00000000000002f0                . = SIZEOF_HEADERS
+                0x0000000000001000                . = ALIGN (__section_alignment__)
+
+.text           0x0000000180001000    0x21400
+ *(SORT_NONE(.init))
+ *(.text)
+ .text          0x0000000180001000       0x27 C:\GitHub\BlockyOS\compile\cache\asm.RNG.o
+                0x0000000180001000                GetTrueRandom64
+ *fill*         0x0000000180001027        0x9 
+ .text          0x0000000180001030      0x200 C:\GitHub\BlockyOS\compile\cache\c.RNG.o
+                0x0000000180001030                GetTrueRandomRange64
+                0x000000018000110d                GetTrueRandomRange64U
+ .text          0x0000000180001230       0x38 C:\GitHub\BlockyOS\compile\cache\asm.GDT.o
+                0x0000000180001230                _LoadGDTR
+                0x000000018000123e                _ReadGDTR
+                0x000000018000124c                _LoadLDTR
+                0x000000018000125a                _ReadLDTR
+ *fill*         0x0000000180001268        0x8 
+ .text          0x0000000180001270      0x980 C:\GitHub\BlockyOS\compile\cache\c.GDT.o
+                0x0000000180001270                LoadGDTR
+                0x00000001800013a5                ReadGDTR
+                0x000000018000148f                LoadLDTR
+                0x00000001800015c4                ReadLDTR
+                0x00000001800016ae                AllocateSystemDescriptor
+ .text          0x0000000180001bf0       0x87 C:\GitHub\BlockyOS\compile\cache\asm.paging.o
+                0x0000000180001bf0                IsLA57Enabled
+                0x0000000180001bfe                EnableLA57
+                0x0000000180001c15                IsLA57Supported
+                0x0000000180001c2c                LoadPageTree
+                0x0000000180001c5b                GetPageTable
+ *fill*         0x0000000180001c77        0x9 
+ .text          0x0000000180001c80     0x1910 C:\GitHub\BlockyOS\compile\cache\c.paging.o
+                0x0000000180001c80                GetMaxPhysicalAddressBits
+                0x0000000180001cac                MapPhysical
+                0x000000018000219f                WalkPageTreeByPhysical
+                0x00000001800021e5                WalkPageTreeByVirtual
+                0x00000001800023ff                InvalidatePages
+                0x000000018000245a                InvalidatePage
+                0x0000000180002469                WalkPageTree
+                0x000000018000289f                RepointVirtualAddress
+                0x0000000180002ff4                MapPTVirtual
+ .text          0x0000000180003590      0x2ed C:\GitHub\BlockyOS\compile\cache\asm.SSE.o
+                0x0000000180003590                testSSE
+                0x00000001800035ab                testSSEExtensions
+                0x000000018000364c                decodeSIMDFeatureMask
+                0x0000000180003762                enableSSE
+                0x000000018000378d                disableSSE
+                0x00000001800037af                pushSSE
+                0x0000000180003816                popSSE
+ *fill*         0x000000018000387d        0x3 
+ .text          0x0000000180003880     0x14d0 C:\GitHub\BlockyOS\compile\cache\c.SSE.o
+                0x0000000180003880                StoreAlignedFloats
+                0x0000000180003962                LoadAlignedFloats
+                0x0000000180003a44                StoreUAlignedFloats
+                0x0000000180003b26                LoadUAlignedFloats
+                0x0000000180003c08                StoreAlignedIntegers
+                0x0000000180003cea                LoadAlignedIntegers
+                0x0000000180003dcc                StoreUAlignedIntegers
+                0x0000000180003eae                LoadUAlignedIntegers
+                0x0000000180003f90                StoreAlignedDoubles
+                0x0000000180004072                LoadAlignedDoubles
+                0x0000000180004154                StoreUAlignedDoubles
+                0x0000000180004236                LoadUAlignedDoubles
+                0x0000000180004318                StoreAlignedVectors
+                0x00000001800043fa                LoadAlignedVectors
+                0x00000001800044dc                StoreUAlignedVectors
+                0x00000001800045be                LoadUAlignedVectors
+                0x00000001800046a0                AllocateSSERegister
+                0x00000001800048c7                FreeSSERegister
+                0x0000000180004989                pushStore
+                0x0000000180004b20                popStore
+                0x0000000180004c43                switchCurrentStore
+ .text          0x0000000180004d50      0x630 C:\GitHub\BlockyOS\compile\cache\c.memory.o
+                0x0000000180004d50                memset
+                0x0000000180004ed6                memcmp
+                0x0000000180005068                memcpy
+                0x00000001800051e5                ResolveGenericChecksum
+                0x00000001800052cd                memmove_s
+ .text          0x0000000180005380      0x610 C:\GitHub\BlockyOS\compile\cache\c.string.o
+                0x0000000180005380                strlen
+                0x00000001800053b9                strchecks
+                0x000000018000546a                strcmpc
+                0x00000001800054bd                isdigit
+                0x00000001800054df                tobitcomplex
+                0x000000018000550b                tobyte
+                0x0000000180005562                toword
+                0x00000001800055eb                tolong
+                0x0000000180005671                tolonglong
+                0x000000018000584d                pattmatch
+ .text          0x0000000180005990     0x2c20 C:\GitHub\BlockyOS\compile\cache\c.palloc.o
+                0x0000000180005998                TotalMemorySize
+                0x00000001800059aa                TotalMappedMemory
+                0x0000000180005a22                MemoryIsMapped
+                0x0000000180005ab7                InitialiseAllocationState
+                0x000000018000604b                QueryFreeMemory
+                0x0000000180006179                UpdateAllocationTable
+                0x000000018000632a                AllocateAlignedPagesFromRange
+                0x00000001800063f3                AllocatePagesFromRange
+                0x000000018000646d                AllocatePages
+                0x0000000180008367                MapVirtual
+                0x00000001800083e5                FreePages
+ .text          0x00000001800085b0      0x880 C:\GitHub\BlockyOS\compile\cache\c.palloc(1).o
+                0x00000001800085b0                ReallocatePages
+                0x0000000180008c55                FreeAlignedPages
+                0x0000000180008c78                AllocateAlignedPages
+                0x0000000180008ccb                ReallocateAlignedPages
+                0x0000000180008d9f                SafeAllocatePages
+ .text          0x0000000180008e30     0x21c0 C:\GitHub\BlockyOS\compile\cache\c.mmalloc.o
+                0x0000000180008e38                allocatepool
+                0x000000018000900c                querydescu
+                0x00000001800090e1                fixmdarray
+                0x000000018000938a                fragmemory
+                0x00000001800094ea                chaintip
+                0x000000018000951e                memusedsize
+                0x0000000180009649                allocatedesc
+                0x00000001800097f0                fusememory
+                0x0000000180009a0a                mrealloc
+                0x0000000180009c00                mcalloc
+                0x0000000180009c26                mmalloczero
+                0x0000000180009c65                mclone
+                0x0000000180009e44                mIsMapped
+                0x0000000180009fdc                mclone_s
+                0x000000018000a219                mmalloc
+                0x000000018000a747                mfree
+                0x000000018000a9fe                descinfo
+                0x000000018000acdf                mtest
+                0x000000018000ae9d                mdump
+ .text          0x000000018000aff0     0x1200 C:\GitHub\BlockyOS\compile\cache\c.math.o
+                0x000000018000aff0                float_bits
+                0x000000018000b00f                bits_float
+                0x000000018000b02a                fast_log1p
+                0x000000018000b0dd                fast_logf
+                0x000000018000b1bf                fast_expf_small
+                0x000000018000b27c                pow2_int
+                0x000000018000b2e9                fast_expf
+                0x000000018000b3db                powf_int_base
+                0x000000018000b488                powll
+                0x000000018000b4d5                powf
+                0x000000018000b626                setprecision
+                0x000000018000b637                sqrtf_newton
+                0x000000018000b6ea                sqrtf
+                0x000000018000b710                sqrti
+                0x000000018000b773                pow_10
+                0x000000018000b7e8                log_10
+                0x000000018000b8c5                integral
+                0x000000018000ba2b                absf
+                0x000000018000ba56                absi
+                0x000000018000ba66                absl
+                0x000000018000ba76                absll
+                0x000000018000ba8b                double_as_uint64
+                0x000000018000bab7                uint64_as_double
+                0x000000018000bae3                fmod
+                0x000000018000bd79                wichmann_hill
+                0x000000018000beba                wh_rng
+                0x000000018000bec8                wh_seed
+                0x000000018000c129                mt_rng
+ .text          0x000000018000c1f0       0xc9 C:\GitHub\BlockyOS\compile\cache\asm.IO.o
+                0x000000018000c1f0                __outb
+                0x000000018000c202                __inb
+                0x000000018000c20a                __outw
+                0x000000018000c21d                __inw
+                0x000000018000c226                __outl
+                0x000000018000c237                __inl
+                0x000000018000c23c                __outsb
+                0x000000018000c24f                __insb
+                0x000000018000c265                __outsw
+                0x000000018000c279                __insw
+                0x000000018000c290                __outsl
+                0x000000018000c2a3                __insl
+ *fill*         0x000000018000c2b9        0x7 
+ .text          0x000000018000c2c0       0x1c C:\GitHub\BlockyOS\compile\cache\asm.IDT.o
+                0x000000018000c2c0                LoadIDTR
+                0x000000018000c2ce                ReadIDTR
+ *fill*         0x000000018000c2dc        0x4 
+ .text          0x000000018000c2e0      0xf2f C:\GitHub\BlockyOS\compile\cache\asm.ISR.o
+                0x000000018000c337                isrCallback0
+                0x000000018000c346                isrCallback1
+                0x000000018000c355                isrCallback2
+                0x000000018000c364                isrCallback3
+                0x000000018000c373                isrCallback4
+                0x000000018000c382                isrCallback5
+                0x000000018000c391                isrCallback6
+                0x000000018000c3a0                isrCallback7
+                0x000000018000c3af                isrCallback8
+                0x000000018000c3b9                isrCallback9
+                0x000000018000c3c8                isrCallback10
+                0x000000018000c3d2                isrCallback11
+                0x000000018000c3dc                isrCallback12
+                0x000000018000c3e6                isrCallback13
+                0x000000018000c3f0                isrCallback14
+                0x000000018000c3fa                isrCallback15
+                0x000000018000c409                isrCallback16
+                0x000000018000c418                isrCallback17
+                0x000000018000c422                isrCallback18
+                0x000000018000c431                isrCallback19
+                0x000000018000c440                isrCallback20
+                0x000000018000c44f                isrCallback21
+                0x000000018000c459                isrCallback22
+                0x000000018000c468                isrCallback23
+                0x000000018000c477                isrCallback24
+                0x000000018000c486                isrCallback25
+                0x000000018000c495                isrCallback26
+                0x000000018000c4a4                isrCallback27
+                0x000000018000c4b3                isrCallback28
+                0x000000018000c4c2                isrCallback29
+                0x000000018000c4d1                isrCallback30
+                0x000000018000c4e0                isrCallback31
+                0x000000018000c4ef                isrCallback32
+                0x000000018000c4fe                isrCallback33
+                0x000000018000c50d                isrCallback34
+                0x000000018000c51c                isrCallback35
+                0x000000018000c52b                isrCallback36
+                0x000000018000c53a                isrCallback37
+                0x000000018000c549                isrCallback38
+                0x000000018000c558                isrCallback39
+                0x000000018000c567                isrCallback40
+                0x000000018000c576                isrCallback41
+                0x000000018000c585                isrCallback42
+                0x000000018000c594                isrCallback43
+                0x000000018000c5a3                isrCallback44
+                0x000000018000c5b2                isrCallback45
+                0x000000018000c5c1                isrCallback46
+                0x000000018000c5d0                isrCallback47
+                0x000000018000c5df                isrCallback48
+                0x000000018000c5ee                isrCallback49
+                0x000000018000c5fd                isrCallback50
+                0x000000018000c60c                isrCallback51
+                0x000000018000c61b                isrCallback52
+                0x000000018000c62a                isrCallback53
+                0x000000018000c639                isrCallback54
+                0x000000018000c648                isrCallback55
+                0x000000018000c657                isrCallback56
+                0x000000018000c666                isrCallback57
+                0x000000018000c675                isrCallback58
+                0x000000018000c684                isrCallback59
+                0x000000018000c693                isrCallback60
+                0x000000018000c6a2                isrCallback61
+                0x000000018000c6b1                isrCallback62
+                0x000000018000c6c0                isrCallback63
+                0x000000018000c6cf                isrCallback64
+                0x000000018000c6de                isrCallback65
+                0x000000018000c6ed                isrCallback66
+                0x000000018000c6fc                isrCallback67
+                0x000000018000c70b                isrCallback68
+                0x000000018000c71a                isrCallback69
+                0x000000018000c729                isrCallback70
+                0x000000018000c738                isrCallback71
+                0x000000018000c747                isrCallback72
+                0x000000018000c756                isrCallback73
+                0x000000018000c765                isrCallback74
+                0x000000018000c774                isrCallback75
+                0x000000018000c783                isrCallback76
+                0x000000018000c792                isrCallback77
+                0x000000018000c7a1                isrCallback78
+                0x000000018000c7b0                isrCallback79
+                0x000000018000c7bf                isrCallback80
+                0x000000018000c7ce                isrCallback81
+                0x000000018000c7dd                isrCallback82
+                0x000000018000c7ec                isrCallback83
+                0x000000018000c7fb                isrCallback84
+                0x000000018000c80a                isrCallback85
+                0x000000018000c819                isrCallback86
+                0x000000018000c828                isrCallback87
+                0x000000018000c837                isrCallback88
+                0x000000018000c846                isrCallback89
+                0x000000018000c855                isrCallback90
+                0x000000018000c864                isrCallback91
+                0x000000018000c873                isrCallback92
+                0x000000018000c882                isrCallback93
+                0x000000018000c891                isrCallback94
+                0x000000018000c8a0                isrCallback95
+                0x000000018000c8af                isrCallback96
+                0x000000018000c8be                isrCallback97
+                0x000000018000c8cd                isrCallback98
+                0x000000018000c8dc                isrCallback99
+                0x000000018000c8eb                isrCallback100
+                0x000000018000c8fa                isrCallback101
+                0x000000018000c909                isrCallback102
+                0x000000018000c918                isrCallback103
+                0x000000018000c927                isrCallback104
+                0x000000018000c936                isrCallback105
+                0x000000018000c945                isrCallback106
+                0x000000018000c954                isrCallback107
+                0x000000018000c963                isrCallback108
+                0x000000018000c972                isrCallback109
+                0x000000018000c981                isrCallback110
+                0x000000018000c990                isrCallback111
+                0x000000018000c99f                isrCallback112
+                0x000000018000c9ae                isrCallback113
+                0x000000018000c9bd                isrCallback114
+                0x000000018000c9cc                isrCallback115
+                0x000000018000c9db                isrCallback116
+                0x000000018000c9ea                isrCallback117
+                0x000000018000c9f9                isrCallback118
+                0x000000018000ca08                isrCallback119
+                0x000000018000ca17                isrCallback120
+                0x000000018000ca26                isrCallback121
+                0x000000018000ca35                isrCallback122
+                0x000000018000ca44                isrCallback123
+                0x000000018000ca53                isrCallback124
+                0x000000018000ca62                isrCallback125
+                0x000000018000ca71                isrCallback126
+                0x000000018000ca80                isrCallback127
+                0x000000018000ca8f                isrCallback128
+                0x000000018000ca9e                isrCallback129
+                0x000000018000caad                isrCallback130
+                0x000000018000cabc                isrCallback131
+                0x000000018000cacb                isrCallback132
+                0x000000018000cada                isrCallback133
+                0x000000018000cae9                isrCallback134
+                0x000000018000caf8                isrCallback135
+                0x000000018000cb07                isrCallback136
+                0x000000018000cb16                isrCallback137
+                0x000000018000cb25                isrCallback138
+                0x000000018000cb34                isrCallback139
+                0x000000018000cb43                isrCallback140
+                0x000000018000cb52                isrCallback141
+                0x000000018000cb61                isrCallback142
+                0x000000018000cb70                isrCallback143
+                0x000000018000cb7f                isrCallback144
+                0x000000018000cb8e                isrCallback145
+                0x000000018000cb9d                isrCallback146
+                0x000000018000cbac                isrCallback147
+                0x000000018000cbbb                isrCallback148
+                0x000000018000cbca                isrCallback149
+                0x000000018000cbd9                isrCallback150
+                0x000000018000cbe8                isrCallback151
+                0x000000018000cbf7                isrCallback152
+                0x000000018000cc06                isrCallback153
+                0x000000018000cc15                isrCallback154
+                0x000000018000cc24                isrCallback155
+                0x000000018000cc33                isrCallback156
+                0x000000018000cc42                isrCallback157
+                0x000000018000cc51                isrCallback158
+                0x000000018000cc60                isrCallback159
+                0x000000018000cc6f                isrCallback160
+                0x000000018000cc7e                isrCallback161
+                0x000000018000cc8d                isrCallback162
+                0x000000018000cc9c                isrCallback163
+                0x000000018000ccab                isrCallback164
+                0x000000018000ccba                isrCallback165
+                0x000000018000ccc9                isrCallback166
+                0x000000018000ccd8                isrCallback167
+                0x000000018000cce7                isrCallback168
+                0x000000018000ccf6                isrCallback169
+                0x000000018000cd05                isrCallback170
+                0x000000018000cd14                isrCallback171
+                0x000000018000cd23                isrCallback172
+                0x000000018000cd32                isrCallback173
+                0x000000018000cd41                isrCallback174
+                0x000000018000cd50                isrCallback175
+                0x000000018000cd5f                isrCallback176
+                0x000000018000cd6e                isrCallback177
+                0x000000018000cd7d                isrCallback178
+                0x000000018000cd8c                isrCallback179
+                0x000000018000cd9b                isrCallback180
+                0x000000018000cdaa                isrCallback181
+                0x000000018000cdb9                isrCallback182
+                0x000000018000cdc8                isrCallback183
+                0x000000018000cdd7                isrCallback184
+                0x000000018000cde6                isrCallback185
+                0x000000018000cdf5                isrCallback186
+                0x000000018000ce04                isrCallback187
+                0x000000018000ce13                isrCallback188
+                0x000000018000ce22                isrCallback189
+                0x000000018000ce31                isrCallback190
+                0x000000018000ce40                isrCallback191
+                0x000000018000ce4f                isrCallback192
+                0x000000018000ce5e                isrCallback193
+                0x000000018000ce6d                isrCallback194
+                0x000000018000ce7c                isrCallback195
+                0x000000018000ce8b                isrCallback196
+                0x000000018000ce9a                isrCallback197
+                0x000000018000cea9                isrCallback198
+                0x000000018000ceb8                isrCallback199
+                0x000000018000cec7                isrCallback200
+                0x000000018000ced6                isrCallback201
+                0x000000018000cee5                isrCallback202
+                0x000000018000cef4                isrCallback203
+                0x000000018000cf03                isrCallback204
+                0x000000018000cf12                isrCallback205
+                0x000000018000cf21                isrCallback206
+                0x000000018000cf30                isrCallback207
+                0x000000018000cf3f                isrCallback208
+                0x000000018000cf4e                isrCallback209
+                0x000000018000cf5d                isrCallback210
+                0x000000018000cf6c                isrCallback211
+                0x000000018000cf7b                isrCallback212
+                0x000000018000cf8a                isrCallback213
+                0x000000018000cf99                isrCallback214
+                0x000000018000cfa8                isrCallback215
+                0x000000018000cfb7                isrCallback216
+                0x000000018000cfc6                isrCallback217
+                0x000000018000cfd5                isrCallback218
+                0x000000018000cfe4                isrCallback219
+                0x000000018000cff3                isrCallback220
+                0x000000018000d002                isrCallback221
+                0x000000018000d011                isrCallback222
+                0x000000018000d020                isrCallback223
+                0x000000018000d02f                isrCallback224
+                0x000000018000d03e                isrCallback225
+                0x000000018000d04d                isrCallback226
+                0x000000018000d05c                isrCallback227
+                0x000000018000d06b                isrCallback228
+                0x000000018000d07a                isrCallback229
+                0x000000018000d089                isrCallback230
+                0x000000018000d098                isrCallback231
+                0x000000018000d0a7                isrCallback232
+                0x000000018000d0b6                isrCallback233
+                0x000000018000d0c5                isrCallback234
+                0x000000018000d0d4                isrCallback235
+                0x000000018000d0e3                isrCallback236
+                0x000000018000d0f2                isrCallback237
+                0x000000018000d101                isrCallback238
+                0x000000018000d110                isrCallback239
+                0x000000018000d11f                isrCallback240
+                0x000000018000d12e                isrCallback241
+                0x000000018000d13d                isrCallback242
+                0x000000018000d14c                isrCallback243
+                0x000000018000d15b                isrCallback244
+                0x000000018000d16a                isrCallback245
+                0x000000018000d179                isrCallback246
+                0x000000018000d188                isrCallback247
+                0x000000018000d197                isrCallback248
+                0x000000018000d1a6                isrCallback249
+                0x000000018000d1b5                isrCallback250
+                0x000000018000d1c4                isrCallback251
+                0x000000018000d1d3                isrCallback252
+                0x000000018000d1e2                isrCallback253
+                0x000000018000d1f1                isrCallback254
+                0x000000018000d200                isrCallback255
+ *fill*         0x000000018000d20f        0x1 
+ .text          0x000000018000d210     0x1040 C:\GitHub\BlockyOS\compile\cache\c.ISR.o
+                0x000000018000d210                AllocateInterruptVector
+                0x000000018000d273                QueryVectorByCallback
+                0x000000018000d2dc                ISRSetCallback
+                0x000000018000d79a                ISRUSetCallback
+                0x000000018000daab                ISRGetStackHeader
+                0x000000018000dcbe                AllocateIST
+                0x000000018000dfba                GenericISR
+                0x000000018000dfd7                DivideErrorISR
+                0x000000018000e004                DebugExceptionISR
+                0x000000018000e021                NonMaskableExtISR
+                0x000000018000e03e                BreakpointISR
+                0x000000018000e05b                OverflowISR
+                0x000000018000e078                BoundRangeExceptionISR
+                0x000000018000e095                InvalidOpcodeISR
+                0x000000018000e0b2                UnavailableDeviceISR
+                0x000000018000e0cf                DoubleFaultISR
+                0x000000018000e0ec                CoprocessorSegmentOverrunISR
+                0x000000018000e109                InvalidTSSISR
+                0x000000018000e126                SegmentNotPresentISR
+                0x000000018000e143                StackSegmentFaultISR
+                0x000000018000e160                GeneralProtectionISR
+                0x000000018000e17d                PageFaultISR
+                0x000000018000e19a                x87FPUErrorISR
+                0x000000018000e1b7                AlignmentCheckISR
+                0x000000018000e1d4                MachineCheckISR
+                0x000000018000e1f1                SIMDFloatingPointExceptionISR
+                0x000000018000e20e                VirtualisationExceptionISR
+                0x000000018000e22b                ControlProtectionExceptionISR
+ .text          0x000000018000e250      0x3a0 C:\GitHub\BlockyOS\compile\cache\c.ACPI.o
+                0x000000018000e250                ValidateHeader
+                0x000000018000e29c                GetACPIRevision
+                0x000000018000e589                SearchACPITable
+ .text          0x000000018000e5f0       0x40 C:\GitHub\BlockyOS\compile\cache\c.APIC.o
+                0x000000018000e5f0                TestAPIC
+ .text          0x000000018000e630      0x840 C:\GitHub\BlockyOS\compile\cache\c.IOAPIC.o
+                0x000000018000e630                MapAPIC
+                0x000000018000e67d                DisableIoApicInterrupt
+                0x000000018000e71b                DisableIoApic
+                0x000000018000e794                EnableIoApicInterrupt
+                0x000000018000e82c                EnableIoApic
+                0x000000018000e8a5                _ReadIoApic
+                0x000000018000e8da                ReadIoApicRegister
+                0x000000018000ea80                _WriteIoApic
+                0x000000018000eabf                WriteIoApicRegister
+                0x000000018000ec7f                ReadIoApicInterruptRegister
+                0x000000018000ed31                WriteIoApicInterruptRegister
+                0x000000018000eddf                IoApicSetRedirection
+ .text          0x000000018000ee70      0x560 C:\GitHub\BlockyOS\compile\cache\c.LocalAPIC.o
+                0x000000018000ee70                GetLocalAPICBase
+                0x000000018000efe4                InitLocalAPIC
+                0x000000018000f24d                EnableLocalAPIC
+                0x000000018000f30c                DisableLocalAPIC
+ .text          0x000000018000f3d0      0x4a0 C:\GitHub\BlockyOS\compile\cache\c.LocalAPICTimer.o
+                0x000000018000f3d0                GetTimerVector
+                0x000000018000f3f0                AddTimerEvent
+                0x000000018000f52f                APICTimerEventHandlerISR
+                0x000000018000f68d                InitializeAndCalibrateAPICTimer
+ .text          0x000000018000f870      0x810 C:\GitHub\BlockyOS\compile\cache\c.hardware.o
+                0x000000018000f870                TestMSR
+                0x000000018000f8b3                ReadMSR
+                0x000000018000f8e2                WriteMSR
+                0x000000018000f919                _PITTickISR
+                0x000000018000f966                InitializePIT
+                0x000000018000fc0a                SleepMS
+                0x000000018000fc79                CMOSRead
+                0x000000018000fd50                CMOSGetElapsedDays
+                0x000000018000fe34                CMOSGetTime
+ .text          0x0000000180010080     0x6da0 C:\GitHub\BlockyOS\compile\cache\c.blake2b-ref.o
+                0x00000001800103d9                blake2b_init_param
+                0x0000000180010477                blake2b_init
+                0x000000018001056e                blake2b_init_key
+                0x0000000180016945                blake2b_update
+                0x0000000180016aa6                blake2b_final
+                0x0000000180016c73                blake2b
+                0x0000000180016dd2                blake2
+ .text          0x0000000180016e20      0xdd0 C:\GitHub\BlockyOS\compile\cache\c.blake2bp-ref.o
+                0x00000001800170e3                blake2bp_init
+                0x00000001800171ea                blake2bp_init_key
+                0x0000000180017415                blake2bp_update
+                0x00000001800175f8                blake2bp_final
+                0x00000001800177e4                blake2bp
+ .text          0x0000000180017bf0     0x4730 C:\GitHub\BlockyOS\compile\cache\c.blake2s-ref.o
+                0x0000000180017e58                blake2s_init_param
+                0x0000000180017eef                blake2s_init
+                0x0000000180017fca                blake2s_init_key
+                0x000000018001bf0d                blake2s_update
+                0x000000018001c05c                blake2s_final
+                0x000000018001c1bc                blake2s
+ .text          0x000000018001c320      0xda0 C:\GitHub\BlockyOS\compile\cache\c.blake2sp-ref.o
+                0x000000018001c5e4                blake2sp_init
+                0x000000018001c6eb                blake2sp_init_key
+                0x000000018001c8f5                blake2sp_update
+                0x000000018001cad8                blake2sp_final
+                0x000000018001ccc1                blake2sp
+ .text          0x000000018001d0c0      0x730 C:\GitHub\BlockyOS\compile\cache\c.blake2xb-ref.o
+                0x000000018001d1b8                blake2xb_init
+                0x000000018001d1e9                blake2xb_init_key
+                0x000000018001d437                blake2xb_update
+                0x000000018001d469                blake2xb_final
+                0x000000018001d6c1                blake2xb
+ .text          0x000000018001d7f0      0x6d0 C:\GitHub\BlockyOS\compile\cache\c.blake2xs-ref.o
+                0x000000018001d90e                blake2xs_init
+                0x000000018001d93f                blake2xs_init_key
+                0x000000018001db2f                blake2xs_update
+                0x000000018001db61                blake2xs_final
+                0x000000018001dd9b                blake2xs
+ .text          0x000000018001dec0     0x1150 C:\GitHub\BlockyOS\compile\cache\c.PCIe.o
+                0x000000018001dec0                GetPCIeConfigurationBase
+                0x000000018001e0c7                ReadPCIeU32
+                0x000000018001e153                WritePCIeU32
+                0x000000018001e1d0                PCIeBARSize
+                0x000000018001e2b1                PCIeResolveBar
+                0x000000018001e4ee                ReadPCIeVOIDPTR
+                0x000000018001e5cb                WritePCIeVOIDPTR
+                0x000000018001e698                PCIeSearchDevice
+                0x000000018001e7cb                PCIeDisableMsiX
+                0x000000018001e96d                PCIeEnableMsiX
+                0x000000018001eb0d                PCIeGetMSIxEntry
+                0x000000018001ec73                SearchPCIeCapabilitiesN
+                0x000000018001ed2a                ReadPCIeCapabilities
+ .text          0x000000018001f010     0x3300 C:\GitHub\BlockyOS\compile\cache\asm.UTILS.o
+                0x000000018001f010                MovAlignedFloatsToXmm0
+                0x000000018001f02b                MovUAlignedFloatsToXmm0
+                0x000000018001f039                MovAlignedFloatsFromXmm0
+                0x000000018001f054                MovUAlignedFloatsFromXmm0
+                0x000000018001f062                AddFloatXmm0
+                0x000000018001f070                SubFloatXmm0
+                0x000000018001f07e                MulFloatXmm0
+                0x000000018001f08c                DivFloatXmm0
+                0x000000018001f09a                SqrtFloatXmm0
+                0x000000018001f0a8                AndFloatXmm0
+                0x000000018001f0b6                OrFloatXmm0
+                0x000000018001f0c4                XorFloatXmm0
+                0x000000018001f0d2                ClearFloatXmm0
+                0x000000018001f0e0                EqualToFloatXmm0
+                0x000000018001f0ef                LessThanFloatXmm0
+                0x000000018001f0fe                NotEqualToFloatXmm0
+                0x000000018001f10d                GreaterThanFloatXmm0
+                0x000000018001f11c                BroadcastFloatLane0Xmm0
+                0x000000018001f12b                InterleaveLowFloatXmm0
+                0x000000018001f139                ConvertFloatToInt32TruncXmm0
+                0x000000018001f148                MovAlignedIntegersToXmm0
+                0x000000018001f164                MovUAlignedIntegersToXmm0
+                0x000000018001f173                MovAlignedIntegersFromXmm0
+                0x000000018001f18f                MovUAlignedIntegersFromXmm0
+                0x000000018001f19e                AddIntegerXmm0
+                0x000000018001f1ad                SubIntegerXmm0
+                0x000000018001f1bc                MulIntegerXmm0
+                0x000000018001f1cc                AndIntegerXmm0
+                0x000000018001f1db                OrIntegerXmm0
+                0x000000018001f1ea                XorIntegerXmm0
+                0x000000018001f1f9                ClearIntegerXmm0
+                0x000000018001f208                MovAlignedDoublesToXmm0
+                0x000000018001f224                MovUAlignedDoublesToXmm0
+                0x000000018001f233                MovAlignedDoublesFromXmm0
+                0x000000018001f24f                MovUAlignedDoublesFromXmm0
+                0x000000018001f25e                AddDoubleXmm0
+                0x000000018001f26d                SubDoubleXmm0
+                0x000000018001f27c                MulDoubleXmm0
+                0x000000018001f28b                DivDoubleXmm0
+                0x000000018001f29a                SqrtDoubleXmm0
+                0x000000018001f2a9                MovAlignedVectorsToYmm0
+                0x000000018001f2c5                MovUAlignedVectorsToYmm0
+                0x000000018001f2d4                MovAlignedVectorsFromYmm0
+                0x000000018001f2f0                MovUAlignedVectorsFromYmm0
+                0x000000018001f2ff                AddVectorYmm0
+                0x000000018001f30e                SubVectorYmm0
+                0x000000018001f31d                MulVectorYmm0
+                0x000000018001f32c                MovAlignedFloatsToXmm1
+                0x000000018001f347                MovUAlignedFloatsToXmm1
+                0x000000018001f355                MovAlignedFloatsFromXmm1
+                0x000000018001f370                MovUAlignedFloatsFromXmm1
+                0x000000018001f37e                AddFloatXmm1
+                0x000000018001f38c                SubFloatXmm1
+                0x000000018001f39a                MulFloatXmm1
+                0x000000018001f3a8                DivFloatXmm1
+                0x000000018001f3b6                SqrtFloatXmm1
+                0x000000018001f3c4                AndFloatXmm1
+                0x000000018001f3d2                OrFloatXmm1
+                0x000000018001f3e0                XorFloatXmm1
+                0x000000018001f3ee                ClearFloatXmm1
+                0x000000018001f3fc                EqualToFloatXmm1
+                0x000000018001f40b                LessThanFloatXmm1
+                0x000000018001f41a                NotEqualToFloatXmm1
+                0x000000018001f429                GreaterThanFloatXmm1
+                0x000000018001f438                BroadcastFloatLane0Xmm1
+                0x000000018001f447                InterleaveLowFloatXmm1
+                0x000000018001f455                ConvertFloatToInt32TruncXmm1
+                0x000000018001f464                MovAlignedIntegersToXmm1
+                0x000000018001f480                MovUAlignedIntegersToXmm1
+                0x000000018001f48f                MovAlignedIntegersFromXmm1
+                0x000000018001f4ab                MovUAlignedIntegersFromXmm1
+                0x000000018001f4ba                AddIntegerXmm1
+                0x000000018001f4c9                SubIntegerXmm1
+                0x000000018001f4d8                MulIntegerXmm1
+                0x000000018001f4e8                AndIntegerXmm1
+                0x000000018001f4f7                OrIntegerXmm1
+                0x000000018001f506                XorIntegerXmm1
+                0x000000018001f515                ClearIntegerXmm1
+                0x000000018001f524                MovAlignedDoublesToXmm1
+                0x000000018001f540                MovUAlignedDoublesToXmm1
+                0x000000018001f54f                MovAlignedDoublesFromXmm1
+                0x000000018001f56b                MovUAlignedDoublesFromXmm1
+                0x000000018001f57a                AddDoubleXmm1
+                0x000000018001f589                SubDoubleXmm1
+                0x000000018001f598                MulDoubleXmm1
+                0x000000018001f5a7                DivDoubleXmm1
+                0x000000018001f5b6                SqrtDoubleXmm1
+                0x000000018001f5c5                MovAlignedVectorsToYmm1
+                0x000000018001f5e1                MovUAlignedVectorsToYmm1
+                0x000000018001f5f0                MovAlignedVectorsFromYmm1
+                0x000000018001f60c                MovUAlignedVectorsFromYmm1
+                0x000000018001f61b                AddVectorYmm1
+                0x000000018001f62a                SubVectorYmm1
+                0x000000018001f639                MulVectorYmm1
+                0x000000018001f648                MovAlignedFloatsToXmm2
+                0x000000018001f663                MovUAlignedFloatsToXmm2
+                0x000000018001f671                MovAlignedFloatsFromXmm2
+                0x000000018001f68c                MovUAlignedFloatsFromXmm2
+                0x000000018001f69a                AddFloatXmm2
+                0x000000018001f6a8                SubFloatXmm2
+                0x000000018001f6b6                MulFloatXmm2
+                0x000000018001f6c4                DivFloatXmm2
+                0x000000018001f6d2                SqrtFloatXmm2
+                0x000000018001f6e0                AndFloatXmm2
+                0x000000018001f6ee                OrFloatXmm2
+                0x000000018001f6fc                XorFloatXmm2
+                0x000000018001f70a                ClearFloatXmm2
+                0x000000018001f718                EqualToFloatXmm2
+                0x000000018001f727                LessThanFloatXmm2
+                0x000000018001f736                NotEqualToFloatXmm2
+                0x000000018001f745                GreaterThanFloatXmm2
+                0x000000018001f754                BroadcastFloatLane0Xmm2
+                0x000000018001f763                InterleaveLowFloatXmm2
+                0x000000018001f771                ConvertFloatToInt32TruncXmm2
+                0x000000018001f780                MovAlignedIntegersToXmm2
+                0x000000018001f79c                MovUAlignedIntegersToXmm2
+                0x000000018001f7ab                MovAlignedIntegersFromXmm2
+                0x000000018001f7c7                MovUAlignedIntegersFromXmm2
+                0x000000018001f7d6                AddIntegerXmm2
+                0x000000018001f7e5                SubIntegerXmm2
+                0x000000018001f7f4                MulIntegerXmm2
+                0x000000018001f804                AndIntegerXmm2
+                0x000000018001f813                OrIntegerXmm2
+                0x000000018001f822                XorIntegerXmm2
+                0x000000018001f831                ClearIntegerXmm2
+                0x000000018001f840                MovAlignedDoublesToXmm2
+                0x000000018001f85c                MovUAlignedDoublesToXmm2
+                0x000000018001f86b                MovAlignedDoublesFromXmm2
+                0x000000018001f887                MovUAlignedDoublesFromXmm2
+                0x000000018001f896                AddDoubleXmm2
+                0x000000018001f8a5                SubDoubleXmm2
+                0x000000018001f8b4                MulDoubleXmm2
+                0x000000018001f8c3                DivDoubleXmm2
+                0x000000018001f8d2                SqrtDoubleXmm2
+                0x000000018001f8e1                MovAlignedVectorsToYmm2
+                0x000000018001f8fd                MovUAlignedVectorsToYmm2
+                0x000000018001f90c                MovAlignedVectorsFromYmm2
+                0x000000018001f928                MovUAlignedVectorsFromYmm2
+                0x000000018001f937                AddVectorYmm2
+                0x000000018001f946                SubVectorYmm2
+                0x000000018001f955                MulVectorYmm2
+                0x000000018001f964                MovAlignedFloatsToXmm3
+                0x000000018001f97f                MovUAlignedFloatsToXmm3
+                0x000000018001f98d                MovAlignedFloatsFromXmm3
+                0x000000018001f9a8                MovUAlignedFloatsFromXmm3
+                0x000000018001f9b6                AddFloatXmm3
+                0x000000018001f9c4                SubFloatXmm3
+                0x000000018001f9d2                MulFloatXmm3
+                0x000000018001f9e0                DivFloatXmm3
+                0x000000018001f9ee                SqrtFloatXmm3
+                0x000000018001f9fc                AndFloatXmm3
+                0x000000018001fa0a                OrFloatXmm3
+                0x000000018001fa18                XorFloatXmm3
+                0x000000018001fa26                ClearFloatXmm3
+                0x000000018001fa34                EqualToFloatXmm3
+                0x000000018001fa43                LessThanFloatXmm3
+                0x000000018001fa52                NotEqualToFloatXmm3
+                0x000000018001fa61                GreaterThanFloatXmm3
+                0x000000018001fa70                BroadcastFloatLane0Xmm3
+                0x000000018001fa7f                InterleaveLowFloatXmm3
+                0x000000018001fa8d                ConvertFloatToInt32TruncXmm3
+                0x000000018001fa9c                MovAlignedIntegersToXmm3
+                0x000000018001fab8                MovUAlignedIntegersToXmm3
+                0x000000018001fac7                MovAlignedIntegersFromXmm3
+                0x000000018001fae3                MovUAlignedIntegersFromXmm3
+                0x000000018001faf2                AddIntegerXmm3
+                0x000000018001fb01                SubIntegerXmm3
+                0x000000018001fb10                MulIntegerXmm3
+                0x000000018001fb20                AndIntegerXmm3
+                0x000000018001fb2f                OrIntegerXmm3
+                0x000000018001fb3e                XorIntegerXmm3
+                0x000000018001fb4d                ClearIntegerXmm3
+                0x000000018001fb5c                MovAlignedDoublesToXmm3
+                0x000000018001fb78                MovUAlignedDoublesToXmm3
+                0x000000018001fb87                MovAlignedDoublesFromXmm3
+                0x000000018001fba3                MovUAlignedDoublesFromXmm3
+                0x000000018001fbb2                AddDoubleXmm3
+                0x000000018001fbc1                SubDoubleXmm3
+                0x000000018001fbd0                MulDoubleXmm3
+                0x000000018001fbdf                DivDoubleXmm3
+                0x000000018001fbee                SqrtDoubleXmm3
+                0x000000018001fbfd                MovAlignedVectorsToYmm3
+                0x000000018001fc19                MovUAlignedVectorsToYmm3
+                0x000000018001fc28                MovAlignedVectorsFromYmm3
+                0x000000018001fc44                MovUAlignedVectorsFromYmm3
+                0x000000018001fc53                AddVectorYmm3
+                0x000000018001fc62                SubVectorYmm3
+                0x000000018001fc71                MulVectorYmm3
+                0x000000018001fc80                MovAlignedFloatsToXmm4
+                0x000000018001fc9b                MovUAlignedFloatsToXmm4
+                0x000000018001fca9                MovAlignedFloatsFromXmm4
+                0x000000018001fcc4                MovUAlignedFloatsFromXmm4
+                0x000000018001fcd2                AddFloatXmm4
+                0x000000018001fce0                SubFloatXmm4
+                0x000000018001fcee                MulFloatXmm4
+                0x000000018001fcfc                DivFloatXmm4
+                0x000000018001fd0a                SqrtFloatXmm4
+                0x000000018001fd18                AndFloatXmm4
+                0x000000018001fd26                OrFloatXmm4
+                0x000000018001fd34                XorFloatXmm4
+                0x000000018001fd42                ClearFloatXmm4
+                0x000000018001fd50                EqualToFloatXmm4
+                0x000000018001fd5f                LessThanFloatXmm4
+                0x000000018001fd6e                NotEqualToFloatXmm4
+                0x000000018001fd7d                GreaterThanFloatXmm4
+                0x000000018001fd8c                BroadcastFloatLane0Xmm4
+                0x000000018001fd9b                InterleaveLowFloatXmm4
+                0x000000018001fda9                ConvertFloatToInt32TruncXmm4
+                0x000000018001fdb8                MovAlignedIntegersToXmm4
+                0x000000018001fdd4                MovUAlignedIntegersToXmm4
+                0x000000018001fde3                MovAlignedIntegersFromXmm4
+                0x000000018001fdff                MovUAlignedIntegersFromXmm4
+                0x000000018001fe0e                AddIntegerXmm4
+                0x000000018001fe1d                SubIntegerXmm4
+                0x000000018001fe2c                MulIntegerXmm4
+                0x000000018001fe3c                AndIntegerXmm4
+                0x000000018001fe4b                OrIntegerXmm4
+                0x000000018001fe5a                XorIntegerXmm4
+                0x000000018001fe69                ClearIntegerXmm4
+                0x000000018001fe78                MovAlignedDoublesToXmm4
+                0x000000018001fe94                MovUAlignedDoublesToXmm4
+                0x000000018001fea3                MovAlignedDoublesFromXmm4
+                0x000000018001febf                MovUAlignedDoublesFromXmm4
+                0x000000018001fece                AddDoubleXmm4
+                0x000000018001fedd                SubDoubleXmm4
+                0x000000018001feec                MulDoubleXmm4
+                0x000000018001fefb                DivDoubleXmm4
+                0x000000018001ff0a                SqrtDoubleXmm4
+                0x000000018001ff19                MovAlignedVectorsToYmm4
+                0x000000018001ff35                MovUAlignedVectorsToYmm4
+                0x000000018001ff44                MovAlignedVectorsFromYmm4
+                0x000000018001ff60                MovUAlignedVectorsFromYmm4
+                0x000000018001ff6f                AddVectorYmm4
+                0x000000018001ff7e                SubVectorYmm4
+                0x000000018001ff8d                MulVectorYmm4
+                0x000000018001ff9c                MovAlignedFloatsToXmm5
+                0x000000018001ffb7                MovUAlignedFloatsToXmm5
+                0x000000018001ffc5                MovAlignedFloatsFromXmm5
+                0x000000018001ffe0                MovUAlignedFloatsFromXmm5
+                0x000000018001ffee                AddFloatXmm5
+                0x000000018001fffc                SubFloatXmm5
+                0x000000018002000a                MulFloatXmm5
+                0x0000000180020018                DivFloatXmm5
+                0x0000000180020026                SqrtFloatXmm5
+                0x0000000180020034                AndFloatXmm5
+                0x0000000180020042                OrFloatXmm5
+                0x0000000180020050                XorFloatXmm5
+                0x000000018002005e                ClearFloatXmm5
+                0x000000018002006c                EqualToFloatXmm5
+                0x000000018002007b                LessThanFloatXmm5
+                0x000000018002008a                NotEqualToFloatXmm5
+                0x0000000180020099                GreaterThanFloatXmm5
+                0x00000001800200a8                BroadcastFloatLane0Xmm5
+                0x00000001800200b7                InterleaveLowFloatXmm5
+                0x00000001800200c5                ConvertFloatToInt32TruncXmm5
+                0x00000001800200d4                MovAlignedIntegersToXmm5
+                0x00000001800200f0                MovUAlignedIntegersToXmm5
+                0x00000001800200ff                MovAlignedIntegersFromXmm5
+                0x000000018002011b                MovUAlignedIntegersFromXmm5
+                0x000000018002012a                AddIntegerXmm5
+                0x0000000180020139                SubIntegerXmm5
+                0x0000000180020148                MulIntegerXmm5
+                0x0000000180020158                AndIntegerXmm5
+                0x0000000180020167                OrIntegerXmm5
+                0x0000000180020176                XorIntegerXmm5
+                0x0000000180020185                ClearIntegerXmm5
+                0x0000000180020194                MovAlignedDoublesToXmm5
+                0x00000001800201b0                MovUAlignedDoublesToXmm5
+                0x00000001800201bf                MovAlignedDoublesFromXmm5
+                0x00000001800201db                MovUAlignedDoublesFromXmm5
+                0x00000001800201ea                AddDoubleXmm5
+                0x00000001800201f9                SubDoubleXmm5
+                0x0000000180020208                MulDoubleXmm5
+                0x0000000180020217                DivDoubleXmm5
+                0x0000000180020226                SqrtDoubleXmm5
+                0x0000000180020235                MovAlignedVectorsToYmm5
+                0x0000000180020251                MovUAlignedVectorsToYmm5
+                0x0000000180020260                MovAlignedVectorsFromYmm5
+                0x000000018002027c                MovUAlignedVectorsFromYmm5
+                0x000000018002028b                AddVectorYmm5
+                0x000000018002029a                SubVectorYmm5
+                0x00000001800202a9                MulVectorYmm5
+                0x00000001800202b8                MovAlignedFloatsToXmm6
+                0x00000001800202d3                MovUAlignedFloatsToXmm6
+                0x00000001800202e1                MovAlignedFloatsFromXmm6
+                0x00000001800202fc                MovUAlignedFloatsFromXmm6
+                0x000000018002030a                AddFloatXmm6
+                0x0000000180020318                SubFloatXmm6
+                0x0000000180020326                MulFloatXmm6
+                0x0000000180020334                DivFloatXmm6
+                0x0000000180020342                SqrtFloatXmm6
+                0x0000000180020350                AndFloatXmm6
+                0x000000018002035e                OrFloatXmm6
+                0x000000018002036c                XorFloatXmm6
+                0x000000018002037a                ClearFloatXmm6
+                0x0000000180020388                EqualToFloatXmm6
+                0x0000000180020397                LessThanFloatXmm6
+                0x00000001800203a6                NotEqualToFloatXmm6
+                0x00000001800203b5                GreaterThanFloatXmm6
+                0x00000001800203c4                BroadcastFloatLane0Xmm6
+                0x00000001800203d3                InterleaveLowFloatXmm6
+                0x00000001800203e1                ConvertFloatToInt32TruncXmm6
+                0x00000001800203f0                MovAlignedIntegersToXmm6
+                0x000000018002040c                MovUAlignedIntegersToXmm6
+                0x000000018002041b                MovAlignedIntegersFromXmm6
+                0x0000000180020437                MovUAlignedIntegersFromXmm6
+                0x0000000180020446                AddIntegerXmm6
+                0x0000000180020455                SubIntegerXmm6
+                0x0000000180020464                MulIntegerXmm6
+                0x0000000180020474                AndIntegerXmm6
+                0x0000000180020483                OrIntegerXmm6
+                0x0000000180020492                XorIntegerXmm6
+                0x00000001800204a1                ClearIntegerXmm6
+                0x00000001800204b0                MovAlignedDoublesToXmm6
+                0x00000001800204cc                MovUAlignedDoublesToXmm6
+                0x00000001800204db                MovAlignedDoublesFromXmm6
+                0x00000001800204f7                MovUAlignedDoublesFromXmm6
+                0x0000000180020506                AddDoubleXmm6
+                0x0000000180020515                SubDoubleXmm6
+                0x0000000180020524                MulDoubleXmm6
+                0x0000000180020533                DivDoubleXmm6
+                0x0000000180020542                SqrtDoubleXmm6
+                0x0000000180020551                MovAlignedVectorsToYmm6
+                0x000000018002056d                MovUAlignedVectorsToYmm6
+                0x000000018002057c                MovAlignedVectorsFromYmm6
+                0x0000000180020598                MovUAlignedVectorsFromYmm6
+                0x00000001800205a7                AddVectorYmm6
+                0x00000001800205b6                SubVectorYmm6
+                0x00000001800205c5                MulVectorYmm6
+                0x00000001800205d4                MovAlignedFloatsToXmm7
+                0x00000001800205ef                MovUAlignedFloatsToXmm7
+                0x00000001800205fd                MovAlignedFloatsFromXmm7
+                0x0000000180020618                MovUAlignedFloatsFromXmm7
+                0x0000000180020626                AddFloatXmm7
+                0x0000000180020634                SubFloatXmm7
+                0x0000000180020642                MulFloatXmm7
+                0x0000000180020650                DivFloatXmm7
+                0x000000018002065e                SqrtFloatXmm7
+                0x000000018002066c                AndFloatXmm7
+                0x000000018002067a                OrFloatXmm7
+                0x0000000180020688                XorFloatXmm7
+                0x0000000180020696                ClearFloatXmm7
+                0x00000001800206a4                EqualToFloatXmm7
+                0x00000001800206b3                LessThanFloatXmm7
+                0x00000001800206c2                NotEqualToFloatXmm7
+                0x00000001800206d1                GreaterThanFloatXmm7
+                0x00000001800206e0                BroadcastFloatLane0Xmm7
+                0x00000001800206ef                InterleaveLowFloatXmm7
+                0x00000001800206fd                ConvertFloatToInt32TruncXmm7
+                0x000000018002070c                MovAlignedIntegersToXmm7
+                0x0000000180020728                MovUAlignedIntegersToXmm7
+                0x0000000180020737                MovAlignedIntegersFromXmm7
+                0x0000000180020753                MovUAlignedIntegersFromXmm7
+                0x0000000180020762                AddIntegerXmm7
+                0x0000000180020771                SubIntegerXmm7
+                0x0000000180020780                MulIntegerXmm7
+                0x0000000180020790                AndIntegerXmm7
+                0x000000018002079f                OrIntegerXmm7
+                0x00000001800207ae                XorIntegerXmm7
+                0x00000001800207bd                ClearIntegerXmm7
+                0x00000001800207cc                MovAlignedDoublesToXmm7
+                0x00000001800207e8                MovUAlignedDoublesToXmm7
+                0x00000001800207f7                MovAlignedDoublesFromXmm7
+                0x0000000180020813                MovUAlignedDoublesFromXmm7
+                0x0000000180020822                AddDoubleXmm7
+                0x0000000180020831                SubDoubleXmm7
+                0x0000000180020840                MulDoubleXmm7
+                0x000000018002084f                DivDoubleXmm7
+                0x000000018002085e                SqrtDoubleXmm7
+                0x000000018002086d                MovAlignedVectorsToYmm7
+                0x0000000180020889                MovUAlignedVectorsToYmm7
+                0x0000000180020898                MovAlignedVectorsFromYmm7
+                0x00000001800208b4                MovUAlignedVectorsFromYmm7
+                0x00000001800208c3                AddVectorYmm7
+                0x00000001800208d2                SubVectorYmm7
+                0x00000001800208e1                MulVectorYmm7
+                0x00000001800208f0                MovAlignedFloatsToXmm8
+                0x000000018002090c                MovUAlignedFloatsToXmm8
+                0x000000018002091b                MovAlignedFloatsFromXmm8
+                0x0000000180020937                MovUAlignedFloatsFromXmm8
+                0x0000000180020946                AddFloatXmm8
+                0x0000000180020955                SubFloatXmm8
+                0x0000000180020964                MulFloatXmm8
+                0x0000000180020973                DivFloatXmm8
+                0x0000000180020982                SqrtFloatXmm8
+                0x0000000180020991                AndFloatXmm8
+                0x00000001800209a0                OrFloatXmm8
+                0x00000001800209af                XorFloatXmm8
+                0x00000001800209be                ClearFloatXmm8
+                0x00000001800209cd                EqualToFloatXmm8
+                0x00000001800209dd                LessThanFloatXmm8
+                0x00000001800209ed                NotEqualToFloatXmm8
+                0x00000001800209fd                GreaterThanFloatXmm8
+                0x0000000180020a0d                BroadcastFloatLane0Xmm8
+                0x0000000180020a1d                InterleaveLowFloatXmm8
+                0x0000000180020a2c                ConvertFloatToInt32TruncXmm8
+                0x0000000180020a3c                MovAlignedIntegersToXmm8
+                0x0000000180020a59                MovUAlignedIntegersToXmm8
+                0x0000000180020a69                MovAlignedIntegersFromXmm8
+                0x0000000180020a86                MovUAlignedIntegersFromXmm8
+                0x0000000180020a96                AddIntegerXmm8
+                0x0000000180020aa6                SubIntegerXmm8
+                0x0000000180020ab6                MulIntegerXmm8
+                0x0000000180020ac7                AndIntegerXmm8
+                0x0000000180020ad7                OrIntegerXmm8
+                0x0000000180020ae7                XorIntegerXmm8
+                0x0000000180020af7                ClearIntegerXmm8
+                0x0000000180020b07                MovAlignedDoublesToXmm8
+                0x0000000180020b24                MovUAlignedDoublesToXmm8
+                0x0000000180020b34                MovAlignedDoublesFromXmm8
+                0x0000000180020b51                MovUAlignedDoublesFromXmm8
+                0x0000000180020b61                AddDoubleXmm8
+                0x0000000180020b71                SubDoubleXmm8
+                0x0000000180020b81                MulDoubleXmm8
+                0x0000000180020b91                DivDoubleXmm8
+                0x0000000180020ba1                SqrtDoubleXmm8
+                0x0000000180020bb1                MovAlignedVectorsToYmm8
+                0x0000000180020bcd                MovUAlignedVectorsToYmm8
+                0x0000000180020bdc                MovAlignedVectorsFromYmm8
+                0x0000000180020bf8                MovUAlignedVectorsFromYmm8
+                0x0000000180020c07                AddVectorYmm8
+                0x0000000180020c16                SubVectorYmm8
+                0x0000000180020c25                MulVectorYmm8
+                0x0000000180020c34                MovAlignedFloatsToXmm9
+                0x0000000180020c50                MovUAlignedFloatsToXmm9
+                0x0000000180020c5f                MovAlignedFloatsFromXmm9
+                0x0000000180020c7b                MovUAlignedFloatsFromXmm9
+                0x0000000180020c8a                AddFloatXmm9
+                0x0000000180020c99                SubFloatXmm9
+                0x0000000180020ca8                MulFloatXmm9
+                0x0000000180020cb7                DivFloatXmm9
+                0x0000000180020cc6                SqrtFloatXmm9
+                0x0000000180020cd5                AndFloatXmm9
+                0x0000000180020ce4                OrFloatXmm9
+                0x0000000180020cf3                XorFloatXmm9
+                0x0000000180020d02                ClearFloatXmm9
+                0x0000000180020d11                EqualToFloatXmm9
+                0x0000000180020d21                LessThanFloatXmm9
+                0x0000000180020d31                NotEqualToFloatXmm9
+                0x0000000180020d41                GreaterThanFloatXmm9
+                0x0000000180020d51                BroadcastFloatLane0Xmm9
+                0x0000000180020d61                InterleaveLowFloatXmm9
+                0x0000000180020d70                ConvertFloatToInt32TruncXmm9
+                0x0000000180020d80                MovAlignedIntegersToXmm9
+                0x0000000180020d9d                MovUAlignedIntegersToXmm9
+                0x0000000180020dad                MovAlignedIntegersFromXmm9
+                0x0000000180020dca                MovUAlignedIntegersFromXmm9
+                0x0000000180020dda                AddIntegerXmm9
+                0x0000000180020dea                SubIntegerXmm9
+                0x0000000180020dfa                MulIntegerXmm9
+                0x0000000180020e0b                AndIntegerXmm9
+                0x0000000180020e1b                OrIntegerXmm9
+                0x0000000180020e2b                XorIntegerXmm9
+                0x0000000180020e3b                ClearIntegerXmm9
+                0x0000000180020e4b                MovAlignedDoublesToXmm9
+                0x0000000180020e68                MovUAlignedDoublesToXmm9
+                0x0000000180020e78                MovAlignedDoublesFromXmm9
+                0x0000000180020e95                MovUAlignedDoublesFromXmm9
+                0x0000000180020ea5                AddDoubleXmm9
+                0x0000000180020eb5                SubDoubleXmm9
+                0x0000000180020ec5                MulDoubleXmm9
+                0x0000000180020ed5                DivDoubleXmm9
+                0x0000000180020ee5                SqrtDoubleXmm9
+                0x0000000180020ef5                MovAlignedVectorsToYmm9
+                0x0000000180020f11                MovUAlignedVectorsToYmm9
+                0x0000000180020f20                MovAlignedVectorsFromYmm9
+                0x0000000180020f3c                MovUAlignedVectorsFromYmm9
+                0x0000000180020f4b                AddVectorYmm9
+                0x0000000180020f5a                SubVectorYmm9
+                0x0000000180020f69                MulVectorYmm9
+                0x0000000180020f78                MovAlignedFloatsToXmm10
+                0x0000000180020f94                MovUAlignedFloatsToXmm10
+                0x0000000180020fa3                MovAlignedFloatsFromXmm10
+                0x0000000180020fbf                MovUAlignedFloatsFromXmm10
+                0x0000000180020fce                AddFloatXmm10
+                0x0000000180020fdd                SubFloatXmm10
+                0x0000000180020fec                MulFloatXmm10
+                0x0000000180020ffb                DivFloatXmm10
+                0x000000018002100a                SqrtFloatXmm10
+                0x0000000180021019                AndFloatXmm10
+                0x0000000180021028                OrFloatXmm10
+                0x0000000180021037                XorFloatXmm10
+                0x0000000180021046                ClearFloatXmm10
+                0x0000000180021055                EqualToFloatXmm10
+                0x0000000180021065                LessThanFloatXmm10
+                0x0000000180021075                NotEqualToFloatXmm10
+                0x0000000180021085                GreaterThanFloatXmm10
+                0x0000000180021095                BroadcastFloatLane0Xmm10
+                0x00000001800210a5                InterleaveLowFloatXmm10
+                0x00000001800210b4                ConvertFloatToInt32TruncXmm10
+                0x00000001800210c4                MovAlignedIntegersToXmm10
+                0x00000001800210e1                MovUAlignedIntegersToXmm10
+                0x00000001800210f1                MovAlignedIntegersFromXmm10
+                0x000000018002110e                MovUAlignedIntegersFromXmm10
+                0x000000018002111e                AddIntegerXmm10
+                0x000000018002112e                SubIntegerXmm10
+                0x000000018002113e                MulIntegerXmm10
+                0x000000018002114f                AndIntegerXmm10
+                0x000000018002115f                OrIntegerXmm10
+                0x000000018002116f                XorIntegerXmm10
+                0x000000018002117f                ClearIntegerXmm10
+                0x000000018002118f                MovAlignedDoublesToXmm10
+                0x00000001800211ac                MovUAlignedDoublesToXmm10
+                0x00000001800211bc                MovAlignedDoublesFromXmm10
+                0x00000001800211d9                MovUAlignedDoublesFromXmm10
+                0x00000001800211e9                AddDoubleXmm10
+                0x00000001800211f9                SubDoubleXmm10
+                0x0000000180021209                MulDoubleXmm10
+                0x0000000180021219                DivDoubleXmm10
+                0x0000000180021229                SqrtDoubleXmm10
+                0x0000000180021239                MovAlignedVectorsToYmm10
+                0x0000000180021255                MovUAlignedVectorsToYmm10
+                0x0000000180021264                MovAlignedVectorsFromYmm10
+                0x0000000180021280                MovUAlignedVectorsFromYmm10
+                0x000000018002128f                AddVectorYmm10
+                0x000000018002129e                SubVectorYmm10
+                0x00000001800212ad                MulVectorYmm10
+                0x00000001800212bc                MovAlignedFloatsToXmm11
+                0x00000001800212d8                MovUAlignedFloatsToXmm11
+                0x00000001800212e7                MovAlignedFloatsFromXmm11
+                0x0000000180021303                MovUAlignedFloatsFromXmm11
+                0x0000000180021312                AddFloatXmm11
+                0x0000000180021321                SubFloatXmm11
+                0x0000000180021330                MulFloatXmm11
+                0x000000018002133f                DivFloatXmm11
+                0x000000018002134e                SqrtFloatXmm11
+                0x000000018002135d                AndFloatXmm11
+                0x000000018002136c                OrFloatXmm11
+                0x000000018002137b                XorFloatXmm11
+                0x000000018002138a                ClearFloatXmm11
+                0x0000000180021399                EqualToFloatXmm11
+                0x00000001800213a9                LessThanFloatXmm11
+                0x00000001800213b9                NotEqualToFloatXmm11
+                0x00000001800213c9                GreaterThanFloatXmm11
+                0x00000001800213d9                BroadcastFloatLane0Xmm11
+                0x00000001800213e9                InterleaveLowFloatXmm11
+                0x00000001800213f8                ConvertFloatToInt32TruncXmm11
+                0x0000000180021408                MovAlignedIntegersToXmm11
+                0x0000000180021425                MovUAlignedIntegersToXmm11
+                0x0000000180021435                MovAlignedIntegersFromXmm11
+                0x0000000180021452                MovUAlignedIntegersFromXmm11
+                0x0000000180021462                AddIntegerXmm11
+                0x0000000180021472                SubIntegerXmm11
+                0x0000000180021482                MulIntegerXmm11
+                0x0000000180021493                AndIntegerXmm11
+                0x00000001800214a3                OrIntegerXmm11
+                0x00000001800214b3                XorIntegerXmm11
+                0x00000001800214c3                ClearIntegerXmm11
+                0x00000001800214d3                MovAlignedDoublesToXmm11
+                0x00000001800214f0                MovUAlignedDoublesToXmm11
+                0x0000000180021500                MovAlignedDoublesFromXmm11
+                0x000000018002151d                MovUAlignedDoublesFromXmm11
+                0x000000018002152d                AddDoubleXmm11
+                0x000000018002153d                SubDoubleXmm11
+                0x000000018002154d                MulDoubleXmm11
+                0x000000018002155d                DivDoubleXmm11
+                0x000000018002156d                SqrtDoubleXmm11
+                0x000000018002157d                MovAlignedVectorsToYmm11
+                0x0000000180021599                MovUAlignedVectorsToYmm11
+                0x00000001800215a8                MovAlignedVectorsFromYmm11
+                0x00000001800215c4                MovUAlignedVectorsFromYmm11
+                0x00000001800215d3                AddVectorYmm11
+                0x00000001800215e2                SubVectorYmm11
+                0x00000001800215f1                MulVectorYmm11
+                0x0000000180021600                MovAlignedFloatsToXmm12
+                0x000000018002161c                MovUAlignedFloatsToXmm12
+                0x000000018002162b                MovAlignedFloatsFromXmm12
+                0x0000000180021647                MovUAlignedFloatsFromXmm12
+                0x0000000180021656                AddFloatXmm12
+                0x0000000180021665                SubFloatXmm12
+                0x0000000180021674                MulFloatXmm12
+                0x0000000180021683                DivFloatXmm12
+                0x0000000180021692                SqrtFloatXmm12
+                0x00000001800216a1                AndFloatXmm12
+                0x00000001800216b0                OrFloatXmm12
+                0x00000001800216bf                XorFloatXmm12
+                0x00000001800216ce                ClearFloatXmm12
+                0x00000001800216dd                EqualToFloatXmm12
+                0x00000001800216ed                LessThanFloatXmm12
+                0x00000001800216fd                NotEqualToFloatXmm12
+                0x000000018002170d                GreaterThanFloatXmm12
+                0x000000018002171d                BroadcastFloatLane0Xmm12
+                0x000000018002172d                InterleaveLowFloatXmm12
+                0x000000018002173c                ConvertFloatToInt32TruncXmm12
+                0x000000018002174c                MovAlignedIntegersToXmm12
+                0x0000000180021769                MovUAlignedIntegersToXmm12
+                0x0000000180021779                MovAlignedIntegersFromXmm12
+                0x0000000180021796                MovUAlignedIntegersFromXmm12
+                0x00000001800217a6                AddIntegerXmm12
+                0x00000001800217b6                SubIntegerXmm12
+                0x00000001800217c6                MulIntegerXmm12
+                0x00000001800217d7                AndIntegerXmm12
+                0x00000001800217e7                OrIntegerXmm12
+                0x00000001800217f7                XorIntegerXmm12
+                0x0000000180021807                ClearIntegerXmm12
+                0x0000000180021817                MovAlignedDoublesToXmm12
+                0x0000000180021834                MovUAlignedDoublesToXmm12
+                0x0000000180021844                MovAlignedDoublesFromXmm12
+                0x0000000180021861                MovUAlignedDoublesFromXmm12
+                0x0000000180021871                AddDoubleXmm12
+                0x0000000180021881                SubDoubleXmm12
+                0x0000000180021891                MulDoubleXmm12
+                0x00000001800218a1                DivDoubleXmm12
+                0x00000001800218b1                SqrtDoubleXmm12
+                0x00000001800218c1                MovAlignedVectorsToYmm12
+                0x00000001800218dd                MovUAlignedVectorsToYmm12
+                0x00000001800218ec                MovAlignedVectorsFromYmm12
+                0x0000000180021908                MovUAlignedVectorsFromYmm12
+                0x0000000180021917                AddVectorYmm12
+                0x0000000180021926                SubVectorYmm12
+                0x0000000180021935                MulVectorYmm12
+                0x0000000180021944                MovAlignedFloatsToXmm13
+                0x0000000180021960                MovUAlignedFloatsToXmm13
+                0x000000018002196f                MovAlignedFloatsFromXmm13
+                0x000000018002198b                MovUAlignedFloatsFromXmm13
+                0x000000018002199a                AddFloatXmm13
+                0x00000001800219a9                SubFloatXmm13
+                0x00000001800219b8                MulFloatXmm13
+                0x00000001800219c7                DivFloatXmm13
+                0x00000001800219d6                SqrtFloatXmm13
+                0x00000001800219e5                AndFloatXmm13
+                0x00000001800219f4                OrFloatXmm13
+                0x0000000180021a03                XorFloatXmm13
+                0x0000000180021a12                ClearFloatXmm13
+                0x0000000180021a21                EqualToFloatXmm13
+                0x0000000180021a31                LessThanFloatXmm13
+                0x0000000180021a41                NotEqualToFloatXmm13
+                0x0000000180021a51                GreaterThanFloatXmm13
+                0x0000000180021a61                BroadcastFloatLane0Xmm13
+                0x0000000180021a71                InterleaveLowFloatXmm13
+                0x0000000180021a80                ConvertFloatToInt32TruncXmm13
+                0x0000000180021a90                MovAlignedIntegersToXmm13
+                0x0000000180021aad                MovUAlignedIntegersToXmm13
+                0x0000000180021abd                MovAlignedIntegersFromXmm13
+                0x0000000180021ada                MovUAlignedIntegersFromXmm13
+                0x0000000180021aea                AddIntegerXmm13
+                0x0000000180021afa                SubIntegerXmm13
+                0x0000000180021b0a                MulIntegerXmm13
+                0x0000000180021b1b                AndIntegerXmm13
+                0x0000000180021b2b                OrIntegerXmm13
+                0x0000000180021b3b                XorIntegerXmm13
+                0x0000000180021b4b                ClearIntegerXmm13
+                0x0000000180021b5b                MovAlignedDoublesToXmm13
+                0x0000000180021b78                MovUAlignedDoublesToXmm13
+                0x0000000180021b88                MovAlignedDoublesFromXmm13
+                0x0000000180021ba5                MovUAlignedDoublesFromXmm13
+                0x0000000180021bb5                AddDoubleXmm13
+                0x0000000180021bc5                SubDoubleXmm13
+                0x0000000180021bd5                MulDoubleXmm13
+                0x0000000180021be5                DivDoubleXmm13
+                0x0000000180021bf5                SqrtDoubleXmm13
+                0x0000000180021c05                MovAlignedVectorsToYmm13
+                0x0000000180021c21                MovUAlignedVectorsToYmm13
+                0x0000000180021c30                MovAlignedVectorsFromYmm13
+                0x0000000180021c4c                MovUAlignedVectorsFromYmm13
+                0x0000000180021c5b                AddVectorYmm13
+                0x0000000180021c6a                SubVectorYmm13
+                0x0000000180021c79                MulVectorYmm13
+                0x0000000180021c88                MovAlignedFloatsToXmm14
+                0x0000000180021ca4                MovUAlignedFloatsToXmm14
+                0x0000000180021cb3                MovAlignedFloatsFromXmm14
+                0x0000000180021ccf                MovUAlignedFloatsFromXmm14
+                0x0000000180021cde                AddFloatXmm14
+                0x0000000180021ced                SubFloatXmm14
+                0x0000000180021cfc                MulFloatXmm14
+                0x0000000180021d0b                DivFloatXmm14
+                0x0000000180021d1a                SqrtFloatXmm14
+                0x0000000180021d29                AndFloatXmm14
+                0x0000000180021d38                OrFloatXmm14
+                0x0000000180021d47                XorFloatXmm14
+                0x0000000180021d56                ClearFloatXmm14
+                0x0000000180021d65                EqualToFloatXmm14
+                0x0000000180021d75                LessThanFloatXmm14
+                0x0000000180021d85                NotEqualToFloatXmm14
+                0x0000000180021d95                GreaterThanFloatXmm14
+                0x0000000180021da5                BroadcastFloatLane0Xmm14
+                0x0000000180021db5                InterleaveLowFloatXmm14
+                0x0000000180021dc4                ConvertFloatToInt32TruncXmm14
+                0x0000000180021dd4                MovAlignedIntegersToXmm14
+                0x0000000180021df1                MovUAlignedIntegersToXmm14
+                0x0000000180021e01                MovAlignedIntegersFromXmm14
+                0x0000000180021e1e                MovUAlignedIntegersFromXmm14
+                0x0000000180021e2e                AddIntegerXmm14
+                0x0000000180021e3e                SubIntegerXmm14
+                0x0000000180021e4e                MulIntegerXmm14
+                0x0000000180021e5f                AndIntegerXmm14
+                0x0000000180021e6f                OrIntegerXmm14
+                0x0000000180021e7f                XorIntegerXmm14
+                0x0000000180021e8f                ClearIntegerXmm14
+                0x0000000180021e9f                MovAlignedDoublesToXmm14
+                0x0000000180021ebc                MovUAlignedDoublesToXmm14
+                0x0000000180021ecc                MovAlignedDoublesFromXmm14
+                0x0000000180021ee9                MovUAlignedDoublesFromXmm14
+                0x0000000180021ef9                AddDoubleXmm14
+                0x0000000180021f09                SubDoubleXmm14
+                0x0000000180021f19                MulDoubleXmm14
+                0x0000000180021f29                DivDoubleXmm14
+                0x0000000180021f39                SqrtDoubleXmm14
+                0x0000000180021f49                MovAlignedVectorsToYmm14
+                0x0000000180021f65                MovUAlignedVectorsToYmm14
+                0x0000000180021f74                MovAlignedVectorsFromYmm14
+                0x0000000180021f90                MovUAlignedVectorsFromYmm14
+                0x0000000180021f9f                AddVectorYmm14
+                0x0000000180021fae                SubVectorYmm14
+                0x0000000180021fbd                MulVectorYmm14
+                0x0000000180021fcc                MovAlignedFloatsToXmm15
+                0x0000000180021fe8                MovUAlignedFloatsToXmm15
+                0x0000000180021ff7                MovAlignedFloatsFromXmm15
+                0x0000000180022013                MovUAlignedFloatsFromXmm15
+                0x0000000180022022                AddFloatXmm15
+                0x0000000180022031                SubFloatXmm15
+                0x0000000180022040                MulFloatXmm15
+                0x000000018002204f                DivFloatXmm15
+                0x000000018002205e                SqrtFloatXmm15
+                0x000000018002206d                AndFloatXmm15
+                0x000000018002207c                OrFloatXmm15
+                0x000000018002208b                XorFloatXmm15
+                0x000000018002209a                ClearFloatXmm15
+                0x00000001800220a9                EqualToFloatXmm15
+                0x00000001800220b9                LessThanFloatXmm15
+                0x00000001800220c9                NotEqualToFloatXmm15
+                0x00000001800220d9                GreaterThanFloatXmm15
+                0x00000001800220e9                BroadcastFloatLane0Xmm15
+                0x00000001800220f9                InterleaveLowFloatXmm15
+                0x0000000180022108                ConvertFloatToInt32TruncXmm15
+                0x0000000180022118                MovAlignedIntegersToXmm15
+                0x0000000180022135                MovUAlignedIntegersToXmm15
+                0x0000000180022145                MovAlignedIntegersFromXmm15
+                0x0000000180022162                MovUAlignedIntegersFromXmm15
+                0x0000000180022172                AddIntegerXmm15
+                0x0000000180022182                SubIntegerXmm15
+                0x0000000180022192                MulIntegerXmm15
+                0x00000001800221a3                AndIntegerXmm15
+                0x00000001800221b3                OrIntegerXmm15
+                0x00000001800221c3                XorIntegerXmm15
+                0x00000001800221d3                ClearIntegerXmm15
+                0x00000001800221e3                MovAlignedDoublesToXmm15
+                0x0000000180022200                MovUAlignedDoublesToXmm15
+                0x0000000180022210                MovAlignedDoublesFromXmm15
+                0x000000018002222d                MovUAlignedDoublesFromXmm15
+                0x000000018002223d                AddDoubleXmm15
+                0x000000018002224d                SubDoubleXmm15
+                0x000000018002225d                MulDoubleXmm15
+                0x000000018002226d                DivDoubleXmm15
+                0x000000018002227d                SqrtDoubleXmm15
+                0x000000018002228d                MovAlignedVectorsToYmm15
+                0x00000001800222a9                MovUAlignedVectorsToYmm15
+                0x00000001800222b8                MovAlignedVectorsFromYmm15
+                0x00000001800222d4                MovUAlignedVectorsFromYmm15
+                0x00000001800222e3                AddVectorYmm15
+                0x00000001800222f2                SubVectorYmm15
+                0x0000000180022301                MulVectorYmm15
+ *(SORT_BY_NAME(.text$*))
+ *(.text.*)
+ *(.gnu.linkonce.t.*)
+ *(.glue_7t)
+ *(.glue_7)
+                0x0000000180022310                . = ALIGN (0x8)
+ *(SORT_NONE(.fini))
+ *(.gcc_exc)
+                [!provide]                        PROVIDE (etext = .)
+ *(.gcc_except_table)
+
+.data           0x0000000180023000      0xa00
+                0x0000000180023000                __data_start__ = .
+ *(.data)
+ .data          0x0000000180023000        0x0 C:\GitHub\BlockyOS\compile\cache\c.RNG.o
+ .data          0x0000000180023000        0x0 C:\GitHub\BlockyOS\compile\cache\c.GDT.o
+ .data          0x0000000180023000        0x0 C:\GitHub\BlockyOS\compile\cache\c.paging.o
+ .data          0x0000000180023000       0xa2 C:\GitHub\BlockyOS\compile\cache\asm.SSE.o
+ *fill*         0x00000001800230a2        0xe 
+ .data          0x00000001800230b0        0x0 C:\GitHub\BlockyOS\compile\cache\c.SSE.o
+ .data          0x00000001800230b0        0x0 C:\GitHub\BlockyOS\compile\cache\c.memory.o
+ .data          0x00000001800230b0        0x0 C:\GitHub\BlockyOS\compile\cache\c.string.o
+ .data          0x00000001800230b0        0x0 C:\GitHub\BlockyOS\compile\cache\c.palloc.o
+ .data          0x00000001800230b0        0x0 C:\GitHub\BlockyOS\compile\cache\c.palloc(1).o
+ .data          0x00000001800230b0        0x0 C:\GitHub\BlockyOS\compile\cache\c.mmalloc.o
+ .data          0x00000001800230b0       0x10 C:\GitHub\BlockyOS\compile\cache\c.math.o
+ .data          0x00000001800230c0      0x800 C:\GitHub\BlockyOS\compile\cache\c.ISR.o
+                0x00000001800230c0                InterruptCallbacks
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.ACPI.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.APIC.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.IOAPIC.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.LocalAPIC.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.LocalAPICTimer.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.hardware.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2b-ref.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2bp-ref.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2s-ref.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2sp-ref.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2xb-ref.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2xs-ref.o
+ .data          0x00000001800238c0        0x0 C:\GitHub\BlockyOS\compile\cache\c.PCIe.o
+ *(.data2)
+ *(SORT_BY_NAME(.data$*))
+ *(.jcr)
+                0x00000001800238c0                __data_end__ = .
+ *(.data_cygwin_nocopy)
+
+.rdata          0x0000000180024000     0x1600
+ *(.rdata)
+ .rdata         0x0000000180024000      0x800 C:\GitHub\BlockyOS\compile\cache\c.SSE.o
+ .rdata         0x0000000180024800       0x20 C:\GitHub\BlockyOS\compile\cache\c.mmalloc.o
+ .rdata         0x0000000180024820       0xb0 C:\GitHub\BlockyOS\compile\cache\c.math.o
+ *fill*         0x00000001800248d0       0x10 
+ .rdata         0x00000001800248e0       0xc0 C:\GitHub\BlockyOS\compile\cache\c.ISR.o
+ .rdata         0x00000001800249a0       0xe0 C:\GitHub\BlockyOS\compile\cache\c.ACPI.o
+ .rdata         0x0000000180024a80       0xc0 C:\GitHub\BlockyOS\compile\cache\c.APIC.o
+ .rdata         0x0000000180024b40       0xe0 C:\GitHub\BlockyOS\compile\cache\c.IOAPIC.o
+ .rdata         0x0000000180024c20       0xe0 C:\GitHub\BlockyOS\compile\cache\c.LocalAPIC.o
+ .rdata         0x0000000180024d00       0xc0 C:\GitHub\BlockyOS\compile\cache\c.LocalAPICTimer.o
+ .rdata         0x0000000180024dc0       0xe0 C:\GitHub\BlockyOS\compile\cache\c.hardware.o
+ .rdata         0x0000000180024ea0      0x120 C:\GitHub\BlockyOS\compile\cache\c.blake2b-ref.o
+ .rdata         0x0000000180024fc0       0x10 C:\GitHub\BlockyOS\compile\cache\c.blake2bp-ref.o
+ *fill*         0x0000000180024fd0       0x10 
+ .rdata         0x0000000180024fe0       0xe0 C:\GitHub\BlockyOS\compile\cache\c.blake2s-ref.o
+ .rdata         0x00000001800250c0       0x10 C:\GitHub\BlockyOS\compile\cache\c.blake2sp-ref.o
+ .rdata         0x00000001800250d0       0x10 C:\GitHub\BlockyOS\compile\cache\c.blake2xb-ref.o
+ .rdata         0x00000001800250e0       0x10 C:\GitHub\BlockyOS\compile\cache\c.blake2xs-ref.o
+ .rdata         0x00000001800250f0       0x10 C:\GitHub\BlockyOS\compile\cache\c.PCIe.o
+ *(SORT_BY_NAME(.rdata$*))
+ .rdata$zzz     0x0000000180025100       0x30 C:\GitHub\BlockyOS\compile\cache\c.RNG.o
+ .rdata$zzz     0x0000000180025130       0x30 C:\GitHub\BlockyOS\compile\cache\c.GDT.o
+ .rdata$zzz     0x0000000180025160       0x30 C:\GitHub\BlockyOS\compile\cache\c.paging.o
+ .rdata$zzz     0x0000000180025190       0x30 C:\GitHub\BlockyOS\compile\cache\c.SSE.o
+ .rdata$zzz     0x00000001800251c0       0x30 C:\GitHub\BlockyOS\compile\cache\c.memory.o
+ .rdata$zzz     0x00000001800251f0       0x30 C:\GitHub\BlockyOS\compile\cache\c.string.o
+ .rdata$zzz     0x0000000180025220       0x30 C:\GitHub\BlockyOS\compile\cache\c.palloc.o
+ .rdata$zzz     0x0000000180025250       0x30 C:\GitHub\BlockyOS\compile\cache\c.palloc(1).o
+ .rdata$zzz     0x0000000180025280       0x30 C:\GitHub\BlockyOS\compile\cache\c.mmalloc.o
+ .rdata$zzz     0x00000001800252b0       0x30 C:\GitHub\BlockyOS\compile\cache\c.math.o
+ .rdata$zzz     0x00000001800252e0       0x30 C:\GitHub\BlockyOS\compile\cache\c.ISR.o
+ .rdata$zzz     0x0000000180025310       0x30 C:\GitHub\BlockyOS\compile\cache\c.ACPI.o
+ .rdata$zzz     0x0000000180025340       0x30 C:\GitHub\BlockyOS\compile\cache\c.APIC.o
+ .rdata$zzz     0x0000000180025370       0x30 C:\GitHub\BlockyOS\compile\cache\c.IOAPIC.o
+ .rdata$zzz     0x00000001800253a0       0x30 C:\GitHub\BlockyOS\compile\cache\c.LocalAPIC.o
+ .rdata$zzz     0x00000001800253d0       0x30 C:\GitHub\BlockyOS\compile\cache\c.LocalAPICTimer.o
+ .rdata$zzz     0x0000000180025400       0x30 C:\GitHub\BlockyOS\compile\cache\c.hardware.o
+ .rdata$zzz     0x0000000180025430       0x30 C:\GitHub\BlockyOS\compile\cache\c.blake2b-ref.o
+ .rdata$zzz     0x0000000180025460       0x30 C:\GitHub\BlockyOS\compile\cache\c.blake2bp-ref.o
+ .rdata$zzz     0x0000000180025490       0x30 C:\GitHub\BlockyOS\compile\cache\c.blake2s-ref.o
+ .rdata$zzz     0x00000001800254c0       0x30 C:\GitHub\BlockyOS\compile\cache\c.blake2sp-ref.o
+ .rdata$zzz     0x00000001800254f0       0x30 C:\GitHub\BlockyOS\compile\cache\c.blake2xb-ref.o
+ .rdata$zzz     0x0000000180025520       0x30 C:\GitHub\BlockyOS\compile\cache\c.blake2xs-ref.o
+ .rdata$zzz     0x0000000180025550       0x30 C:\GitHub\BlockyOS\compile\cache\c.PCIe.o
+                0x0000000180025580                . = ALIGN (0x4)
+                0x0000000180025580                __rt_psrelocs_start = .
+ *(.rdata_runtime_pseudo_reloc)
+                0x0000000180025580                __rt_psrelocs_end = .
+                0x0000000180025580                . = ALIGN (0x8)
+                0x0000000180025580                __DELAY_IMPORT_DIRECTORY_start__ = .
+ SORT_BY_NAME(*)(.didat$2)
+ SORT_BY_NAME(*)(.didat$3)
+                0x0000000180025580                __DELAY_IMPORT_DIRECTORY_end__ = .
+                0x0000000180025580                . = (. + (__DELAY_IMPORT_DIRECTORY_end__ - __DELAY_IMPORT_DIRECTORY_start__)?0x20:0x0)
+                0x0000000180025580                . = ALIGN (0x8)
+ SORT_BY_NAME(*)(.didat$4)
+ SORT_BY_NAME(*)(.didat$6)
+ SORT_BY_NAME(*)(.didat$7)
+                0x0000000180025580                . = ALIGN (0x8)
+                0x0000000180025580                ___CTOR_LIST__ = .
+                0x0000000180025580                __CTOR_LIST__ = .
+                0x0000000180025580        0x4 LONG 0xffffffffffffffff
+                0x0000000180025584        0x4 LONG 0xffffffffffffffff
+ *(.ctors)
+ *(.ctor)
+ *(SORT_BY_NAME(.ctors.*))
+                0x0000000180025588        0x4 LONG 0x0
+                0x000000018002558c        0x4 LONG 0x0
+                0x0000000180025590                ___DTOR_LIST__ = .
+                0x0000000180025590                __DTOR_LIST__ = .
+                0x0000000180025590        0x4 LONG 0xffffffffffffffff
+                0x0000000180025594        0x4 LONG 0xffffffffffffffff
+ *(.dtors)
+ *(.dtor)
+ *(SORT_BY_NAME(.dtors.*))
+                0x0000000180025598        0x4 LONG 0x0
+                0x000000018002559c        0x4 LONG 0x0
+                0x00000001800255a0                ___crt_xc_start__ = .
+ *(SORT_BY_NAME(.CRT$XC*))
+                0x00000001800255a0                ___crt_xc_end__ = .
+                0x00000001800255a0                ___crt_xi_start__ = .
+ *(SORT_BY_NAME(.CRT$XI*))
+                0x00000001800255a0                ___crt_xi_end__ = .
+                0x00000001800255a0                ___crt_xl_start__ = .
+ *(SORT_BY_NAME(.CRT$XL*))
+                0x00000001800255a0                ___crt_xp_start__ = .
+ *(SORT_BY_NAME(.CRT$XP*))
+                0x00000001800255a0                ___crt_xp_end__ = .
+                0x00000001800255a0                ___crt_xt_start__ = .
+ *(SORT_BY_NAME(.CRT$XT*))
+                0x00000001800255a0                ___crt_xt_end__ = .
+                0x00000001800255a0                ___crt_xd_start__ = .
+ *(SORT_BY_NAME(.CRT$XD*))
+                0x00000001800255a0                ___crt_xd_end__ = .
+                0x0000000180025580                ___RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x0000000180025580                __RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x0000000180025580                ___RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+                0x0000000180025580                __RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+
+.eh_frame
+ *(.eh_frame*)
+
+.pdata          0x0000000180026000      0xe00
+ *(.pdata*)
+ .pdata         0x0000000180026000       0x18 C:\GitHub\BlockyOS\compile\cache\c.RNG.o
+ .pdata         0x0000000180026018       0x3c C:\GitHub\BlockyOS\compile\cache\c.GDT.o
+ .pdata         0x0000000180026054       0x90 C:\GitHub\BlockyOS\compile\cache\c.paging.o
+ .pdata         0x00000001800260e4       0xfc C:\GitHub\BlockyOS\compile\cache\c.SSE.o
+ .pdata         0x00000001800261e0       0x3c C:\GitHub\BlockyOS\compile\cache\c.memory.o
+ .pdata         0x000000018002621c       0x84 C:\GitHub\BlockyOS\compile\cache\c.string.o
+ .pdata         0x00000001800262a0       0x90 C:\GitHub\BlockyOS\compile\cache\c.palloc.o
+ .pdata         0x0000000180026330       0x3c C:\GitHub\BlockyOS\compile\cache\c.palloc(1).o
+ .pdata         0x000000018002636c       0xfc C:\GitHub\BlockyOS\compile\cache\c.mmalloc.o
+ .pdata         0x0000000180026468      0x168 C:\GitHub\BlockyOS\compile\cache\c.math.o
+ .pdata         0x00000001800265d0      0x150 C:\GitHub\BlockyOS\compile\cache\c.ISR.o
+ .pdata         0x0000000180026720       0x30 C:\GitHub\BlockyOS\compile\cache\c.ACPI.o
+ .pdata         0x0000000180026750        0xc C:\GitHub\BlockyOS\compile\cache\c.APIC.o
+ .pdata         0x000000018002675c       0x90 C:\GitHub\BlockyOS\compile\cache\c.IOAPIC.o
+ .pdata         0x00000001800267ec       0x30 C:\GitHub\BlockyOS\compile\cache\c.LocalAPIC.o
+ .pdata         0x000000018002681c       0x30 C:\GitHub\BlockyOS\compile\cache\c.LocalAPICTimer.o
+ .pdata         0x000000018002684c       0x78 C:\GitHub\BlockyOS\compile\cache\c.hardware.o
+ .pdata         0x00000001800268c4       0xd8 C:\GitHub\BlockyOS\compile\cache\c.blake2b-ref.o
+ .pdata         0x000000018002699c       0x78 C:\GitHub\BlockyOS\compile\cache\c.blake2bp-ref.o
+ .pdata         0x0000000180026a14       0xcc C:\GitHub\BlockyOS\compile\cache\c.blake2s-ref.o
+ .pdata         0x0000000180026ae0       0x84 C:\GitHub\BlockyOS\compile\cache\c.blake2sp-ref.o
+ .pdata         0x0000000180026b64       0x60 C:\GitHub\BlockyOS\compile\cache\c.blake2xb-ref.o
+ .pdata         0x0000000180026bc4       0x6c C:\GitHub\BlockyOS\compile\cache\c.blake2xs-ref.o
+ .pdata         0x0000000180026c30       0x9c C:\GitHub\BlockyOS\compile\cache\c.PCIe.o
+
+.xdata          0x0000000180027000     0x1000
+ *(.xdata*)
+ .xdata         0x0000000180027000       0x68 C:\GitHub\BlockyOS\compile\cache\c.RNG.o
+ .xdata         0x0000000180027068       0xe0 C:\GitHub\BlockyOS\compile\cache\c.GDT.o
+ .xdata         0x0000000180027148      0x138 C:\GitHub\BlockyOS\compile\cache\c.paging.o
+ .xdata         0x0000000180027280      0x418 C:\GitHub\BlockyOS\compile\cache\c.SSE.o
+ .xdata         0x0000000180027698       0x28 C:\GitHub\BlockyOS\compile\cache\c.memory.o
+ .xdata         0x00000001800276c0       0x50 C:\GitHub\BlockyOS\compile\cache\c.string.o
+ .xdata         0x0000000180027710       0xc4 C:\GitHub\BlockyOS\compile\cache\c.palloc.o
+ .xdata         0x00000001800277d4       0x2c C:\GitHub\BlockyOS\compile\cache\c.palloc(1).o
+ .xdata         0x0000000180027800       0xa4 C:\GitHub\BlockyOS\compile\cache\c.mmalloc.o
+ .xdata         0x00000001800278a4       0xdc C:\GitHub\BlockyOS\compile\cache\c.math.o
+ .xdata         0x0000000180027980      0x10c C:\GitHub\BlockyOS\compile\cache\c.ISR.o
+ .xdata         0x0000000180027a8c       0x1c C:\GitHub\BlockyOS\compile\cache\c.ACPI.o
+ .xdata         0x0000000180027aa8        0x8 C:\GitHub\BlockyOS\compile\cache\c.APIC.o
+ .xdata         0x0000000180027ab0       0x60 C:\GitHub\BlockyOS\compile\cache\c.IOAPIC.o
+ .xdata         0x0000000180027b10       0x20 C:\GitHub\BlockyOS\compile\cache\c.LocalAPIC.o
+ .xdata         0x0000000180027b30       0x18 C:\GitHub\BlockyOS\compile\cache\c.LocalAPICTimer.o
+ .xdata         0x0000000180027b48       0xa4 C:\GitHub\BlockyOS\compile\cache\c.hardware.o
+ .xdata         0x0000000180027bec       0x80 C:\GitHub\BlockyOS\compile\cache\c.blake2b-ref.o
+ .xdata         0x0000000180027c6c       0x50 C:\GitHub\BlockyOS\compile\cache\c.blake2bp-ref.o
+ .xdata         0x0000000180027cbc       0x78 C:\GitHub\BlockyOS\compile\cache\c.blake2s-ref.o
+ .xdata         0x0000000180027d34       0x58 C:\GitHub\BlockyOS\compile\cache\c.blake2sp-ref.o
+ .xdata         0x0000000180027d8c       0x40 C:\GitHub\BlockyOS\compile\cache\c.blake2xb-ref.o
+ .xdata         0x0000000180027dcc       0x48 C:\GitHub\BlockyOS\compile\cache\c.blake2xs-ref.o
+ .xdata         0x0000000180027e14       0x68 C:\GitHub\BlockyOS\compile\cache\c.PCIe.o
+
+.bss            0x0000000180028000     0x2b50
+                0x0000000180028000                __bss_start__ = .
+ *(.bss)
+ .bss           0x0000000180028000        0x0 C:\GitHub\BlockyOS\compile\cache\c.RNG.o
+ .bss           0x0000000180028000        0x0 C:\GitHub\BlockyOS\compile\cache\c.GDT.o
+ .bss           0x0000000180028000        0x0 C:\GitHub\BlockyOS\compile\cache\c.paging.o
+ .bss           0x0000000180028000     0x2100 C:\GitHub\BlockyOS\compile\cache\c.SSE.o
+ .bss           0x000000018002a100       0x10 C:\GitHub\BlockyOS\compile\cache\c.memory.o
+ .bss           0x000000018002a110        0x0 C:\GitHub\BlockyOS\compile\cache\c.string.o
+ .bss           0x000000018002a110       0x10 C:\GitHub\BlockyOS\compile\cache\c.palloc.o
+ .bss           0x000000018002a120        0x0 C:\GitHub\BlockyOS\compile\cache\c.palloc(1).o
+ .bss           0x000000018002a120       0x20 C:\GitHub\BlockyOS\compile\cache\c.mmalloc.o
+ .bss           0x000000018002a140      0x9e0 C:\GitHub\BlockyOS\compile\cache\c.math.o
+                0x000000018002a140                local_precision
+ .bss           0x000000018002ab20        0x0 C:\GitHub\BlockyOS\compile\cache\c.ISR.o
+ .bss           0x000000018002ab20        0x0 C:\GitHub\BlockyOS\compile\cache\c.ACPI.o
+ .bss           0x000000018002ab20        0x0 C:\GitHub\BlockyOS\compile\cache\c.APIC.o
+ .bss           0x000000018002ab20        0x0 C:\GitHub\BlockyOS\compile\cache\c.IOAPIC.o
+ .bss           0x000000018002ab20        0x0 C:\GitHub\BlockyOS\compile\cache\c.LocalAPIC.o
+ .bss           0x000000018002ab20       0x10 C:\GitHub\BlockyOS\compile\cache\c.LocalAPICTimer.o
+ .bss           0x000000018002ab30       0x10 C:\GitHub\BlockyOS\compile\cache\c.hardware.o
+                0x000000018002ab30                pit_ticks
+ .bss           0x000000018002ab40        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2b-ref.o
+ .bss           0x000000018002ab40        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2bp-ref.o
+ .bss           0x000000018002ab40        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2s-ref.o
+ .bss           0x000000018002ab40        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2sp-ref.o
+ .bss           0x000000018002ab40        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2xb-ref.o
+ .bss           0x000000018002ab40        0x0 C:\GitHub\BlockyOS\compile\cache\c.blake2xs-ref.o
+ .bss           0x000000018002ab40       0x10 C:\GitHub\BlockyOS\compile\cache\c.PCIe.o
+ *(COMMON)
+                0x000000018002ab50                __bss_end__ = .
+
+.edata          0x000000018002b000     0x1000
+ *(.edata)
+ .edata         0x000000018002b000      0xe14 dll stuff
+
+/DISCARD/
+ *(.debug$S)
+ *(.debug$T)
+ *(.debug$F)
+ *(.drectve)
+ *(.note.GNU-stack)
+ *(.gnu.lto_*)
+ *(.gnu_object_only)
+
+.idata          0x000000018002c000      0x200
+ SORT_BY_NAME(*)(.idata$2)
+ SORT_BY_NAME(*)(.idata$3)
+                0x000000018002c000        0x4 LONG 0x0
+                0x000000018002c004        0x4 LONG 0x0
+                0x000000018002c008        0x4 LONG 0x0
+                0x000000018002c00c        0x4 LONG 0x0
+                0x000000018002c010        0x4 LONG 0x0
+                0x000000018002c018                . = ALIGN (0x8)
+ *fill*         0x000000018002c014        0x4 
+ SORT_BY_NAME(*)(.idata$4)
+                0x000000018002c018                __IAT_start__ = .
+ SORT_BY_NAME(*)(.idata$5)
+                0x000000018002c018                __IAT_end__ = .
+ SORT_BY_NAME(*)(.idata$6)
+ SORT_BY_NAME(*)(.idata$7)
+
+.didat
+ SORT_BY_NAME(*)(.didat$5)
+
+.tls            0x000000018002d000        0x0
+                0x000000018002d000                ___tls_start__ = .
+ *(.tls$AAA)
+ *(.tls)
+ *(.tls$)
+ *(SORT_BY_NAME(.tls$*))
+ *(.tls$ZZZ)
+                0x000000018002d000                ___tls_end__ = .
+
+.endjunk        0x000000018002d000        0x0
+                [!provide]                        PROVIDE (end = .)
+                [!provide]                        PROVIDE (_end = .)
+                0x000000018002d000                __end__ = .
+
+.rsrc
+ *(.rsrc)
+ *(.rsrc$*)
+
+.reloc          0x000000018002d000      0x600
+ *(.reloc)
+ .reloc         0x000000018002d000      0x43c dll stuff
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.zdebug_aranges
+ *(.zdebug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.zdebug_pubnames
+ *(.zdebug_pubnames)
+
+.debug_info
+ *(.debug_info .gnu.linkonce.wi.*)
+
+.zdebug_info
+ *(.zdebug_info .zdebug.gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.zdebug_abbrev
+ *(.zdebug_abbrev)
+
+.debug_line
+ *(.debug_line)
+
+.zdebug_line
+ *(.zdebug_line)
+
+.debug_frame
+ *(.debug_frame*)
+
+.zdebug_frame
+ *(.zdebug_frame*)
+
+.debug_str
+ *(.debug_str)
+
+.zdebug_str
+ *(.zdebug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.zdebug_loc
+ *(.zdebug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.zdebug_macinfo
+ *(.zdebug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.zdebug_weaknames
+ *(.zdebug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.zdebug_funcnames
+ *(.zdebug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.zdebug_typenames
+ *(.zdebug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.zdebug_varnames
+ *(.zdebug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.zdebug_pubtypes
+ *(.zdebug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.zdebug_ranges
+ *(.zdebug_ranges)
+
+.debug_types
+ *(.debug_types .gnu.linkonce.wt.*)
+
+.zdebug_types
+ *(.zdebug_types .gnu.linkonce.wt.*)
+
+.debug_addr
+ *(.debug_addr)
+
+.zdebug_addr
+ *(.zdebug_addr)
+
+.debug_line_str
+ *(.debug_line_str)
+
+.zdebug_line_str
+ *(.zdebug_line_str)
+
+.debug_loclists
+ *(.debug_loclists)
+
+.zdebug_loclists
+ *(.zdebug_loclists)
+
+.debug_macro
+ *(.debug_macro)
+
+.zdebug_macro
+ *(.zdebug_macro)
+
+.debug_names
+ *(.debug_names)
+
+.zdebug_names
+ *(.zdebug_names)
+
+.debug_rnglists
+ *(.debug_rnglists)
+
+.zdebug_rnglists
+ *(.zdebug_rnglists)
+
+.debug_str_offsets
+ *(.debug_str_offsets)
+
+.zdebug_str_offsets
+ *(.zdebug_str_offsets)
+
+.debug_sup
+ *(.debug_sup)
+
+.debug_gdb_scripts
+ *(.debug_gdb_scripts)
+
+.zdebug_gdb_scripts
+ *(.zdebug_gdb_scripts)
+OUTPUT(C:/GitHub/BlockyOS/Build/Build-nodate/objs/libcrt.dll pei-x86-64)
+LOAD dll stuff

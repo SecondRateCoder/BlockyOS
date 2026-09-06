@@ -4,6 +4,7 @@ param(
 	[string]$LogFile,
 	[switch]$Verbose,
 	[switch]$IsDrive,
+	[switch]$Validate,
 	[switch]$Help
 )
 
@@ -22,20 +23,242 @@ function Compute-CRC32{
 	param([byte[]]$Data)
 
 	$table = @(0..255 | ForEach-Object{
-		$crc = $_
+		[uint32]$crc = [uint32]$_
 		for($i=0; $i -lt 8; $i++){
-			if($crc -band 1){$crc = (0xEDB88320 -bxor ($crc -shr 1))
-			}else{$crc = ($crc -shr 1)}
+			if($crc -band 1){ $crc = [uint32](0xEDB88320 -bxor ($crc -shr 1)) }
+			else { $crc = [uint32]($crc -shr 1) }
 		}
 		$crc
 	})
 
-	$crc32 = 0xFFFFFFFF
+	[uint32]$crc32 = 0xFFFFFFFFUL
 	foreach($b in $Data){
-		$crc32 = ($crc32 -shr 8) -bxor $table[($crc32 -bxor $b) -band 0xFF]
+		$crc32 = [uint32](($crc32 -shr 8) -bxor $table[([uint32]($crc32 -bxor $b) -band 0xFF)])
 	}
 
-	return (-bnot $crc32) -band 0xFFFFFFFF
+    return [uint32](-bnot $crc32)
+}
+    function Read-Bytes {
+    param(
+        [System.IO.FileStream]$Stream,
+        [int64]$Offset,
+        [int]$Count
+    )
+
+    $buf = New-Object byte[] $Count
+    $Stream.Seek($Offset, 'Begin') | Out-Null
+    $read = $Stream.Read($buf, 0, $Count)
+    if ($read -ne $Count) {
+        throw "Short read at offset $Offset (wanted $Count, got $read)"
+    }
+    return $buf
+}
+
+function Get-UInt32LE {
+    param([byte[]]$Bytes, [int]$Offset)
+    return [BitConverter]::ToUInt32($Bytes, $Offset)
+}
+
+function Get-UInt64LE {
+    param([byte[]]$Bytes, [int]$Offset)
+    return [BitConverter]::ToUInt64($Bytes, $Offset)
+}
+
+function Format-GuidLE {
+    param([byte[]]$Bytes, [int]$Offset)
+
+    $d1 = [BitConverter]::ToUInt32($Bytes, $Offset)
+    $d2 = [BitConverter]::ToUInt16($Bytes, $Offset + 4)
+    $d3 = [BitConverter]::ToUInt16($Bytes, $Offset + 6)
+    $d4 = $Bytes[($Offset + 8) .. ($Offset + 15)]
+
+    $guidBytes = [byte[]](
+        [BitConverter]::GetBytes($d1) +
+        [BitConverter]::GetBytes($d2) +
+        [BitConverter]::GetBytes($d3) +
+        $d4
+    )
+
+    return [Guid]::new($guidBytes)
+}
+
+function Validate-MBR {
+    param(
+        [byte[]]$MBR
+    )
+
+    $okSig = ($MBR[510] -eq 0x55 -and $MBR[511] -eq 0xAA)
+    $entries = @()
+    for ($i = 0; $i -lt 4; $i++) {
+        $start = 446 + ($i * 16)
+        $end = $start + 15
+        $e = $MBR[$start..$end]
+        $type = [byte]$e[4]
+        $lbaStart = [BitConverter]::ToUInt32($e, 8)
+        $sectors  = [BitConverter]::ToUInt32($e, 12)
+        $entries += [pscustomobject]@{
+            Index = $i
+            Type = $type
+            LbaStart = $lbaStart
+            Sectors = $sectors
+        }
+    }
+
+    $protective = $entries | Where-Object { $_.Type -eq 0xEE }
+
+    return [pscustomobject]@{
+        SignatureOK     = $okSig
+        ProtectiveFound = ($null -ne $protective)
+        Partitions      = $entries
+    }
+}
+
+function Parse-GptHeader {
+    param(
+        [byte[]]$Sector
+    )
+
+    $sig = [System.Text.Encoding]::ASCII.GetString($Sector, 0, 8)
+    $rev = Get-UInt32LE $Sector 8
+    $hdrSize = Get-UInt32LE $Sector 12
+    $hdrCRC  = Get-UInt32LE $Sector 16
+    $currentLBA = Get-UInt64LE $Sector 24
+    $backupLBA  = Get-UInt64LE $Sector 32
+    $firstUsable = Get-UInt64LE $Sector 40
+    $lastUsable  = Get-UInt64LE $Sector 48
+    $diskGuid    = Format-GuidLE $Sector 56
+    $partEntriesLBA = Get-UInt64LE $Sector 72
+    $numEntries     = Get-UInt32LE $Sector 80
+    $entrySize      = Get-UInt32LE $Sector 84
+    $entriesCRC     = Get-UInt32LE $Sector 88
+
+    [pscustomobject]@{
+        Signature      = $sig
+        Revision       = $rev
+        HeaderSize     = $hdrSize
+        HeaderCRC32    = $hdrCRC
+        CurrentLBA     = $currentLBA
+        BackupLBA      = $backupLBA
+        FirstUsableLBA = $firstUsable
+        LastUsableLBA  = $lastUsable
+        DiskGuid       = $diskGuid
+        PartEntriesLBA = $partEntriesLBA
+        NumEntries     = $numEntries
+        EntrySize      = $entrySize
+        EntriesCRC32   = $entriesCRC
+        Raw            = $Sector
+    }
+}
+
+function Validate-GptHeader {
+    param(
+        [pscustomobject]$Header
+    )
+
+    $sigOK = ($Header.Signature -eq 'EFI PART')
+    $sizeOK = ($Header.HeaderSize -ge 92 -and $Header.HeaderSize -le 512)
+
+    $raw = $Header.Raw.Clone()
+    $raw[16] = 0
+    $raw[17] = 0
+    $raw[18] = 0
+    $raw[19] = 0
+
+    $calc = [Uint32](Compute-CRC32 $raw[0..($Header.HeaderSize - 1)])
+
+    [pscustomobject]@{
+        SignatureOK = $sigOK
+        SizeOK      = $sizeOK
+        CRC32OK     = ($calc -eq $Header.HeaderCRC32)
+        CalcCRC32   = $calc
+    }
+}
+
+function Read-PartitionEntries {
+    param(
+        [System.IO.FileStream]$Stream,
+        [pscustomobject]$Header,
+        [int]$SectorSize
+    )
+
+    $totalBytes = $Header.NumEntries * $Header.EntrySize
+    $offset = $Header.PartEntriesLBA * $SectorSize
+    return Read-Bytes -Stream $Stream -Offset $offset -Count $totalBytes
+}
+
+function Validate-PartitionEntries {
+    param(
+        [byte[]]$Entries,
+        [pscustomobject]$Header
+    )
+
+    $calc = [Uint32](Compute-CRC32 $Entries)
+    $crcOK = ($calc -eq $Header.EntriesCRC32)
+
+    $list = @()
+    for ($i = 0; $i -lt $Header.NumEntries; $i++) {
+        $off = $i * $Header.EntrySize
+        $typeGuid = Format-GuidLE $Entries $off
+        $uniqGuid = Format-GuidLE $Entries ($off + 16)
+        $firstLBA = Get-UInt64LE $Entries ($off + 32)
+        $lastLBA  = Get-UInt64LE $Entries ($off + 40)
+        $attrs    = Get-UInt64LE $Entries ($off + 48)
+        $nameBytes = $Entries[($off + 56)..($off + $Header.EntrySize - 1)]
+        $name = -join ($nameBytes | Where-Object { $_ -ne 0 } | ForEach-Object {[char]$_})
+
+        if ($typeGuid -ne [Guid]::Empty) {
+            $list += [pscustomobject]@{
+                Index      = $i
+                TypeGuid   = $typeGuid
+                UniqueGuid = $uniqGuid
+                FirstLBA   = $firstLBA
+                LastLBA    = $lastLBA
+                Attributes = $attrs
+                Name       = $name
+            }
+        }
+    }
+
+    [pscustomobject]@{
+        CRC32OK   = $crcOK
+        CalcCRC32 = $calc
+        Entries   = $list
+    }
+}
+
+function Validate-GptImage {
+    param(
+        [string]$ImagePath,
+        [int]$SectorSize = 512
+    )
+
+    $fs = [System.IO.File]::Open($ImagePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+    try {
+        $result = [ordered]@{}
+        $result.MBR = Validate-MBR (Read-Bytes -Stream $fs -Offset 0 -Count $SectorSize)
+
+        $primarySector = Read-Bytes -Stream $fs -Offset $SectorSize -Count $SectorSize
+        $result.PrimaryHeader = Parse-GptHeader $primarySector
+        $result.PrimaryHeaderValidation = Validate-GptHeader $result.PrimaryHeader
+        $result.PrimaryEntries = Read-PartitionEntries -Stream $fs -Header $result.PrimaryHeader -SectorSize $SectorSize
+        $result.PrimaryEntriesValidation = Validate-PartitionEntries -Entries $result.PrimaryEntries -Header $result.PrimaryHeader
+
+        $backupSector = Read-Bytes -Stream $fs -Offset ($result.PrimaryHeader.BackupLBA * $SectorSize) -Count $SectorSize
+        $result.BackupHeader = Parse-GptHeader $backupSector
+        $result.BackupHeaderValidation = Validate-GptHeader $result.BackupHeader
+        $result.BackupEntries = Read-PartitionEntries -Stream $fs -Header $result.BackupHeader -SectorSize $SectorSize
+        $result.BackupEntriesValidation = Validate-PartitionEntries -Entries $result.BackupEntries -Header $result.BackupHeader
+
+        $result.Passed = $result.MBR.SignatureOK -and $result.MBR.ProtectiveFound -and
+            $result.PrimaryHeaderValidation.SignatureOK -and $result.PrimaryHeaderValidation.SizeOK -and $result.PrimaryHeaderValidation.CRC32OK -and
+            $result.PrimaryEntriesValidation.CRC32OK -and
+            $result.BackupHeaderValidation.SignatureOK -and $result.BackupHeaderValidation.SizeOK -and $result.BackupHeaderValidation.CRC32OK -and
+            $result.BackupEntriesValidation.CRC32OK
+
+        return $result
+    } finally {
+        $fs.Dispose()
+    }
 }
 
 # ============================================================
@@ -90,7 +313,8 @@ PARAMETERS
 	-IsDrive               	Write directly to a real drive (DANGEROUS)
 	-LogFile               	Log output
 	-Verbose               	Verbose logging
-	-Help                  	Show this help
+    -Validate               Validate an existing GPT image or validate generated GPT after building
+    -Help                  	Show this help
 	-ProtectiveMBR         	File Path to a Protective MBR Binary
 
 "@
@@ -125,11 +349,16 @@ function New-ProtectiveMBRFromJson{
 
     if(-not $parts -or $parts.Count -eq 0){throw "JSON contains no partitions"}
 
-    # Compute total disk size if not provided
-    if(-not $DiskSizeBytes){$DiskSizeBytes = ($parts | Measure-Object -Property size -Sum).Sum}
+    # Compute total disk size if not provided or if explicitly zero
+    if ($null -eq $DiskSizeBytes -or $DiskSizeBytes -eq 0) {
+        $DiskSizeBytes = ($parts | Measure-Object -Property size -Sum).Sum
+    }
 
     $sectorSize = 512
-    $totalSectors = [uint32]([math]::Floor($DiskSizeBytes / $sectorSize))
+    if ($DiskSizeBytes -lt $sectorSize) {
+        throw "Disk size must be at least $sectorSize bytes to generate a protective MBR."
+    }
+    $totalSectors = [uint64]([math]::Floor($DiskSizeBytes / $sectorSize))
 
     # Create empty 512-byte MBR
     $mbr = New-Object byte[] 512
@@ -155,16 +384,21 @@ function New-ProtectiveMBRFromJson{
         # Status
         $Buffer[$Offset + 0] = $Status
 
-        $Buffer[$Offset + 1] = [byte]($StartLBA / (255 * 63))
-        $Buffer[$Offset + 2] = [byte](($StartLBA / 255) % 63)
-        $Buffer[$Offset + 3] = [byte](($StartLBA % 255) + 1)
+        $startCHS = LBA-2-CHS $StartLBA
+        $endCHS   = LBA-2-CHS ($StartLBA + $SectorCount - 1)
+
+        # Start CHS
+        $Buffer[$Offset + 1] = [byte]$startCHS.cylinder
+        $Buffer[$Offset + 2] = [byte]$startCHS.head
+        $Buffer[$Offset + 3] = [byte]$startCHS.sector
 
         # Type
         $Buffer[$Offset + 4] = [byte]$Type
-        $CHS = LBA-2-CHS $StartLBA
-        $Buffer[$Offset + 5] = [byte]$CHS.cylinder
-        $Buffer[$Offset + 6] = [byte]$CHS.head
-        $Buffer[$Offset + 7] = [byte]$CHS.sector
+
+        # End CHS
+        $Buffer[$Offset + 5] = [byte]$endCHS.cylinder
+        $Buffer[$Offset + 6] = [byte]$endCHS.head
+        $Buffer[$Offset + 7] = [byte]$endCHS.sector
 
         # LBA start
         [BitConverter]::GetBytes($StartLBA).CopyTo($Buffer, $Offset + 8)
@@ -173,45 +407,13 @@ function New-ProtectiveMBRFromJson{
         [BitConverter]::GetBytes($SectorCount).CopyTo($Buffer, $Offset + 12)
     }
 
-    # Compute LBA positions for each partition
-    $currentLBA = 2048  # Standard alignment
-    $computed = @()
-
-    foreach($p in $parts){
-        $sectors = [uint32]([math]::Ceiling($p.size / $sectorSize))
-        $computed += [PSCustomObject]@{
-            name   = $p.name
-            size   = $p.size
-            start  = $currentLBA
-            end    = $currentLBA + $sectors - 1
-            sectors= $sectors
-            type   = $p.type
-        }
-        $currentLBA += $sectors
+    $startLBA = 1
+    if ($totalSectors -le 1) {
+        throw "Disk size must be large enough to contain at least one usable sector for the protective MBR entry."
     }
+    $sectorCount = if ($totalSectors -gt 0xFFFFFFFFu) { [uint64]0xFFFFFFFFu } else { [uint64]($totalSectors - 1) }
 
-    # If more than 4 partitions → last entry spans all mapped space
-    if($computed.Count -gt 4){
-        $first = $computed[0]
-        $last  = $computed[-1]
-
-        $computed = $computed[0..2] + @(
-            [PSCustomObject]@{
-                name    = "MBR-SPAN"
-                size    = $DiskSizeBytes
-                start   = $first.start
-                end     = $last.end
-                sectors = [uint32]($last.end - $first.start + 1)
-            }
-        )
-    }
-
-    # Write up to 4 entries
-    for($i = 0; $i -lt [math]::Min(4, $computed.Count); $i++){
-        # $p = $computed[$i]
-        $type = if($computed[$i].type -contains 'efi-boot'){0x44}else{0x00}
-        Write-MbrEntry -Buffer $mbr -Offset ($entryOffset + (16 * $i)) -Status 0x00 -Type $type -StartLBA ([uint32]($computed[$i]).start) -SectorCount ([uint32]($computed[$i]).sectors)
-    }
+    Write-MbrEntry -Buffer $mbr -Offset $entryOffset -Status 0x00 -Type 0xEE -StartLBA $startLBA -SectorCount $sectorCount
 
     # Boot signature
     $mbr[510] = [UInt16]0x55
@@ -279,16 +481,47 @@ if($LogFile){"=== GPT/MBR Driver Session ===" | Out-File -FilePath $LogFile -For
 
 Log "Driver started"
 
+$sectorSize = 512
+
 # ============================================================
 # BASIC PARAM VALIDATION
 # ============================================================
-if(-not $LayoutJson){
-    Log "LayoutJson is required" "ERROR"
+if(-not $OutputImage){
+    Log "OutputImage is required" "ERROR"
     exit 1
 }
 
-if(-not $OutputImage){
-    Log "OutputImage is required" "ERROR"
+if ($Validate -and -not $LayoutJson) {
+    if (-not (Test-Path $OutputImage)) {
+        Log "Output image not found for validation: $OutputImage" "ERROR"
+        exit 1
+    }
+
+    $validateResult = Validate-GptImage -ImagePath $OutputImage -SectorSize $sectorSize
+
+    Write-Host "Validation Results:"
+    Write-Host "  MBR Signature OK     : $($validateResult.MBR.SignatureOK)"
+    Write-Host "  Protective MBR Found : $($validateResult.MBR.ProtectiveFound)"
+    Write-Host "  Primary GPT Sig OK   : $($validateResult.PrimaryHeaderValidation.SignatureOK)"
+    Write-Host "  Primary GPT Size OK  : $($validateResult.PrimaryHeaderValidation.SizeOK)"
+    Write-Host "  Primary GPT CRC OK   : $($validateResult.PrimaryHeaderValidation.CRC32OK)"
+    Write-Host "  Primary Entries CRC  : $($validateResult.PrimaryEntriesValidation.CRC32OK)"
+    Write-Host "  Backup GPT Sig OK    : $($validateResult.BackupHeaderValidation.SignatureOK)"
+    Write-Host "  Backup GPT Size OK   : $($validateResult.BackupHeaderValidation.SizeOK)"
+    Write-Host "  Backup GPT CRC OK    : $($validateResult.BackupHeaderValidation.CRC32OK)"
+    Write-Host "  Backup Entries CRC   : $($validateResult.BackupEntriesValidation.CRC32OK)"
+
+    if ($validateResult.Passed) {
+        Write-Host "GPT validation succeeded."
+        exit 0
+    }
+
+    Write-Host "GPT validation failed."
+    exit 1
+}
+
+if (-not $LayoutJson) {
+    Log "LayoutJson is required" "ERROR"
     exit 1
 }
 
@@ -362,13 +595,50 @@ function Normalize-Give{
 # ============================================================
 # DISK LAYOUT COMPUTATION (INITIAL)
 # ============================================================
-$diskGuid = [Guid]$layout.disk.type
+if(-not $layout.disk -or -not $layout.disk.type){
+    Log "disk.type GUID is required in layout JSON" "ERROR"
+    exit 1
+}
+
+try{
+    $diskGuid = [Guid]$layout.disk.type
+}catch{
+    Log "Invalid disk.type GUID: $($_.Exception.Message)" "ERROR"
+    exit 1
+}
 
 $sectorSize     = 512
 $firstUsableLBA = 2048
 $currentLBA     = $firstUsableLBA
 
 foreach($p in $parts){
+    if(-not $p.type){
+        Log "Partition '$($p.name)' is missing type GUID" "ERROR"
+        exit 1
+    }
+
+    try{
+        $p.type = ([Guid]$p.type).ToString()
+    }catch{
+        Log "Partition '$($p.name)' has invalid type GUID: $($p.type)" "ERROR"
+        exit 1
+    }
+
+    if(-not $p.unique){
+        $p.unique = [Guid]::NewGuid().ToString()
+    }else{
+        try{
+            $p.unique = ([Guid]$p.unique).ToString()
+        }catch{
+            $p.unique = [Guid]::NewGuid().ToString()
+        }
+    }
+
+    if(-not $p.size -or $p.size -le 0){
+        Log "Partition '$($p.name)' has invalid size: $($p.size)" "ERROR"
+        exit 1
+    }
+
     $p.give            = Normalize-Give $p.give
     $p.attributesValue = Get-GptAttributeValue $p.attributes
 
@@ -634,7 +904,7 @@ $primaryEntriesLBA = 2
 Log "Writing primary GPT header and entries"
 # Generate GPT Entries
 $primaryEntries = Write-GptEntries -LBA $primaryEntriesLBA -Parts $parts -EntrySize $entrySize -SectorSize $sectorSize
-$entriesCRC = [Int32]((Compute-CRC32 $primaryEntries) -band 0xFFFFFFFF)
+$entriesCRC = [Uint32](Compute-CRC32 $primaryEntries)
 
 $primaryHdr = Write-GptHeader `
     -HeaderLBA $primaryHeaderLBA `
@@ -656,7 +926,7 @@ $hdrCopy[16] = 0
 $hdrCopy[17] = 0
 $hdrCopy[18] = 0
 $hdrCopy[19] = 0
-$headerCRC = Compute-CRC32 $hdrCopy[0..91]
+$headerCRC = [Uint32](Compute-CRC32 $hdrCopy[0..91])
 
 [BitConverter]::GetBytes($headerCRC).CopyTo($primaryHdr,16)
 
@@ -672,7 +942,7 @@ Log "Writing backup GPT header and entries"
 # $backupEntries = Write-GptEntries -LBA $backupEntriesLBA -Parts $parts -EntrySize $entrySize -SectorSize $sectorSize
 $backupEntries = Write-GptEntries -LBA $backupEntriesLBA -Parts $parts -EntrySize $entrySize -SectorSize $sectorSize
 
-$backupEntriesCRC = [Int32]((Compute-CRC32 $backupEntries) -band 0xFFFFFFFF)
+$backupEntriesCRC = [Uint32](Compute-CRC32 $backupEntries)
 
 $backupHdr = Write-GptHeader `
     -HeaderLBA $backupHeaderLBA `
@@ -686,7 +956,7 @@ $backupHdr = Write-GptHeader `
     -EntriesCRC32 $backupEntriesCRC `
     -HeaderCRC32 0
 
-$backupHeaderCRC = [Int32]((Compute-CRC32 $backupHdr[0..91]) -band 0xFFFFFFFF)
+$backupHeaderCRC = [Uint32](Compute-CRC32 $backupHdr[0..91])
 [BitConverter]::GetBytes($backupHeaderCRC).CopyTo($backupHdr,16)
 
 Seek-Bytes ($backupHeaderLBA * $sectorSize)
@@ -697,5 +967,32 @@ $fs.Write([byte[]]$backupHdr)
 # ============================================================
 $fs.BaseStream.Close()
 
+if ($Validate) {
+    Write-Host "Validating written GPT image..."
+    $validateResult = Validate-GptImage -ImagePath $OutputImage -SectorSize $sectorSize
+    Write-Host "Validation Results:"
+    Write-Host "  MBR Signature OK     : $($validateResult.MBR.SignatureOK)"
+    Write-Host "  Protective MBR Found : $($validateResult.MBR.ProtectiveFound)"
+    Write-Host "  Primary GPT Sig OK   : $($validateResult.PrimaryHeaderValidation.SignatureOK)"
+    Write-Host "  Primary GPT Size OK  : $($validateResult.PrimaryHeaderValidation.SizeOK)"
+    Write-Host "  Primary GPT CRC OK   : $($validateResult.PrimaryHeaderValidation.CRC32OK)"
+    Write-Host "  Primary Entries CRC  : $($validateResult.PrimaryEntriesValidation.CRC32OK)"
+    Write-Host "  Backup GPT Sig OK    : $($validateResult.BackupHeaderValidation.SignatureOK)"
+    Write-Host "  Backup GPT Size OK   : $($validateResult.BackupHeaderValidation.SizeOK)"
+    Write-Host "  Backup GPT CRC OK    : $($validateResult.BackupHeaderValidation.CRC32OK)"
+    Write-Host "  Backup Entries CRC   : $($validateResult.BackupEntriesValidation.CRC32OK)"
+
+    if ($validateResult.Passed) {
+        Write-Host "GPT validation succeeded."
+        Log "GPT validation succeeded." "INFO"
+        exit 0
+    }
+
+    Write-Host "GPT validation failed."
+    Log "GPT validation failed." "ERROR"
+    exit 1
+}
+
 Log "Disk build complete"
 Write-Host "Disk successfully built → $OutputImage"
+exit 0

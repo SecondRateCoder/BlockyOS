@@ -147,3 +147,55 @@ enumdef(uint16_t, PeRelocationTypes){
     // PE_REL_RESERVED4       = 14, 
     // PE_REL_RESERVED5       = 15
 };
+
+enumdef(uint32_t, PeResourceType){
+	RT_CURSOR = 1, RT_BITMAP = 2, RT_ICON = 3,RT_MENU = 4, 
+	RT_DIALOG = 5, RT_STRING = 6, RT_FONTDIR = 7, RT_FONT = 8, 
+	RT_ACCELERATOR = 9, RT_RCDATA = 10, RT_MESSAGETABLE = 11, 
+	RT_GROUP_CURSOR = RT_CURSOR + 11, RT_GROUP_ICON = RT_ICON + 11, 
+	RT_VERSION = 16, RT_DLGINCLUDE = 17, RT_PLUGPLAY = 19, RT_VXD = 20, 
+	RT_ANICURSOR = 21, RT_ANIICON = 22, RT_HTML = 23, RT_MANIFEST = 24
+};
+
+enumdef(uint8_t, PeUnwindOpCode){
+	/* Push a 64-bit integer nonvolatile register. OpInfo = reg index */
+	UWOP_PUSH_NONVOL     = 0,  
+	/* Allocate large area on stack. OpInfo = 0 (16-bit) or 1 (32-bit) */
+	UWOP_ALLOC_LARGE     = 1,  
+	/* Allocate small area on stack. Size = (OpInfo * 8) + 8 */
+	UWOP_ALLOC_SMALL     = 2,  
+	/* Establish frame pointer register. Offsets from FP register */
+	UWOP_SET_FPREG       = 3,  
+	/* Save nonvolatile register on stack via MOV. Followed by 16-bit offset */
+	UWOP_SAVE_NONVOL     = 4,  
+	/* Save nonvolatile register on stack with 32-bit offset */
+	UWOP_SAVE_NONVOL_FAR = 5,  
+	/* Epilog description code (Version 2) */
+	UWOP_EPILOG          = 6,  
+	/* Reserved / Unused */
+	UWOP_SPARE           = 7,  
+	/* Save 128-bit XMM register on stack. Followed by 16-bit offset */
+	UWOP_SAVE_XMM128     = 8,  
+	/* Save 128-bit XMM register on stack with 32-bit offset */
+	UWOP_SAVE_XMM128_FAR = 9,  
+	/* Push machine frame (interrupt/exception context) */
+	UWOP_PUSH_MACHFRAME  = 10  
+};
+enumdef(uint8_t, PeUnwindFlags){
+	/* Function has no exception handler */
+	UNW_FLAG_NHANDLER  = 0x00, 
+	/* Function has an exception handler (__try / __except) */
+	UNW_FLAG_EHANDLER  = 0x01, 
+	/* Function has a termination handler (__try / __finally) */
+	UNW_FLAG_UHANDLER  = 0x02, 
+	/* This UNWIND_INFO structure is chained to another RUNTIME_FUNCTION */
+	UNW_FLAG_CHAININFO = 0x04  
+};
+enumdef(uint8_t, PeUnwindRegister){
+	UNW_REG_RAX = 0, UNW_REG_RCX = 1, UNW_REG_RDX = 2, UNW_REG_RBX = 3,
+    UNW_REG_RSP = 4, UNW_REG_RBP = 5,
+    UNW_REG_RSI = 6, UNW_REG_RDI = 7,
+    UNW_REG_R8  = 8, UNW_REG_R9  = 9, UNW_REG_R10 = 10,
+    UNW_REG_R11 = 11, UNW_REG_R12 = 12, UNW_REG_R13 = 13,
+    UNW_REG_R14 = 14, UNW_REG_R15 = 15
+};

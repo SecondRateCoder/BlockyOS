@@ -2740,7 +2740,7 @@ static void stbir_overlapping_memcpy( void * dest, void const * src, size_t byte
   static stbir__inline stbir_uint64 STBIR_PROFILE_FUNC()
   {
     stbir_uint32 lo, hi;
-    asm volatile ("rdtsc" : "=a" (lo), "=d" (hi) );
+    __asm__ volatile ("rdtsc" : "=a" (lo), "=d" (hi) );
     return ( ( (stbir_uint64) hi ) << 32 ) | ( (stbir_uint64) lo );
   }
 
@@ -2757,7 +2757,7 @@ static void stbir_overlapping_memcpy( void * dest, void const * src, size_t byte
   static stbir__inline stbir_uint64 STBIR_PROFILE_FUNC()
   {
     stbir_uint64 tsc;
-    asm volatile("mrs %0, cntvct_el0" : "=r" (tsc));
+    __asm__ volatile("mrs %0, cntvct_el0" : "=r" (tsc));
     return tsc;
   }
 

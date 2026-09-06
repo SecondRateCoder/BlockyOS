@@ -122,43 +122,43 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
  *(.gnu.hash)
                 0x0000000000000000                . = ALIGN (0x1000)
 
-.eh_frame       0x0000000000000000     0x3474
+.eh_frame       0x0000000000000000     0x37b4
  *(.eh_frame)
- .eh_frame      0x0000000000000000     0x1900 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
-                                       0x1a48 (size before relaxing)
- .eh_frame      0x0000000000001900       0x40 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
+ .eh_frame      0x0000000000000000     0x1c40 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+                                       0x1db0 (size before relaxing)
+ .eh_frame      0x0000000000001c40       0x40 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
                                          0x58 (size before relaxing)
- .eh_frame      0x0000000000001940       0x90 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
+ .eh_frame      0x0000000000001c80       0x90 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
                                          0xa8 (size before relaxing)
- .eh_frame      0x00000000000019d0       0xd8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
+ .eh_frame      0x0000000000001d10       0xd8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
                                          0xf0 (size before relaxing)
- .eh_frame      0x0000000000001aa8      0x400 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
+ .eh_frame      0x0000000000001de8      0x400 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
                                         0x418 (size before relaxing)
- .eh_frame      0x0000000000001ea8      0x2c0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
+ .eh_frame      0x00000000000021e8      0x2c0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
                                         0x2d8 (size before relaxing)
- .eh_frame      0x0000000000002168       0x90 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
+ .eh_frame      0x00000000000024a8       0x90 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
                                          0xa8 (size before relaxing)
- .eh_frame      0x00000000000021f8      0x150 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
+ .eh_frame      0x0000000000002538      0x150 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
                                         0x168 (size before relaxing)
- .eh_frame      0x0000000000002348       0x18 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
+ .eh_frame      0x0000000000002688       0x18 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
                                          0x30 (size before relaxing)
- .eh_frame      0x0000000000002360      0x3d0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
+ .eh_frame      0x00000000000026a0      0x3d0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
                                         0x3e8 (size before relaxing)
- .eh_frame      0x0000000000002730      0x1e0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
+ .eh_frame      0x0000000000002a70      0x1e0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
                                         0x1f8 (size before relaxing)
- .eh_frame      0x0000000000002910       0x80 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
+ .eh_frame      0x0000000000002c50       0x80 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
                                          0x98 (size before relaxing)
- .eh_frame      0x0000000000002990      0x718 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
+ .eh_frame      0x0000000000002cd0      0x718 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
                                         0x730 (size before relaxing)
- .eh_frame      0x00000000000030a8       0x18 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
+ .eh_frame      0x00000000000033e8       0x18 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
                                          0x30 (size before relaxing)
- .eh_frame      0x00000000000030c0       0xc8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
+ .eh_frame      0x0000000000003400       0xc8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
                                          0xe0 (size before relaxing)
- .eh_frame      0x0000000000003188      0x288 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
+ .eh_frame      0x00000000000034c8      0x288 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
                                         0x2a0 (size before relaxing)
- .eh_frame      0x0000000000003410       0x50 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
+ .eh_frame      0x0000000000003750       0x50 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
                                          0x68 (size before relaxing)
- .eh_frame      0x0000000000003460       0x14 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
+ .eh_frame      0x00000000000037a0       0x14 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
                                          0x30 (size before relaxing)
 
 .eh_frame_hdr
@@ -168,576 +168,596 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
  *(.gcc_except_table*)
                 0x0000000000004000                . = ALIGN (0x1000)
 
-.text           0x0000000000004000    0x20e80
+.text           0x0000000000004000    0x23980
                 0x0000000000004000                _text = .
  *(.text)
- .text          0x0000000000004000    0x19a87 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+ .text          0x0000000000004000    0x1c593 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
                 0x000000000000401f                checkdisk
                 0x00000000000041ed                loadpart
                 0x00000000000044f5                formatpart
-                0x000000000000498e                queryparttablefs
-                0x0000000000004bc1                queryfs
-                0x0000000000004d22                fmount
-                0x0000000000005528                allocatecluster
-                0x00000000000055e3                __ffremove
-                0x000000000000564b                __ffremoveh
-                0x00000000000056c1                __ffremovel
-                0x00000000000056f1                __ffremovelh
-                0x00000000000057da                __fcreate
-                0x0000000000005d72                __faddr
-                0x00000000000061f0                __finit
-                0x00000000000065c3                __ffindh
-                0x00000000000066ae                __ffindhi
-                0x0000000000006783                __ffindi
-                0x00000000000067bb                __ffind
-                0x00000000000067f0                __fread1
-                0x0000000000006982                __fpush1
-                0x0000000000006bea                floadhdir
-                0x0000000000006dcd                fuloaddir
-                0x000000000000703a                __fdirrefresh
-                0x00000000000072a5                floadh
-                0x000000000000739d                fuloadh
-                0x00000000000074ef                __freadinfo
-                0x000000000000758a                __fupdatetstamp
-                0x00000000000076de                __fsize
-                0x0000000000007821                __dsize
-                0x00000000000078a7                _dreadinfo
-                0x00000000000078cf                _freadinfo
-                0x00000000000078f7                _fseek
-                0x0000000000007916                _fseeko
-                0x0000000000007940                _fwrite
-                0x0000000000007bc7                _fread
-                0x0000000000007dc2                __fgetparent
-                0x0000000000007eb7                __fdiradd
-                0x00000000000082f5                __ftest
-                0x0000000000008582                __fdirlist
-                0x00000000000089e5                __dirr_init
-                0x0000000000008e89                __dirr_free
-                0x0000000000008fa2                __dirr
-                0x00000000000091a0                __fprint_info
-                0x000000000000939c                getloc
-                0x00000000000093f1                FindDiskHandleByGUID
-                0x0000000000009c80                DisableVerbose
-                0x0000000000009c97                EnableVerbose
-                0x0000000000009cae                getblocksize
-                0x0000000000009cc3                setblocksize
-                0x0000000000009d19                startup
-                0x000000000000a017                readblocks
-                0x000000000000a26d                writeblocks
-                0x000000000000a498                writebytes
-                0x000000000000a625                readbytes
-                0x000000000000a84a                dispose
-                0x000000000000aa85                blake2b_init_param
-                0x000000000000ab14                blake2b_init
-                0x000000000000abf9                blake2b_init_key
-                0x0000000000011a96                blake2b_update
-                0x0000000000011bd9                blake2b_final
-                0x0000000000011d57                blake2b
-                0x0000000000011eb2                blake2
-                0x0000000000012140                blake2bp_init
-                0x0000000000012235                blake2bp_init_key
-                0x0000000000012424                blake2bp_update
-                0x00000000000125d7                blake2bp_final
-                0x0000000000012776                blake2bp
-                0x0000000000012cae                blake2s_init_param
-                0x0000000000012d36                blake2s_init
-                0x0000000000012e01                blake2s_init_key
-                0x0000000000016ac6                blake2s_update
-                0x0000000000016bf7                blake2s_final
-                0x0000000000016d3c                blake2s
-                0x00000000000170d3                blake2sp_init
-                0x00000000000171c8                blake2sp_init_key
-                0x0000000000017360                blake2sp_update
-                0x0000000000017513                blake2sp_final
-                0x00000000000176af                blake2sp
-                0x0000000000017a90                blake2xb_init
-                0x0000000000017abc                blake2xb_init_key
-                0x0000000000017ce9                blake2xb_update
-                0x0000000000017d16                blake2xb_final
-                0x0000000000017f36                blake2xb
-                0x00000000000180fe                blake2xs_init
-                0x000000000001812a                blake2xs_init_key
-                0x00000000000182df                blake2xs_update
-                0x000000000001830c                blake2xs_final
-                0x000000000001852f                blake2xs
-                0x00000000000188dc                computeReloc
-                0x00000000000189f1                __resolve
-                0x0000000000019a11                socketopen
-                0x0000000000019c13                __fhandle_sckwrite
-                0x0000000000019dac                __fhandle_sckread
-                0x0000000000019f7e                __fhandle_sckclose
-                0x000000000001a0a7                __fhandle_sckOPENchild
-                0x000000000001a528                __froot_sckread
-                0x000000000001a5b4                __froot_sckwrite
-                0x000000000001a640                __froot_sckclose
-                0x000000000001a7d9                __froot_sckOPENchild
-                0x000000000001abea                __froot_sckopen
-                0x000000000001aeea                _GUIDtoSTR
-                0x000000000001af5a                prGUID
-                0x000000000001afcc                strcheck
-                0x000000000001b01f                strchecki
-                0x000000000001b073                __memdup
-                0x000000000001b0df                isascii
-                0x000000000001b0f3                __getfcode
-                0x000000000001b1fe                readbuf
-                0x000000000001b31a                strtok_i
-                0x000000000001b3e6                strtok_k
-                0x000000000001b5da                strtok_d
-                0x000000000001b687                trng__
-                0x000000000001b71f                tolower
-                0x000000000001b735                isdigit
-                0x000000000001b75f                str_tolower
-                0x000000000001b7d9                match_rec
-                0x000000000001b90d                makeGPTeNSTR
-                0x000000000001b9ad                __pattmatch
-                0x000000000001bb11                __realloc_
-                0x000000000001bbf8                __calloc_
-                0x000000000001bc81                __memset
-                0x000000000001bcdc                __safecopy
-                0x000000000001bd65                __memcpy
-                0x000000000001bdc9                __strlen
-                0x000000000001bdfc                __strdup
-                0x000000000001be29                __strspn
-                0x000000000001be93                __memcmp
-                0x000000000001bf3f                getDriveMediaID
-                0x000000000001c0b5                ValidateImageHandle
-                0x000000000001c111                IsPartition
-                0x000000000001c183                GetDevicePath
-                0x000000000001c1e2                RestartSystem
-                0x000000000001c213                sysbase
-                0x000000000001c2b4                getptr
-                0x000000000001c2d6                libinit
-                0x000000000001c38f                efi_main
-                0x000000000001c762                ProcessNode
-                0x000000000001c8c1                BuildDeviceTree
-                0x000000000001c99a                DebugDevicePath
-                0x000000000001ca75                DescribeDeviceNode
-                0x000000000001ce0c                getDevPath
-                0x000000000001ceb4                loadDNodes
-                0x000000000001d159                GetMemoryMap
-                0x000000000001d601                gatherbootinfo
-                0x000000000001d71c                CreateBootEntry
- *fill*         0x000000000001da87        0x1 
- .text          0x000000000001da88       0x29 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
-                0x000000000001da88                _start
- .text          0x000000000001dab1        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
- *fill*         0x000000000001dab1        0xf 
- .text          0x000000000001dac0      0x11c C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
-                0x000000000001dac0                _entry
- *fill*         0x000000000001dbdc        0x4 
- .text          0x000000000001dbe0      0x11b C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
-                0x000000000001dbe0                InitializeGuid
-                0x000000000001dbf0                CompareGuid_1
-                0x000000000001dc00                IsZeroGuid
-                0x000000000001dc10                GuidToString
- *fill*         0x000000000001dcfb        0x5 
- .text          0x000000000001dd00      0x2c3 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
-                0x000000000001dd00                InitializeUnicodeSupport
-                0x000000000001ddf0                EFIDebugVariable
-                0x000000000001de50                InitializeLib
-                0x000000000001df50                memset
-                0x000000000001dfa0                memcpy
- *fill*         0x000000000001dfc3        0xd 
- .text          0x000000000001dfd0      0x9e7 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
-                0x000000000001dfd0                AllocatePool
-                0x000000000001e010                AllocateZeroPool
-                0x000000000001e060                ReallocatePool_1
-                0x000000000001e0f0                FreePool
-                0x000000000001e110                ZeroMem
-                0x000000000001e120                SetMem
-                0x000000000001e130                CopyMem_1
-                0x000000000001e140                CopyMemC
-                0x000000000001e150                CompareMem
-                0x000000000001e160                GrowBuffer
-                0x000000000001e240                LibMemoryMap
-                0x000000000001e340                LibGetVariableAndSize
-                0x000000000001e420                LibGetVariable
-                0x000000000001e440                LibDeleteVariable
-                0x000000000001e4b0                LibSetNVVariable
-                0x000000000001e4e0                LibSetVariable
-                0x000000000001e510                LibInsertToTailOfBootOrder
-                0x000000000001e680                ValidMBR
-                0x000000000001e830                DecimaltoBCD
-                0x000000000001e840                BCDtoDecimal
-                0x000000000001e850                LibGetSystemConfigurationTable
-                0x000000000001e8f0                LibGetUiString
- *fill*         0x000000000001e9b7        0x9 
- .text          0x000000000001e9c0      0x5e0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
-                0x000000000001e9c0                StrCmp
-                0x000000000001e9d0                StrnCmp
-                0x000000000001ea20                LibStubStriCmp
-                0x000000000001eac0                LibStubStrLwrUpr
-                0x000000000001ead0                StriCmp
-                0x000000000001eaf0                StrLwr
-                0x000000000001eb10                StrUpr
-                0x000000000001eb30                StrCpy
-                0x000000000001eb40                StrnCpy
-                0x000000000001eb50                StpCpy
-                0x000000000001eb60                StpnCpy
-                0x000000000001eb70                StrCat
-                0x000000000001eb80                StrnCat
-                0x000000000001eb90                StrnLen
-                0x000000000001eba0                StrLen
-                0x000000000001ebb0                StrSize
-                0x000000000001ebc0                StrDuplicate
-                0x000000000001ec10                AsciiStrLen
-                0x000000000001ec40                AsciiStrCmp
-                0x000000000001ec90                AsciiStrnCmp
-                0x000000000001ece0                xtoi
-                0x000000000001ed70                Atoi
-                0x000000000001edc0                MetaMatch
-                0x000000000001eee0                LibStubMetaiMatch
-                0x000000000001ef80                MetaiMatch
- .text          0x000000000001efa0      0x190 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
-                0x000000000001efa0                RtZeroMem
-                0x000000000001efe0                RtSetMem
-                0x000000000001f020                RtCopyMem
-                0x000000000001f0a0                RtCopyMemC
-                0x000000000001f0b0                RtCompareMem
-                0x000000000001f0f0                RtCompareGuid
-                0x000000000001f120                RtIsZeroGuid
- .text          0x000000000001f130      0x387 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
-                0x000000000001f130                RtStrCmp
-                0x000000000001f180                RtStrCpy
-                0x000000000001f1b0                RtStrnCpy
-                0x000000000001f230                RtStpCpy
-                0x000000000001f260                RtStpnCpy
-                0x000000000001f2f0                RtStrCat
-                0x000000000001f340                RtStrnCat
-                0x000000000001f3d0                RtStrLen
-                0x000000000001f400                RtStrnLen
-                0x000000000001f440                RtStrSize
-                0x000000000001f470                RtBCDtoDecimal
-                0x000000000001f490                RtDecimaltoBCD
- .text          0x000000000001f4b7        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtdata.o)
- *fill*         0x000000000001f4b7        0x9 
- .text          0x000000000001f4c0        0x5 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
-                0x000000000001f4c0                InitializeLibPlatform
- *fill*         0x000000000001f4c5        0xb 
- .text          0x000000000001f4d0     0x2071 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
-                0x000000000001f4d0                _DbgOut
-                0x000000000001f500                _SPrint
-                0x000000000001f630                _PoolPrint
-                0x000000000001f990                UnicodeSPrint
-                0x000000000001fa20                AsciiSPrint
-                0x000000000001fab0                PoolPrint
-                0x000000000001fb50                CatPrint
-                0x000000000001fc00                Print
-                0x000000000001fcc0                PrintAt
-                0x000000000001fd70                IPrint
-                0x000000000001fe20                IPrintAt
-                0x000000000001fec0                AsciiPrint
-                0x000000000001ff80                ValueToHex
-                0x000000000001ffa0                ValueToString
-                0x000000000001ffc0                FloatToString
-                0x00000000000200e0                TimeToString
-                0x0000000000020190                DbgPrint
-                0x0000000000021380                DumpHex
- *fill*         0x0000000000021541        0xf 
- .text          0x0000000000021550     0x113b C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
-                0x0000000000022370                _PoolCatPrint
-                0x00000000000223e0                UnicodeVSPrint
-                0x0000000000022430                VPoolPrint
-                0x0000000000022480                _IPrint
-                0x0000000000022580                VPrint
-                0x00000000000225b0                AsciiVSPrint
- .text          0x000000000002268b      0x17b C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efi_stub.o)
-                0x000000000002268b                efi_call0
-                0x0000000000022696                efi_call1
-                0x00000000000226a4                efi_call2
-                0x00000000000226b2                efi_call3
-                0x00000000000226c3                efi_call4
-                0x00000000000226d7                efi_call5
-                0x00000000000226f0                efi_call6
-                0x0000000000022713                efi_call7
-                0x0000000000022740                efi_call8
-                0x0000000000022777                efi_call9
-                0x00000000000227b8                efi_call10
- *fill*         0x0000000000022806        0xa 
- .text          0x0000000000022810      0x124 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
-                0x0000000000022810                Output
-                0x0000000000022840                IInput
-                0x0000000000022910                Input
- *fill*         0x0000000000022934        0xc 
- .text          0x0000000000022940     0x16bf C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
-                0x0000000000023740                DevicePathFromHandle
-                0x0000000000023780                DevicePathInstance
-                0x0000000000023830                DevicePathInstanceCount
-                0x0000000000023870                DevicePathSize
-                0x00000000000238a0                DuplicateDevicePath
-                0x0000000000023900                AppendDevicePath
-                0x0000000000023a70                AppendDevicePathNode
-                0x0000000000023af0                FileDevicePath
-                0x0000000000023ba0                UnpackDevicePath
-                0x0000000000023c60                AppendDevicePathInstance
-                0x0000000000023d40                LibDevicePathToInterface
-                0x0000000000023dd0                DevicePathToStr
-                0x0000000000023f10                LibMatchDevicePaths
-                0x0000000000023f90                LibDuplicateDevicePathInstance
- *fill*         0x0000000000023fff        0x1 
- .text          0x0000000000024000       0x50 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
-                0x0000000000024000                StatusToString
- .text          0x0000000000024050      0x1f5 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
-                0x0000000000024050                LibCreateProtocolNotifyEvent
-                0x00000000000240d0                WaitForSingleEvent
-                0x00000000000241b0                WaitForEventWithTimeout
- *fill*         0x0000000000024245        0xb 
- .text          0x0000000000024250      0xb2a C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
-                0x0000000000024250                LibLocateHandle
-                0x0000000000024310                LibLocateProtocol
-                0x00000000000243b0                LibLocateHandleByDiskSignature
-                0x0000000000024700                LibOpenRoot
-                0x0000000000024760                LibFileInfo
-                0x00000000000247f0                LibFileSystemInfo
-                0x0000000000024880                LibFileSystemVolumeLabelInfo
-                0x0000000000024910                LibInstallProtocolInterfaces
-                0x0000000000024ad0                LibUninstallProtocolInterfaces
-                0x0000000000024ba0                LibReinstallProtocolInterfaces
- *fill*         0x0000000000024d7a        0x6 
- .text          0x0000000000024d80       0x50 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
-                0x0000000000024d80                LShiftU64
-                0x0000000000024d90                RShiftU64
-                0x0000000000024da0                MultU64x32
-                0x0000000000024db0                DivU64x32
- .text          0x0000000000024dd0       0xab C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
-                0x0000000000024dd0                _relocate
+                0x00000000000049c2                queryparttablefs
+                0x0000000000004bf5                queryfs
+                0x0000000000004d56                fmount
+                0x0000000000005590                allocatecluster
+                0x0000000000005689                __ffremove
+                0x00000000000056fe                __ffremoveh
+                0x000000000000578b                __ffremovel
+                0x00000000000057bb                __ffremovelh
+                0x0000000000005923                __fcreate
+                0x0000000000005dba                __faddr
+                0x00000000000061d4                __finit
+                0x0000000000006580                __ffindh
+                0x00000000000066cc                __ffindhi
+                0x0000000000006805                __ffindi
+                0x000000000000683d                __ffind
+                0x0000000000006872                __fread1
+                0x0000000000006a1b                __fpush1
+                0x0000000000006c86                floadhdir
+                0x0000000000006e4a                fuloaddir
+                0x00000000000070c9                __fdirrefresh
+                0x0000000000007341                floadh
+                0x0000000000007446                fuloadh
+                0x00000000000075a1                __freadinfo
+                0x000000000000763c                __fupdatetstamp
+                0x0000000000007796                __fsize
+                0x0000000000007901                __dsize
+                0x000000000000799a                _dreadinfo
+                0x00000000000079c2                _freadinfo
+                0x00000000000079ea                _fseek
+                0x0000000000007a09                _fseeko
+                0x0000000000007a33                _fwrite
+                0x0000000000007cad                _fread
+                0x0000000000007ea8                __fgetparent
+                0x0000000000007f9d                __fdiradd
+                0x00000000000083b2                __ftest
+                0x0000000000008648                __fdirlist
+                0x0000000000008aca                __dirr_init
+                0x0000000000008f6e                __dirr_free
+                0x0000000000009087                __dirr
+                0x0000000000009285                __fprint_info
+                0x00000000000094d1                getloc
+                0x0000000000009536                FindDiskHandleByGUID
+                0x0000000000009dc5                DisableVerbose
+                0x0000000000009ddc                EnableVerbose
+                0x0000000000009df3                getblocksize
+                0x0000000000009e08                setblocksize
+                0x0000000000009e5e                startup
+                0x000000000000a15c                readblocks
+                0x000000000000a3b2                writeblocks
+                0x000000000000a5dd                writebytes
+                0x000000000000a76a                readbytes
+                0x000000000000a98f                dispose
+                0x000000000000abca                blake2b_init_param
+                0x000000000000ac59                blake2b_init
+                0x000000000000ad3e                blake2b_init_key
+                0x0000000000011bdb                blake2b_update
+                0x0000000000011d1e                blake2b_final
+                0x0000000000011e9c                blake2b
+                0x0000000000011ff7                blake2
+                0x0000000000012285                blake2bp_init
+                0x000000000001237a                blake2bp_init_key
+                0x0000000000012569                blake2bp_update
+                0x000000000001271c                blake2bp_final
+                0x00000000000128bb                blake2bp
+                0x0000000000012df3                blake2s_init_param
+                0x0000000000012e7b                blake2s_init
+                0x0000000000012f46                blake2s_init_key
+                0x0000000000016c0b                blake2s_update
+                0x0000000000016d3c                blake2s_final
+                0x0000000000016e81                blake2s
+                0x0000000000017218                blake2sp_init
+                0x000000000001730d                blake2sp_init_key
+                0x00000000000174a5                blake2sp_update
+                0x0000000000017658                blake2sp_final
+                0x00000000000177f4                blake2sp
+                0x0000000000017bd5                blake2xb_init
+                0x0000000000017c01                blake2xb_init_key
+                0x0000000000017e2e                blake2xb_update
+                0x0000000000017e5b                blake2xb_final
+                0x000000000001807b                blake2xb
+                0x0000000000018243                blake2xs_init
+                0x000000000001826f                blake2xs_init_key
+                0x0000000000018424                blake2xs_update
+                0x0000000000018451                blake2xs_final
+                0x0000000000018674                blake2xs
+                0x000000000001878f                LoadExecutable
+                0x0000000000018c53                LoadService
+                0x00000000000190e4                ResolveRelS
+                0x000000000001972d                ReadBeHeader
+                0x00000000000199ab                RvoToFileOffsetBe
+                0x0000000000019a44                FileOffsetToRvoBe
+                0x0000000000019a98                FindSectionBe
+                0x0000000000019b8a                GetAtRVOFromSectionDataBe
+                0x0000000000019bf5                ReadAtRVOFromSectionBe
+                0x0000000000019c98                ReadSectionBe
+                0x0000000000019d03                FindRelocationBe
+                0x0000000000019ed5                MatchResourceName
+                0x0000000000019f4c                ReadResourceBe
+                0x000000000001a6d6                JsonCreateValue
+                0x000000000001a9d0                JsonreadValue
+                0x000000000001ab53                JsonParse
+                0x000000000001ae13                JsonFree
+                0x000000000001b0eb                JsongetValue
+                0x000000000001b1fe                socketopen
+                0x000000000001b412                __fhandle_sckinfo
+                0x000000000001bc87                __fhandle_sckwrite
+                0x000000000001be20                __fhandle_sckread
+                0x000000000001bff2                __fhandle_sckclose
+                0x000000000001c11b                __fhandle_sckOPENchild
+                0x000000000001c586                __froot_sckread
+                0x000000000001c612                __froot_sckwrite
+                0x000000000001c69e                __froot_sckclose
+                0x000000000001c837                __froot_sckOPENchild
+                0x000000000001cc35                __froot_sckinfo
+                0x000000000001d0e9                __froot_sckopen
+                0x000000000001d40d                _GUIDtoSTR
+                0x000000000001d47d                prGUID
+                0x000000000001d4ef                strcheck
+                0x000000000001d542                strchecki
+                0x000000000001d596                __memdup
+                0x000000000001d602                isascii
+                0x000000000001d616                __getfcode
+                0x000000000001d722                readbuf
+                0x000000000001d83e                strtok_i
+                0x000000000001d90a                strtok_k
+                0x000000000001dafe                strtok_d
+                0x000000000001dbab                trng__
+                0x000000000001dc43                tolower
+                0x000000000001dc59                isdigit
+                0x000000000001dc83                str_tolower
+                0x000000000001dcfd                match_rec
+                0x000000000001de31                makeGPTeNSTR
+                0x000000000001ded1                __pattmatch
+                0x000000000001e035                __realloc_
+                0x000000000001e11c                __calloc_
+                0x000000000001e1a5                __memset
+                0x000000000001e200                __safecopy
+                0x000000000001e289                __memcpy
+                0x000000000001e2ed                __strlen
+                0x000000000001e320                __strdup
+                0x000000000001e34d                __strspn
+                0x000000000001e3b7                __memcmp
+                0x000000000001e463                getDriveMediaID
+                0x000000000001e5d9                ValidateImageHandle
+                0x000000000001e635                IsPartition
+                0x000000000001e6a7                GetDevicePath
+                0x000000000001e706                RestartSystem
+                0x000000000001e737                sysbase
+                0x000000000001e7d8                getptr
+                0x000000000001e7fa                __strtod
+                0x000000000001e939                libinit
+                0x000000000001e9f2                efi_main
+                0x000000000001ee21                ProcessNode
+                0x000000000001ef80                BuildDeviceTree
+                0x000000000001f059                DebugDevicePath
+                0x000000000001f134                DescribeDeviceNode
+                0x000000000001f4cb                getDevPath
+                0x000000000001f573                loadDNodes
+                0x000000000001f818                GetMemoryMap
+                0x000000000001fcaf                InitialiseVideoMemory
+                0x000000000001ff87                gatherbootinfo
+                0x0000000000020228                CreateBootEntry
+ *fill*         0x0000000000020593        0x1 
+ .text          0x0000000000020594       0x29 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
+                0x0000000000020594                _start
+ .text          0x00000000000205bd        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
+ *fill*         0x00000000000205bd        0x3 
+ .text          0x00000000000205c0      0x11c C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
+                0x00000000000205c0                _entry
+ *fill*         0x00000000000206dc        0x4 
+ .text          0x00000000000206e0      0x11b C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
+                0x00000000000206e0                InitializeGuid
+                0x00000000000206f0                CompareGuid_1
+                0x0000000000020700                IsZeroGuid
+                0x0000000000020710                GuidToString
+ *fill*         0x00000000000207fb        0x5 
+ .text          0x0000000000020800      0x2c3 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
+                0x0000000000020800                InitializeUnicodeSupport
+                0x00000000000208f0                EFIDebugVariable
+                0x0000000000020950                InitializeLib
+                0x0000000000020a50                memset
+                0x0000000000020aa0                memcpy
+ *fill*         0x0000000000020ac3        0xd 
+ .text          0x0000000000020ad0      0x9e7 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
+                0x0000000000020ad0                AllocatePool
+                0x0000000000020b10                AllocateZeroPool
+                0x0000000000020b60                ReallocatePool_1
+                0x0000000000020bf0                FreePool
+                0x0000000000020c10                ZeroMem
+                0x0000000000020c20                SetMem
+                0x0000000000020c30                CopyMem_1
+                0x0000000000020c40                CopyMemC
+                0x0000000000020c50                CompareMem
+                0x0000000000020c60                GrowBuffer
+                0x0000000000020d40                LibMemoryMap
+                0x0000000000020e40                LibGetVariableAndSize
+                0x0000000000020f20                LibGetVariable
+                0x0000000000020f40                LibDeleteVariable
+                0x0000000000020fb0                LibSetNVVariable
+                0x0000000000020fe0                LibSetVariable
+                0x0000000000021010                LibInsertToTailOfBootOrder
+                0x0000000000021180                ValidMBR
+                0x0000000000021330                DecimaltoBCD
+                0x0000000000021340                BCDtoDecimal
+                0x0000000000021350                LibGetSystemConfigurationTable
+                0x00000000000213f0                LibGetUiString
+ *fill*         0x00000000000214b7        0x9 
+ .text          0x00000000000214c0      0x5e0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
+                0x00000000000214c0                StrCmp
+                0x00000000000214d0                StrnCmp
+                0x0000000000021520                LibStubStriCmp
+                0x00000000000215c0                LibStubStrLwrUpr
+                0x00000000000215d0                StriCmp
+                0x00000000000215f0                StrLwr
+                0x0000000000021610                StrUpr
+                0x0000000000021630                StrCpy
+                0x0000000000021640                StrnCpy
+                0x0000000000021650                StpCpy
+                0x0000000000021660                StpnCpy
+                0x0000000000021670                StrCat
+                0x0000000000021680                StrnCat
+                0x0000000000021690                StrnLen
+                0x00000000000216a0                StrLen
+                0x00000000000216b0                StrSize
+                0x00000000000216c0                StrDuplicate
+                0x0000000000021710                AsciiStrLen
+                0x0000000000021740                AsciiStrCmp
+                0x0000000000021790                AsciiStrnCmp
+                0x00000000000217e0                xtoi
+                0x0000000000021870                Atoi
+                0x00000000000218c0                MetaMatch
+                0x00000000000219e0                LibStubMetaiMatch
+                0x0000000000021a80                MetaiMatch
+ .text          0x0000000000021aa0      0x190 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
+                0x0000000000021aa0                RtZeroMem
+                0x0000000000021ae0                RtSetMem
+                0x0000000000021b20                RtCopyMem
+                0x0000000000021ba0                RtCopyMemC
+                0x0000000000021bb0                RtCompareMem
+                0x0000000000021bf0                RtCompareGuid
+                0x0000000000021c20                RtIsZeroGuid
+ .text          0x0000000000021c30      0x387 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
+                0x0000000000021c30                RtStrCmp
+                0x0000000000021c80                RtStrCpy
+                0x0000000000021cb0                RtStrnCpy
+                0x0000000000021d30                RtStpCpy
+                0x0000000000021d60                RtStpnCpy
+                0x0000000000021df0                RtStrCat
+                0x0000000000021e40                RtStrnCat
+                0x0000000000021ed0                RtStrLen
+                0x0000000000021f00                RtStrnLen
+                0x0000000000021f40                RtStrSize
+                0x0000000000021f70                RtBCDtoDecimal
+                0x0000000000021f90                RtDecimaltoBCD
+ .text          0x0000000000021fb7        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtdata.o)
+ *fill*         0x0000000000021fb7        0x9 
+ .text          0x0000000000021fc0        0x5 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
+                0x0000000000021fc0                InitializeLibPlatform
+ *fill*         0x0000000000021fc5        0xb 
+ .text          0x0000000000021fd0     0x2071 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
+                0x0000000000021fd0                _DbgOut
+                0x0000000000022000                _SPrint
+                0x0000000000022130                _PoolPrint
+                0x0000000000022490                UnicodeSPrint
+                0x0000000000022520                AsciiSPrint
+                0x00000000000225b0                PoolPrint
+                0x0000000000022650                CatPrint
+                0x0000000000022700                Print
+                0x00000000000227c0                PrintAt
+                0x0000000000022870                IPrint
+                0x0000000000022920                IPrintAt
+                0x00000000000229c0                AsciiPrint
+                0x0000000000022a80                ValueToHex
+                0x0000000000022aa0                ValueToString
+                0x0000000000022ac0                FloatToString
+                0x0000000000022be0                TimeToString
+                0x0000000000022c90                DbgPrint
+                0x0000000000023e80                DumpHex
+ *fill*         0x0000000000024041        0xf 
+ .text          0x0000000000024050     0x113b C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
+                0x0000000000024e70                _PoolCatPrint
+                0x0000000000024ee0                UnicodeVSPrint
+                0x0000000000024f30                VPoolPrint
+                0x0000000000024f80                _IPrint
+                0x0000000000025080                VPrint
+                0x00000000000250b0                AsciiVSPrint
+ .text          0x000000000002518b      0x17b C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efi_stub.o)
+                0x000000000002518b                efi_call0
+                0x0000000000025196                efi_call1
+                0x00000000000251a4                efi_call2
+                0x00000000000251b2                efi_call3
+                0x00000000000251c3                efi_call4
+                0x00000000000251d7                efi_call5
+                0x00000000000251f0                efi_call6
+                0x0000000000025213                efi_call7
+                0x0000000000025240                efi_call8
+                0x0000000000025277                efi_call9
+                0x00000000000252b8                efi_call10
+ *fill*         0x0000000000025306        0xa 
+ .text          0x0000000000025310      0x124 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
+                0x0000000000025310                Output
+                0x0000000000025340                IInput
+                0x0000000000025410                Input
+ *fill*         0x0000000000025434        0xc 
+ .text          0x0000000000025440     0x16bf C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
+                0x0000000000026240                DevicePathFromHandle
+                0x0000000000026280                DevicePathInstance
+                0x0000000000026330                DevicePathInstanceCount
+                0x0000000000026370                DevicePathSize
+                0x00000000000263a0                DuplicateDevicePath
+                0x0000000000026400                AppendDevicePath
+                0x0000000000026570                AppendDevicePathNode
+                0x00000000000265f0                FileDevicePath
+                0x00000000000266a0                UnpackDevicePath
+                0x0000000000026760                AppendDevicePathInstance
+                0x0000000000026840                LibDevicePathToInterface
+                0x00000000000268d0                DevicePathToStr
+                0x0000000000026a10                LibMatchDevicePaths
+                0x0000000000026a90                LibDuplicateDevicePathInstance
+ *fill*         0x0000000000026aff        0x1 
+ .text          0x0000000000026b00       0x50 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
+                0x0000000000026b00                StatusToString
+ .text          0x0000000000026b50      0x1f5 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
+                0x0000000000026b50                LibCreateProtocolNotifyEvent
+                0x0000000000026bd0                WaitForSingleEvent
+                0x0000000000026cb0                WaitForEventWithTimeout
+ *fill*         0x0000000000026d45        0xb 
+ .text          0x0000000000026d50      0xb2a C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
+                0x0000000000026d50                LibLocateHandle
+                0x0000000000026e10                LibLocateProtocol
+                0x0000000000026eb0                LibLocateHandleByDiskSignature
+                0x0000000000027200                LibOpenRoot
+                0x0000000000027260                LibFileInfo
+                0x00000000000272f0                LibFileSystemInfo
+                0x0000000000027380                LibFileSystemVolumeLabelInfo
+                0x0000000000027410                LibInstallProtocolInterfaces
+                0x00000000000275d0                LibUninstallProtocolInterfaces
+                0x00000000000276a0                LibReinstallProtocolInterfaces
+ *fill*         0x000000000002787a        0x6 
+ .text          0x0000000000027880       0x50 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
+                0x0000000000027880                LShiftU64
+                0x0000000000027890                RShiftU64
+                0x00000000000278a0                MultU64x32
+                0x00000000000278b0                DivU64x32
+ .text          0x00000000000278d0       0xab C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
+                0x00000000000278d0                _relocate
  *(.text.*)
  *(.gnu.linkonce.t.*)
  *(.plt)
-                0x0000000000024e80                . = ALIGN (0x10)
- *fill*         0x0000000000024e7b        0x5 
-                0x0000000000024e80                _etext = .
-                0x0000000000020e80                _text_size = (_etext - _text)
+                0x0000000000027980                . = ALIGN (0x10)
+ *fill*         0x000000000002797b        0x5 
+                0x0000000000027980                _etext = .
+                0x0000000000023980                _text_size = (_etext - _text)
 
-.iplt           0x0000000000024e80        0x0
- .iplt          0x0000000000024e80        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+.iplt           0x0000000000027980        0x0
+ .iplt          0x0000000000027980        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
 
-.rela.dyn       0x0000000000024e80        0x0
- .rela.iplt     0x0000000000024e80        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
-                0x0000000000025000                . = ALIGN (0x1000)
+.rela.dyn       0x0000000000027980        0x0
+ .rela.iplt     0x0000000000027980        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+                0x0000000000028000                . = ALIGN (0x1000)
 
-.data           0x0000000000025000      0xef8
-                0x0000000000025000                _data = .
+.data           0x0000000000028000      0xf08
+                0x0000000000028000                _data = .
  *(.got.plt)
- .got.plt       0x0000000000025000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+ .got.plt       0x0000000000028000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
  *(.got)
- .got           0x0000000000025000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+ .got           0x0000000000028000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
  *(.data*)
- .data          0x0000000000025000        0x1 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
- *fill*         0x0000000000025001        0x7 
- .data.rel.ro   0x0000000000025008       0x28 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
- *fill*         0x0000000000025030       0x10 
+ .data          0x0000000000028000        0x1 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+ *fill*         0x0000000000028001        0x7 
+ .data.rel.ro   0x0000000000028008       0x28 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+ *fill*         0x0000000000028030       0x10 
  .data.rel.ro.local
-                0x0000000000025040      0x130 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
- .data          0x0000000000025170        0x8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
- *fill*         0x0000000000025178        0x8 
- .data          0x0000000000025180      0x4f0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
-                0x0000000000025180                ShellDynamicCommandProtocolGuid
-                0x0000000000025190                ShellParametersProtocolGuid
-                0x00000000000251a0                ShellProtocolGuid
-                0x00000000000251b0                SimpleTextInputExProtocol
-                0x00000000000251c0                gEfiDebugSupportProtocolGuid
-                0x00000000000251d0                gEfiDebugImageInfoTableGuid
-                0x00000000000251e0                AbsolutePointerProtocol
-                0x00000000000251f0                SimplePointerProtocol
-                0x0000000000025200                Tcp4Protocol
-                0x0000000000025210                Tcp4ServiceBindingProtocol
-                0x0000000000025220                Udp4Protocol
-                0x0000000000025230                Udp4ServiceBindingProtocol
-                0x0000000000025240                Ip4Protocol
-                0x0000000000025250                Ip4ServiceBindingProtocol
-                0x0000000000025260                EfiDtbTableGuid
-                0x0000000000025270                SalSystemTableGuid
-                0x0000000000025280                gEfiSmbios3TableGuid
-                0x0000000000025290                gEfiSmbiosTableGuid
-                0x00000000000252a0                AcpiTableGuid
-                0x00000000000252b0                MpsTableGuid
-                0x00000000000252c0                UnknownDevice
-                0x00000000000252d0                EfiPartTypeLegacyMbrGuid
-                0x00000000000252e0                EfiPartTypeSystemPartitionGuid
-                0x00000000000252f0                gEfiVTUTF8Guid
-                0x0000000000025300                gEfiVT100PlusGuid
-                0x0000000000025310                gEfiVT100Guid
-                0x0000000000025320                gEfiPcAnsiGuid
-                0x0000000000025330                AdapterDebugProtocol
-                0x0000000000025340                gEfiEdidOverrideProtocolGuid
-                0x0000000000025350                gEfiEdidActiveProtocolGuid
-                0x0000000000025360                gEfiEdidDiscoveredProtocolGuid
-                0x0000000000025370                gEfiGraphicsOutputProtocolGuid
-                0x0000000000025380                TextInSpliterProtocol
-                0x0000000000025390                ErrorOutSpliterProtocol
-                0x00000000000253a0                TextOutSpliterProtocol
-                0x00000000000253b0                VgaClassProtocol
-                0x00000000000253c0                LegacyBootProtocol
-                0x00000000000253d0                VariableStoreProtocol
-                0x00000000000253e0                InternalShellProtocol
-                0x00000000000253f0                gEfiMpServicesProtocolGuid
-                0x0000000000025400                gEfiFileSystemVolumeLabelInfoIdGuid
-                0x0000000000025410                gEfiFileSystemInfoGuid
-                0x0000000000025420                gEfiFileInfoGuid
-                0x0000000000025430                gEfiEbcProtocolGuid
-                0x0000000000025440                gEfiDriverFamilyOverrideProtocolGuid
-                0x0000000000025450                gEfiBusSpecificDriverOverrideProtocolGuid
-                0x0000000000025460                gEfiPlatformDriverOverrideProtocolGuid
-                0x0000000000025470                gEfiHashProtocolGuid
-                0x0000000000025480                gEfiComponentName2ProtocolGuid
-                0x0000000000025490                gEfiComponentNameProtocolGuid
-                0x00000000000254a0                gEfiDriverBindingProtocolGuid
-                0x00000000000254b0                gEfiPciRootBridgeIoProtocolGuid
-                0x00000000000254c0                gEfiPciIoProtocolGuid
-                0x00000000000254d0                gEFiUiInterfaceProtocolGuid
-                0x00000000000254e0                gEfiNetworkInterfaceIdentifierProtocolGuid
-                0x00000000000254f0                gEfiPxeBaseCodeCallbackProtocolGuid
-                0x0000000000025500                gEfiPxeBaseCodeProtocolGuid
-                0x0000000000025510                gEfiSimpleNetworkProtocolGuid
-                0x0000000000025520                gEfiSerialIoProtocolGuid
-                0x0000000000025530                gEfiUnicodeCollationProtocolGuid
-                0x0000000000025540                gEfiDeviceIoProtocolGuid
-                0x0000000000025550                gEfiLoadFile2ProtocolGuid
-                0x0000000000025560                gEfiLoadFileProtocolGuid
-                0x0000000000025570                gEfiLoadedImageDevicePathProtocolGuid
-                0x0000000000025580                gEfiSimpleFileSystemProtocolGuid
-                0x0000000000025590                gEfiDxeServicesTableGuid
-                0x00000000000255a0                gEfiDiskIo2ProtocolGuid
-                0x00000000000255b0                gEfiDiskIoProtocolGuid
-                0x00000000000255c0                gEfiBlockIo2ProtocolGuid
-                0x00000000000255d0                gEfiBlockIoProtocolGuid
-                0x00000000000255e0                gEfiSimpleTextOutProtocolGuid
-                0x00000000000255f0                gEfiSimpleTextInProtocolGuid
-                0x0000000000025600                gEfiLoadedImageProtocolGuid
-                0x0000000000025610                gEfiDevicePathUtilitiesProtocolGuid
-                0x0000000000025620                gEfiDevicePathFromTextProtocolGuid
-                0x0000000000025630                gEfiDevicePathToTextProtocolGuid
-                0x0000000000025640                gEfiDevicePathProtocolGuid
-                0x0000000000025650                gEfiGlobalVariableGuid
-                0x0000000000025660                EndInstanceDevicePath
-                0x0000000000025664                EndDevicePath
-                0x0000000000025668                RootDevicePath
-                0x000000000002566c                PoolAllocationType
- *fill*         0x0000000000025670       0x10 
+                0x0000000000028040      0x130 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+ .data          0x0000000000028170        0x8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
+ *fill*         0x0000000000028178        0x8 
+ .data          0x0000000000028180      0x4f0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
+                0x0000000000028180                ShellDynamicCommandProtocolGuid
+                0x0000000000028190                ShellParametersProtocolGuid
+                0x00000000000281a0                ShellProtocolGuid
+                0x00000000000281b0                SimpleTextInputExProtocol
+                0x00000000000281c0                gEfiDebugSupportProtocolGuid
+                0x00000000000281d0                gEfiDebugImageInfoTableGuid
+                0x00000000000281e0                AbsolutePointerProtocol
+                0x00000000000281f0                SimplePointerProtocol
+                0x0000000000028200                Tcp4Protocol
+                0x0000000000028210                Tcp4ServiceBindingProtocol
+                0x0000000000028220                Udp4Protocol
+                0x0000000000028230                Udp4ServiceBindingProtocol
+                0x0000000000028240                Ip4Protocol
+                0x0000000000028250                Ip4ServiceBindingProtocol
+                0x0000000000028260                EfiDtbTableGuid
+                0x0000000000028270                SalSystemTableGuid
+                0x0000000000028280                gEfiSmbios3TableGuid
+                0x0000000000028290                gEfiSmbiosTableGuid
+                0x00000000000282a0                AcpiTableGuid
+                0x00000000000282b0                MpsTableGuid
+                0x00000000000282c0                UnknownDevice
+                0x00000000000282d0                EfiPartTypeLegacyMbrGuid
+                0x00000000000282e0                EfiPartTypeSystemPartitionGuid
+                0x00000000000282f0                gEfiVTUTF8Guid
+                0x0000000000028300                gEfiVT100PlusGuid
+                0x0000000000028310                gEfiVT100Guid
+                0x0000000000028320                gEfiPcAnsiGuid
+                0x0000000000028330                AdapterDebugProtocol
+                0x0000000000028340                gEfiEdidOverrideProtocolGuid
+                0x0000000000028350                gEfiEdidActiveProtocolGuid
+                0x0000000000028360                gEfiEdidDiscoveredProtocolGuid
+                0x0000000000028370                gEfiGraphicsOutputProtocolGuid
+                0x0000000000028380                TextInSpliterProtocol
+                0x0000000000028390                ErrorOutSpliterProtocol
+                0x00000000000283a0                TextOutSpliterProtocol
+                0x00000000000283b0                VgaClassProtocol
+                0x00000000000283c0                LegacyBootProtocol
+                0x00000000000283d0                VariableStoreProtocol
+                0x00000000000283e0                InternalShellProtocol
+                0x00000000000283f0                gEfiMpServicesProtocolGuid
+                0x0000000000028400                gEfiFileSystemVolumeLabelInfoIdGuid
+                0x0000000000028410                gEfiFileSystemInfoGuid
+                0x0000000000028420                gEfiFileInfoGuid
+                0x0000000000028430                gEfiEbcProtocolGuid
+                0x0000000000028440                gEfiDriverFamilyOverrideProtocolGuid
+                0x0000000000028450                gEfiBusSpecificDriverOverrideProtocolGuid
+                0x0000000000028460                gEfiPlatformDriverOverrideProtocolGuid
+                0x0000000000028470                gEfiHashProtocolGuid
+                0x0000000000028480                gEfiComponentName2ProtocolGuid
+                0x0000000000028490                gEfiComponentNameProtocolGuid
+                0x00000000000284a0                gEfiDriverBindingProtocolGuid
+                0x00000000000284b0                gEfiPciRootBridgeIoProtocolGuid
+                0x00000000000284c0                gEfiPciIoProtocolGuid
+                0x00000000000284d0                gEFiUiInterfaceProtocolGuid
+                0x00000000000284e0                gEfiNetworkInterfaceIdentifierProtocolGuid
+                0x00000000000284f0                gEfiPxeBaseCodeCallbackProtocolGuid
+                0x0000000000028500                gEfiPxeBaseCodeProtocolGuid
+                0x0000000000028510                gEfiSimpleNetworkProtocolGuid
+                0x0000000000028520                gEfiSerialIoProtocolGuid
+                0x0000000000028530                gEfiUnicodeCollationProtocolGuid
+                0x0000000000028540                gEfiDeviceIoProtocolGuid
+                0x0000000000028550                gEfiLoadFile2ProtocolGuid
+                0x0000000000028560                gEfiLoadFileProtocolGuid
+                0x0000000000028570                gEfiLoadedImageDevicePathProtocolGuid
+                0x0000000000028580                gEfiSimpleFileSystemProtocolGuid
+                0x0000000000028590                gEfiDxeServicesTableGuid
+                0x00000000000285a0                gEfiDiskIo2ProtocolGuid
+                0x00000000000285b0                gEfiDiskIoProtocolGuid
+                0x00000000000285c0                gEfiBlockIo2ProtocolGuid
+                0x00000000000285d0                gEfiBlockIoProtocolGuid
+                0x00000000000285e0                gEfiSimpleTextOutProtocolGuid
+                0x00000000000285f0                gEfiSimpleTextInProtocolGuid
+                0x0000000000028600                gEfiLoadedImageProtocolGuid
+                0x0000000000028610                gEfiDevicePathUtilitiesProtocolGuid
+                0x0000000000028620                gEfiDevicePathFromTextProtocolGuid
+                0x0000000000028630                gEfiDevicePathToTextProtocolGuid
+                0x0000000000028640                gEfiDevicePathProtocolGuid
+                0x0000000000028650                gEfiGlobalVariableGuid
+                0x0000000000028660                EndInstanceDevicePath
+                0x0000000000028664                EndDevicePath
+                0x0000000000028668                RootDevicePath
+                0x000000000002866c                PoolAllocationType
+ *fill*         0x0000000000028670       0x10 
  .data.rel.local
-                0x0000000000025680       0x58 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
-                0x0000000000025680                UnicodeInterface
-                0x00000000000256a0                LibStubUnicodeInterface
- .data          0x00000000000256d8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
- *fill*         0x00000000000256d8        0x8 
- .data          0x00000000000256e0       0x50 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
- *fill*         0x0000000000025730       0x10 
+                0x0000000000028680       0x58 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
+                0x0000000000028680                UnicodeInterface
+                0x00000000000286a0                LibStubUnicodeInterface
+ .data          0x00000000000286d8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
+ *fill*         0x00000000000286d8        0x8 
+ .data          0x00000000000286e0       0x50 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
+ *fill*         0x0000000000028730       0x10 
  .data.rel.ro.local
-                0x0000000000025740      0x2c0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
- .data          0x0000000000025a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
- .data          0x0000000000025a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
- .data          0x0000000000025a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
- .data          0x0000000000025a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
- .data          0x0000000000025a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
- .data          0x0000000000025a00        0x8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtdata.o)
-                0x0000000000025a00                EFIDebug
- .data          0x0000000000025a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
- .data          0x0000000000025a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
- .data          0x0000000000025a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
- .data          0x0000000000025a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efi_stub.o)
- .data          0x0000000000025a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
- .data          0x0000000000025a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
- *fill*         0x0000000000025a08       0x18 
+                0x0000000000028740      0x2c0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
+ .data          0x0000000000028a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
+ .data          0x0000000000028a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
+ .data          0x0000000000028a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
+ .data          0x0000000000028a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
+ .data          0x0000000000028a00        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
+ .data          0x0000000000028a00        0x8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtdata.o)
+                0x0000000000028a00                EFIDebug
+ .data          0x0000000000028a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
+ .data          0x0000000000028a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
+ .data          0x0000000000028a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
+ .data          0x0000000000028a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efi_stub.o)
+ .data          0x0000000000028a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
+ .data          0x0000000000028a08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
+ *fill*         0x0000000000028a08       0x18 
  .data.rel.local
-                0x0000000000025a20      0x1c0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
-                0x0000000000025a20                DevPathTable
- .data          0x0000000000025be0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
+                0x0000000000028a20      0x1c0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
+                0x0000000000028a20                DevPathTable
+ .data          0x0000000000028be0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
  .data.rel.local
-                0x0000000000025be0      0x2a0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
-                0x0000000000025be0                ErrorCodeTable
- .data          0x0000000000025e80        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
- .data          0x0000000000025e80        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
- .data          0x0000000000025e80        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
- .data          0x0000000000025e80        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
+                0x0000000000028be0      0x2a0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
+                0x0000000000028be0                ErrorCodeTable
+ .data          0x0000000000028e80        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
+ .data          0x0000000000028e80        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
+ .data          0x0000000000028e80        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
+ .data          0x0000000000028e80        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
  *(.sdata)
-                0x0000000000025e80                . = ALIGN (0x10)
-                0x0000000000025e80                __init_array_start = .
+                0x0000000000028e80                . = ALIGN (0x10)
+                0x0000000000028e80                __init_array_start = .
  *(SORT_BY_NAME(.init_array.*))
  *(.init_array)
-                0x0000000000025e80                __init_array_end = .
-                0x0000000000025e80                . = ALIGN (0x10)
-                0x0000000000025e80                __CTOR_LIST__ = .
+                0x0000000000028e80                __init_array_end = .
+                0x0000000000028e80                . = ALIGN (0x10)
+                0x0000000000028e80                __CTOR_LIST__ = .
  *(SORT_BY_NAME(.ctors.*))
  *(.ctors)
-                0x0000000000025e80                __CTOR_END__ = .
-                0x0000000000025e80                . = ALIGN (0x10)
-                0x0000000000025e80                __DTOR_LIST__ = .
+                0x0000000000028e80                __CTOR_END__ = .
+                0x0000000000028e80                . = ALIGN (0x10)
+                0x0000000000028e80                __DTOR_LIST__ = .
  *(SORT_BY_NAME(.dtors.*))
  *(.dtors)
-                0x0000000000025e80                __DTOR_END__ = .
-                0x0000000000025e80                . = ALIGN (0x10)
-                0x0000000000025e80                __fini_array_start = .
+                0x0000000000028e80                __DTOR_END__ = .
+                0x0000000000028e80                . = ALIGN (0x10)
+                0x0000000000028e80                __fini_array_start = .
  *(SORT_BY_NAME(.fini_array.*))
  *(.fini_array)
-                0x0000000000025e80                __fini_array_end = .
+                0x0000000000028e80                __fini_array_end = .
  *(.sbss)
  *(.scommon)
  *(.dynbss)
  *(.bss*)
- .bss           0x0000000000025e80        0x8 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
- .bss           0x0000000000025e88        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
- *fill*         0x0000000000025e88        0x8 
- .bss           0x0000000000025e90       0x29 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
-                0x0000000000025e90                gZeroGuid
-                0x0000000000025ea0                BS
-                0x0000000000025ea8                ST
-                0x0000000000025eb0                LibImageHandle
-                0x0000000000025eb8                LibInitialized
- .bss           0x0000000000025eb9        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
- *fill*         0x0000000000025eb9        0x7 
- .bss           0x0000000000025ec0       0x10 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
-                0x0000000000025ec0                GuidList
- .bss           0x0000000000025ed0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
- .bss           0x0000000000025ed0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
- .bss           0x0000000000025ed0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
- .bss           0x0000000000025ed0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
- .bss           0x0000000000025ed0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
- .bss           0x0000000000025ed0       0x28 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtdata.o)
-                0x0000000000025ed0                LibRuntimeRestoreTPL
-                0x0000000000025ed8                LibRuntimeRaiseTPL
-                0x0000000000025ee0                LibRuntimeDebugOut
-                0x0000000000025ee8                LibFwInstance
-                0x0000000000025ef0                RT
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efi_stub.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
- .bss           0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
+ .bss           0x0000000000028e80       0x18 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+ .bss           0x0000000000028e98        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
+ *fill*         0x0000000000028e98        0x8 
+ .bss           0x0000000000028ea0       0x29 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
+                0x0000000000028ea0                gZeroGuid
+                0x0000000000028eb0                BS
+                0x0000000000028eb8                ST
+                0x0000000000028ec0                LibImageHandle
+                0x0000000000028ec8                LibInitialized
+ .bss           0x0000000000028ec9        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
+ *fill*         0x0000000000028ec9        0x7 
+ .bss           0x0000000000028ed0       0x10 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
+                0x0000000000028ed0                GuidList
+ .bss           0x0000000000028ee0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
+ .bss           0x0000000000028ee0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
+ .bss           0x0000000000028ee0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
+ .bss           0x0000000000028ee0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
+ .bss           0x0000000000028ee0        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
+ .bss           0x0000000000028ee0       0x28 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtdata.o)
+                0x0000000000028ee0                LibRuntimeRestoreTPL
+                0x0000000000028ee8                LibRuntimeRaiseTPL
+                0x0000000000028ef0                LibRuntimeDebugOut
+                0x0000000000028ef8                LibFwInstance
+                0x0000000000028f00                RT
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efi_stub.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
+ .bss           0x0000000000028f08        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
  *(COMMON)
  *(.rel.local)
 
-.igot.plt       0x0000000000025ef8        0x0
- .igot.plt      0x0000000000025ef8        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+.igot.plt       0x0000000000028f08        0x0
+ .igot.plt      0x0000000000028f08        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
 
 .note.gnu.build-id
  *(.note.gnu.build-id)
-                0x0000000000025ef8                _edata = .
-                0x0000000000001078                _data_size = (_edata - _etext)
-                0x0000000000026000                . = ALIGN (0x1000)
+                0x0000000000028f08                _edata = .
+                0x0000000000001588                _data_size = (_edata - _etext)
+                0x0000000000029000                . = ALIGN (0x1000)
 
-.reloc          0x0000000000026000        0xc
+.reloc          0x0000000000029000        0xc
  *(.reloc)
- .reloc         0x0000000000026000        0xc C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
-                0x0000000000027000                . = ALIGN (0x1000)
-                0x0000000000027000                _DYNAMIC = .
+ .reloc         0x0000000000029000        0xc C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
+                0x000000000002a000                . = ALIGN (0x1000)
+                0x000000000002a000                _DYNAMIC = .
 
 .dynamic
  *(.dynamic)
-                0x0000000000027000                . = ALIGN (0x1000)
+                0x000000000002a000                . = ALIGN (0x1000)
 
-.rela           0x0000000000027000        0x0
+.rela           0x000000000002a000        0x0
  *(.rela.text*)
- .rela.text     0x0000000000027000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+ .rela.text     0x000000000002a000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
  *(.rela.data*)
  *(.rela.got)
- .rela.got      0x0000000000027000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+ .rela.got      0x000000000002a000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
  *(.rela.dyn)
  *(.rela.stab)
  *(.rela.init_array*)
@@ -745,85 +765,86 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
  *(.rela.ctors*)
  *(.rela.dtors*)
  *(.rela.reloc)
-                0x0000000000027000                . = ALIGN (0x1000)
+                0x000000000002a000                . = ALIGN (0x1000)
 
 .rela.plt
  *(.rela.plt)
-                0x0000000000027000                . = ALIGN (0x1000)
+                0x000000000002a000                . = ALIGN (0x1000)
 
-.rodata         0x0000000000027000     0x497e
+.rodata         0x000000000002a000     0x46fe
  *(.rodata*)
- .rodata        0x0000000000027000     0x3734 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
-                0x0000000000029b40                DebugPort
- *fill*         0x000000000002a734        0x4 
- .rodata        0x000000000002a738      0x2f8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
- .rodata        0x000000000002aa30       0x1c C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
- .rodata        0x000000000002aa4c       0x14 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
- .rodata        0x000000000002aa60      0x250 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
- .rodata        0x000000000002acb0      0x184 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
- .rodata        0x000000000002ae34        0x8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
- *fill*         0x000000000002ae3c        0x4 
- .rodata        0x000000000002ae40      0x628 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
- .rodata        0x000000000002b468      0x516 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
-                0x000000000002c000                . = ALIGN (0x1000)
+ .rodata        0x000000000002a000     0x34ae C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
+                0x000000000002c808                DebugPort
+ *fill*         0x000000000002d4ae        0x2 
+ .rodata        0x000000000002d4b0      0x2f8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
+ .rodata        0x000000000002d7a8       0x1c C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
+ .rodata        0x000000000002d7c4       0x14 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
+ *fill*         0x000000000002d7d8        0x8 
+ .rodata        0x000000000002d7e0      0x250 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
+ .rodata        0x000000000002da30      0x184 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
+ .rodata        0x000000000002dbb4        0x8 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
+ *fill*         0x000000000002dbbc        0x4 
+ .rodata        0x000000000002dbc0      0x628 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
+ .rodata        0x000000000002e1e8      0x516 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
+                0x000000000002f000                . = ALIGN (0x1000)
 
 .dynsym
  *(.dynsym)
-                0x000000000002c000                . = ALIGN (0x1000)
+                0x000000000002f000                . = ALIGN (0x1000)
 
 .dynstr
  *(.dynstr)
-                0x000000000002c000                . = ALIGN (0x1000)
+                0x000000000002f000                . = ALIGN (0x1000)
 
-.ignored.reloc  0x000000000002c000        0x0
+.ignored.reloc  0x000000000002f000        0x0
  *(.note.GNU-stack)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(guid.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(init.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(misc.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(str.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efirtlib.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtstr.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtdata.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(rtdata.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(initplat.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(print.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(va_print.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efi_stub.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(efi_stub.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(console.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(dpath.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(error.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(event.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(hand.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(math.o)
  .note.GNU-stack
-                0x000000000002c000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
+                0x000000000002f000        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libgnuefi.a(reloc_x86_64.o)
 
 .comment        0x0000000000000000       0x3f
  *(.comment)
  .comment       0x0000000000000000       0x3f C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
-                                        0x10a (size before relaxing)
+                                        0x143 (size before relaxing)
  .comment       0x000000000000003f        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(data.o)
                                          0x2e (size before relaxing)
  .comment       0x000000000000003f        0x0 C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/\libefi.a(entry.o)

@@ -14,7 +14,7 @@
 */
 
 #include <efi.h>
-#include "src/Boot/UEFI/tools/tools.h"
+#include "Boot/UEFI/tools/tools.h"
 
 #include "blake2.h"
 #include "blake2-impl.h"
@@ -286,7 +286,7 @@ int blake2sp( void *out, UINT64 outlen, const void *in, UINT64 inlen, const void
 
 
 #if defined(BLAKE2SP_SELFTEST)
-#include "src/Boot/UEFI/tools/tools.h"
+#include "Boot/UEFI/tools/tools.h"
 #include "blake2-kat.h"
 int main( void )
 {

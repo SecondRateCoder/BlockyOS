@@ -1,15 +1,15 @@
 #include "frat.h"
 
 bool checkdisk(char *path){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nVerifying Disk GPT");
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nVerifying Disk GPT");
 #endif
 	bool out = false;
 	rawenv re = startup(path, __FS_DEFAULTBLOCKSIZE);
 	uint8_t *block = readblocks(re, GPT_LBA, sizeof(miniGPT));
 	miniGPT *gpt = (miniGPT *)block;
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, 
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, 
 		"\nGPT Dump:"
 		"\n    Sig: \"%s\""
 		"\n    Rev: %u"
@@ -23,7 +23,7 @@ bool checkdisk(char *path){
 		gpt->sig, gpt->rev, gpt->hSize, gpt->hChecksum,
 		gpt->localLBA, gpt->alternateLBA, gpt->fUsable, gpt->lUsable
 	);
-	dualprintf(logf, stdout, 
+	dualprintf(fs_logf, stdout, 
 		"\n    Partition-Table: %llu"
 		"\n    # of Partition-Entries: %u"
 		"\n    Partition-Entry Size: %u"
@@ -35,30 +35,30 @@ bool checkdisk(char *path){
 	if(!memcmp(gpt->sig, "EFI PART", 8)){out = true;}else{out = false;}
 	free(block);
 	dispose(re);
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nGPT Exists? %s", ((out == true)? "true": "false"));
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nGPT Exists? %s", ((out == true)? "true": "false"));
 #endif
 	return out;
 }
 
 partdim loadpart(char *path, GPTeNSTR name){
-#ifdef __DEBUG__
-	char gptname[GPTeNAMELEN + 1];	memset(gptname, GPTeNAMESIZE + 1, 0);
-	for(uint8_t cc = 0; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
-	dualprintf(logf, stdout, "\n[%s:%u]  >>  Loading Partition:    %s", __FILE__, __LINE__, gptname);
+#ifdef _DEBUG
+	char gptname[GPTeNAMELEN + 1];	memset(gptname, GPTeNAMESIZE + 1, 0x00);
+	for(uint8_t cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
+	dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  Loading Partition:    %s", __FILE__, __LINE__, gptname);
 #endif
 	if(checkdisk(path)){
 		rawenv re = startup(path, __FS_DEFAULTBLOCKSIZE);
 		miniGPT *gpt = (miniGPT *)readblocks(re, GPT_LBA, sizeof(miniGPT));
 		GPTentry *ge = (GPTentry *)readblocks(re, gpt->partEntryLoc, gpt->nPartEntries * sizeof(GPTentry));
 		dispose(re);
-		for(uint32_t i = 0; i < gpt->nPartEntries; i++){
+		for(uint32_t i = 0x00; i < gpt->nPartEntries; i++){
 			if(!memcmp(name, ge[i].name, GPTeNAMESIZE)){
 				partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA, .e = ge[i]};
 				free(gpt);
 				free(ge);
-#ifdef __DEBUG__
-				dualprintf(logf, stdout, "\n[%s:%u]  >>  Found Partition: %llu:%llu", __FILE__, __LINE__, out.base, out.high);
+#ifdef _DEBUG
+				dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  Found Partition: %llu:%llu", __FILE__, __LINE__, out.base, out.high);
 #endif
 				return out;
 			}
@@ -66,10 +66,10 @@ partdim loadpart(char *path, GPTeNSTR name){
 		free(gpt);
 		free(ge);
 	}
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\n[%s:%u]  >>  Found No Partition named: %s", __FILE__, __LINE__, gptname);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  Found No Partition named: %s", __FILE__, __LINE__, gptname);
 #endif
-	return (partdim){0, 0, {0}};
+	return (partdim){0x00, 0x00, {0x00}};
 }
 
 void formatpart(
@@ -78,71 +78,68 @@ void formatpart(
 	uint32_t confBlockSize, uint32_t confLogSectors, 
 	uint32_t verMAJOR, uint32_t verMINOR
 ){
-#ifdef __DEBUG__
-	char gptname[GPTeNAMELEN + 1];	memset(gptname, GPTeNAMESIZE + 1, 0);
-	for(uint8_t cc = 0; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
-	dualprintf(logf, stdout, "\n[%s:%u]  >>  Formatting Partition:    %s", __FILE__, __LINE__, gptname);
+#ifdef _DEBUG
+	char gptname[GPTeNAMELEN + 1];	memset(gptname, GPTeNAMESIZE + 1, 0x00);
+	for(uint8_t cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
+	dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  Formatting Partition:    %s", __FILE__, __LINE__, gptname);
 #endif
 	partdim part = loadpart(path, name);
 	if(!part.high){return;}
 	rawenv re = startup(path, confBlockSize);
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, 
-		"\n[%s:%u]  >>  Format Target: %llu:%llu -> %llu LBAs"
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, 
+		"\n[%s:%u]  >>  Format Target: %llu:%llu -> %llu Blocks"
 		"\n    Version-Code: [%u:%u]"
 		"\n    Configured Block-Size: %u"
 		"\n    Configured Cluster-Size: %u"
 		"\n    Configured # of Log-Sectors: %u"
 		"\n    Configured Log-Size: %u",
 		__FILE__, __LINE__, 
-		part.base, part.high, part.high - part.base, 
-		verMAJOR, verMINOR, confBlockSize, 
+		part.base, part.high, part.high - part.base, verMAJOR, verMINOR, confBlockSize, 
 		CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize), 
 		confLogSectors, confLogSectors * sizeof(fslogitem)
 	);
 #endif
-
 	// Root-Block
 	void *block = calloc(confLogSectors, confBlockSize);
 	// ZeroMem(block, confBlockSize * confLogSectors);
-	fsroot *fr = block;
-	*fr = (fsroot){
+	*((fsroot *)block) = (fsroot){
 		.confLogSectors = confLogSectors,
 		.confBlockSize = confBlockSize,
 		.confClusterSize = CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize),
 		.verCode = MAKEVERSION(verMAJOR, verMINOR),
 	};
 	// Write FSROOT
-	memcpy(fr->signature, FRATSIG, sizeof(FRATSIG));
+	memcpy(((fsroot *)block)->signature, FRATSIG, sizeof(FRATSIG));
 	writeblocks(re, block, part.base + FRATROOTOFFSET, sizeof(fsroot));
 
 	// Log-Block
-	memset(block, 0, confBlockSize * confLogSectors);
+	memset(block, 0x00, confBlockSize * confLogSectors);
 	writeblocks(re, block, part.base + LOGBLOCKOFFSET, confBlockSize * confLogSectors);
 
 	// Cluster-Map
 	free(block);
 	block = calloc(CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize), confBlockSize);
-	// memset(block, 0, CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
+	// memset(block, 0x00, CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
 	writeblocks(re, block, part.base + CLUSTERMAPOFFSET(confLogSectors), CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
 	free(block);
 	dispose(re);
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\n[%s:%u]  >>  Formatted Partition", __FILE__, __LINE__);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  Formatted Partition", __FILE__, __LINE__);
 #endif
 }
 
 partdim queryparttablefs(miniGPT *gpt, rawenv re){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\n[%s:%u]  >>  Querying Part Table", __FILE__, __LINE__);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  Querying Part Table", __FILE__, __LINE__);
 #endif
 	// Query all Partitions for the FileSystem.
 	GPTentry *ge = (GPTentry *)readblocks(re, gpt->partEntryLoc, gpt->nPartEntries * sizeof(GPTentry));
-	for(uint32_t i = 0; i < gpt->nPartEntries; i++){
-		char gptname[GPTeNAMELEN + 1];	memset(gptname, GPTeNAMESIZE + 1, 0);
-		for(uint8_t cc = 0; cc < GPTeNAMELEN; ++cc){gptname[cc] = (ge[i].name[cc] & 0xFF);}
-#ifdef __DEBUG__
-		dualprintf(logf, stdout, "\n[%s:%u]  >>  GPT-Entry: %s{%llu:%llu -> %llu}", __FILE__, __LINE__, gptname, ge[i].sLBA, ge[i].eLBA, ge[i].eLBA - ge[i].sLBA);
+	for(uint32_t i = 0x00; i < gpt->nPartEntries; i++){
+		char gptname[GPTeNAMELEN + 1];	memset(gptname, 0x00, GPTeNAMESIZE);
+		for(uint8_t cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (ge[i].name[cc] & 0xFF);}
+#ifdef _DEBUG
+		dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  GPT-Entry: %s{%llu:%llu -> %llu}", __FILE__, __LINE__, gptname, ge[i].sLBA, ge[i].eLBA, ge[i].eLBA - ge[i].sLBA);
 #endif
 		if(queryfs(re, ge[i].sLBA)){
 			partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA, .e = ge[i]};
@@ -151,37 +148,37 @@ partdim queryparttablefs(miniGPT *gpt, rawenv re){
 		}
 	}
 	free(ge);
-	return (partdim){0, 0, {0}};
+	return (partdim){0x00, 0x00, {0x00}};
 }
 
 bool queryfs(rawenv re, LBA partbase){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\n[%s:%u]  >>  Querying FS at %llu", __FILE__, __LINE__, partbase);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  Querying FS at %llu", __FILE__, __LINE__, partbase);
 #endif
 	// Check that a FileSystem exists at the bytebase.
-	bool out = 0;
+	bool out = 0x00;
 	fsroot *fr = (fsroot *)readblocks(re, partbase + FRATROOTOFFSET, sizeof(fsroot));
-	dualprintf(logf, stdout, 
+	dualprintf(fs_logf, stdout, 
 		"\nFS-Root Blob:"
 		"\n    Version: [%u:%u]"
 		"\n    Sig: %.16s"
 		"\n    Configured Log Sectors: %u"
 		"\n    Configured Block Size: %u"
 		"\n    Configured Cluster-Map Size: %u",
-		fr->verCode[0], fr->verCode[1], 
+		fr->verCode[0x00], fr->verCode[1], 
 		fr->signature, fr->confLogSectors, 
 		fr->confBlockSize, fr->confClusterSize
 	);
 	if(!memcmp(fr->signature, FRATSIG, sizeof(FRATSIG))){
-#ifdef __DEBUG__
-		dualprintf(logf, stdout, 
+#ifdef _DEBUG
+		dualprintf(fs_logf, stdout, 
 			"\n[%s:%u]  >>  FS Found at [%llu]:"
 			"\n	Version-Code: [%u:%u]"
 			"\n	Configured Block-Size: %u"
 			"\n	Configured Cluster-Size: %u"
 			"\n	Configured # of Log-Sectors: %u"
 			"\n	Configured Log-Size: %u", 
-			__FILE__, __LINE__, partbase, fr->verCode[0], fr->verCode[1], 
+			__FILE__, __LINE__, partbase, fr->verCode[0x00], fr->verCode[1], 
 			fr->confBlockSize, fr->confClusterSize, fr->confLogSectors, fr->confLogSectors * sizeof(fslogitem)
 		);
 #endif
@@ -192,8 +189,8 @@ bool queryfs(rawenv re, LBA partbase){
 }
 
 conf_fsroot *fmount(char *path){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\n[%s:%u]  >>  Mounting FS Root: [%s]", __FILE__, __LINE__, path);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  Mounting FS Root: [%s]", __FILE__, __LINE__, path);
 #endif
 	partdim PART;
 	if(checkdisk(path)){
@@ -202,16 +199,16 @@ conf_fsroot *fmount(char *path){
 		void *block = readblocks(re, GPT_LBA, sizeof(miniGPT));
 		miniGPT *gpt = (miniGPT *)block;
 		if(!(PART = queryparttablefs(gpt, re)).high){free(gpt);    return NULL;}
-#ifdef __DEBUG__
-		dualprintf(logf, stdout, 
+#ifdef _DEBUG
+		dualprintf(fs_logf, stdout, 
 			"\n[%s:%u]  >>  Found Formatted Partition: %llu:%llu -> %llu", 
 			__FILE__, __LINE__, PART.base, PART.high, PART.high - PART.base
 		);
 #endif
 		// Generate the fsroot
 		fsroot *fsroot_ = (fsroot *)readblocks(re, PART.base + FRATROOTOFFSET, sizeof(fsroot));
-#ifdef __DEBUG__
-		dualprintf(logf, stdout, 
+#ifdef _DEBUG
+		dualprintf(fs_logf, stdout, 
 			"\n[%s:%u]  >>  Root: %llu:%llu -> %llu LBAs"
 			"\n	Version-Code: [%u:%u]"
 			"\n	Configured Block-Size: %u"
@@ -219,7 +216,7 @@ conf_fsroot *fmount(char *path){
 			"\n	Configured # of Log-Sectors: %u"
 			"\n	Configured Log-Size: %u", 
 			__FILE__,__LINE__, PART.base, PART.high, PART.high - PART.base, 
-			fsroot_->verCode[0], fsroot_->verCode[1], 
+			fsroot_->verCode[0x00], fsroot_->verCode[1], 
 			fsroot_->confBlockSize, CLUSTERMAPSECTORS_CALC(PART.base, PART.high, fsroot_->confLogSectors, fsroot_->confBlockSize), 
 			fsroot_->confClusterSize, fsroot_->confLogSectors, fsroot_->confLogSectors * sizeof(fslogitem)
 		);
@@ -227,9 +224,9 @@ conf_fsroot *fmount(char *path){
 		setblocksize(re, fsroot_->confBlockSize);
 		conf_fsroot *largeroot = calloc(1, sizeof(conf_fsroot));
 		*largeroot = (conf_fsroot){
-			.loc = 0,
+			.loc = 0x00,
 			.root = fsroot_,
-			.lastClusterAlloc = 0,
+			.lastClusterAlloc = 0x00,
 			.logblocks = {
 				.logBlock = readblocks(re, PART.base + LOGBLOCKOFFSET, fsroot_->confBlockSize * fsroot_->confLogSectors),
 				.nLogSectors = fsroot_->confLogSectors
@@ -239,30 +236,30 @@ conf_fsroot *fmount(char *path){
 				.clusterSize = fsroot_->confClusterSize,
 				.clusterMap = readblocks(re, PART.base + CLUSTERMAPOFFSET(fsroot_->confLogSectors), fsroot_->confClusterSize)
 			},
-			.GUID[0] = PART.e.GUID[0],	.GUID[1] = PART.e.GUID[1],
-			.altGUID[0] = PART.e.uGUID[0],	.altGUID[1] = PART.e.uGUID[1],
+			._GUID[0x00] = PART.e.GUID[0x00],	._GUID[1] = PART.e.GUID[1],
+			.altGUID[0x00] = PART.e.uGUID[0x00],	.altGUID[1] = PART.e.uGUID[1],
 			.path = strdup(path)
 		};
-#ifdef __DEBUG__
-		dualprintf(logf, stdout, "\n    Verifying FS Root Items #items: %llu", (size_t)(fsroot_->confClusterSize / sizeof(fsblock)));
+#ifdef _DEBUG
+		dualprintf(fs_logf, stdout, "\n    Verifying FS Root Items #items: %llu", (uint64_t)(fsroot_->confClusterSize / sizeof(fsblock)));
 		EnableVerbose(re);
 #endif
-		for(size_t i = 0; i < (fsroot_->confClusterSize / sizeof(fsblock)); ++i){
+		for(uint64_t i = 0x00; i < (fsroot_->confClusterSize / sizeof(fsblock)); ++i){
 			// Read and verify ROOTS
 			fsblock *f = largeroot->clusterbuffer.clusterMap + i;
-			if(f->fcode != 0){
-				if(flagcheck(f->attr, __fsmetadatacluster) && f->fcode != 0){
+			if(f->fcodehigh && f->fcodelow){
+				if(flagcheck(f->attributes, __fsmetadatacluster) && f->fcodehigh && f->fcodelow){
 					meta_fsblock *temp = readblocks(re, getloc(largeroot, f), sizeof(meta_fsblock));
 					if(memcmp(temp->fsig, FRATBLOCKSIG, 8)){
-#ifdef __DEBUG__
-						dualprintf(logf, stdout, 
+#ifdef _DEBUG
+						dualprintf(fs_logf, stdout, 
 							"\n[%s:%u]  >>  ERROR!    Corrupted FileSystem Root Block    ERASING ENTRY!!"
-							"\n    %llu:%u:%u", 
-							__FILE__, __LINE__, f->fcode, f->attr, f->index
+							"\n    [%llu:%llu]:%u:%u", 
+							__FILE__, __LINE__, f->fcodelow, f->fcodehigh, f->attributes, f->index
 						);
 #endif
-						memset(temp, 0, 512);
-						f->fcode = 0;
+						memset(temp, 0x00, 512);
+						f->fcodehigh = 0x00;	f->fcodelow = 0x00;
 						writeblocks(re, temp, getloc(largeroot, f), sizeof(meta_fsblock));
 					}
 					free(temp);
@@ -276,54 +273,59 @@ conf_fsroot *fmount(char *path){
 }
 
 fsblock *allocatecluster(conf_fsroot *root){
-	for(size_t i = root->lastClusterAlloc; i < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++i){
-		if(root->clusterbuffer.clusterMap[i].fcode == 0){
+	for(uint64_t i = root->lastClusterAlloc; i < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++i){
+		if(root->clusterbuffer.clusterMap[i].fcodelow == 0x00 && root->clusterbuffer.clusterMap[i].fcodehigh == 0x00){
 			root->lastClusterAlloc = i;
 			return root->clusterbuffer.clusterMap + i;
 		}
 	}
-	root->lastClusterAlloc = 0;
+	root->lastClusterAlloc = 0x00;
 	return NULL;
 }
 
 void __ffremove(conf_fsroot *root, char *path){
 	fsblock *fb = __ffind(root, path);
-	fb->fcode = 0;
+	fb->fcodelow = 0x00;	fb->fcodehigh = 0x00;
 }
-void __ffremoveh(conf_fsroot *root, size_t hash){
-	hash &= 0x3FFFFFFFFFF;
+void __ffremoveh(conf_fsroot *root, uint64_t hash[2]){
+	hash[1] &= FCODEHASHMASK;
 	fsblock *fb = __ffindh(root, hash);
-	fb->fcode = 0;
+	fb->fcodelow = 0x00;	fb->fcodehigh = 0x00;
 }
 
 void __ffremovel(conf_fsroot *root, char *path){return __ffremovelh(root, __getfcode(path));}
 
-void __ffremovelh(conf_fsroot *root, size_t hash){
-	hash &= 0x3FFFFFFFFFF;
-	for(size_t cc = 0; cc < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
-		if(root->clusterbuffer.clusterMap[cc].fcode == hash){root->clusterbuffer.clusterMap[cc].fcode = 0;}
+void __ffremovelh(conf_fsroot *root, uint64_t hash[2]){
+	hash[1] &= FCODEHASHMASK;
+	for(uint64_t cc = 0x00; cc < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
+		if(root->clusterbuffer.clusterMap[cc].fcodelow == hash[0x00] && 
+			root->clusterbuffer.clusterMap[cc].fcodehigh == hash[1]
+		){root->clusterbuffer.clusterMap[cc].fcodelow = 0x00;	root->clusterbuffer.clusterMap[cc].fcodehigh = 0x00;}
 	}
 }
 
 void __fcreate(conf_fsroot *root, char *path, char *flags){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nCreating File at: ./%s", path);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nCreating File at: ./%s", path);
 #endif
 	if(__ffind(root, path)){if(strcheck(flags, 'F')){__ffremove(root, path);}else{return;}}
 	fsblock *fb = allocatecluster(root);
 	if(fb){
-		if(strcheck(flags, 'P')){fb->attr |= __fsproxy;}else{
-			if(strcheck(flags, 'd')){fb->attr |= __fsdirectory;}
-			if(strcheck(flags, 'f') && !flagcheck(fb->attr, __fsdirectory)){fb->attr |= __fsfile;}
-			if(strcheck(flags, 'r')){fb->attr |= __fsreadonly;}}
-		fb->attr |= __fsmetadatacluster;
-		fb->fcode = __getfcode(path);
-#ifdef __DEBUG__
-		dualprintf(logf, stdout, "\n\tFcode: %llu", fb->fcode);
+		if(strcheck(flags, 'P')){fb->attributes |= __fsproxy;}else{
+			if(strcheck(flags, 'd')){fb->attributes |= __fsdirectory;}
+			if(strcheck(flags, 'f') && !flagcheck(fb->attributes, __fsdirectory)){fb->attributes |= __fsfile;}
+			if(strcheck(flags, 'r')){fb->attributes |= __fsreadonly;}}
+		fb->attributes |= __fsmetadatacluster;
+		uint64_t *hash = __getfcode(path);
+		uint64_t fcode[2] = {hash[0], hash[1]};
+#ifdef _DEBUG
+		dualprintf(fs_logf, stdout, "\n\tFcode: [%llu:%llu]", fcode[0], fcode[1] & FCODEHASHMASK);
 #endif
-		fb->index = 0;
+		fb->fcodehigh = (fcode[1] & FCODEHASHMASK);
+		fb->fcodelow = fcode[0];
+		fb->index = 0x00;
 		dirhandle *dhandle = __fgetparent(root, path);
-		if(dhandle && dhandle->file->fcode != fb->fcode){
+		if(dhandle && (dhandle->file->fcodelow != fb->fcodelow || dhandle->file->fcodehigh != fb->fcodehigh)){
 			__fdiradd(dhandle, fb);
 			fuloaddir(dhandle);
 		}
@@ -335,24 +337,25 @@ void __fcreate(conf_fsroot *root, char *path, char *flags){
 }
 
 fsblock *__faddr(conf_fsroot *root, fsblock *family){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nAdding FS Table Entry: %llu, Type: %s", family->fcode, (flagcheck(family->attr, __fsdirectory)? "DIRECTORY": "FILE"));
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nAdding FS Table Entry: [%llu:%llu], Type: %s", family->fcodelow, family->fcodehigh, (flagcheck(family->attributes, __fsdirectory)? "DIRECTORY": "FILE"));
 #endif
 	fsblock *fb = allocatecluster(root);
 	if(fb){
-		fb->index = 0;
-		for(size_t i = 0; i < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++i){
-			if(root->clusterbuffer.clusterMap[i].fcode == family->fcode){fb->index++;}
+		fb->index = 0x00;
+		for(uint64_t i = 0x00; i < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++i){
+			if(root->clusterbuffer.clusterMap[i].fcodelow == family->fcodelow && root->clusterbuffer.clusterMap[i].fcodehigh == family->fcodehigh){fb->index++;}
 		}
-		fb->attr = family->attr;
-		fb->fcode = family->fcode;
-		flagunset(fb->attr, __fsmetadatacluster);
+		fb->attributes = family->attributes;
+		fb->fcodelow = family->fcodelow;
+		fb->fcodehigh = family->fcodehigh;
+		flagunset(fb->attributes, __fsmetadatacluster);
 		// Clear Block
 		void *bl0 = calloc(1, root->root->confBlockSize);
-		memset(bl0, 0, root->root->confBlockSize);
+		memset(bl0, 0x00, root->root->confBlockSize);
 		LBA loc = getloc(root, fb);
-#ifdef __DEBUG__
-		dualprintf(logf, stdout, "\n\tWriting 0-Block: %llu", loc);
+#ifdef _DEBUG
+		dualprintf(fs_logf, stdout, "\n\tWriting 0x00-Block: %llu", loc);
 #endif
 		rawenv re = startup(root->path, root->root->confBlockSize);
 		writeblocks(re, bl0, loc, root->root->confBlockSize);
@@ -363,8 +366,8 @@ fsblock *__faddr(conf_fsroot *root, fsblock *family){
 }
 
 void __finit(conf_fsroot *root, fsblock *fb, char *path){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nInitialising File MetaData: ./%s", path);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nInitialising File MetaData: ./%s", path);
 #endif
 	LBA loc = getloc(root, fb);
 	meta_fsblock *metadata = (meta_fsblock *)calloc(1, root->root->confBlockSize);
@@ -375,69 +378,66 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
     localtime_r(_t, &_time);
 #endif
 	char *name;
-	for(ssize_t i = strlen(path) - 1; i > -1; i--){
-		if(i > GPTeNAMELEN){path[i] = '\0';}else{
+	for(uint64_t i = strlen(path) - 1; i > -1; i--){
+		if(i > GPTeNAMELEN){path[i] = '\0x00';}else{
 			if(path[i] == '/' || path[i] == '\\'){
 				name = path + strlen(path) - i;  break;
-			}else if(!isascii(path[i])){path[i] = 0;}
+			}else if(!isascii(path[i])){path[i] = 0x00;}
 		}
 	}
 	*metadata = (meta_fsblock){
 		.accessdate = _t->tm_yday,
-		.writedate = 0,
+		.writedate = 0x00,
 		.accesstime = (_t->tm_hour * 3600) + (_t->tm_min * 60) + _t->tm_sec,
-		.writetime = 0,
-		.attributes = fb->attr,
-		.fcode = (flagcheck(fb->attr, __fsproxy)? 0: fb->fcode),
+		.writetime = 0x00,
+		.f = {.attributes = fb->attributes, 
+			.fcodelow = (flagcheck(fb->attributes, __fsproxy)? 0x00: fb->fcodelow), 
+			.fcodehigh = (flagcheck(fb->attributes, __fsproxy)? 0x00: fb->fcodehigh)},
 	};
 	memcpy(metadata->fsig, FRATBLOCKSIG, 8);
-	flagunset(metadata->attributes, __fsmetadatacluster);
-	memset(metadata->name, 0, GPTeNAMELEN);
+	flagunset(metadata->f.attributes, __fsmetadatacluster);
+	memset(metadata->name, 0x00, GPTeNAMELEN);
 	memcpy(metadata->name, name, strlen(name));
 	rawenv re = startup(root->path, root->root->confBlockSize);
 	writeblocks(re, metadata, loc, sizeof(meta_fsblock));
 	dispose(re);
 }
 
-fsblock *__ffindh(conf_fsroot *root, size_t hash){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nRoot is %p", root);
+fsblock *__ffindhi(conf_fsroot *root, uint64_t hash[2], uint64_t index){
+	fsblock _temp = {.fcodehigh = hash[1], .fcodelow = hash[0], .index = index, .attributes = 0x00};
+	for(uint64_t cc = 0x00; cc < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
+		if((root->clusterbuffer.clusterMap[cc].fcodehigh == _temp.fcodehigh) && 
+			(root->clusterbuffer.clusterMap[cc].fcodelow == _temp.fcodelow) && 
+			root->clusterbuffer.clusterMap[cc].index == _temp.index
+		){return root->clusterbuffer.clusterMap + cc;}
+	}
+	return NULL;
+}
+
+fsblock *__ffindh(conf_fsroot *root, uint64_t *hash){
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nRoot is %p", root);
 #endif
-	hash &= 0x3FFFFFFFFFF;
-	for(size_t cc = 0; cc < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
-		if(root->clusterbuffer.clusterMap[cc].fcode == hash && root->clusterbuffer.clusterMap[cc].index == 0){
-			return root->clusterbuffer.clusterMap + cc;
-		}
-	}
-	return NULL;
+	return __ffindhi(root, hash, 0x00);
 }
 
-fsblock *__ffindhi(conf_fsroot *root, size_t hash, size_t index){
-	hash &= 0x3FFFFFFFFFF;
-	for(size_t cc = 0; cc < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
-		if(root->clusterbuffer.clusterMap[cc].fcode == hash && root->clusterbuffer.clusterMap[cc].index == index){
-			return root->clusterbuffer.clusterMap + cc;
-		}
-	}
-	return NULL;
-}
 
-fsblock *__ffindi(conf_fsroot *root, char *path, size_t index){return __ffindhi(root, __getfcode(path), index);}
+fsblock *__ffindi(conf_fsroot *root, char *path, uint64_t index){return __ffindhi(root, __getfcode(path), index);}
 
 fsblock *__ffind(conf_fsroot *root, char *path){
-	size_t hash = __getfcode(path);
+	uint64_t *hash = __getfcode(path);
 	return __ffindh(root, hash);
 }
 
-void *__fread1(conf_fsroot *root, fsblock *fb, size_t index){
-	LBA loc = 0;
+void *__fread1(conf_fsroot *root, fsblock *fb, uint64_t index){
+	LBA loc = 0x00;
 	if(index != fb->index){
-		fsblock *fb_ = __ffindhi(root, fb->fcode, index);
+		fsblock *fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, index);
 		if(fb_ == NULL){return NULL;}
 		loc = getloc(root, fb_);
 	}else{loc = getloc(root, fb);}
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nReading File Block at %llu, Item: %llu.    Root: %llu", loc, index, fb->fcode);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nReading File Block at %llu, Item: %llu.    Root: [%llu:%llu]", loc, index, fb->fcodelow, fb->fcodehigh);
 #endif
 	rawenv re = startup(root->path, root->root->confBlockSize);
 	void *out = readblocks(re, loc, root->root->confBlockSize);
@@ -445,27 +445,27 @@ void *__fread1(conf_fsroot *root, fsblock *fb, size_t index){
 	return out;
 }
 
-void __fpush1(conf_fsroot *root, fsblock *fb, size_t i, void *buffer){
-	LBA loc = 0;
+void __fpush1(conf_fsroot *root, fsblock *fb, uint64_t i, void *buffer){
+	LBA loc = 0x00;
 	if(i != fb->index){
 		fsblock *fb_ = NULL;
-		if((fb_ = __ffindhi(root, fb->fcode, i)) == NULL){
+		if((fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, i)) == NULL){
 			fb_ = __faddr(root, fb);
 			if(fb_){loc = getloc(root, fb_);
 			}else{return;}
 		}else{loc = getloc(root, fb_);}
 	}else{
-		if(flagcheck(fb->attr, __fsmetadatacluster)){
+		if(flagcheck(fb->attributes, __fsmetadatacluster)){
 			// Reject the Write
-#ifdef __DEBUG__
-			dualprintf(logf, stdout, "\nError: Attempted Write to Protected Metadata Cluster");
+#ifdef _DEBUG
+			dualprintf(fs_logf, stdout, "\nError: Attempted Write to Protected Metadata Cluster");
 #endif
 			return;
 		}else{loc = getloc(root, fb);}
 		
 	}
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nWriting File Block at %llu, Item: %llu.\tRoot: %llu", loc, i, fb->fcode);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nWriting File Block at %llu, Item: %llu.\tRoot: [%llu:%llu]", loc, i, fb->fcodelow, fb->fcodehigh);
 #endif
 	rawenv re = startup(root->path, root->root->confBlockSize);
 	writeblocks(re, buffer, loc, root->root->confBlockSize);
@@ -473,8 +473,8 @@ void __fpush1(conf_fsroot *root, fsblock *fb, size_t i, void *buffer){
 }
 
 dirhandle *floadhdir(conf_fsroot *root, char *path, char *args){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nMounting Dir [%s] with Args: \"%s\"", path, args);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nMounting Dir [%s] with Args: \"%s\"", path, args);
 #endif
 	dirhandle *out = calloc(1, sizeof(dirhandle));
 	*out = (dirhandle){
@@ -488,7 +488,7 @@ dirhandle *floadhdir(conf_fsroot *root, char *path, char *args){
 		out->file = __ffind(root, path);
 		if(!out->file){return NULL;}
 	}
-	if(flagcheck(out->file->attr, __fsdirectory)){__fdirrefresh(out);}
+	if(flagcheck(out->file->attributes, __fsdirectory)){__fdirrefresh(out);}
 	else{
 		free(out->path);
 		free(out);
@@ -498,8 +498,8 @@ dirhandle *floadhdir(conf_fsroot *root, char *path, char *args){
 }
 
 void fuloaddir(dirhandle *handle){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nUn-Mounting Directory [%s]", handle->path);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nUn-Mounting Directory [%s]", handle->path);
 #endif
 	// Flush root
 	rawenv re = startup(handle->root->path, handle->root->root->confBlockSize);
@@ -507,10 +507,10 @@ void fuloaddir(dirhandle *handle){
 	// Flush cluster Array/Buffer
 	writeblocks(re, handle->root->clusterbuffer.clusterMap, handle->root->loc + CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors), handle->root->clusterbuffer.nClusterSectors);	
 	// Flush Entries
-	size_t entry = 0;
+	uint64_t entry = 0x00;
 	fsblock *f = NULL;
 	do{
-		f = __ffindhi(handle->root, handle->file->fcode, entry + 1);
+		f = __ffindhi(handle->root, (uint64_t[2]){handle->file->fcodelow, handle->file->fcodehigh}, entry + 1);
 		if(f){writeblocks(
 			re, ((void *)handle->dirarray) + (handle->root->root->confBlockSize * entry), 
 			getloc(handle->root, f), 
@@ -533,11 +533,11 @@ void fuloadroot(conf_fsroot *fr){
 }
 
 void __fdirrefresh(dirhandle *handle){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nRefreshing Dir %s", handle->path);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nRefreshing Dir %s", handle->path);
 #endif
 	rawenv re = startup(handle->root->path, handle->root->root->confBlockSize);
-	size_t blockprogress = 0;
+	uint64_t blockprogress = 0x00;
 	bool exit_ = false;
 	do{
 		// Find the associated Clusters/Blocks
@@ -548,7 +548,7 @@ void __fdirrefresh(dirhandle *handle){
 			void *temp = readblocks(re, getloc(handle->root, fb), handle->root->root->confBlockSize);
 			memcpy(handle->dirarray + (getblocksize(re) * blockprogress), temp, getblocksize(re));
 			free(temp);
-			for(size_t cc = 0; cc < __safediv(getblocksize(re), sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0){exit_ = true;	break;}}
+			for(uint64_t cc = 0x00; cc < __safediv(getblocksize(re), sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = true;	break;}}
 			blockprogress++;
 		}else if(!fb){exit_ = true;}
 	}while(!exit_);
@@ -557,8 +557,8 @@ void __fdirrefresh(dirhandle *handle){
 }
 
 fhandle *floadh(conf_fsroot *root, char *path, char *args){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nMounting File [%s] with \"%s\"", path, args);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nMounting File [%s] with \"%s\"", path, args);
 #endif
 	if(strcheck(args, 'c')){__fcreate(root, path, args);}
 	fsblock *fb = __ffind(root, path);
@@ -576,8 +576,8 @@ fhandle *floadh(conf_fsroot *root, char *path, char *args){
 }
 
 void fuloadh(fhandle *handle){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nUn-Mounting File [%llu]", handle->file->fcode);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nUn-Mounting File [%llu:%llu]", handle->file->fcodelow, handle->file->fcodehigh);
 #endif
 	// Flush root
 	rawenv re = startup(handle->root->path, handle->root->root->confBlockSize);
@@ -592,8 +592,8 @@ void fuloadh(fhandle *handle){
 meta_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 	LBA loc = getloc(root, fb);
 	rawenv re = startup(root->path, root->root->confBlockSize);
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nReading File Info");
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nReading File Info");
 #endif
 	void *out = readblocks(re, loc, sizeof(meta_fsblock));
 	dispose(re);
@@ -623,21 +623,22 @@ void __fupdatetstamp(conf_fsroot *root, fsblock *file, bool wt){
 	dispose(re);
 }
 
-size_t __fsize(fhandle *fh){
-	size_t size = 0;
-	for(size_t cc = 0; cc < (fh->root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
+uint64_t __fsize(fhandle *fh){
+	uint64_t size = 0x00;
+	for(uint64_t cc = 0x00; cc < (fh->root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
 		size += (
-			!flagcheck((fh->root->clusterbuffer.clusterMap + cc)->attr, __fsmetadatacluster) &&
-			((fh->root->clusterbuffer.clusterMap + cc)->fcode == fh->file->fcode) 
-			? fh->root->root->confBlockSize: 0
+			!flagcheck((fh->root->clusterbuffer.clusterMap + cc)->attributes, __fsmetadatacluster) &&
+				((fh->root->clusterbuffer.clusterMap + cc)->fcodelow == fh->file->fcodelow && 
+					(fh->root->clusterbuffer.clusterMap + cc)->fcodehigh == fh->file->fcodehigh) 
+			? fh->root->root->confBlockSize: 0x00
 		);
 	}
 	return size;
 }
-size_t __dsize(dirhandle *dh){
-	size_t size = 0;
-	for(size_t cc = 0; cc < ((dh->loadedblocks * dh->root->root->confBlockSize) / sizeof(diritem)); ++cc){
-		size += (((dh->dirarray + cc)->local != 0) ? dh->root->root->confBlockSize: 0);
+uint64_t __dsize(dirhandle *dh){
+	uint64_t size = 0x00;
+	for(uint64_t cc = 0x00; cc < ((dh->loadedblocks * dh->root->root->confBlockSize) / sizeof(diritem)); ++cc){
+		size += (((dh->dirarray + cc)->local) ? dh->root->root->confBlockSize: 0x00);
 	}
 	return size;
 }
@@ -645,21 +646,21 @@ size_t __dsize(dirhandle *dh){
 meta_fsblock *_dreadinfo(dirhandle *handle){return __freadinfo(handle->root, handle->file);}
 meta_fsblock *_freadinfo(fhandle *handle){return __freadinfo(handle->root, handle->file);}
 
-void _fseeko(fhandle *handle, ssize_t progress){_fseek(handle, handle->progress + progress);}
-void _fseek(fhandle *handle, size_t progress){handle->progress = (progress == 0? handle->root->root->confBlockSize: progress);}
+void _fseeko(fhandle *handle, uint64_t progress){_fseek(handle, handle->progress + progress);}
+void _fseek(fhandle *handle, uint64_t progress){handle->progress = (progress == 0x00? handle->root->root->confBlockSize: progress);}
 
-size_t _fwrite(fhandle *handle, size_t nbytes, const void *data){
-    if(!handle || !data || nbytes == 0){return 0;}
-    size_t blkSize = handle->root->root->confBlockSize;
-    size_t pos    = handle->progress;      // byte offset in file
-    size_t left    = nbytes;
-    size_t written = 0;
+uint64_t _fwrite(fhandle *handle, uint64_t nbytes, const void *data){
+    if(!handle || !data || nbytes == 0x00){return 0x00;}
+    uint64_t blkSize = handle->root->root->confBlockSize, 
+			pos = handle->progress,       // byte offset in fil
+			left = nbytes, 
+			written = 0x00;
     __fupdatetstamp(handle->root, handle->file, true);
-    if(flagcheck((__ffindh(handle->root, handle->file->fcode))->attr, __fsreadonly)){return 0;}
-    while(left > 0){
-        size_t blkIndex   = pos / blkSize;
-        size_t blkOffset  = (size_t)(pos % blkSize);
-        size_t chunk      = blkSize - blkOffset;
+    if(flagcheck((__ffindh(handle->root, (uint64_t[2]){handle->file->fcodelow, handle->file->fcodehigh}))->attributes, __fsreadonly)){return 0x00;}
+    while(left > 0x00){
+        uint64_t blkIndex = pos / blkSize, 
+				blkOffset = (uint64_t)(pos % blkSize), 
+				chunk = blkSize - blkOffset;
         if(chunk > left){chunk = left;}
         void *blk = __fread1(handle->root, handle->file, blkIndex);
         if(!blk){
@@ -676,20 +677,20 @@ size_t _fwrite(fhandle *handle, size_t nbytes, const void *data){
     handle->progress = pos;
     return nbytes - left;
 }
-size_t _fread(fhandle *handle, size_t nbytes, void **dataout){
-    if(!handle || nbytes == 0){return 0;}
-    size_t blkSize = handle->root->root->confBlockSize;
-    size_t pos    = handle->progress;      // byte offset in file
-    size_t left    = nbytes;
-    size_t written = 0;
+uint64_t _fread(fhandle *handle, uint64_t nbytes, void **dataout){
+    if(!handle || nbytes == 0x00){return 0x00;}
+    uint64_t blkSize = handle->root->root->confBlockSize;
+    uint64_t pos    = handle->progress;      // byte offset in file
+    uint64_t left    = nbytes;
+    uint64_t written = 0x00;
 	__fupdatetstamp(handle->root, handle->file, false);
 
     void *out = calloc(1, nbytes);
-    if(!out){return 0;}
-    while(left > 0){
-        size_t blkIndex   = pos / blkSize;
-        size_t blkOffset  = (size_t)(pos % blkSize);
-        size_t chunk      = blkSize - blkOffset;
+    if(!out){return 0x00;}
+    while(left > 0x00){
+        uint64_t blkIndex   = pos / blkSize;
+        uint64_t blkOffset  = (uint64_t)(pos % blkSize);
+        uint64_t chunk      = blkSize - blkOffset;
 
         void *blk = __fread1(handle->root, handle->file, blkIndex);
         if(!blk){break;}
@@ -710,59 +711,58 @@ dirhandle *__fgetparent(conf_fsroot *root, char *path){
 	uint32_t cc = strlen(path);
 	char *dup = strdup(path);
 	while(dup[cc] == PATHnoSEP || dup[cc] == PATHSEP){cc--;}
-	for(; cc > 0; --cc){if(dup[cc] == PATHSEP || dup[cc] == PATHnoSEP){dup[cc] = '\0';	break;}}
-	if(cc == 0){return NULL;}
+	for(; cc > 0x00; --cc){if(dup[cc] == PATHSEP || dup[cc] == PATHnoSEP){dup[cc] = '\0';	break;}}
+	if(cc == 0x00){return NULL;}
 	dirhandle *out = floadhdir(root, dup, "dc");
 	free(dup);
 	return out;
 }
 
 void __fdiradd(dirhandle *dir, fsblock *fb){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nAdding Entry:%llu to Dir [%s:%llu]", fb->fcode, dir->path, dir->file->fcode);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nAdding Entry:[%llu:%llu] to Dir [%s:[%llu:%llu]", fb->fcodelow, fb->fcodehigh, dir->path, dir->file->fcodelow, dir->file->fcodehigh);
 #endif
 	do{
 		__fdirrefresh(dir);
-		uint32_t cc = 0;
+		uint32_t cc = 0x00;
 		if(dir->dirarray){
 			do{
-				if(dir->dirarray[cc].fcode == 0){
-					dir->dirarray[cc].attributes = fb->attr;
-					dir->dirarray[cc].fcode = fb->fcode;
-					dir->dirarray[cc].local = 0;
+				if(dir->dirarray[cc].f.fcodelow == 0x00 && dir->dirarray[cc].f.fcodehigh == 0x00){
+					dir->dirarray[cc].f = *fb;
+					dir->dirarray[cc].local = 0x00;
 					return;
-				}else if(dir->dirarray[cc].fcode == fb->fcode){
-					dir->dirarray[cc].attributes = fb->attr;
+				}else if(dir->dirarray[cc].f.fcodelow == fb->fcodelow && dir->dirarray[cc].f.fcodehigh == fb->fcodehigh){
+					dir->dirarray[cc].f.attributes = fb->attributes;
 					return;
 				}else{dir->dirarray[cc].local++;}
 				cc++;
-			}while(dir->dirarray[cc == 0? cc: (cc - 1)].local != 0);
+			}while(dir->dirarray[cc == 0x00? cc: (cc - 1)].local);
 		}
 		__faddr(dir->root, dir->file);
 	}while(true);
 }
 
 bool __ftest(fhandle *h){
-#ifdef __DEBUG__
-	dualprintf(logf, stdout, "\nPerforming File Test. Code: %llu", h->file->fcode);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nPerforming File Test. Code: [%llu:%llu]", h->file->fcodelow, h->file->fcodehigh);
 #endif
 	bool out = true;
 	void *_block = calloc(1, h->root->root->confBlockSize);
 	trng__(_block, h->root->root->confBlockSize);
-	_fseek(h, 0);
+	_fseek(h, 0x00);
 	_fwrite(h, h->root->root->confBlockSize, _block);
-	_fseek(h, 0);
+	_fseek(h, 0x00);
 	void *__block = NULL;
 	_fread(h, h->root->root->confBlockSize, &__block);
 	if(__block){
-		dualprintf(logf, stdout, "\n");
-		for(size_t cc = 0; cc < h->root->root->confBlockSize; ++cc){
+		dualprintf(fs_logf, stdout, "\n");
+		for(uint64_t cc = 0x00; cc < h->root->root->confBlockSize; ++cc){
 			if(((uint8_t *)_block)[cc] != ((uint8_t *)__block)[cc]){
 				out = false;
-#ifdef __DEBUG__
-				dualprintf(logf, stdout, "✖ %u:%u  ", ((uint8_t *)_block)[cc], ((uint8_t *)__block)[cc]);
+#ifdef _DEBUG
+				dualprintf(fs_logf, stdout, "✖ %u:%u  ", ((uint8_t *)_block)[cc], ((uint8_t *)__block)[cc]);
 			}else{
-				dualprintf(logf, stdout, "✔ %u:%u  ", ((uint8_t *)_block)[cc], ((uint8_t *)__block)[cc]);
+				dualprintf(fs_logf, stdout, "✔ %u:%u  ", ((uint8_t *)_block)[cc], ((uint8_t *)__block)[cc]);
 #endif
 			}
 		}
@@ -772,14 +772,14 @@ bool __ftest(fhandle *h){
 	return out;
 }
 
-unhandle *__fdirlist(dirhandle *dir, size_t *index){
+unhandle *__fdirlist(dirhandle *dir, uint64_t *index){
 	__fdirrefresh(dir);
 	if(__safediv(((*index) * sizeof(diritem)), dir->root->root->confBlockSize) < dir->loadedblocks){
 		diritem *ditem = dir->dirarray + (*index);
 		(*index)++;
-		fsblock *fb = __ffindh(dir->root, ditem->fcode);
+		fsblock *fb = __ffindh(dir->root, (uint64_t[2]){dir->file->fcodelow, dir->file->fcodehigh});
 		if(fb){
-			if(fb->fcode == ditem->fcode && (fb->fcode != 0)){
+			if(fb->fcodelow == ditem->f.fcodelow && fb->fcodehigh == ditem->f.fcodehigh && (fb->fcodelow && fb->fcodehigh)){
 				meta_fsblock *finfo = __freadinfo(dir->root, fb);
 				char *temp = strdup(dir->path);
 				temp = realloc(temp, strlen(temp) + strlen(finfo->name) + 2);
@@ -787,14 +787,15 @@ unhandle *__fdirlist(dirhandle *dir, size_t *index){
 				temp[strlen(dir->path)] = PATHSEP;
 				free(finfo);
 				unhandle *out = calloc(1, sizeof(unhandle));
-				if((out->dir = flagcheck(fb->attr, __fsdirectory))){
+				if((out->dir = flagcheck(fb->attributes, __fsdirectory))){
 					out->dhandle_ = floadhdir(dir->root, temp, "");
 				}else{out->fhandle_ = floadh(dir->root, temp, "f");}
 				free(temp);
 				return out;
 			}else{
 				// Remove Entry
-				ditem->fcode = 0;
+				ditem->f.fcodehigh = 0x00;
+				ditem->f.fcodelow = 0x00;
 				return NULL;
 			}
 		}else{
@@ -813,15 +814,15 @@ dirrunner *__dirr_init(dirhandle *handle, char *patternmatcher){
 	dr->stack_size = 8;
 	dr->stack_depth = 1;
 	dr->dir_stack = calloc(dr->stack_size, sizeof(dirhandle*));
-	dr->idx_stack = calloc(dr->stack_size, sizeof(size_t));
+	dr->idx_stack = calloc(dr->stack_size, sizeof(uint64_t));
 	if(!dr->dir_stack || !dr->idx_stack){
 		free(dr->dir_stack);
 		free(dr->idx_stack);
 		free(dr);
 		return NULL;
 	}
-	dr->dir_stack[0] = handle;
-	dr->idx_stack[0] = 0;
+	dr->dir_stack[0x00] = handle;
+	dr->idx_stack[0x00] = 0x00;
 	return dr;
 }
 
@@ -835,20 +836,20 @@ static bool __dirr_matches(dirrunner *dr, unhandle *item){
 
 static bool __dirr_push(dirrunner *dr, dirhandle *handle){
 	if(dr->stack_depth == dr->stack_size){
-		size_t new_size = dr->stack_size ? dr->stack_size * 2 : 8;
+		uint64_t new_size = dr->stack_size ? dr->stack_size * 2 : 8;
 		dr->dir_stack = realloc(dr->dir_stack, new_size * sizeof(dirhandle*));
-		dr->idx_stack = realloc(dr->idx_stack, new_size * sizeof(size_t));
+		dr->idx_stack = realloc(dr->idx_stack, new_size * sizeof(uint64_t));
 		if(!dr->dir_stack || !dr->idx_stack) return false;
 		dr->stack_size = new_size;
 	}
 	dr->dir_stack[dr->stack_depth] = handle;
-	dr->idx_stack[dr->stack_depth] = 0;
+	dr->idx_stack[dr->stack_depth] = 0x00;
 	dr->stack_depth++;
 	return true;
 }
 
 static dirhandle *__dirr_pop(dirrunner *dr){
-	if(dr->stack_depth == 0) return NULL;
+	if(dr->stack_depth == 0x00) return NULL;
 	dr->stack_depth--;
 	dirhandle *out = dr->dir_stack[dr->stack_depth];
 	dr->dir_stack[dr->stack_depth] = NULL;
@@ -857,8 +858,8 @@ static dirhandle *__dirr_pop(dirrunner *dr){
 
 void __dirr_free(dirrunner *dr){
 	if(!dr){return;}
-	for(size_t cc = 0; cc < dr->stack_depth; ++cc){
-		if(dr->dir_stack[cc]){if(cc > 0){fuloaddir(dr->dir_stack[cc]);}}
+	for(uint64_t cc = 0x00; cc < dr->stack_depth; ++cc){
+		if(dr->dir_stack[cc]){if(cc > 0x00){fuloaddir(dr->dir_stack[cc]);}}
 	}
 	free(dr->dir_stack);
 	free(dr->idx_stack);
@@ -866,26 +867,26 @@ void __dirr_free(dirrunner *dr){
 }
 
 unhandle *__dirr(dirrunner *dr){
-	if(!dr || dr->stack_depth == 0){return NULL;}
-	while(dr->stack_depth > 0){
-		size_t top = dr->stack_depth - 1;
+	if(!dr || dr->stack_depth == 0x00){return NULL;}
+	while(dr->stack_depth > 0x00){
+		uint64_t top = dr->stack_depth - 1;
 		dirhandle *current = dr->dir_stack[top];
-		size_t idx = dr->idx_stack[top];
+		uint64_t idx = dr->idx_stack[top];
 		unhandle *item = __fdirlist(current, &idx);
 		dr->idx_stack[top] = idx;
 
 		if(!item){
-			if(top > 0){fuloaddir(current);}
+			if(top > 0x00){fuloaddir(current);}
 			__dirr_pop(dr);
 			continue;
 		}
 		if(!item->dhandle_){
-			if(top > 0){fuloaddir(current);}
+			if(top > 0x00){fuloaddir(current);}
 			__dirr_pop(dr);
 			continue;
 		}
 		if(!item->dhandle_->file){
-			if(top > 0){fuloaddir(current);}
+			if(top > 0x00){fuloaddir(current);}
 			__dirr_pop(dr);
 			continue;
 		}
@@ -905,11 +906,11 @@ unhandle *__dirr(dirrunner *dr){
 }
 
 void __fprint_info(meta_fsblock *finfo){
-	dualprintf(logf, stdout, 
+	dualprintf(fs_logf, stdout, 
 		"\nFile Info:"
 		"\nSignature: %.8s"
 		"\nVersion: %llu"
-		"\nfCode: %llu"
+		"\nfCode: [%llu:%llu]"
 		"\nAttributes:"
 		"\n\tIs Directory: [%s]"
 		"\n\tIs File: [%s]"
@@ -919,9 +920,9 @@ void __fprint_info(meta_fsblock *finfo){
 		"\nWrite Time: %u:%u:%u"
 		"\nAccess Date: %u"
 		"\nWrite Date: %u",
-		finfo->fsig, finfo->headerversion, (size_t)finfo->fcode,
-		(flagcheck(finfo->attributes, __fsdirectory) ? "true": "false"), (flagcheck(finfo->attributes, __fsfile) ? "true": "false"), 
-		(flagcheck(finfo->attributes, __fsreadonly) ? "true": "false"), 
+		finfo->fsig, finfo->headerversion, (uint64_t)finfo->f.fcodelow, finfo->f.fcodehigh,
+		(flagcheck(finfo->f.attributes, __fsdirectory) ? "true": "false"), (flagcheck(finfo->f.attributes, __fsfile) ? "true": "false"), 
+		(flagcheck(finfo->f.attributes, __fsreadonly) ? "true": "false"), 
 		finfo->name, 
 		(uint32_t)(__safediv(finfo->accesstime, 3600)), 
 		(uint32_t)(__safediv((finfo->accesstime % 3600), 60)),
@@ -933,6 +934,4 @@ void __fprint_info(meta_fsblock *finfo){
 	);
 }
 
-LBA getloc(conf_fsroot *root, fsblock *fb){
-	return DATAFIRST(root) + __safediv(((size_t)fb - (size_t)root->clusterbuffer.clusterMap), sizeof(fsblock));
-}
+LBA getloc(conf_fsroot *root, fsblock *fb){return DATAFIRST(root) + __safediv(((uint64_t)fb - (uint64_t)root->clusterbuffer.clusterMap), sizeof(fsblock));}

@@ -5,7 +5,7 @@
 #define GPTsig "EFI PART"
 #define GPT_LBA 1
 
-typedef size_t LBA;
+typedef uint64_t LBA;
 
 typedef struct miniGPT{
 	char sig[8];
@@ -28,7 +28,7 @@ typedef struct GPTentry{
 	_GUID uGUID;
 	LBA sLBA;
 	LBA eLBA;
-	size_t attr;
+	uint64_t attr;
 	GPTeNSTR name;
 }__attribute__((packed)) GPTentry;
 
@@ -42,7 +42,7 @@ typedef struct rawenv_t{
     FILE *file;
 	char *path;
     uint32_t CalcBlock, ConfBlock, RealBlock;
-#ifdef __DEBUG__
+#ifdef _DEBUG
     bool EnableVerbose;
 #endif
 }rawenv_t, *rawenv;
@@ -55,10 +55,10 @@ void setblocksize(rawenv re, uint32_t new);
 
 rawenv startup(char *path, uint32_t configuredBlockSize);
 
-void writebytes(rawenv re, void *data, size_t bytepos, size_t nbytes);
-void *writeblocks(rawenv re, void *data, LBA pos, size_t bytes);
+void writebytes(rawenv re, void *data, uint64_t bytepos, uint64_t nbytes);
+void *writeblocks(rawenv re, void *data, LBA pos, uint64_t bytes);
 
-void *readbytes(rawenv re, LBA pos, uint16_t offset, size_t nbytes);
-void *readblocks(rawenv re, LBA pos, size_t bytes);
+void *readbytes(rawenv re, LBA pos, uint16_t offset, uint64_t nbytes);
+void *readblocks(rawenv re, LBA pos, uint64_t bytes);
 
 void dispose(rawenv re);

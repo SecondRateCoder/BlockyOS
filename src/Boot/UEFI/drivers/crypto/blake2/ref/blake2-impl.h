@@ -16,8 +16,8 @@
 #define BLAKE2_IMPL_H
 
 #include <efi.h>
-// #include "src/Boot/UEFI/tools/tools.h"
-#include "src/Boot/UEFI/tools/tools.h"
+// #include "Boot/UEFI/tools/tools.h"
+#include "Boot/UEFI/tools/tools.h"
 
 #if !defined(__cplusplus) && (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L)
 	#if   defined(_MSC_VER)

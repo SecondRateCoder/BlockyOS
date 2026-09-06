@@ -164,7 +164,7 @@ int blake2xb(void *out, UINT64 outlen, const void *in, UINT64 inlen, const void 
 }
 
 #if defined(BLAKE2XB_SELFTEST)
-#include "src/Boot/UEFI/tools/tools.h"
+#include "Boot/UEFI/tools/tools.h"
 #include "blake2-kat.h"
 int main( void )
 {

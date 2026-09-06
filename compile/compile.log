@@ -1,0 +1,13 @@
+Initializing CGCC.MAKE build process...
+[DEBUG] Sources: .\src\kernel\libcrt\memory\allocator\palloc.c
+[DEBUG] Output Target: .\Build\Build-nodate\root-part\libcrt.obj
+[DEBUG] Compile Flags: -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-protector -fno-builtin -funsigned-bitfields -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -g
+[DEBUG] Link Flags: -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostdlib --emit-relocs -Map C:\GitHub\BlockyOS\compile\alibcrt.map -o .\Build\Build-nodate\root-part\libcrt.obj
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\palloc.c. source=2026-09-01T21:13:15.5237197Z, stored=none, delta=n/a sec
+C:\msys64\mingw64\bin\x86_64-w64-mingw32-gcc.exe -c C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\palloc.c -o C:\GitHub\BlockyOS\compile\cache\palloc.win64.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-protector -fno-builtin -funsigned-bitfields -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -g
+In file included from C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\palloc.c:1:
+C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\malloc.h:3:10: fatal error: kernel/libcrt/hardware/paging/paging.h: No such file or directory
+    3 | #include "kernel/libcrt/hardware/paging/paging.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+Failure in compiling C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\palloc.c -> C:\GitHub\BlockyOS\compile\cache\palloc.win64.o

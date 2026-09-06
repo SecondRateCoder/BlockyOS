@@ -12,6 +12,7 @@
 #define __FS_DEFAULTLOGSECTORS 5
 #define __FS_DEFAULTBLOCKSIZE 512
 
+
 #define FRATROOTOFFSET (0)
 #define LOGBLOCKOFFSET (FRATROOTOFFSET + 1)
 #define CLUSTERMAPOFFSET(nLogSectors) (LOGBLOCKOFFSET + (nLogSectors) + 1)
@@ -23,7 +24,7 @@
 // __safediv((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) - 						\
 // __safediv(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors), (confSectorSize)) + ((__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) % (confSectorSize)) != 0)	\
 // ), confSectorSize)
-#define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) ( ((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * (size_t)sizeof(fsblock) )
+#define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) ( ((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * (uint64_t)sizeof(fsblock) )
 #define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize) (__safediv(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) + ((confSectorSize) - 1), (confSectorSize)))
 
 enumdef(fsattribute, uint8_t){
@@ -42,30 +43,30 @@ enumdef(logoperation, uint16_t){
 };
 
 typedef struct fslogitem{
-	size_t sourcefcode		: 42;
+	uint64_t sourcefcode		: 48;
 	logoperation logop;
-	size_t destfcode		: 42;
+	uint64_t destfcode		: 48;
 }__attribute__((packed)) fslogitem;
 
 typedef struct fsblock{
-	size_t fcode        : 42;
-	size_t attr			: 16;
-	// uint32_t logalias;
-	size_t index;
+	uint64_t fcodelow;
+	uint64_t fcodehigh		: 48;
+	uint64_t attributes		: 16;
+	// UINT32 logalias;
+	uint32_t index;
 }__attribute__((packed)) fsblock;
 
 /// @brief This is the expanded block of FileInfo
 typedef struct meta_fsblock{
 	char fsig[8];
-	size_t headerversion;
+	uint64_t headerversion;
 	// uint8_t coremeta[32];
-	size_t fcode        : 42;
-	size_t attributes	: 16;
-	char name[GPTeNAMELEN];
-	uint32_t accesstime,
+	fsblock f;
+	uint64_t accesstime,
 		   writetime,
 		   accessdate,
 		   writedate;
+	char name[];
 }meta_fsblock;
 
 #define MAKEVERSION(MAJOR, MINOR)	{(uint32_t)(MAJOR), (uint32_t)(MINOR)}
@@ -78,7 +79,7 @@ typedef struct fsroot{
 }__attribute__((packed)) fsroot;
 
 typedef struct conf_fsroot{
-	_GUID GUID, altGUID;
+	_GUID _GUID, altGUID;
 	char *path;
 	fsroot *root;
 	LBA loc;
@@ -88,7 +89,7 @@ typedef struct conf_fsroot{
 		fslogitem *logBlock;	// The Log Block
 	}logblocks;
 	struct clusterbuffer{
-		size_t clusterSize,
+		uint64_t clusterSize,
 		 	nClusterSectors;
 		fsblock *clusterMap;	// The Cluster-Map
 	}clusterbuffer;
@@ -97,21 +98,20 @@ typedef struct conf_fsroot{
 typedef struct fhandle{
 	conf_fsroot *root;
 	fsblock *file;
-	size_t progress;
+	uint64_t progress;
 	char *path;
 }fhandle;
 
 typedef struct diritem{
-	size_t fcode		: 42;
-	size_t attributes	: 16;
+	fsblock f;
 	// A code, if it is 0, then this item is the end of the list
-	ssize_t local;
+	uint64_t local;
 }__attribute__((packed)) diritem, *diribuffer;
 typedef struct dirhandle{
     conf_fsroot *root;
 	fsblock *file;
 	char *path;
-	size_t loadedblocks;
+	uint64_t loadedblocks;
 	diribuffer dirarray;
 }dirhandle;
 
@@ -127,8 +127,8 @@ typedef struct unhandle{
 typedef struct dirrunner{
 	dirhandle *dir;
 	unhandle **handles;
-	size_t *index;
-	size_t depth;
+	uint64_t *index;
+	uint64_t depth;
 	/*
 		Uses the Keys:
 			'*': This is a single-char Wild-Card. It represents all Chars,
@@ -137,15 +137,15 @@ typedef struct dirrunner{
 	*/
 	char *pattmatcher;
 	// Iteration stack state
-	size_t stack_size;
+	uint64_t stack_size;
 	dirhandle **dir_stack;
-	size_t *idx_stack;
-	size_t stack_depth;
+	uint64_t *idx_stack;
+	uint64_t stack_depth;
 }dirrunner;
 
 LBA getloc(conf_fsroot *root, fsblock *fb);
-size_t __fsize(fhandle *fh);
-size_t __dsize(dirhandle *dh);
+uint64_t __fsize(fhandle *fh);
+uint64_t __dsize(dirhandle *dh);
 
 bool checkdisk(char *path);
 partdim queryparttablefs(miniGPT *gpt, rawenv re);
@@ -164,8 +164,8 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path);
 void fuloadh(fhandle *handle);
 fhandle *floadh(conf_fsroot *root, char *path, char *args);
 void __fcreate(conf_fsroot *root, char *path, char *flags);
-size_t _fwrite(fhandle *handle, size_t nbytes, const void *data);
-size_t _fread(fhandle *h, size_t nbytes, void **dataout);
+uint64_t _fwrite(fhandle *handle, uint64_t nbytes, const void *data);
+uint64_t _fread(fhandle *h, uint64_t nbytes, void **dataout);
 dirhandle *__fgetparent(conf_fsroot *root, char *path);
 bool __ftest(fhandle *h);
 void fuloaddir(dirhandle *handle);
@@ -173,20 +173,20 @@ dirhandle *floadhdir(conf_fsroot *root, char *path, char *args);
 meta_fsblock *_dreadinfo(dirhandle *handle);
 meta_fsblock *_freadinfo(fhandle *handle);
 fsblock *__faddr(conf_fsroot *root, fsblock *family);
-void _fseek(fhandle *handle, size_t progress);
-void _fseeko(fhandle *handle, ssize_t progress);
+void _fseek(fhandle *handle, uint64_t progress);
+void _fseeko(fhandle *handle, uint64_t progress);
 
 fsblock *__ffind(conf_fsroot *root, char *path);
-fsblock *__ffindh(conf_fsroot *root, size_t hash);
+fsblock *__ffindh(conf_fsroot *root, uint64_t hash[2]);
 void __ffremove(conf_fsroot *root, char *path);
-void __ffremoveh(conf_fsroot *root, size_t hash);
+void __ffremoveh(conf_fsroot *root, uint64_t hash[2]);
 void __ffremovel(conf_fsroot *root, char *path);
-void __ffremovelh(conf_fsroot *root, size_t hash);
+void __ffremovelh(conf_fsroot *root, uint64_t hash[2]);
 
 void __fdiradd(dirhandle *dir, fsblock *fb);
 void __fdirrefresh(dirhandle *handle);
 void __fupdatetstamp(conf_fsroot *root, fsblock *file, bool wt);
-unhandle *__fdirlist(dirhandle *dir, size_t *index);
+unhandle *__fdirlist(dirhandle *dir, uint64_t *index);
 dirrunner *__dirr_init(dirhandle *handle, char *patternmatcher);
 unhandle *__dirr(dirrunner *dr);
 void __dirr_free(dirrunner *dr);

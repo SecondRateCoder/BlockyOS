@@ -1,4 +1,5 @@
 #include "standard.h"
+#include "tools/tools.h"
 
 __efiDevNode *ProcessNode(EFI_DEVICE_PATH *Node, __efiDevNode *Parent){
 		DEBUGPRINT(L"\nLoading Node");
@@ -123,18 +124,18 @@ EFI_DEVICE_PATH *getDevPath(EFI_DEVICE_PATH *dPath, UINT32 dType, UINT32 sType){
 	return NULL;
 }
 
-__efiDevNode **loadDNodes(UINTN *nNodes){
+__efiDevNode **loadDNodes(UINT32 *nNodes){
 	EFI_GUID dPathGUID = EFI_DEVICE_PATH_PROTOCOL_GUID;
 	EFI_HANDLE *handles = NULL;		UINTN nHandles = 0;
 	__efiDevNode **dnodes = NULL;	(*nNodes) = 0;
 	DEBUGPRINT(L"\nLoading Device Tree");
-	if(!EFI_ERROR(uefi_call_wrapper(gBS->LocateHandleBuffer, 5, AllHandles, NULL, NULL, &nHandles, &handles))){
+	if(!EFI_ERROR(uefi_call_wrapper(gBS->LocateHandleBuffer, 0, AllHandles, NULL, NULL, &nHandles, &handles))){
 		dnodes = AllocatePool(sizeof(__efiDevNode *) * nHandles);
 		EFI_STATUS status;
 		DEBUGPRINT(L"\n");
 		for(UINTN cc = 0; cc < nHandles; ++cc){
 			EFI_DEVICE_PATH *dPath = NULL;
-			status = uefi_call_wrapper(gBS->HandleProtocol, 3, handles[cc], &dPathGUID, (void **)&dPath);
+			status = uefi_call_wrapper(gBS->HandleProtocol, 0, handles[cc], &dPathGUID, (void **)&dPath);
 			if(!EFI_ERROR(status)){
 				// DebugDevicePath(dPath);
 				dnodes[*nNodes] = BuildDeviceTree(dPath);
@@ -151,23 +152,23 @@ __efiDevNode **loadDNodes(UINTN *nNodes){
 	return dnodes;
 }
 
-EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSize, UINT32 *descVersion){
+EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINT32 *mapSize, UINT32 *mapKey, UINT32 *descSize, UINT32 *descVersion){
 	DEBUGPRINT(L"\nGetting the Memory Map");
 	EFI_STATUS status;
 	EFI_MEMORY_DESCRIPTOR *map = NULL;
 	*mapSize = 0;
 
 	// First call: get required size
-	status = uefi_call_wrapper(gBS->GetMemoryMap, 5, mapSize, map, mapKey, descSize, descVersion);
+	status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, map, mapKey, descSize, descVersion);
 	if(status != EFI_BUFFER_TOO_SMALL){return NULL;}
 	
 	// Allocate extra space (UEFI spec recommends padding)
 	*mapSize += 2 * (*descSize);
-	status = uefi_call_wrapper(gBS->AllocatePool, 3, EfiLoaderData, *mapSize, (void **)&map);
+	status = uefi_call_wrapper(gBS->AllocatePool, 0, EfiLoaderData, *mapSize, (void **)&map);
 	if(EFI_ERROR(status)){return NULL;}
 
 	// Second call: actual memory map
-	status = uefi_call_wrapper(gBS->GetMemoryMap, 5, mapSize, map, mapKey, descSize, descVersion);
+	status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, map, mapKey, descSize, descVersion);
 	if(EFI_ERROR(status)){
 		gBS->FreePool(map);
 		return NULL;
@@ -208,14 +209,72 @@ static CHAR16 *EfiMemoryTypeToStr(UINT32 type){
 	}
 }
 
+EFI_GRAPHICS_OUTPUT_MODE_INFORMATION InitialiseVideoMemory(UINT64 *VideoMemory, UINT64 *PixelSize, UINT64 *Width, UINT64 *Height){
+	EFI_GUID gopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
+	EFI_GRAPHICS_OUTPUT_PROTOCOL *gop;
+	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *info;
+	UINTN SizeOfInfo, numModes, nativeMode;
+
+	//	Query GOP
+	EFI_STATUS status = uefi_call_wrapper(BS->LocateProtocol, 3, &gopGuid, NULL, (void**)&gop);
+	if(EFI_ERROR(status)){Print(L"Unable to locate GOP");}
+
+	//	Get the current Mode
+	status = uefi_call_wrapper(gop->QueryMode, 4, gop, gop->Mode==NULL?0:gop->Mode->Mode, &SizeOfInfo, &info);
+	// this is needed to get the current video mode
+	if(status == EFI_NOT_STARTED){status = uefi_call_wrapper(gop->SetMode, 2, gop, 0);}
+	if(EFI_ERROR(status)){Print(L"Unable to get native mode");}else{
+		nativeMode = gop->Mode->Mode;		numModes = gop->Mode->MaxMode;}
+
+	//	Query all available Modes and set the Current Mode to that which is Largest and of the RGB Mode.
+	for(UINT32 i = 0; i < numModes; i++){
+		status = uefi_call_wrapper(gop->QueryMode, 4, gop, i, &SizeOfInfo, &info);
+		Print(L"mode %03d width %d height %d format %x%s",
+			i, info->HorizontalResolution, 
+			info->VerticalResolution, info->PixelFormat, 
+			i == nativeMode ? "(current)" : ""
+		);
+		if(
+			((gop->Mode->Info->PixelFormat != PixelRedGreenBlueReserved8BitPerColor) && info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) || 
+			//	We get the Larget FB
+			((gop->Mode->Info->HorizontalResolution < info->HorizontalResolution) && (gop->Mode->Info->VerticalResolution < info->VerticalResolution))
+		){status = uefi_call_wrapper(gop->SetMode, 3, gop, i);}
+	}
+
+	*VideoMemory = gop->Mode->FrameBufferBase;
+	*Width = gop->Mode->Info->HorizontalResolution;
+	*Height = gop->Mode->Info->VerticalResolution;
+	*PixelSize = sizeof(UINT32);
+
+	return *info;
+}
+
 __bootinfo *gatherbootinfo(){
 	__bootinfo *out = __calloc(1, sizeof(__bootinfo));
-	__memset(out->bootentry.BootEntryName, 0, sizeof(out->bootentry.BootEntryName));
-	out->bootentry.BootEntryCode = CreateBootEntry(&rootDesc.guid, &rootDesc.uGuid, (CHAR16 *)out->bootentry.BootEntryName);
-	if(out->bootentry.BootEntryCode != 1){RestartSystem();}
-	out->devices.devices = loadDNodes(&out->devices.nnodes);
-	out->memory.desc = GetMemoryMap(&out->memory.descSize, &out->memory.mapKey, &out->memory.descItemSize, &out->memory.descVersion);
-	out->memory.nDescs = __safediv(out->memory.descSize, out->memory.descItemSize);
+	StrnCpy(out->bootentry.BootEntryName, BOOTOPTION16, __min(sizeof(BOOTOPTION16) / sizeof(CHAR16), sizeof(out->bootentry.BootEntryName)));
+
+	//	We need to initialise some Video Memory
+
+	*out = (__bootinfo){
+		.devices = {
+			.devices = loadDNodes(&out->devices.nnodes), .CTableLength = ST->NumberOfTableEntries, 
+			.CTable = __memdup(ST->ConfigurationTable, sizeof(EFI_CONFIGURATION_TABLE) * ST->NumberOfTableEntries)
+		}, 
+		.memory = {
+			.MemoryDescriptors = GetMemoryMap(&out->memory.MemoryDescriptorStructSize, &out->memory.MemocryDescriptorMapKey, 
+				&out->memory.MemoryDescriptorStructSize, &out->memory.MDescriptorsVersion), 
+			.NMemoryDescriptors = __safediv(out->memory.MemoryDescriptorStructSize, out->memory.MemoryDescriptorStructSize), 
+			.TotalMemorySize = 0
+		}, 
+		.bootentry.BootEntryCode = CreateBootEntry(&rootDesc.guid, &rootDesc.uGuid, (CHAR16 *)out->bootentry.BootEntryName), 
+		.Video = {.CurrentVideoMode = {0x00}, .PixelHeight = 0x00, .PixelSize = 0x00, .PixelWidth = 0x00, .videomemory = NULL}
+	};
+	out->Video.CurrentVideoMode = InitialiseVideoMemory(out->Video.videomemory, &(out->Video.PixelSize), &(out->Video.PixelWidth), &out->Video.PixelHeight);
+	for(UINTN cc = 0 ; cc < out->memory.NMemoryDescriptors; ++cc){
+		if(out->memory.MemoryDescriptors[cc].PhysicalStart > out->memory.TotalMemorySize){
+			out->memory.TotalMemorySize = out->memory.MemoryDescriptors[cc].PhysicalStart + (out->memory.MemoryDescriptors[cc].NumberOfPages * EFI_PAGE_SIZE);
+		}
+	}
 	return out;
 }
 
@@ -238,7 +297,7 @@ UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarN
 		Existing = NULL;
 
 		Status = uefi_call_wrapper(
-			RT->GetVariable, 5, BootVar, BootGuid,
+			RT->GetVariable, 0, BootVar, BootGuid,
 			NULL, &ExistingSize, NULL
 		);
 
@@ -254,7 +313,7 @@ UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarN
 		SPrint(BootVar, sizeof(BootVar), L"Boot%04X", BootIndex);
 		ExistingSize = 0;
 		Status = uefi_call_wrapper(
-			RT->GetVariable, 5, BootVar, BootGuid,
+			RT->GetVariable, 0, BootVar, BootGuid,
 			NULL, &ExistingSize, NULL
 		);
 		if(Status == EFI_NOT_FOUND){break;}
@@ -297,7 +356,7 @@ UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarN
 
 	// Write Boot#### variable
 	Status = uefi_call_wrapper(
-		RT->SetVariable, 5, BootVar, BootGuid,
+		RT->SetVariable, 0, BootVar, BootGuid,
 		EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 		TotalSize, Buffer
 	);

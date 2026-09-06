@@ -26,7 +26,9 @@ const char *ERRORS[22] = {
 };
 
 void ASMCALL isr_inthandleC(InterruptFrame *IFrame){
+    
     printf("\nInterrupt: %i, Error Code:\t%s", IFrame->interrupt, IFrame->error_code < 32? ERRORS[IFrame->error_code]: "");
+    
     printf(
         "\nInterrupt Frame:"
         "\nds: %i, es: %i,"

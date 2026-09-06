@@ -3,7 +3,7 @@
 #include "efi.h"
 #include "efilib.h"
 
-#include "src/Boot/UEFI/tools/tools.h"
+#include "Boot/UEFI/tools/tools.h"
 
 #define GPTsig "EFI PART"
 #define GPT_LBA 1

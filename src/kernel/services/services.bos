@@ -1,0 +1,19 @@
+#FSFRAT.RUNTIME:ENABLED
+#JSON:ENABLED
+#CACHE:ENABLED
+
+{
+	"LOG": "C:/GitHub/BlockyOS/src/kernel/services/services.log", 
+	"SCRIPT.VERSION": 999, 
+	"FS.IMAGE": "C:/GitHub/BlockyOS/Build/Build-nodate/disk.img", 
+	"FS.FORMAT": {
+		"TARGET.PARTITION": "ROOT", 
+		"TARGET.BLOCK.SIZE": 2048, 
+		"TARGET.LOG.BLOCKS": 32, 
+		"TARGET.VERSION": "1:0"
+	}, 
+	"INPUT": {}
+}
+
+SHELL.EXECUTE -p "C:/GitHub/BlockyOS/src/kernel/services/IO/IO.bos"
+SHELL.EXECUTE -p "C:/GitHub/BlockyOS/src/kernel/services/Video/Video.bos"

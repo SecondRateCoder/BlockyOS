@@ -1,27 +1,18 @@
 param(
 	[string[]]$Extrafiles,
 	# [Parameter(Mandatory=$false)]
-	[switch]$runbochs,
+	[switch]$runbochs, [switch]$run,
 	# [Parameter(Mandatory=$false)]
-	[switch]$run,
-	# [Parameter(Mandatory=$false)]
-	[switch]$clear,
-	[switch]$broadimage,
-	[Parameter(Mandatory=$false)]
-	[int]$SectorNum,
-	[Parameter(Mandatory=$false)]
-	[int]$Reserved,
-	[Parameter(Mandatory=$false)]
-	[int]$Hidden,
+	[switch]$clear, [switch]$broadimage,
+	[Parameter(Mandatory=$false)][int]$SectorNum,
+	[Parameter(Mandatory=$false)][int]$Reserved,
+	[Parameter(Mandatory=$false)][int]$Hidden,
 	[switch]$emudebug,
-	[Parameter(Mandatory=$true)]
-	[string]$PREFIX = (Get-Date -Format "yyyy-MM-dd-ss").ToString(),
-	[Parameter(Mandatory=$false)]
-	[int]$SectorSize = 512,
+	[switch]$InstallOS,
+	[Parameter(Mandatory=$true)][string]$PREFIX = (Get-Date -Format "yyyy-MM-dd-ss").ToString(),
+	[Parameter(Mandatory=$false)][int]$SectorSize = 512,
 	[string]$imagetype = 'default',
-	[switch]$enablevars,
-	[switch]$nocompile,
-    [string[]]$SHELLSCRIPTS
+	[switch]$enablevars, [switch]$nocompile
 )
 $GCC = 'gcc'
 # $NASM = ${env:NASM}
@@ -32,13 +23,15 @@ $BOCHS = if(${env:bochs}){${env:bochs}}else{'bochs'}
 $Build = Join-Path (Get-Location) ('Build\Build-' + $PREFIX)
 $Image = Join-Path $Build 'disk.img'
 $BootPartitionDir = Join-Path $Build 'boot-part/'
-$BootPartitionBlob = Join-Path $BootPartitionDir 'legacyblob.bin'
+$RootPartitionDir = Join-Path $Build 'root-part/'
+# $BootPartitionBlob = Join-Path $BootPartitionDir 'legacyblob.bin'
 $UEFIBootBlob = Join-Path $BootPartitionDir 'efi/boot/bootx64.efi'
 $BroadImageFile = Join-Path (Get-Location) 'Build\temp\image.img'
 $Objdir = Join-Path $Build 'objs'
 $DiskConfigJson = Join-Path (Get-Location) 'compile\disk-config.json'
 $GPTScript = Join-Path (Get-Location) 'compile\emu\GPT.ps1'
 $FSScript = Join-Path (Get-Location) 'compile\emu\FS.ps1'
+$InstallFile = Join-Path (Get-Location) 'compile\install.bos'
 
 $SHELLDRIVER = Join-Path (Get-Location) 'tools/build-suite/build.ps1'
 
@@ -212,27 +205,28 @@ function Img-Pad{
 	}finally{$file.Close()}
 }
 
-function Prepare {
+function Prepare{
 	if($clear -eq $true){
-		Remove-Item (Join-Path (Get-Location) "/Build/") -Force -Recurse
+		(Get-ChildItem -Path (Join-Path (Get-Location) "/Build/") -File -Recurse) | ForEach-Object{
+			if($_.BaseName -inotmatch "disk**"){Remove-Item $_.FullName -Force -Recurse}
+		}
 		New-Item -Path $Build -ItemType Directory -Force
-	}
-	if(-not(Test-Path $Build)){New-Item -Path $Build -ItemType Directory -Force}
+	}else{
+        (Get-ChildItem -Path (Join-Path (Get-Location) "/Build/") -File -Recurse) | ForEach-Object{
+            if($_.Extension -imatch "o"){Remove-Item $_.FullName -Force -Recurse}
+        }
+    }
 	if($broadimage){
-		if(-not(Test-Path $BroadImageFile)){
-			Remove-Item -Path $BroadImageFile -Force -ErrorAction SilentlyContinue
-			New-Item -Path $BroadImageFile -ItemType File -Force
-		}
-		if(Test-Path $BroadImageFile) {Remove-Item -Path $BroadImageFile -Force -ErrorAction SilentlyContinue
-		}else{
+		if(-not (Test-Path $BroadImageFile)){
 			New-Item -Path (Split-Path $BroadImageFile -Parent) -ItemType Directory -Force | Out-Null
-			New-Item -Path $BroadImageFile -ItemType File -Force | Out-Null
-		}
+			New-Item -Path $BroadImageFile -ItemType File -Force
+		}elseif(-not $InstallOS){Remove-Item -Path $BroadImageFile -Force}
 	}
 	if(-not(Test-Path $Objdir)){New-Item -Path $Objdir -ItemType Directory -Force}
+	if(-not(Test-Path $RootPartitionDir)){New-Item -Path $RootPartitionDir -ItemType Directory -Force}
 	if(-not(Test-Path $BootPartitionDir)){New-Item -Path $BootPartitionDir -ItemType Directory -Force}
 	if(-not(Test-Path $debuglog)){New-Item -Path $debuglog -ItemType File -Force}
-	if(-not(Test-Path $Image)){New-Item -Path $Build -ItemType File -Force -ErrorAction SilentlyContinue}
+	if(-not(Test-Path $Image)){New-Item -Path $Image -ItemType File -Force}
 	Write-Host (& $NASM -v)
 	if($LASTEXITCODE -ne 0){
 		Log-Write -color Red -Msg "NASM not found at $($NASM). Please install NASM."
@@ -247,20 +241,19 @@ function Prepare {
 		New-Item -Path $BOCHSRC -ItemType File -Force
 		Add-Content -Path $BOCHSRC -Value $BOCHSFILE
 	}
-	# (& $STDLIB)
 }
 
-function Parse-Number {
+function Parse-Number{
 	param([string]$s)
 	$s = $s.Trim()
-	if ($s -match '^0x([0-9A-Fa-f]+)$') { return [int64]::Parse($matches[1], [System.Globalization.NumberStyles]::HexNumber) }
-	if ($s -match '^[0-9]+$') { return [int64]$s }
-	if ($s -match '0x([0-9A-Fa-f]+)') { return [int64]::Parse($matches[1], [System.Globalization.NumberStyles]::HexNumber) }
-	if ($s -match '([0-9]+)') { return [int64]$matches[1] }
+	if ($s -match '^0x([0-9A-Fa-f]+)$'){ return [int64]::Parse($matches[1], [System.Globalization.NumberStyles]::HexNumber) }
+	if ($s -match '^[0-9]+$'){ return [int64]$s }
+	if ($s -match '0x([0-9A-Fa-f]+)'){ return [int64]::Parse($matches[1], [System.Globalization.NumberStyles]::HexNumber) }
+	if ($s -match '([0-9]+)'){ return [int64]$matches[1] }
 	throw "Unable to parse number from '$s'"
 }
 
-function Handle-PadToken {
+function Handle-PadToken{
 	param(
 		[string]$token
 		# [string]$filePath  # required for \a
@@ -276,8 +269,8 @@ function Handle-PadToken {
 		}
 
 		if($token.StartsWith('\a')){
-			# if (-not $filePath) { Log-Write -color Red -Msg "Missing file path for `\a token"; return }
-			# if (-not (Test-Path $filePath)) { Log-Write -color Red -Msg "File not found: $filePath"; return }
+			# if (-not $filePath){ Log-Write -color Red -Msg "Missing file path for `\a token"; return }
+			# if (-not (Test-Path $filePath)){ Log-Write -color Red -Msg "File not found: $filePath"; return }
 
 			$num = Parse-Number $token.Substring(2)
 			if($num -lt 0){throw "Negative address not allowed"}
@@ -302,15 +295,15 @@ function Handle-PadToken {
 (Prepare)
 
 if(-not $nocompile){
-	Log-Write -color Cyan "===== Step 1: Compile Bootloaders ====="
-	Log-Write -color Cyan "===== Step 1.1: Compile Legacy BootLoader Blob ====="
-	if(-not (Test-Path $BootPartitionDir)){New-Item -Path $BootPartitionDir -ItemType Directory -Force | Out-Null}
-	(& "$(Join-Path (Get-Location) 'src/Boot/Legacy/legacy.ps1')" -prefix $PREFIX -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
-	if(-not (Test-Path $BootPartitionBlob)){
-		Log-Write -color Red -Msg "Legacy Bootloader blob not created: $BootPartitionBlob"
-		exit 1
-	}
-	Log-Write -color Green "Legacy bootloader compiled: $BootPartitionBlob"
+	# Log-Write -color Cyan "===== Step 1: Compile Bootloaders ====="
+	# Log-Write -color Cyan "===== Step 1.1: Compile Legacy BootLoader Blob ====="
+	# if(-not (Test-Path $BootPartitionDir)){New-Item -Path $BootPartitionDir -ItemType Directory -Force | Out-Null}
+	# (& "$(Join-Path (Get-Location) 'src/Boot/Legacy/legacy.ps1')" -prefix $PREFIX -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
+	# if(-not (Test-Path $BootPartitionBlob)){
+	# 	Log-Write -color Red -Msg "Legacy Bootloader blob not created: $BootPartitionBlob"
+	# 	exit 1
+	# }
+	# Log-Write -color Green "Legacy bootloader compiled: $BootPartitionBlob"
 
 	Log-Write -color Cyan "===== Step 1.2: Compile UEFI BootLoader Blob ====="
 	(& "$(Join-Path (Get-Location) 'src/Boot/UEFI/UEFI.ps1')" -prefix $PREFIX -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir -ENABLEDEBUGGABLE ($imagetype -eq 'debug') -layoutjson $DiskConfigJson)
@@ -322,52 +315,51 @@ if(-not $nocompile){
 }
 
 Log-Write -color Cyan "===== Step 2: Validate or Create Disk Layout (GPT) ====="
-$needRebuild = $true
-if(Test-Path $Image){
-	Log-Write -color Yellow "Validating existing disk image: $($Image)"
-	& (Join-Path (Get-Location) '/compile/emu/ValiGPT.ps1') -ImagePath $Image -Verbose
-	if($LASTEXITCODE -eq 0){
-		Log-Write -color Green "GPT is healthy. Skipping GPT rebuild."
-		$needRebuild = $false
-	}else{Log-Write -color Red "GPT Incorrection detected. Rebuilding GPT..."}
-}else{Log-Write -color Yellow "Disk image not found. Creating a new GPT disk..."}
+do{
+    if(Test-Path $Image){
+        Log-Write -color Yellow "Validating existing disk image: $($Image)"
+        try{& $GPTScript -OutputImage $Image -Validate -Verbose}catch{$LASTEXITCODE = 1}
+        if($LASTEXITCODE -eq 0){
+            Log-Write -color Green "GPT is healthy. Skipping GPT rebuild."
+            if(-not (Test-Path $DiskConfigJson)){
+                Log-Write -color Red -Msg "Disk config not found: $DiskConfigJson"
+                exit 1
+            }
+            break
+        }else{Log-Write -color Red "GPT incorrect or invalid. Rebuilding GPT..."}
+    }else{Log-Write -color Yellow "Disk image not found. Creating a new GPT disk..."}
+    Log-Write -color Yellow "Creating GPT disk: $($Image)"
+    (& $GPTScript -LayoutJson $DiskConfigJson -OutputImage $Image -LogFile (Join-Path $Build "gpt.log") -Verbose)
+    # (& $GPTScript -OutputImage $Image -Validate -Verbose)
+}while($LASTEXITCODE -ne 0)
 
-if($needRebuild){
-	if(Test-Path $Image){Remove-Item $Image -Force}
-	if(-not (Test-Path $DiskConfigJson)){
-		Log-Write -color Red -Msg "Disk config not found: $DiskConfigJson"
+if($InstallOS){
+	if(-not (Test-Path $FSScript)){
+		Log-Write -color Red "FS script not found: $FSScript"
 		exit 1
 	}
-	Log-Write -color Yellow "Creating GPT disk: $($Image)"
-	(& $GPTScript -LayoutJson $DiskConfigJson -OutputImage $Image -LogFile (Join-Path $Build "gpt.log") -Verbose)
+	#!	Temporarily disable FS Creation for Debugging Optimisation.
+	# Log-Write -color Yellow "InstallOS requested: formatting disk with FS.ps1."
+	# (& $FSScript -PartitionName 'Boot' -FileSystemType 'FAT32' -PartitionFlag 'efi-boot' -DiskImage $Image -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs-install.log") -Verbose)
+	# if($LASTEXITCODE -ne 0){
+	# 	Log-Write -color Red "FS formatting failed during InstallOS. Aborting."
+	# 	exit 1
+	# }
+	if(-not (Test-Path $InstallFile)){
+		Log-Write -color Red "Install file not found: $InstallFile"
+		exit 1
+	}
+	Log-Write -color Yellow "Running install.bos in current directory."
+	(& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
+	if($LASTEXITCODE -ne 0){
+		Log-Write -color Red "install.bos execution failed during InstallOS. Aborting."
+		exit 1
+	}
 }
-
-Log-Write -color Cyan "===== Step 3: Format Boot Partition (FAT32) ====="
-if(Test-Path $FSScript){
-	Log-Write -color Yellow "Formatting boot partition with FAT32..."
-	try{
-		# (Copy-Item $ovmfshell (Join-Path $BootPartitionDir 'SHELL.efi'))
-		(& $FSScript -PartitionName  'Boot' -FileSystemType 'FAT32' -PartitionFlag 'efi-boot' -DiskImage $Image -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs.log") -Verbose)
-		Log-Write -color Green "Boot partition formatted successfully"
-	}catch{Log-Write -color Yellow "FS.ps1 formatting encountered an issue: $_";    throw ''}
-}else{Log-Write -color Yellow "FS.ps1 not found at $FSScript, skipping FAT32 formatting"}
-
-Log-Write -color Cyan "===== Step 4: Validating Image ====="
-& (Join-Path (Get-Location) '/compile/emu/ValiGPT.ps1') -ImagePath $Image -Verbose
-
-# $GDISKOUT = & 'wsl' 'gdisk' (($Image -replace "\\",'/') -replace "C:/",'/mnt/c/')
-# Log-Write "$($GDISKOUT -join "`n")"
-
 
 # Optimise by Using ShortCut
 if($broadimage){New-Item -Path (Join-Path (Get-Location) '/Build/temp/image.img') -ItemType SymbolicLink -Value $Image}
 
-# Run Shell Scripts
-foreach($PATH in $SHELLSCRIPTS){
-    if(Test-Path $PATH){
-        & $SHELLDRIVER -SHELLSCRIPT $PATH
-    }
-}
 if($run){
 	Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ') "
 	$QEMUOUT = ""

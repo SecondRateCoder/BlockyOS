@@ -1,0 +1,38 @@
+help -h short
+help -h ..
+help -h help
+help -h e.disk
+help -h create
+help -h open
+help -h close
+help -h read
+help -h write
+help -h fread
+help -h fwrite
+help -h symdump
+help -h symprint
+help -h delete
+help -h e.flush
+help -h exit
+
+e.disk -pp "C:\GitHub\BlockyOS\Build\Build-nodate\disk.img" -pt "ROOT" -bs 512 -lb 5 -v "1:0"
+create -la "f" -p "/root" -n "shell-test.bin"
+open -la "f" -p "/root/shell-test.bin" -a "FILE"
+
+e.sym -% "DATA" -n 16 -d "0123456789ABCDEF"
+symprint -n ".."
+symprint -n "DATA"
+symprint -n "%DATA%"
+
+write -oa "%DATA%" -ia "%FILE%" -p 0 -n 16
+read -oa "%DATA%" -ia "%FILE%" -p 0 -n 16
+symprint -n "DATA"
+
+fwrite -pp "tools\filesystem\fsshell.log" -ia "%FILE%" -p 0 -n 0
+fread -pp "tools\filesystem\fsshell.log" -ia "%FILE%" -p 0 -n 0
+
+symdump -% "DATA" -P "tools\symbol-dump.bin"
+
+close -a "%FILE%"
+delete -a "/root/shell-test.bin"
+exit

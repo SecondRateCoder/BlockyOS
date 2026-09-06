@@ -1,4 +1,9 @@
 #include "standard.h"
+#include "drivers/socket/socket.h"
+#include "tools/tools.h"
+#include "drivers/executable/eload.h"
+#include "drivers/executable/exec.h"
+#include "drivers/.disk/fs/frat.h"
 
 const EFI_PHYSICAL_ADDRESS DebugPort = 0x402;
 
@@ -18,7 +23,7 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	// Initialise GNU-EFI
 	libinit(Image, Table);
 	// Initialise Hardware Device Tree
-	UINT32 ntries = 3;
+	UINT32 ntries = 3, N = 0;
 	__bootinfo *bootout = gatherbootinfo();
 	// Open FrAT Socket
 	socket_t *fs = NULL;
@@ -47,16 +52,20 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	// Load the Executable
 	char *path = KERNELEXE, *loadargs = "f";
 	DEBUGPRINT(L"\n\nPath: %p:%a\nLoad-Args: %p:%a", path, path, loadargs, loadargs);
-	socket_ret ret = socketfunc(fs->open)(fs, sizeof(char *) * 2, path, loadargs);
+	socket_ret ret = fs->open(fs, sizeof(char *) * 2, path, loadargs);
 	if(flagcheck(ret.errout, __noerr)){
 		DEBUGPRINT(L"\nGot Executable File");
 		socket_t *exe = ret.data;
-		void *loadin = __calloc(1, __fsize(((unhandle *)exe->persistent)->fhandle_));
-		DEBUGPRINT(L"\nResolving to Memory");
-		kernelmain main = (kernelmain)resolve(fs, (socket_t *)ret.data, NULL, 0, NULL);
+		kernelmain main = NULL;
+		ExecutableSection *LoadedExe = LoadExecutable(fs, exe, &N);
+		for(uint32_t cc = 0; cc < N; ++cc){
+			if(!strncmpa(LoadedExe[cc].Name, DefCodeSectionName, sizeof(SectionNameBe))){
+				main = (kernelmain)LoadedExe[cc].Entry;		break;
+			}
+		}
 		DEBUGPRINT(L"\nExiting Boot Servies?");
-		uefi_call_wrapper(gBS->ExitBootServices, 2, Image, bootout->memory.mapKey);
-		main(bootout);
+		uefi_call_wrapper(gBS->ExitBootServices, 0, Image, bootout->memory.MemocryDescriptorMapKey);
+		main(bootout, LoadedExe, N);
 	}else{DEBUGPRINT(L"\nError opening Executable");}
 	return EFI_ABORTED;
 }

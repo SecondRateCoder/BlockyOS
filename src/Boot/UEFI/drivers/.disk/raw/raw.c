@@ -15,8 +15,8 @@ EFI_HANDLE FindDiskHandleByGUID(EFI_GUID TargetGUID, EFI_GUID AltGUID){
 	for(UINTN i = 0; i < nHandles; i++){
 		EFI_BLOCK_IO_PROTOCOL *blk = NULL;
 		EFI_DISK_IO_PROTOCOL  *dsk = NULL;
-		EFI_STATUS status = uefi_call_wrapper(gBS->HandleProtocol, 3, handles[i], &BlkIoGuid, (void**)&blk);
-		status |= uefi_call_wrapper(gBS->HandleProtocol, 3, handles[i], &DskIoGuid,  (void**)&dsk);
+		EFI_STATUS status = uefi_call_wrapper(gBS->HandleProtocol, 0, handles[i], &BlkIoGuid, (void**)&blk);
+		status |= uefi_call_wrapper(gBS->HandleProtocol, 0, handles[i], &DskIoGuid,  (void**)&dsk);
 		DEBUGPRINT(
 			L"\nHandle %u: BlockSize=%u,    LastBlock=%u,    LogicalPartition? = %a,    MediaId=%u,    Status=%llu", 
 			i, blk->Media->BlockSize, blk->Media->LastBlock, blk->Media->LogicalPartition? "TRUE": "FALSE", blk->Media->MediaId, (status & ~0xF000000000000000)
@@ -25,7 +25,7 @@ EFI_HANDLE FindDiskHandleByGUID(EFI_GUID TargetGUID, EFI_GUID AltGUID){
 		UINTN blockSize = blk->Media->BlockSize;
 		miniGPT *hdr = __calloc(blockSize, 1);
 		status = uefi_call_wrapper(
-			dsk->ReadDisk, 5, 
+			dsk->ReadDisk, 0, 
 			dsk, blk->Media->MediaId,
 			blockSize * 1, blockSize, hdr
 		);
@@ -45,7 +45,7 @@ EFI_HANDLE FindDiskHandleByGUID(EFI_GUID TargetGUID, EFI_GUID AltGUID){
 		UINTN entriesSize = hdr->nPartEntries * hdr->partEntrySize;
 		GPTentry *entries = __calloc(entriesSize, 1);
 		status = uefi_call_wrapper(
-			dsk->ReadDisk, 5, 
+			dsk->ReadDisk, 0, 
 			dsk, blk->Media->MediaId,
 			hdr->partEntryLoc * blockSize,
 			entriesSize, entries
@@ -99,7 +99,7 @@ rawenv startup(EFI_GUID GUID, EFI_GUID altGUID, UINT32 configuredBlockSize){
 	EFI_BLOCK_IO_PROTOCOL *Blk;
 	EFI_HANDLE handle = FindDiskHandleByGUID(GUID, altGUID);
 	if(handle){
-		status = uefi_call_wrapper(BS->HandleProtocol, 3, handle, &BlockIoGuid, (void **)&Blk);
+		status = uefi_call_wrapper(BS->HandleProtocol, 0, handle, &BlockIoGuid, (void **)&Blk);
 		if(!EFI_ERROR(status)){
 			*re = (rawenv_t){
 				.Blk = Blk,
@@ -145,7 +145,7 @@ void *readblocks(rawenv re, LBA pos, UINTN bytes){
     if(!data){return NULL;}
 
     EFI_STATUS status = uefi_call_wrapper(
-        re->Blk->ReadBlocks, 5, re->Blk,
+        re->Blk->ReadBlocks, 0, re->Blk,
         re->Blk->Media->MediaId,
         pos * re->CalcBlock, allocSize, data
     );
@@ -166,7 +166,7 @@ void writeblocks(rawenv re, void *data, LBA pos, UINTN bytes){
 	if(buf){
 		__memcpy(buf, data, bytes);
 		status = uefi_call_wrapper(
-			re->Blk->WriteBlocks, 5, re->Blk, 
+			re->Blk->WriteBlocks, 0, re->Blk, 
 			re->Blk->Media->MediaId, 
 			pos * re->CalcBlock, nBlocks * re->RealBlock, buf
 		);

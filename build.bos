@@ -10,12 +10,12 @@
     "FS.IMAGE": "C:\\GitHub\\BlockyOS\\Build\\Build-2026-05-26-41\\disk.img",
     "FS.FORMAT": {
         "TARGET.PARTITION": "ROOT",
-        "TARGET.BLOCK.SIZE": 1024,
+        "TARGET.BLOCK.SIZE": 2048,
         "TARGET.LOG.BLOCKS": 10,
         "TARGET.VERSION": "1:0"
     }
 }
 
-PE2EXEC.MAKE -i "C:\GitHub\BlockyOS\tools\filesystem\fs.exe" -o "C:\GitHub\BlockyOS\tools\output-1.exe" -d 1
+PE2EXEC.MAKE -I"C:\GitHub\BlockyOS\tools\filesystem\fs.exe" -o "C:\GitHub\BlockyOS\tools\output-1.exe" -od 1
 FSFRAT.OPEN -p "/root/test.exe" -a "test" -la "fc"
 FSFRAT.WRITE -pp "C:\GitHub\BlockyOS\tools\output-1.exe" -ia "%test%" -p 0 -n 0

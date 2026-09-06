@@ -31,7 +31,7 @@ $EMUUEFIBINARYBLOB = (Join-Path -Path $EMUUEFIBINARYDIR "/BOOTX64.EFI")
 $OBJCOPY = 'objcopy'
 
 $TEMPCACHE = Join-Path (Get-Location) 'compile/cache/'
-$TEMPJSON = Join-Path $TEMPCACHE '/desc.json'
+$TEMPJSON = Join-Path $TEMPCACHE '/cache.json'
 if(-not (Test-Path $TEMPCACHE)){New-Item $TEMPCACHE -ItemType Directory -Force}
 if(-not (Test-Path $TEMPJSON)){New-Item $TEMPJSON -ItemType File -Force}
 
@@ -40,13 +40,13 @@ $CARGS = @(
 	'-I', "$(Get-Location)/src/", '-I', "$(Get-Location)/", '-I', "$($EFIPARENT)\include\efi\", 
 	'-I', (Join-Path (Get-Location) "compile\toolchain\prebuild\include\"), '-I',"$($EFIPARENT)include\efi\legacy\",
 	'-I', "$($EFIPARENT)include\efi\$(if($ARCHITECTURE -eq 'x86_64'){'x86_64'}else{'ia32'})\", 
-	'-fno-stack-protector', '-fno-stack-check',
+	'-fno-stack-protector', '-fno-stack-check', '-std=c99', 
 	'-fdiagnostics-color=always', '-fshort-wchar', 
 	'-ffreestanding', '-fPIC', '-O0',
 	'-maccumulate-outgoing-args', '-fno-omit-frame-pointer', 
 	"-m$(if($ARCHITECTURE -eq 'x86_64'){'64'}else{'32'})",
 	'-D', "$(if($ARCHITECTURE -eq 'x86_64'){'__x86_64__', '-mno-red-zone'}else{'__ia32__', '-D', 'EFI32'})", 
-	'-D', '__DEBUG__', 
+	'-D', '_DEBUG', 
 	'-D', '__CUSTMEM_FUNC__', '-D', 'NATIVE_LITTLE_ENDIAN'
 )
 if($ENABLEDEBUGGABLE){$CARGS += '-D', 'EFI_DEBUG', '-g', '-Og'}

@@ -27,11 +27,12 @@
         },
         {
             "name": "GCC",
-            "intelliSenseMode": "gcc-x64",
+            "intelliSenseMode": "windows-gcc-x64",
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE"// ,
+                // "NATIVE_LITTLE_ENDIAN"
             ],
             "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
             "compilerArgs": [

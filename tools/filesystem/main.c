@@ -33,6 +33,7 @@ int main(int argc, char *argv[]){
 		// There's a Command to Parse
 		for(uint32_t cc = 1; cc < argc; cc++){printf("\n  %s", argv[cc]);}
 		for(uint32_t cc = 1; cc < argc; cc++){
+			
 			printf("\n%s", argv[cc]);
 			cmd_errout info = __shellparse(argv[cc]);
 			printf("\t[%u]: \"%s\"", info.errcode, info.msg);
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]){
 		logfile = realloc(logfile, (logn + strlen(LOGFOFFSET) + 2) * sizeof(char));
 		logfile[logn] = '\\';
 		memcpy(logfile + logn + 1, LOGFOFFSET, strlen(LOGFOFFSET) + 1);
-		if(!(logf = fopen(logfile, "w"))){exit(EXIT_FAILURE);}
+		if(!(fs_logf = fopen(logfile, "w"))){exit(EXIT_FAILURE);}
 		free(logfile);
 		char *temp = calloc(64, sizeof(char));
 		time_t t;			time(&t);
@@ -59,21 +60,22 @@ int main(int argc, char *argv[]){
 		snprintf(temp, 64, "\n[%u:    :%u:    :%u:    :%u:    :%u:    :%u]", 
 			t_->tm_yday, t_->tm_mon, t_->tm_wday, t_->tm_hour, t_->tm_min, t_->tm_sec
 		);
-		fwrite(temp, sizeof(char), strlen(temp), logf);				fflush(logf);
+		fwrite(temp, sizeof(char), strlen(temp), fs_logf);				fflush(fs_logf);
 		free(t_);
 		do{
 			char *bf = readbuf(0, "\n>> ");
-			fwrite("\n", sizeof(char), 1, logf);
-			fwrite(bf, sizeof(char), strlen(bf), logf);
-			fflush(logf);
+			fwrite("\n", sizeof(char), 1, fs_logf);
+			fwrite(bf, sizeof(char), strlen(bf), fs_logf);
+			fflush(fs_logf);
 			if(bf && (strlen(bf) > 2)){
 				cmd_errout info = __shellparse(bf);
-				if(info.errcode){dualprintf(logf, stdout, "\n[%u]: \"%s\"", info.errcode, info.msg);}
+				if(info.errcode){dualprintf(fs_logf, stdout, "\n[%u]: \"%s\"", info.errcode, info.msg);}
+				syncprintf(stdout);
 				free(bf);
 			}
 		}while(true);
 	}
-	dualprintf(logf, stdout, "\nNo Commands");
-	fflush(stdout);
+	dualprintf(fs_logf, stdout, "\nNo Commands");
+	syncprintf(stdout);
 	exit(EXIT_FAILURE);
 }

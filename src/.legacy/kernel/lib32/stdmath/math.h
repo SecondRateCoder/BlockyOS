@@ -24,7 +24,7 @@ float powf(float x, float y);
 
 static float sqrtf_newton(float x, uint8_t precision);
 float sqrtf(float x);
-uint32_t isqrt(uint32_t n);
+uint32_t sqrti(uint32_t n);
 
 
 #define abs absf

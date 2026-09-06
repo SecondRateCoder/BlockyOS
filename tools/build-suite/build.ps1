@@ -12,21 +12,17 @@ $FSCONTROLLER = New-Object System.Diagnostics.Process
 $FSOUTEVENT = $null
 $FSERREVENT = $null
 $CUSTOMGCC = Join-Path $TOOLSDIR 'build-suite/gcc.ps1'
+$CUSTOMASM = Join-Path $TOOLSDIR 'build-suite/asm.ps1'
 
 function Open-Log{
-	param([string]$LOGFILE)
-	if($script:BuildFeatures.LOG){
-		if(Test-Path $LOGFILE){$script:BuildFeatures.LOGFILE = $LOGFILE}
-		elseif(Test-Path (Join-Path (Get-Item $script:BuildFeatures.LOGFILE).Parent.FullName ($LOGFILE -replace ".",""))){
-			$script:BuildFeatures.LOGFILE = $LOGFILE
-		}
-		if($script:BuildFeatures.LOGFILE){Set-Content -Path $script:BuildFeatures.LOGFILE -Value $null}
-	}
+	param([string]$LOG)
+	if(-not $script:BuildFeatures.LOG){$script:BuildFeatures.LOG = $LOG}
+    if(-not (Test-Path $script:BuildFeatures.LOG)){New-Item -Path $script:BuildFeatures.LOG -ItemType File}
 }
 function global:Write-Log{
 	param([string]$MSG, [System.ConsoleColor]$COLOR)
-	if($script:BuildFeatures.LOGFILE){
-		Add-Content -Path $script:BuildFeatures.LOGFILE -Value $MSG
+	if($script:BuildFeatures.LOG){
+		Add-Content -Path $script:BuildFeatures.LOG -Value $MSG
 	}
 	if($COLOR){Write-Host $MSG -ForegroundColor $COLOR}
 	else{Write-Host $MSG}
@@ -47,8 +43,7 @@ function Show-Help{
 			#CACHE			Enable Caching of CGCC Files, <THIS FEATURE ISN'T FULLY INITIALISED>
 			#DEBUG			Enable Debugging Output
 			#FSFRAT.RUNTIME	Toggle running FrAT Executable as a Static Service or a RunTime.
-	The script syntax starts with a .json header: <REQUIRING THE ENABLE: "#JSON:ENABLED">
-	{
+	{	[The script syntax starts with a .json header: <REQUIRING THE ENABLE: "#JSON:ENABLED">]
 		"LOG": PATH,
 		"SCRIPT.VERSION": DIGIT,
 		"FS.IMAGE": IMAGE-PATH,
@@ -67,14 +62,14 @@ function Show-Help{
 					"FILES": {
 						...(Files in various Compilation stages)
 					}
-				}, "EXECUTABLE": {
+				}, {
 					"OUTPUT": PATH,
 					"CARGS": "CARGS",
 					"LARGS": "LARGS",
 					"FILES": {
 						...(Files in various Compilation stages)
 					}
-				}, "EXECUTABLE": {
+				}, {
 					"OUTPUT": PATH,
 					"CARGS": "CARGS",
 					"LARGS": "LARGS",
@@ -95,10 +90,13 @@ function Show-Help{
 			-o <OUTPUT PATH>
 			-c @(<VARIOUS COMPILE ARGUMENTS>)
 			-l @(<VARIOUS COMPILE ARGUMENTS>)
+        .EXECUTE
+            -p  <Path to .bos file>
 	PE2EXEC has the command(s):
 		.MAKE
-			-d <INT>
-			-i @(<VARIOUS FILE PATHS>)
+			-i <INPUT PATH>
+			-od <ENABLE DUMP OF OUTPUT FILE>
+			-id <ENABLE DUMP OF INPUT FILE>
 			-o <OUTPUT PATH>
 	FSFRAT has the command(s):
 		.MOUNT
@@ -124,12 +122,12 @@ function Show-Help{
 			-la <ARGS>
 		.READ
 			-pp <NAME> 
-			-ip <OUTPUT-FILE-PATH>
+			-ia <OUTPUT-FILE-PATH>
 			-p <INT>
 			-n <NBYTES>
 		.WRITE
 			-pp <NAME> 
-			-ip <INPUT-FILE-PATH>
+			-ia <INPUT-FILE-PATH>
 			-p <INT>
 			-n <NBYTES>
 "@
@@ -138,15 +136,18 @@ function Show-Help{
 # Global Registries
 # Feature registry: add keys here to allow directives
 $script:BuildFeatures = @{
+	CACHEDIR = $null
 	JSON  = $false
 	CACHE = $false
 	DEBUG = $false
+    LOG = $null
 	'FSFRAT.RUNTIME' = $true
 }
 
 # Command registry: maps command name -> @{ MinArgs = n; MaxArgs = m }
 $script:CommandRegistry = @{}
 $script:FSSET = $false
+$script:FRAT_SYNC_RECEIVED = $false
 # Strict schema definition as nested hashtable
 $script:JsonSchema = @{
 	"LOG" = "string"
@@ -158,6 +159,7 @@ $script:JsonSchema = @{
 		"TARGET.LOG.BLOCKS" = "int"
 		"TARGET.VERSION" = "string"
 	}
+	"CACHEDIR?" = "string"
 	"INPUT?" = @{
 		# Handle up to 
 		"EXECUTABLE **0, 1024**" = @{
@@ -226,18 +228,18 @@ class AstCommand{
 function Throw-ParseError{
 	param([string]$Message, [BuildToken]$Token)
 	if($Token){
-		throw "[ParseError]$Message (at line $($Token.Line), col $($Token.Column), token '$($Token.Value)')"
+		throw "[ParseError]$Message (at $SHELLSCRIPT on line $($Token.Line), col $($Token.Column), token '$($Token.Value)')"
 	}else{throw "[ParseError]$Message"}
 }
 
 function Throw-HeaderError{
 	param([string]$Message)
-	throw "[HeaderError]$Message"
+	throw "[HeaderError]$Message (at $SHELLSCRIPT)"
 }
 
 function Throw-SchemaError{
 	param([string]$Message)
-	throw "[SchemaError]$Message"
+	throw "[SchemaError]$Message (at $SHELLSCRIPT)"
 }
 
 # Directive processing
@@ -444,7 +446,7 @@ function Validate-ChainNamespaces{
 	function Get-Namespace{
 		param([string]$cmd)
 		if($cmd -match '^([A-Za-z0-9_]+)\.'){return $matches[1]}
-		throw "Invalid command format: $cmd"
+		throw "Invalid command format: $($cmd)"
 	}
 
 	$namespaces = $Commands | ForEach-Object{Get-Namespace $_}
@@ -617,13 +619,8 @@ class BuildParser{
 		}
 
 		if($pendingFlag){
-			$cmd.Flags[$pendingFlag] = @{
-				Type  = $this.GetValueType($arg)
-				Value = $arg.Value
-			}
-			$pendingFlag = $null
-		}else{$cmd.Args.Add($arg)}
-
+			Throw-ParseError "Missing value for flag '$pendingFlag'." $this.Current()
+		}
 
 		if($this.Match('EOL')){ }
 
@@ -674,28 +671,38 @@ function Validate-Command{
 	}
 	$rule = $script:CommandRegistry[$CmdNode.Name]
 
-	# Validate positional args
+	# Validate arg count
 	$argc = $CmdNode.Flags.Count
 	if($argc -lt $rule.MinArgs -or $argc -gt $rule.MaxArgs){
 		throw "[CommandError]Command $($CmdNode.Name) expects $($rule.MinArgs)-$($rule.MaxArgs) args, got $argc at line $($CmdNode.Line)"
 	}
 
-	# Validate flags
+	# Validate unknown flags
+	foreach($flag in $CmdNode.Flags.Keys){
+		if(-not $rule.FlagSpec.ContainsKey($flag)){
+			throw "[CommandError]Unknown flag '$flag' for command $($CmdNode.Name) at line $($CmdNode.Line)"
+		}
+	}
+
+	# Validate required flags and types
 	foreach($flag in $rule.FlagSpec.Keys){
 		$spec = $rule.FlagSpec[$flag]
 
-		# Required flag missing
 		if($spec.Required -and -not $CmdNode.Flags.ContainsKey($flag)){
 			throw "[CommandError]Missing required flag '$flag' for command $($CmdNode.Name) at line $($CmdNode.Line)"
 		}
 
-		# Type mismatch
 		if($CmdNode.Flags.ContainsKey($flag)){
-			$actualType   = $CmdNode.Flags[$flag].GetType().ToString()
-			$expectedType = "system.$($spec.Type)"
-
-			if(($actualType.ToLower() -replace "\d",'') -ne $expectedType.ToLower()){
-				throw "[CommandError]Flag '$flag' expects type '$expectedType' but got '$actualType' at line $($CmdNode.Line)"
+			$actual = $CmdNode.Flags[$flag]
+			$expectedType = $spec.Type.ToLower()
+			$typeOk = switch($expectedType){
+				"string" { $actual -is [string] }
+				"int"    { $actual -is [int] -or ($actual -is [string] -and $actual -match '^[0-9]+$') }
+				"list"   { ($actual -is [System.Collections.IEnumerable]) -and -not ($actual -is [string]) }
+				default  { $true }
+			}
+			if(-not $typeOk){
+				throw "[CommandError]Flag '$flag' expects type '$expectedType' but got '$($actual.GetType().Name)' at line $($CmdNode.Line)"
 			}
 		}
 	}
@@ -758,65 +765,35 @@ function Parse-BuildFile{
 
 # MOUNT STRING, Always call FRATEXE with this Command First
 function FUN-CGCC{
-	param(
-		[AstCommand[]]$COMMAND
-		# [string[]]$INPUTFILES,
-		# [string]$OUTPUTFILE,
-		# [string[]]$COMPILEARGS,
-		# [string[]]$LINKARGS,
-		# [bool]$LOGFILE,
-		# [bool]$CACHE,
-		# [bool]$DEBUG
-	)
+	param([AstCommand[]]$COMMANDS)
 	foreach($COMMAND in $COMMANDS){
-		$INPUTFILES = if($COMMAND.Flags["-f"]){$COMMAND.Flags["-f"]}else{$null}
-		$OUTPUTFILE = if($COMMAND.Flags["-o"]){$COMMAND.Flags["-o"]}else{$null}
-		$CARGS = if($COMMAND.Flags["-c"]){$COMMAND.Flags["-c"]}else{$null}
-		$LARGS = if($COMMAND.Flags["-l"]){$COMMAND.Flags["-l"]}else{$null}
-		$OUT = $null
-		if($script:BuildFeatures.CACHE -and $script:BuildFeatures.DEBUG){
-			$OUT = (& $CUSTOMGCC -INPUTFILES $INPUTFILES -OUTPUTFILE $OUTPUTFILE -COMPILEARGS $CARGS -LINKARGS $LARGS -CACHE -DEBUG)
-		}
-		if($script:BuildFeatures.CACHE){$OUT = (& $CUSTOMGCC -INPUTFILES $INPUTFILES -OUTPUTFILE $OUTPUTFILE -COMPILEARGS $CARGS -LINKARGS $LARGS -CACHE)}
-		if($script:BuildFeatures.DEBUG){$OUT = (& $CUSTOMGCC -INPUTFILES $INPUTFILES -OUTPUTFILE $OUTPUTFILE -COMPILEARGS $CARGS -LINKARGS $LARGS -DEBUG)}
-		Write-Log ($OUT -join "`n")
+        $gccArgs = @{
+            f = if($COMMAND.Flags["-f"]){$COMMAND.Flags["-f"]}else{$null}
+            o = if($COMMAND.Flags["-o"]){$COMMAND.Flags["-o"]}else{$null}
+            c = if($COMMAND.Flags["-c"]){$COMMAND.Flags["-c"]}else{$null}
+            l = if($COMMAND.Flags["-l"]){$COMMAND.Flags["-l"]}else{@("")}
+        }
+        if($script:BuildFeatures.CACHE){
+            $gccArgs['CacheEnabled'] = $true
+            $gccArgs['CACHEDIR'] = Join-Path (Get-Location) 'compile\cache\'
+        }
+        if($script:BuildFeatures.DEBUG){$gccArgs['DebugEnabled'] = $true}
+        if($script:BuildFeatures.LOG){
+            $gccArgs['LogEnabled'] = $true
+            $gccArgs['LogFile'] = $script:BuildFeatures.LOG
+        }
+
+        # Single execution call using splatting
+        $OUT = (& $CUSTOMGCC @gccArgs)
+        Write-Log ($OUT -join "`n")
 	}
-}
-function FUN-ECGCC{
-	param(
-		[string[]]$INPUTFILES,
-		[string]$OUTPUTFILE,
-		[string[]]$COMPILEARGS,
-		[string[]]$LINKARGS,
-		[bool]$LOGFILE,
-		[bool]$CACHE,
-		[bool]$DEBUG
-	)
-	$OUT = $null
-	if($script:BuildFeatures.CACHE -and $script:BuildFeatures.DEBUG){
-		$OUT = (& $CUSTOMGCC -INPUTFILES $INPUTFILES -OUTPUTFILE $OUTPUTFILE -COMPILEARGS $CARGS -LINKARGS $LARGS -CACHE -DEBUG)
-	}
-	if($script:BuildFeatures.CACHE){$OUT = (& $CUSTOMGCC -INPUTFILES $INPUTFILES -OUTPUTFILE $OUTPUTFILE -COMPILEARGS $CARGS -LINKARGS $LARGS -CACHE)}
-	if($script:BuildFeatures.DEBUG){$OUT = (& $CUSTOMGCC -INPUTFILES $INPUTFILES -OUTPUTFILE $OUTPUTFILE -COMPILEARGS $CARGS -LINKARGS $LARGS -DEBUG)}
-	Write-Log ($OUT -join "`n")
 }
 
 function FUN-PE2EXEC{
 	param([AstCommand[]]$COMMANDS)
-	$OUT = $false
 	foreach($COMMAND in $COMMANDS){
-		if(($COMMAND.Flags["-d"] -eq 1) -and $COMMAND.Flags["-i"] -and $COMMAND.Flags["-o"]){
-			Write-Log "$($PE2EXEC) -d $($COMMAND.Flags["-i"]) $($COMMAND.Flags["-o"])"
-			Write-Log "$((& $PE2EXEC '-d' $COMMAND.Flags["-i"] $COMMAND.Flags["-o"]) -join "`n")"
-		}elseif(($COMMAND.Flags["-d"] -eq 1) -and $COMMAND.Flags["-i"]){
-			Write-Log "$($PE2EXEC) -d $($COMMAND.Flags["-i"])"
-			Write-Log "$((& $PE2EXEC '-d' $COMMAND.Flags["-i"]) -join "`n")"
-		}elseif($COMMAND.Flags["-i"] -and $COMMAND.Flags["-o"]){
-			Write-Log "$($PE2EXEC) $($COMMAND.Flags["-i"]) $($COMMAND.Flags["-o"])"
-			Write-Log "$((& $PE2EXEC $COMMAND.Flags["-i"] $COMMAND.Flags["-o"] 2>&1) -join "`n")"
-		}
-		if((Test-Path $COMMAND.Flags["-o"]) -and $COMMAND.Flags["-o"]){continue}
-		return $false
+		Write-Log "$($PE2EXEC) $($COMMAND.Flags["-i"]) $($COMMAND.Flags["-o"])$(if($COMMAND.Flags.ContainsKey("-id")){" -id"})$(if($COMMAND.Flags.ContainsKey("-od")){" -od"})"
+		(& $PE2EXEC $COMMAND.Flags["-i"] $COMMAND.Flags["-o"] $(if($COMMAND.Flags.ContainsKey("-id")){"-id"}) $(if($COMMAND.Flags.ContainsKey("-od")){"-od"}) '-L' $script:BuildFeatures.LOG) 2>&1
 	}
 	return $true
 }
@@ -840,19 +817,39 @@ function FRAT-RUNTIME-START{
 	$psi.CreateNoWindow         = $true
 	$FSCONTROLLER.StartInfo = $psi
 	$FSOUTEVENT = Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "OutputDataReceived" -Action {
-		if($EventArgs.Data){Write-Log -MSG "[SHELL OUT]: $($EventArgs.Data)" -COLOR Cyan}
-		# This block runs automatically whenever the fs.exe program prints something
-	}
+		if($EventArgs.Data){
+			if($EventArgs.Data -match 'FRATSYNC'){$script:FRAT_SYNC_RECEIVED = $false}else{
+				Write-Log -MSG "[SHELL OUT]: $($EventArgs.Data -replace 'FRATSYNC','')" -COLOR Cyan
+				$script:FRAT_SYNC_RECEIVED = $true
+			}
+		}}
 	$FSERREVENT = Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "ErrorDataReceived" -Action {
-		if($EventArgs.Data){Write-Log -MSG "[SHELL ERR]: $($EventArgs.Data)" -COLOR Red}
-	}
-
+		if($EventArgs.Data){Write-Log -MSG "[SHELL ERR]: $($EventArgs.Data)" -COLOR Red}}
 	$FSCONTROLLER.Start() | Out-Null
 	$FSCONTROLLER.BeginOutputReadLine()
 	$FSCONTROLLER.BeginErrorReadLine()
+	Write-Log -MSG "[SHELL]`tFSFRAT.MOUNT" -COLOR Blue
 	$FSCONTROLLER.StandardInput.WriteLine($MOUNTCMD)
-	Wait-Event -Timeout 0.5
+	FRAT-RUNTIME-SYNC
 	$script:FSSET = $true
+}
+
+function FRAT-RUNTIME-SYNC{
+	# if(-not $FSCONTROLLER -or $FSCONTROLLER.HasExited){throw "FS controller is not running."}
+	# while($script:FRAT_SYNC_RECEIVED){Start-Sleep -Milliseconds 20}
+}
+
+function FRAT-RUNTIME-STOP{
+	if(-not $script:FSSET){return}
+	try{
+		if(-not $FSCONTROLLER.HasExited){
+			$FSCONTROLLER.StandardInput.WriteLine("exit")
+			$FSCONTROLLER.WaitForExit()
+		}
+	}catch [System.InvalidOperationException]{
+		# The process may have exited before shutdown was requested.
+	}catch{Write-Log "Could not stop FS controller: $($_.Exception.Message)" -COLOR Yellow} 
+	finally{$script:FSSET = $false}
 }
 
 function FUN-FRAT{
@@ -883,7 +880,7 @@ function FUN-FRAT{
 				$PATH = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{$null})
 				$ALIAS = $(if($COMMAND.Flags["-a"]){"-a $($COMMAND.Flags["-a"])"}else{$null})
 				$LOADARGS = $(if($COMMAND.Flags["-la"]){"-la $($COMMAND.Flags["-la"])"}else{$null})
-				if($PATH -and $alias -and $LOADARGS){$TRUECMD += ",o $($PATH) $($ALIAS) $($LOADARGS)"}
+				if($PATH -and $ALIAS -and $LOADARGS){$TRUECMD += ",o $($PATH) $($ALIAS) $($LOADARGS)"}
 			} 'FSFRAT.CLOSE' {
 				$ALIAS = $(if($COMMAND.Flags["-a"]){"-a $($COMMAND.Flags["-a"])"}else{$null})
 				if($ALIAS){$TRUECMD += ",cl $($ALIAS)"}
@@ -896,14 +893,14 @@ function FUN-FRAT{
 				$LOADARGS = $(if($COMMAND.Flags["-la"]){"-la $($COMMAND.Flags["-la"])"}else{$null})
 				if($PATH -and $ALIAS -and $LOADARGS){$TRUECMD += ",cr $($LOADARGS) $($PATH) $($ALIAS)"}
 			} 'FSFRAT.READ' {
-				$PPATH = $(if($COMMAND.Flags["-pp"]){"-pp $($COMMAND.Flags["-pp"])"}else{$null})
-				$ALIAS = $(if($COMMAND.Flags["-ip"]){"-a $($COMMAND.Flags["-ia"])"}else{$null})
+				$PPATH = $(if($COMMAND.Flags["-pp"]){"-oa $($COMMAND.Flags["-pp"])"}else{$null})
+				$ALIAS = $(if($COMMAND.Flags["-ip"]){"-ia $($COMMAND.Flags["-ip"])"}else{$null})
 				$POS = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{'-p 0'})
 				$NBYTES = $(if($COMMAND.Flags["-n"]){"-n $($COMMAND.Flags["-n"])"}else{'-n 0'})
 				if($PPATH -and $ALIAS){$TRUECMD += ",fr $($PPATH) $($ALIAS) $($POS) $($NBYTES)"}
 			} 'FSFRAT.WRITE' {
-				$PPATH = $(if($COMMAND.Flags["-pp"]){"-pp $($COMMAND.Flags["-pp"])"}else{$null})
-				$ALIAS = $(if($COMMAND.Flags["-ip"]){"-ip $($COMMAND.Flags["-ia"])"}else{$null})
+				$PPATH = $(if($COMMAND.Flags["-pp"]){"-oa $($COMMAND.Flags["-pp"])"}else{$null})
+				$ALIAS = $(if($COMMAND.Flags["-ip"]){"-ia $($COMMAND.Flags["-ip"])"}else{$null})
 				$POS = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{'-p 0'})
 				$NBYTES = $(if($COMMAND.Flags["-n"]){"-n $($COMMAND.Flags["-n"])"}else{'-n 0'})
 				if($PPATH -and $ALIAS){$TRUECMD += ",fw $($PPATH) $($ALIAS) $($POS) $($NBYTES)"}
@@ -915,7 +912,7 @@ function FUN-FRAT{
 		foreach($CMD in $TRUECMD){
 			Write-Log -MSG "$($CMD)" -COLOR Blue
 			$FSCONTROLLER.StandardInput.WriteLine($CMD)
-			Wait-Event -Timeout 0.5
+			FRAT-RUNTIME-SYNC
 		}
 	}elseif($MOUNTCMD -and ($TRUECMD.Length -ge 1)){
 		Write-Log "$($FSCONTROLLEREXEPATH) $($MOUNTCMD) $($TRUECMD -join ' ')"
@@ -938,22 +935,29 @@ Register-Feature -Name 'CACHE' -Default $false
 Register-Feature -Name 'LOG' -Default $false
 Register-Feature -Name 'DEBUG' -Default $false
 
-Register-Command "CGCC.MAKE" 1 4 @{
+Register-Command "CGCC.MAKE" 3 4 @{
 	"-c" = @{Required = $true; Type="list"}
 	"-f" = @{Required = $false; Type="list"}
 	"-o" = @{Required = $true; Type="string"}
 	"-l" = @{Required = $true; Type="list"}
 }
+# Register-Command "CASM.MAKE" 3 4 @{
+# 	"-c" = @{Required = $true; Type="list"}
+# 	"-f" = @{Required = $false; Type="list"}
+# 	"-o" = @{Required = $true; Type="string"}
+# 	"-l" = @{Required = $true; Type="list"}
+# }
 
 Register-Command "SHELL.REBUILD" 0 0 @{}
 Register-Command "SHELL.EXECUTE" 1 1 @{
 	"-p" = @{Required=$true; Type="string"}
 }
 
-Register-Command "PE2EXEC.MAKE" 2 3 @{
-	"-d" = @{Required=$false; Type="int"}
+Register-Command "PE2EXEC.MAKE" 2 4 @{
 	"-i" = @{Required = $true; Type="string"}
 	"-o" = @{Required = $true; Type="string"}
+	"-id" = @{Required = $false; Type="int"}
+	"-od" = @{Required = $false; Type="int"}
 }
 Register-Command "PE2EXEC.PRINT" 1 1 @{
 	"-i" = @{Required = $true; Type="string"}
@@ -1002,19 +1006,19 @@ Register-Command "FSFRAT.WRITE" 4 4 @{
 
 
 $AST = Parse-BuildFile $SHELLSCRIPT
-(Open-Log $AST.Header.'LOG')
 if(-not $AST){
 	Write-Log "Could not generate AST from Script"
 	exit 1
 }
+(Open-Log $AST.Header.'LOG')
+if($AST.Header.ContainsKey('CACHEDIR')){$Global:BuildFeatures.CACHEDIR = $AST.Header.'CACHEDIR'}
 
 # Compile all Executables
 foreach($EXECUTABLE in $AST.Header.'INPUT'.'EXECUTABLE'){
-	$INFILES = $EXECUTABLE.'FILES'
-	$OUTFILE = $EXECUTABLE.'OUTPUT'
-	$CARGS = $EXECUTABLE.'CARGS'
-	$LARGS = $EXECUTABLE.'LARGS'
-	$GCCOUT = FUN-ECGCC -INPUTFILES $INFILES -OUTPUTFILE $OUTFILE -COMPILEARGS $CARGS -LINKARGS $LARGS
+	$cmdObj = [AstCommand]::new("CGCC.MAKE", 0)
+	$cmdObj.Flags = @{"-f" = $EXECUTABLE.'FILES'; "-o" = $EXECUTABLE.'OUTPUT'; 
+        "-c" = $EXECUTABLE.'CARGS'; "-l" = $EXECUTABLE.'LARGS'}
+	$GCCOUT = FUN-CGCC -COMMANDS @($cmdObj)
 	Write-Log ($GCCOUT -join "`n")
 }
 
@@ -1024,9 +1028,28 @@ $LASTLINE = $AST.Commands[0].Line
 # Group all AST commands by their line property automatically
 $GroupedCommands = $AST.Commands | Group-Object Line
 
+function Show-ObjectTree{
+    param($Item, $Indent = 0, [System.ConsoleColor]$COLOR)
+    $prefix = " " * ($Indent * 4)
+    
+    if($Item -is [System.Collections.IDictionary]){
+        foreach($key in $Item.Keys){
+            Write-Log "$prefix`t[$key]" -COLOR $COLOR
+            Show-ObjectTree $Item[$key] ($Indent + 1) -COLOR $COLOR
+        }
+    }elseif($Item -is [PSCustomObject] -or $Item -is [psobject]){
+        foreach($prop in $Item.PSObject.Properties){
+            Write-Log "$prefix`t$($prop.Name)" -COLOR $COLOR
+            Show-ObjectTree $prop.Value ($Indent + 1) -COLOR $COLOR
+        }
+    }else{Write-Host "$prefix- $Item" -COLOR $COLOR}
+}
+
 foreach($Group in $GroupedCommands){# .Group contains the array of commands belonging to this specific line
     $CMDPERLINE = $Group.Group 
     $PrimaryCmd = $CMDPERLINE[0]
+	Write-Log -MSG "[SHELL]`t$(([AstCommand]$PrimaryCmd).Name)" -COLOR Blue
+	# $CMDPERLINE | ForEach-Object{Write-Log -MSG "[SHELL]`t$(Show-ObjectTree $_ -COLOR Blue)" -COLOR Blue}
     switch -Regex ($PrimaryCmd.Name){
         '^FSFRAT\..+$' {
             FUN-FRAT -AST $AST -COMMANDS $CMDPERLINE
@@ -1037,11 +1060,14 @@ foreach($Group in $GroupedCommands){# .Group contains the array of commands belo
         } '^CGCC\..+$' {
             FUN-CGCC -COMMANDS $CMDPERLINE
 			continue
+        }  '^CASM\..+$' {
+            FUN-CASM -COMMANDS $CMDPERLINE
+			continue
         } '^SHELL.REBUILD$' {
             $PathFS = Join-Path (Get-Location) 'tools\filesystem\fs.ps1'
             $PathExec = Join-Path (Get-Location) 'tools\executable-format\exec.ps1'
-            Write-Log "$((& $PathFS -RELEASE $true 2>&1) -join "`n")"
-            Write-Log "$((& $PathExec 2>&1) -join "`n")"
+            Write-Log "$((& $PathFS -RELEASE $true) -join "`n")"
+            Write-Log "$((& $PathExec) -join "`n")"
 			continue
         } '^SHELL.EXECUTE$' {
             $PATH = $null
@@ -1054,12 +1080,15 @@ foreach($Group in $GroupedCommands){# .Group contains the array of commands belo
                     if(Test-Path $ComboPath){$PATH = $ComboPath}
                 }# Cleans up dots if relative path shorthand was used
             }
-            if($PATH){Write-Log -MSG "$((& (Join-Path $TOOLSDIR 'tools\build-suite\build.ps1') -SHELLSCRIPT $PATH) -join "`n")"}
+            if($PATH){
+				if($script:BuildFeatures.'FSFRAT.RUNTIME'){FRAT-RUNTIME-STOP}
+                $MSG = (& (Join-Path $TOOLSDIR '\build-suite\build.ps1') -SHELLSCRIPT $PATH)
+                Write-Log -MSG "$($MSG -join "`n")"
+            }
 			continue
         }
     }
 }
 
-$FSCONTROLLER.StandardInput.WriteLine("exit")
-$FSCONTROLLER.WaitForExit()
-(Exit-PSSession)
+(FRAT-RUNTIME-STOP)
+exit 0

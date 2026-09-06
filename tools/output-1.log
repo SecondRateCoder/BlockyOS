@@ -1,0 +1,1130 @@
+
+[C:\GitHub\BlockyOS\tools\filesystem\fs.exe]
+Header: {
+  .Magic	PE
+  .MachineType	PeMachineType_AMD64
+  .NSections	19
+  .Time/Date-Stamp	1785934705
+  .SymbolTablePtr	0x000000000006aa00
+  .NSymbols	3215
+  .OptionalHeaderSize	240
+  .Characteristics	PeCharacteristics_EXECUTABLE PeCharacteristics_NLINENUMS PeCharacteristics_LADDRESS
+	Optional(32-bit): {
+    .Magic	Pe32Plus
+    .LinkerVersion	[2:46]
+    .SizeOfCode	126464
+    .SizeOfInitialisedData	27648
+    .SizeOfUninitialisedData	3072
+    .EntryPointAddress	0x0000000000001440
+    .BaseOfCode	4096
+    .ImageBase	5368709120
+    .SectionAlignment	4096
+    .FileAlignment	512
+    .OSVersion  [4:0]
+    .ImageVersion  [0:0]
+    .SubsystemVersion  [5:2]
+    .Win32Version	0
+    .ImageSize	475136
+    .HeadersSize	1536
+    .Checksum	538409
+    .Subsystem	PeSubsystem_WINCUI
+    .Characteristics	PeDllCharacteristics_HIGHENTROPY_VA PeDllCharacteristics_DYNBASE PeDllCharacteristics_NX
+    .ReservedStackSize	2097152
+    .CommitStackSize	4096
+    .ReservedHeapSize	1048576
+    .CommitHeapSize	4096
+    .LoaderFlags	0
+    .NRVAsAndSize	16
+    [0]: {
+      .RVA	0
+      .Size	0
+      {
+        .Name	.text
+        .VirtualSize	126048
+        .VirtualAddress	4096
+        .RawSize	126464
+        .RawPointer	0x0000000000000600
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_CODE PeSectionCharacteristics_MEXECUTABLE PeSectionCharacteristics_MREADABLE
+      }
+      {
+        c3 00 0f 00 31 ea 0f 00 
+        0f 66 1f 00 c9 01 1f 00 
+        1f 66 84 00 e9 00 84 00 
+        40 2e 00 00 d1 66 00 00 
+      }
+    }
+    [1]: {
+      .RVA	159744
+      .Size	2524
+      {
+        .Name	.data
+        .VirtualSize	2992
+        .VirtualAddress	131072
+        .RawSize	3072
+        .RawPointer	0x000000000001f400
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_MREADABLE PeSectionCharacteristics_MWRITABLE
+      }
+      {
+        68 00 2c 00 c0 01 f9 01 
+        65 00 68 00 23 00 4f 00 
+        6c 00 00 00 02 00 01 00 
+        70 00 00 00 40 00 40 00 
+      }
+    }
+    [2]: {
+      .RVA	167936
+      .Size	1256
+      {
+        .Name	.rdata
+        .VirtualSize	12280
+        .VirtualAddress	135168
+        .RawSize	12288
+        .RawPointer	0x0000000000020000
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_MREADABLE
+      }
+      {
+        08 67 3b 85 2b 72 f1 3a 
+        c9 e6 a7 ae f8 f3 36 f5 
+        bc 09 ca 67 94 6e 1d 4f 
+        f3 6a 84 bb fe 3c 5f a5 
+      }
+    }
+    [3]: {
+      .RVA	147456
+      .Size	3264
+      {
+        .Name	.pdata
+        .VirtualSize	3264
+        .VirtualAddress	147456
+        .RawSize	3584
+        .RawPointer	0x0000000000023000
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_MREADABLE
+      }
+      {
+        .N	298
+        MachineType	PeMachineType_AMD64
+        [0]: {
+          .AddressRVA	4096
+          .EndRVA	4097
+          .UnwindRVA	151552
+        [1]: {
+          .AddressRVA	4112
+          .EndRVA	4119
+          .UnwindRVA	151556
+        [2]: {
+          .AddressRVA	4128
+          .EndRVA	5144
+          .UnwindRVA	151560
+        [3]: {
+          .AddressRVA	5152
+          .EndRVA	5181
+          .UnwindRVA	151584
+        [4]: {
+          .AddressRVA	5184
+          .EndRVA	5213
+          .UnwindRVA	151616
+        [5]: {
+          .AddressRVA	5216
+          .EndRVA	5221
+          .UnwindRVA	151648
+        [6]: {
+          .AddressRVA	5232
+          .EndRVA	5244
+          .UnwindRVA	151652
+        [7]: {
+          .AddressRVA	5248
+          .EndRVA	5249
+          .UnwindRVA	151656
+        [8]: {
+          .AddressRVA	5264
+          .EndRVA	5447
+          .UnwindRVA	151660
+        [9]: {
+          .AddressRVA	5447
+          .EndRVA	5542
+          .UnwindRVA	151672
+        [10]: {
+          .AddressRVA	5542
+          .EndRVA	5732
+          .UnwindRVA	151684
+        [11]: {
+          .AddressRVA	5732
+          .EndRVA	5760
+          .UnwindRVA	151696
+        [12]: {
+          .AddressRVA	5760
+          .EndRVA	5812
+          .UnwindRVA	151704
+        [13]: {
+          .AddressRVA	5812
+          .EndRVA	5835
+          .UnwindRVA	151716
+        [14]: {
+          .AddressRVA	5835
+          .EndRVA	5862
+          .UnwindRVA	151724
+        [15]: {
+          .AddressRVA	5862
+          .EndRVA	5920
+          .UnwindRVA	151732
+        [16]: {
+          .AddressRVA	5920
+          .EndRVA	5995
+          .UnwindRVA	151744
+        [17]: {
+          .AddressRVA	5995
+          .EndRVA	6095
+          .UnwindRVA	151752
+        [18]: {
+          .AddressRVA	6095
+          .EndRVA	6242
+          .UnwindRVA	151764
+        [19]: {
+          .AddressRVA	6242
+          .EndRVA	6475
+          .UnwindRVA	151776
+        [20]: {
+          .AddressRVA	6475
+          .EndRVA	6869
+          .UnwindRVA	151788
+        [21]: {
+          .AddressRVA	6869
+          .EndRVA	27287
+          .UnwindRVA	151800
+        [22]: {
+          .AddressRVA	27287
+          .EndRVA	27608
+          .UnwindRVA	151812
+        [23]: {
+          .AddressRVA	27608
+          .EndRVA	27986
+          .UnwindRVA	151824
+        [24]: {
+          .AddressRVA	27986
+          .EndRVA	28322
+          .UnwindRVA	151836
+        [25]: {
+          .AddressRVA	28322
+          .EndRVA	28394
+          .UnwindRVA	151848
+        [26]: {
+          .AddressRVA	28400
+          .EndRVA	28495
+          .UnwindRVA	151860
+        [27]: {
+          .AddressRVA	28495
+          .EndRVA	28547
+          .UnwindRVA	151872
+        [28]: {
+          .AddressRVA	28547
+          .EndRVA	28613
+          .UnwindRVA	151884
+        [29]: {
+          .AddressRVA	28613
+          .EndRVA	28834
+          .UnwindRVA	151896
+        [30]: {
+          .AddressRVA	28834
+          .EndRVA	29050
+          .UnwindRVA	151908
+        [31]: {
+          .AddressRVA	29050
+          .EndRVA	29299
+          .UnwindRVA	151920
+          }
+        }
+    }
+    [4]: {
+      .RVA	0
+      .Size	0
+      {
+        .Name	.xdata
+        .VirtualSize	3184
+        .VirtualAddress	151552
+        .RawSize	3584
+        .RawPointer	0x0000000000023e00
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_MREADABLE
+      }
+      {
+        01 01 01 10 0b 09 06 02 
+        00 00 10 a2 60 50 d0 f0 
+        00 00 09 0c 0a 08 04 00 
+        00 00 00 30 70 c0 e0 00 
+      }
+    }
+    [5]: {
+      .RVA	172032
+      .Size	288
+      {
+        .Name	.bss
+        .VirtualSize	2992
+        .VirtualAddress	155648
+        .RawSize	0
+        .RawPointer	0x0000000000000000
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_UINITDATA PeSectionCharacteristics_MREADABLE PeSectionCharacteristics_MWRITABLE
+      }
+      {
+      }
+    }
+    [6]: {
+      .RVA	0
+      .Size	0
+      {
+        .Name	.idata
+        .VirtualSize	2524
+        .VirtualAddress	159744
+        .RawSize	2560
+        .RawPointer	0x0000000000024c00
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_MREADABLE
+      }
+      {
+        .NImports	3
+        [0]: {
+          .NEntries	1
+          .ImportLookupTableRVA	159824
+          .Time/DateStamp	0
+          .ForwarderChainFirstIndex	0
+          .NameRVA	161948(bcrypt.dll)
+          .ImportAddressTableRVA	160416
+            "{29:BCryptGenRandom}"
+        [1]: {
+          .NEntries	15
+          .ImportLookupTableRVA	159840
+          .Time/DateStamp	0
+          .ForwarderChainFirstIndex	0
+          .NameRVA	162020(KERNEL32.dll)
+          .ImportAddressTableRVA	160432
+            "{298:DeleteCriticalSection}"
+            "{338:EnterCriticalSection}"
+            "{486:GetCPInfo}"
+            "{653:GetLastError}"
+            "{675:GetModuleHandleA}"
+            "{735:GetProcAddress}"
+            "{923:InitializeCriticalSection}"
+            "{1017:LeaveCriticalSection}"
+            "{1069:MultiByteToWideChar}"
+            "{1440:SetUnhandledExceptionFilter}"
+            "{1456:Sleep}"
+            "{1492:TlsGetValue}"
+            "{1540:VirtualProtect}"
+            "{1542:VirtualQuery}"
+            "{1595:WideCharToMultiByte}"
+        [2]: {
+          .NEntries	55
+          .ImportLookupTableRVA	159968
+          .Time/DateStamp	0
+          .ForwarderChainFirstIndex	0
+          .NameRVA	162256(msvcrt.dll)
+          .ImportAddressTableRVA	160560
+            "{96:__C_specific_handler}"
+            "{118:___lc_codepage_func}"
+            "{121:___mb_cur_max_func}"
+            "{136:__getmainargs}"
+            "{137:__initenv}"
+            "{139:__iob_func}"
+            "{155:__set_app_type}"
+            "{157:__setusermatherr}"
+            "{189:_amsg_exit}"
+            "{211:_cexit}"
+            "{230:_commode}"
+            "{281:_errno}"
+            "{333:_fmode}"
+            "{393:_getcwd}"
+            "{422:_initterm}"
+            "{529:_localtime64}"
+            "{530:_lock}"
+            "{825:_strdup}"
+            "{873:_strtoui64}"
+            "{897:_time64}"
+            "{926:_unlock}"
+            "{1150:abort}"
+            "{1163:atexit}"
+            "{1169:calloc}"
+            "{1182:exit}"
+            "{1186:fclose}"
+            "{1189:fflush}"
+            "{1200:fopen}"
+            "{1203:fprintf}"
+            "{1207:fputc}"
+            "{1208:fputs}"
+            "{1211:fread}"
+    }
+    [7]: {
+      .RVA	0
+      .Size	0
+      {
+        .Name	.tls
+        .VirtualSize	16
+        .VirtualAddress	163840
+        .RawSize	512
+        .RawPointer	0x0000000000025600
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_MREADABLE PeSectionCharacteristics_MWRITABLE
+      }
+      {
+        00 00 00 00 00 00 00 00 
+        00 00 00 00 00 00 00 00 
+        00 00 00 00 00 00 00 00 
+        00 00 00 00 00 00 00 00 
+      }
+    }
+    [8]: {
+      .RVA	0
+      .Size	0
+      {
+        .Name	.rsrc
+        .VirtualSize	1256
+        .VirtualAddress	167936
+        .RawSize	1536
+        .RawPointer	0x0000000000025800
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_MREADABLE
+      }
+      {
+        00 00 00 00 18 18 00 00 
+        00 00 00 00 00 00 00 00 
+        00 00 00 01 00 00 00 00 
+        00 00 00 00 00 80 00 00 
+      }
+    }
+    [9]: {
+      .RVA	142080
+      .Size	40
+      {
+        .Name	.reloc
+        .VirtualSize	288
+        .VirtualAddress	172032
+        .RawSize	512
+        .RawPointer	0x0000000000025e00
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_DISCARDABLE PeSectionCharacteristics_MREADABLE
+      }
+      {
+        00 ac 10 38 c0 f8 60 88 
+        00 00 a0 a0 a0 a0 a1 a1 
+        02 00 18 b8 e0 10 68 a0 
+        00 00 a0 a0 a0 a1 a1 a1 
+      }
+    }
+    [10]: {
+      .RVA	0
+      .Size	0
+      {
+        .Name	/4
+        .VirtualSize	2656
+        .VirtualAddress	176128
+        .RawSize	3072
+        .RawPointer	0x0000000000026000
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_DISCARDABLE PeSectionCharacteristics_MREADABLE
+      }
+      {
+        2c 02 00 00 00 01 65 00 
+        00 00 00 00 10 00 04 00 
+        00 00 08 00 00 00 00 00 
+        00 00 00 00 40 00 00 00 
+      }
+    }
+    [11]: {
+      .RVA	0
+      .Size	0
+      {
+        .Name	/19
+        .VirtualSize	127026
+        .VirtualAddress	180224
+        .RawSize	127488
+        .RawPointer	0x0000000000026c00
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_DISCARDABLE PeSectionCharacteristics_MREADABLE
+      }
+      {
+        92 05 00 3c 20 20 31 2d 
+        28 00 00 47 43 31 2e 6d 
+        00 01 00 4e 39 36 30 36 
+        00 08 00 55 39 2e 20 34 
+      }
+    }
+    [12]: {
+      .RVA	160416
+      .Size	592
+      {
+        .Name	/31
+        .VirtualSize	22142
+        .VirtualAddress	311296
+        .RawSize	22528
+        .RawPointer	0x0000000000045e00
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_DISCARDABLE PeSectionCharacteristics_MREADABLE
+      }
+      {
+        01 08 3b 49 00 00 21 39 
+        0d 3a 05 13 00 03 02 0b 
+        00 21 39 38 02 0e 3b 49 
+        03 02 0b 0b 0d 3a 05 13 
+      }
+    }
+    [13]: {
+      .RVA	2019914798
+      .Size	116
+      {
+        .Name	/45
+        .VirtualSize	58763
+        .VirtualAddress	335872
+        .RawSize	58880
+        .RawPointer	0x000000000004b600
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_DISCARDABLE PeSectionCharacteristics_MREADABLE
+      }
+      {
+        5c 05 9e 01 0e 01 00 00 
+        04 00 00 01 0d 01 00 01 
+        00 08 00 01 00 01 01 01 
+        00 00 00 fb 01 00 00 01 
+      }
+    }
+    [14]: {
+      .RVA	126048
+      .Size	4096
+      {
+        .Name	/57
+        .VirtualSize	14040
+        .VirtualAddress	397312
+        .RawSize	14336
+        .RawPointer	0x0000000000059c00
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_DISCARDABLE PeSectionCharacteristics_MREADABLE
+      }
+      {
+        14 ff 01 20 a0 00 14 00 
+        00 ff 00 0c 01 00 00 00 
+        00 ff 01 07 00 00 00 00 
+        00 ff 78 08 00 00 00 00 
+      }
+    }
+    [15]: {
+      .RVA	126464
+      .Size	1536
+      {
+        .Name	/70
+        .VirtualSize	1483
+        .VirtualAddress	413696
+        .RawSize	1536
+        .RawPointer	0x000000000005d400
+        .RelocationTablePointer	0x0000000000000000
+        .LineNumberPointer	0x0000000000000000
+        .Characteristics	PeSectionCharacteristics_INITDATA PeSectionCharacteristics_DISCARDABLE PeSectionCharacteristics_MREADABLE
+      }
+      {
+        53 79 6d 65 75 69 66 67 
+        75 73 00 63 6d 7a 49 65 
+        62 74 43 6b 00 65 6d 00 
+        73 65 68 53 53 4f 61 42 
+      }
+    }
+[(null):666436208:DumpBeHeader]	Writing 66 bytes to 1956
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:569:CreateResourceSection]
+[(null):666436208:DumpBeHeader]	Writing 66 bytes to 140707423586212
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 32768 to 196436208:DumpBeHeader]	Writing 140707423584322 bytes to 140698833651620
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:589:CreateResourceSection]
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 188 to 1964964
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 32768 to 19644
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 32768 to 19644
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 32768 to 19644
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 32768 to 19644
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 32768 to 19644
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 32768 to 19644
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 1388 to 1765566208:DumpBeHeader]	Writing 66 bytes to 140707423586212
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 2316 to 1779446
+	[C:\GitHub\BlockyOS\tools\executable-format\exec.c:614]
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 1388 to 1765566
+	[C:\GitHub\BlockyOS\tools\executable-format\exec.c:614]
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 1388 to 1765566
+	[C:\GitHub\BlockyOS\tools\executable-format\exec.c:614]
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 2313 to 1779446208:DumpBeHeader]	Writing 66 bytes to 140707423586212
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:175:WriteSection]	Writing 1536 to 420196  .NSections	16
+  .RawHeaderSize	1956
+  .SectionTabeOffset	44
+    [0]: {
+      .Magic	0
+      .Name	
+      .Flags	(null)
+      .Alignment	0
+      .VirtualAddress	0
+      .VirtualSize	0
+      .RawPointer	0
+      .RawSize	0
+      {
+        
+        
+        
+        
+      }
+    [1]: {
+      .Magic	5457218
+      .Name	.SystemS
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	0
+      .VirtualSize	0
+      .RawPointer	1964
+      .RawSize	32768
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 32768 from 1964
+      {
+        bc 00 ba 00 02 00 00 00 
+        07 00 1f 00 00 00 00 00 
+        00 00 00 00 00 00 00 00 
+        00 00 00 00 00 00 00 00 
+      }
+    [2]: {
+      .Magic	5457218
+      .Name	.code
+      .Flags	SFExecutable SFReadable 
+      .Alignment	4
+      .VirtualAddress	4096
+      .VirtualSize	126048
+      .RawPointer	34732
+      .RawSize	126464
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 126464 from 34732
+      {
+        c3 00 0f 00 31 ea 0f 00 
+        0f 66 1f 00 c9 01 1f 00 
+        1f 66 84 00 e9 00 84 00 
+        40 2e 00 00 d1 66 00 00 
+      }
+    [3]: {
+      .Magic	5457218
+      .Name	.data
+      .Flags	SFInitData SFReadable SFWritable 
+      .Alignment	4
+      .VirtualAddress	131072
+      .VirtualSize	2992
+      .RawPointer	161196
+      .RawSize	3072
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 3072 from 161196
+      {
+        68 00 2c 00 c0 01 f9 01 
+        65 00 68 00 23 00 4f 00 
+        6c 00 00 00 02 00 01 00 
+        70 00 00 00 40 00 40 00 
+      }
+    [4]: {
+      .Magic	5457218
+      .Name	.rodata
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	135168
+      .VirtualSize	12280
+      .RawPointer	164268
+      .RawSize	12288
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 12288 from 164268
+      {
+        08 67 3b 85 2b 72 f1 3a 
+        c9 e6 a7 ae f8 f3 36 f5 
+        bc 09 ca 67 94 6e 1d 4f 
+        f3 6a 84 bb fe 3c 5f a5 
+      }
+    [5]: {
+      .Magic	5457218
+      .Name	.RelS
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	0
+      .VirtualSize	1388
+      .RawPointer	176556
+      .RawSize	1388
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 1388 from 176556
+      Header: {
+        .DirectoryTable	176576
+        .UnusedBytes	177468
+        .NRelocationDirectories	8
+        [0]: {
+          .BaseAddress	131072
+          .DirectorySize	340(82 Entries)
+             [0]: {
+            .Type	BRET64
+            .Offset	16(0x20010)
+          } [1]: {
+            .Type	BRET64
+            .Offset	24(0x20018)
+          } [2]: {
+            .Type	BRET64
+            .Offset	56(0x20038)
+          } [3]: {
+            .Type	BRET64
+            .Offset	184(0x200B8)
+          } [4]: {
+            .Type	BRET64
+            .Offset	192(0x200C0)
+          } [5]: {
+            .Type	BRET64
+            .Offset	224(0x200E0)
+          } [6]: {
+            .Type	BRET64
+            .Offset	248(0x200F8)
+          } [7]: {
+            .Type	BRET64
+            .Offset	272(0x20110)
+          }
+        }
+        [1]: {
+          .BaseAddress	135168
+          .DirectorySize	36(6 Entries)
+             [0]: {
+            .Type	BRET64
+            .Offset	256(0x21100)
+          } [1]: {
+            .Type	BRET64
+            .Offset	288(0x21120)
+          } [2]: {
+            .Type	BRET64
+            .Offset	512(0x21200)
+          } [3]: {
+            .Type	BRET64
+            .Offset	544(0x21220)
+          } [4]: {
+            .Type	BRET64
+            .Offset	560(0x21230)
+          } [5]: {
+            .Type	BRET64
+            .Offset	576(0x21240)
+          }
+        }
+        [2]: {
+          .BaseAddress	139264
+          .DirectorySize	36(6 Entries)
+             [0]: {
+            .Type	BRET64
+            .Offset	2784(0x22AE0)
+          } [1]: {
+            .Type	BRET64
+            .Offset	2816(0x22B00)
+          } [2]: {
+            .Type	BRET64
+            .Offset	2824(0x22B08)
+          } [3]: {
+            .Type	BRET64
+            .Offset	2832(0x22B10)
+          } [4]: {
+            .Type	BRET64
+            .Offset	2840(0x22B18)
+          } [5]: {
+            .Type	BRETAbsolute
+            .Offset	0(0x22000)
+          }
+        }
+        [3]: {
+          .BaseAddress	143360
+          .DirectorySize	148(34 Entries)
+             [0]: {
+            .Type	BRET64
+            .Offset	512(0x23200)
+          } [1]: {
+            .Type	BRET64
+            .Offset	528(0x23210)
+          } [2]: {
+            .Type	BRET64
+            .Offset	544(0x23220)
+          } [3]: {
+            .Type	BRET64
+            .Offset	560(0x23230)
+          } [4]: {
+            .Type	BRET64
+            .Offset	576(0x23240)
+          } [5]: {
+            .Type	BRET64
+            .Offset	592(0x23250)
+          } [6]: {
+            .Type	BRET64
+            .Offset	608(0x23260)
+          } [7]: {
+            .Type	BRET64
+            .Offset	624(0x23270)
+          }
+        }
+        [4]: {
+          .BaseAddress	0
+          .DirectorySize	12(0 Entries)
+            
+        }
+        [5]: {
+          .BaseAddress	98816
+          .DirectorySize	16(1 Entries)
+             [0]: {
+            .Type	BRET64
+            .Offset	0(0x18200)
+          }
+        }
+        [6]: {
+          .BaseAddress	98816
+          .DirectorySize	72(15 Entries)
+             [0]: {
+            .Type	BRET64
+            .Offset	0(0x18200)
+          } [1]: {
+            .Type	BRET64
+            .Offset	36420(0x21044)
+          } [2]: {
+            .Type	BRET64
+            .Offset	36743(0x21187)
+          } [3]: {
+            .Type	BRET64
+            .Offset	971(0x185CB)
+          } [4]: {
+            .Type	BRET64
+            .Offset	1070(0x1862E)
+          } [5]: {
+            .Type	BRET64
+            .Offset	1080(0x18638)
+          } [6]: {
+            .Type	BRET64
+            .Offset	1598(0x1883E)
+          } [7]: {
+            .Type	BRET64
+            .Offset	3023(0x18DCF)
+          }
+        }
+        [7]: {
+          .BaseAddress	98816
+          .DirectorySize	232(55 Entries)
+             [0]: {
+            .Type	BRET64
+            .Offset	0(0x18200)
+          } [1]: {
+            .Type	BRET64
+            .Offset	36420(0x21044)
+          } [2]: {
+            .Type	BRET64
+            .Offset	36743(0x21187)
+          } [3]: {
+            .Type	BRET64
+            .Offset	971(0x185CB)
+          } [4]: {
+            .Type	BRET64
+            .Offset	1070(0x1862E)
+          } [5]: {
+            .Type	BRET64
+            .Offset	1080(0x18638)
+          } [6]: {
+            .Type	BRET64
+            .Offset	1598(0x1883E)
+          } [7]: {
+            .Type	BRET64
+            .Offset	3023(0x18DCF)
+          }
+        }
+      }
+    [6]: {
+      .Magic	5457218
+      .Name	.ImportIn
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	0
+      .VirtualSize	0
+      .RawPointer	177944
+      .RawSize	2316
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 2316 from 177944
+      Header: {
+        .NDlls	3
+        .DllImportPathTableRVO	179408
+        .DllImportTableRVO	177964
+        [0]: {
+          .ImportPathIndex	0(C:\Windows\system32\bcrypt.dll)
+          .NHashes	1
+          [0]: {
+            .Hash	{CEF1E424:66AC450A}
+            .Relocation	0
+          }
+        }
+        [1]: {
+          .ImportPathIndex	1(C:\Windows\system32\KERNEL32.dll)
+          .NHashes	15
+          [0]: {
+            .Hash	{438CBAB7:597BD15A}
+            .Relocation	0
+          }
+          [1]: {
+            .Hash	{7207E52A:FE028055}
+            .Relocation	1
+          }
+          [2]: {
+            .Hash	{577FD67C:4392824D}
+            .Relocation	2
+          }
+          [3]: {
+            .Hash	{1FA740D5:BF01E721}
+            .Relocation	3
+          }
+          [4]: {
+            .Hash	{8B77236E:6D3D868D}
+            .Relocation	4
+          }
+          [5]: {
+            .Hash	{8F092AF0:D4353675}
+            .Relocation	5
+          }
+          [6]: {
+            .Hash	{ABD9F862:A266E4B2}
+            .Relocation	6
+          }
+          [7]: {
+            .Hash	{7EBE3411:9DFB22AA}
+            .Relocation	7
+          }
+        }
+        [2]: {
+          .ImportPathIndex	2(C:\Windows\system32\msvcrt.dll)
+          .NHashes	55
+          [0]: {
+            .Hash	{90ABEDC1:C5D6D4C0}
+            .Relocation	0
+          }
+          [1]: {
+            .Hash	{9A77D22:3111CB0C}
+            .Relocation	1
+          }
+          [2]: {
+            .Hash	{1603A3CC:1F2B6216}
+            .Relocation	2
+          }
+          [3]: {
+            .Hash	{B2989E52:8672265E}
+            .Relocation	3
+          }
+          [4]: {
+            .Hash	{2A0F57CA:12145E52}
+            .Relocation	4
+          }
+          [5]: {
+            .Hash	{9C2DDF81:2A93DAC0}
+            .Relocation	5
+          }
+          [6]: {
+            .Hash	{F6349BB7:32D5F0EB}
+            .Relocation	6
+          }
+          [7]: {
+            .Hash	{9BDB3A80:78720461}
+            .Relocation	7
+          }
+        }
+      }
+    [7]: {
+      .Magic	5457218
+      .Name	.ExcS
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	0
+      .VirtualSize	0
+      .RawPointer	180260
+      .RawSize	9536
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 9536 from 180260
+      {
+        [8]: {
+          .VirtualAddress	5264
+          .HandlerAddress	151660
+          .NBytes	0
+        }
+        [7]: {
+          .VirtualAddress	5248
+          .HandlerAddress	151656
+          .NBytes	0
+        }
+        [6]: {
+          .VirtualAddress	5232
+          .HandlerAddress	151652
+          .NBytes	0
+        }
+        [5]: {
+          .VirtualAddress	5216
+          .HandlerAddress	151648
+          .NBytes	0
+        }
+        [4]: {
+          .VirtualAddress	5184
+          .HandlerAddress	151616
+          .NBytes	0
+        }
+        [3]: {
+          .VirtualAddress	5152
+          .HandlerAddress	151584
+          .NBytes	0
+        }
+        [2]: {
+          .VirtualAddress	4128
+          .HandlerAddress	151560
+          .NBytes	0
+        }
+        [1]: {
+          .VirtualAddress	4112
+          .HandlerAddress	151556
+          .NBytes	0
+        }
+        [0]: {
+          .VirtualAddress	4096
+          .HandlerAddress	151552
+          .NBytes	0
+        }
+      }
+    [8]: {
+      .Magic	5457218
+      .Name	.xdata
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	151552
+      .VirtualSize	3184
+      .RawPointer	189796
+      .RawSize	3584
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 3584 from 189796
+      {
+        01 01 01 10 0b 09 06 02 
+        00 00 10 a2 60 50 d0 f0 
+        00 00 09 0c 0a 08 04 00 
+        00 00 00 30 70 c0 e0 00 
+      }
+    [9]: {
+      .Magic	5457218
+      .Name	.tls
+      .Flags	SFInitData SFReadable SFWritable 
+      .Alignment	4
+      .VirtualAddress	163840
+      .VirtualSize	16
+      .RawPointer	193380
+      .RawSize	512
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 512 from 193380
+      {
+        00 00 00 00 00 00 00 00 
+        00 00 00 00 00 00 00 00 
+        00 00 00 00 00 00 00 00 
+        00 00 00 00 00 00 00 00 
+      }
+    [10]: {
+      .Magic	5457218
+      .Name	/4
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	176128
+      .VirtualSize	2656
+      .RawPointer	193892
+      .RawSize	3072
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 3072 from 193892
+      {
+        2c 02 00 00 00 01 65 00 
+        00 00 00 00 10 00 04 00 
+        00 00 08 00 00 00 00 00 
+        00 00 00 00 40 00 00 00 
+      }
+    [11]: {
+      .Magic	5457218
+      .Name	/19
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	180224
+      .VirtualSize	127028
+      .RawPointer	196964
+      .RawSize	127488
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 127488 from 196964
+      {
+        92 05 00 3c 20 20 31 2d 
+        28 00 00 47 43 31 2e 6d 
+        00 01 00 4e 39 36 30 36 
+        00 08 00 55 39 2e 20 34 
+      }
+    [12]: {
+      .Magic	5457218
+      .Name	/31
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	311296
+      .VirtualSize	22144
+      .RawPointer	324452
+      .RawSize	22528
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 22528 from 324452
+      {
+        01 08 3b 49 00 00 21 39 
+        0d 3a 05 13 00 03 02 0b 
+        00 21 39 38 02 0e 3b 49 
+        03 02 0b 0b 0d 3a 05 13 
+      }
+    [13]: {
+      .Magic	5457218
+      .Name	/45
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	335872
+      .VirtualSize	58764
+      .RawPointer	346980
+      .RawSize	58880
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 58880 from 346980
+      {
+        5c 05 9e 01 0e 01 00 00 
+        04 00 00 01 0d 01 00 01 
+        00 08 00 01 00 01 01 01 
+        00 00 00 fb 01 00 00 01 
+      }
+    [14]: {
+      .Magic	5457218
+      .Name	/57
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	397312
+      .VirtualSize	14040
+      .RawPointer	405860
+      .RawSize	14336
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 14336 from 405860
+      {
+        14 ff 01 20 a0 00 14 00 
+        00 ff 00 0c 01 00 00 00 
+        00 ff 01 07 00 00 00 00 
+        00 ff 78 08 00 00 00 00 
+      }
+    [15]: {
+      .Magic	5457218
+      .Name	/70
+      .Flags	SFInitData SFReadable 
+      .Alignment	4
+      .VirtualAddress	413696
+      .VirtualSize	1484
+      .RawPointer	420196
+      .RawSize	1536
+[C:\GitHub\BlockyOS\tools\executable-format\exec.c:144:ReadSection]	Reading 1536 from 420196
+      {
+        53 79 6d 65 75 69 66 67 
+        75 73 00 63 6d 7a 49 65 
+        62 74 43 6b 00 65 6d 00 
+        73 65 68 53 53 4f 61 42 
+      }}

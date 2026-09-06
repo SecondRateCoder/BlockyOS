@@ -9,7 +9,7 @@ static inline void skipSpaces(const char** text){
 
 // Helper function to handle character escaping and write raw values out to a stream
 static void dumpPrimitiveValue(JsonValue* value, FILE* stream){
-    if(!value){return;}
+    if(!value || !stream){return;}
     switch(value->type){
         case JTYPE_STRING: {
             // Maintain basic string syntax requirements with structural quotes
@@ -225,15 +225,15 @@ char* JsonSerialize(JsonValue* root){
 
 // Hierarchical memory tracking destructor block
 void JsonFree(JsonValue* root, char *out){
-    if(root){return;}
+    if(!root){return;}
 	FILE *f = fopen(out, "wb");
 
     // Phase 1: Output the structure serialization layer
     if(root->type == JTYPE_OBJECT){
-        fprintf(f, "{");
+        if(f){fprintf(f, "{");}
         for(int i = 0; i < root->objectValue.count; i++){
             // Output the key mapping layout
-            fprintf(f, "\"%s\":", root->objectValue.pairs[i].key ? root->objectValue.pairs[i].key : "");
+            if(f){fprintf(f, "\"%s\":", root->objectValue.pairs[i].key ? root->objectValue.pairs[i].key : "");}
             
             // Recurse directly if it's a nested object block
             if(root->objectValue.pairs[i].value && root->objectValue.pairs[i].value->type == JTYPE_OBJECT){
@@ -255,19 +255,15 @@ void JsonFree(JsonValue* root, char *out){
             // Maintain syntax comma delimiters cleanly between array pairs
             if(i < root->objectValue.count - 1){fprintf(f, ",");}
         }
-        fprintf(f, "}");
+        if(f){fprintf(f, "}");}
     }else{
         // Fallback catch if JsonFree is called directly on an individual primitive root node
         dumpPrimitiveValue(root, stdout);
-        if(root->type == JTYPE_STRING){
-            free(root->stringValue);
-        }
+        if(root->type == JTYPE_STRING){free(root->stringValue);}
     }
     // Phase 2: Clear structural tracking allocations for the current node
     if(root->type == JTYPE_OBJECT){
-        for(int i = 0; i < root->objectValue.count; i++){
-            free(root->objectValue.pairs[i].key);
-        }
+        for(int i = 0; i < root->objectValue.count; i++){free(root->objectValue.pairs[i].key);}
         free(root->objectValue.pairs);
     }
     free(root);

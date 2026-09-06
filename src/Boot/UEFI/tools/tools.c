@@ -12,20 +12,20 @@ void prGUID(EFI_GUID guid){
 }
 
 BOOLEAN strcheck(char *s, char c){
-	for(UINTN cc = 0; cc < __strlen(s); ++cc){
+	for(UINT64 cc = 0; cc < __strlen(s); ++cc){
 		if(s[cc] == c){return TRUE;}
 	}
 	return FALSE;
 }
 
 INT64 strchecki(char *s, char c){
-	for(UINTN cc = 0; cc < __strlen(s); ++cc){
+	for(UINT64 cc = 0; cc < __strlen(s); ++cc){
 		if(c == s[cc]){return cc;}
 	}
 	return -1;
 }
 
-void *__memdup(void *mem, UINTN s){
+void *__memdup(void *mem, UINT64 s){
 	void *out = __calloc(1, s);
     if(out){__memcpy(out, mem, s);}
 	return out;
@@ -33,41 +33,41 @@ void *__memdup(void *mem, UINTN s){
 
 BOOLEAN isascii(char c){return c <= 0x7F;}
 
-UINT64 __getfcode(char *s_){
+UINT64 *__getfcode(char *s_){
+    static UINT64 hash[2];
 	char *s = __strdup(s_);
 	for(UINT32 cc = 0; cc < __strlen(s_); ++cc){
 		if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}
 	}
-	UINT64 hash;
 	blake2b_state hashstate;
-// #ifdef __DEBUG__
+// #ifdef _DEBUG
 //     Print(L"\nInitialising Blake2 Enviroment");
 // #endif
-	blake2b_init(&hashstate, sizeof(UINT64));
-// #ifdef __DEBUG__
+	blake2b_init(&hashstate, sizeof(UINT64) * 2);
+// #ifdef _DEBUG
 //     Print(L"\nUpdating Blake2 Enviroment");
 // #endif
     blake2b_update(&hashstate, s, __strlen(s));
-// #ifdef __DEBUG__
+// #ifdef _DEBUG
 //     Print(L"\nFinalising Blake2 Enviroment");
 // #endif
-	blake2b_final(&hashstate, &hash, sizeof(UINT64));
-// #ifdef __DEBUG__
+	blake2b_final(&hashstate, &hash, sizeof(UINT64) * 2);
+// #ifdef _DEBUG
 //     Print(L"\nFinalised Blake2 Enviroment");
 // #endif
-	hash &= 0x3FFFFFFFFFF;
+	hash[1] &= UINT64_MAX & ~(UINT16_MAX << 48);
     __free(s);
 	return hash;
 }
 
-char *readbuf(UINTN s, CHAR16 *prefix){
+char *readbuf(UINT64 s, CHAR16 *prefix){
     Print(prefix);
 	char *out = __calloc(s + 1, sizeof(char));
 	if(out){
-		UINTN i = 0;
+		UINT64 i = 0;
 		for(; i < s; ++i){
             EFI_INPUT_KEY key;
-            if(!EFI_ERROR(uefi_call_wrapper(gST->ConIn->ReadKeyStroke, 2, gST->ConIn, &key))){
+            if(!EFI_ERROR(uefi_call_wrapper(gST->ConIn->ReadKeyStroke, 0, gST->ConIn, &key))){
                 if(isascii((char)(key.UnicodeChar & 0xFF))){
                     out[i] = (char)(key.UnicodeChar & 0xFF);
                     if(out[i] == '\n' || out[i] == '\r'){break;}
@@ -157,13 +157,13 @@ void strtok_d(strtok_t *tstate){
 	__free(tstate);
 }
 
-EFI_STATUS trng__(void *buffer, UINTN size){
+EFI_STATUS trng__(void *buffer, UINT64 size){
     EFI_STATUS Status;
     EFI_RNG_PROTOCOL *Rng;
     EFI_GUID guid__ = EFI_RNG_PROTOCOL_GUID;
-    if(EFI_ERROR(uefi_call_wrapper(gST->BootServices->LocateProtocol, 3, &guid__, NULL, (void **)&Rng))){return ((UINT64)-1);}
+    if(EFI_ERROR(uefi_call_wrapper(gST->BootServices->LocateProtocol, 0, &guid__, NULL, (void **)&Rng))){return ((UINT64)-1);}
     // Ask firmware for random bytes (any algorithm)
-    return uefi_call_wrapper(Rng->GetRNG, 4, Rng, NULL, size, buffer);
+    return uefi_call_wrapper(Rng->GetRNG, 0, Rng, NULL, size, buffer);
 }
 
 char tolower(char upper){return upper - abs('A' - 'a');}
@@ -203,7 +203,7 @@ BOOLEAN match_rec(const char *p, const char *s){
 
 GPTeNSTR *makeGPTeNSTR(char *str){
 	GPTeNSTR *out = __calloc(sizeof(GPTeNSTR), 1);
-	for(UINTN cc = 0; cc < __min(__strlen(str), GPTeNAMELEN); ++cc){
+	for(UINT64 cc = 0; cc < __min(__strlen(str), GPTeNAMELEN); ++cc){
 		(*out)[cc] = str[cc];
 	}
 	return out;
@@ -265,7 +265,7 @@ void __memset(void *dst, UINT8 val, UINT64 len){
 #endif
 }
 
-void __safecopy(void *dst, void *src, UINT64 len){
+void __safecopy(void * __restrict__ dst, void * __restrict__ src, UINT64 len){
     DEBUGPRINT(L"\nPerforming Safe-Copy");
     void *dup = __memdup(src, len);
     __memcpy(dst, dup, len);
@@ -326,11 +326,11 @@ EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID){
     EFI_GUID LoadedImageProtocolGuid = LOADED_IMAGE_PROTOCOL;
     EFI_GUID BlockIoGuid = BLOCK_IO_PROTOCOL;
 
-    Status = uefi_call_wrapper(BS->HandleProtocol, 3, Image, &LoadedImageProtocolGuid, (void**)&LoadedImage);
+    Status = uefi_call_wrapper(BS->HandleProtocol, 0, Image, &LoadedImageProtocolGuid, (void**)&LoadedImage);
     DEBUGDO{if(EFI_ERROR(Status)){Print(L"\nHandleProtocol(LoadedImage) = [%r:%u]\n", Status, Status);}}
     if(EFI_ERROR(Status) || LoadedImage == NULL){return Status;}
     EFI_BLOCK_IO *Blk = NULL;
-    Status = uefi_call_wrapper(BS->HandleProtocol, 3, LoadedImage->DeviceHandle, &BlockIoGuid, (void**)&Blk);
+    Status = uefi_call_wrapper(BS->HandleProtocol, 0, LoadedImage->DeviceHandle, &BlockIoGuid, (void**)&Blk);
     DEBUGDO{if(EFI_ERROR(Status)){Print(L"\nHandleProtocol(BlockIo) = [%r:%u]\n", Status, Status);}}
     if(EFI_ERROR(Status) || Blk == NULL || Blk->Media == NULL){return Status;}
     *MediaID = Blk->Media->MediaId;
@@ -341,7 +341,7 @@ EFI_STATUS ValidateImageHandle(EFI_HANDLE Image){
     EFI_LOADED_IMAGE_PROTOCOL *Loaded = NULL;
     EFI_GUID Guid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
 
-    return uefi_call_wrapper(gBS->HandleProtocol, 4, Image, &Guid, (void**)&Loaded);
+    return uefi_call_wrapper(gBS->HandleProtocol, 0, Image, &Guid, (void**)&Loaded);
 }
 
 BOOLEAN IsPartition(EFI_DEVICE_PATH *Dp){
@@ -356,7 +356,7 @@ EFI_DEVICE_PATH *GetDevicePath(EFI_HANDLE Handle){
     EFI_DEVICE_PATH *Dp = NULL;
     EFI_STATUS Status;
 
-    Status = uefi_call_wrapper(BS->HandleProtocol, 3, Handle, &gEfiDevicePathProtocolGuid, (void**)&Dp);
+    Status = uefi_call_wrapper(BS->HandleProtocol, 0, Handle, &gEfiDevicePathProtocolGuid, (void**)&Dp);
 
     if(EFI_ERROR(Status)){return NULL;}
     return Dp;
@@ -366,7 +366,7 @@ VOID RestartSystem(){
     // ResetType = EfiResetCold → full hardware reset
     // ResetStatus = EFI_SUCCESS
     // DataSize = 0, ResetData = NULL → no message passed to firmware
-    uefi_call_wrapper(gRT->ResetSystem, 4, EfiResetCold, EFI_SUCCESS, 0, NULL);
+    uefi_call_wrapper(gRT->ResetSystem, 0, EfiResetCold, EFI_SUCCESS, 0, NULL);
 
     // Execution should never reach here
     for(;;);
@@ -378,7 +378,7 @@ void *sysbase(EFI_HANDLE Image){
 		EFI_LOADED_IMAGE *Protocol;
 		EFI_GUID LoadedImageGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
 		EFI_STATUS status = uefi_call_wrapper(
-			gBS->HandleProtocol, 3, 
+			gBS->HandleProtocol, 0, 
 			Image, &LoadedImageGuid, (void **)&Protocol
 		);
 		if(!EFI_ERROR(status)){out = Protocol->ImageBase;}
@@ -387,11 +387,11 @@ void *sysbase(EFI_HANDLE Image){
 	return out;
 }
 
-void *getptr(void *ptr){return (void *)((UINTN)(sysbase(NULL)) + (UINTN)ptr);}
+void *getptr(void *ptr){return (void *)((UINT64)(sysbase(NULL)) + (UINT64)ptr);}
 
-#include <stdio.h>
+// #include <stdio.h>
 
-double __strtod(const char *str){
+double __strtod(const char *str, char **end){
     double result = 0.0, divisor = 1.0;
     int sign = 1, in_fraction = 0;
     // Handle sign
@@ -418,5 +418,6 @@ double __strtod(const char *str){
         }else{break;}
         str++;
     }
+    *end = str;
     return result * sign;
 }

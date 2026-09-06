@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tools/json/minijson.h"
+#include "struct.h"
+
+#define BeDumpVolume		(32)
+#define BeDumpVolumeLine	(8)
 
 #define DecodeBeExecutableHeader(PTR)						\
 	BeHeader *BH = (PTR) + sizeof(RelativeVirtualOffset);	\
@@ -14,20 +18,35 @@
 #define RDecodeBeExecutableHeader(PTR)				\
 	BH =	(PTR) + sizeof(RelativeVirtualOffset);	\
 	BSDs =	(PTR) + sizeof(RelativeVirtualOffset) + (BH->bSectionTableOffset? BH->bSectionTableOffset - *((RelativeVirtualOffset *)(PTR)): sizeof(BeHeader));
-#define ManifestJsonLen				(16 * 1024)	// 16 kB
+#define ManifestJsonLen				(4 * 1024)	// 16 kB
 #define SectionPathLen				(16)
 #pragma region Defaults
-#define JsonImportSectionNamePath	"sections.import.name"
-#define JsonExportSectionNamePath	"sections.export.name"
-#define JsonRelocSectionNamePath	"sections.reloc.name"
+#define BeResourceRootName			"##"
+#define BeResourceIconPath			BeResourceRootName "\\" "Metadata\\Icon"
+#define BeResourceIconFile			"Icon.20x20bmp"
+#define BeResourceManifestPath		BeResourceRootName "\\" "Metadata\\Manifest"
+#define BeResourceManifestFile		"Manifest.json"
+// #define JsonExceptionSectionNamePath"sections.exception.name"
+// #define JsonImportSectionNamePath	"sections.import.name"
+// #define JsonExportSectionNamePath	"sections.export.name"
+// #define JsonRelocSectionNamePath	"sections.reloc.name"
 
-#define DefaultSystemSectionName	((SectionNameBe){".SystemS"})
-#define DefaultImportSectionName	((SectionNameBe){".ImportIn"})
-#define DefaultExportSectionName	((SectionNameBe){".ExportOut"})
+#define DefExceptionSectionName		((SectionNameBe){".ExcS"})
+#define DefRelocationSectionName	((SectionNameBe){".RelS"})
+#define DefCodeSectionName			((SectionNameBe){".code"})
+#define DefDataSectionName			((SectionNameBe){".data"})
+#define DefUDefDataSectionName		((SectionNameBe){".bss"})
+#define DefReadonlyDataSectionName	((SectionNameBe){".rodata"})
+#define DefSystemSectionName		((SectionNameBe){".SystemS"})
+#define DefResourceSectionName		DefSystemSectionName
+#define DefImportSectionName		((SectionNameBe){".ImportIn"})
+#define DefExportSectionName		((SectionNameBe){".ExportOut"})
+
+#define BeResourceSectionSize		(32 * 1024)
 #define BeStandardAlign				4
 #define BeHeaderMagic				"BE\0\0"
 #define BeSectionMagic				"BES\0\0\0\0\0"
-#define BeDefaultNSections			12
+#define BeDefaultNSections			32
 #define GenericPathLen				512
 #define ExecutableNameLen			32
 #define IconDimensionsX				20
@@ -38,6 +57,7 @@
 
 #define enumdef(type, name)		typedef type name;	enum
 
+extern char *logfile;
 typedef union{
 	char Magic[4];
 	uint32_t uMagic;
@@ -58,7 +78,7 @@ typedef char SectionNameBe[SectionPathLen],
 typedef uint8_t Color[4];
 typedef Color ExecIcon[IconDimensionsX][IconDimensionsY];
 
-enumdef(uint16_t, BeSectionFlags64){
+enumdef(uint16_t, BeSectionFlags){
 	//	The Section should remain in Memory in the Final Load3ed Executable.
 	SFAllocatable = 0x1, 
 	SFPersistent = SFAllocatable, 
@@ -79,7 +99,7 @@ enumdef(uint16_t, BeSectionFlags64){
 	SFSharable = 0x80, 
 };
 
-enumdef(uint16_t, BeSectionDefaults64){
+enumdef(uint16_t, BeSectionDefaults){
 	SDExecutableCode =			(SFExecutable | SFInitData | SFReadable | SFAllocatable), 
 	SDReadonlyData =			(SFReadable | SFWritable | SFRelocatable | SFInitData | SFAllocatable), 
 	SDReadWritableData =		(SFReadable | SFWritable | SFInitData | SFAllocatable), 
@@ -95,23 +115,20 @@ enumdef(uint16_t, BeSectionDefaults64){
 typedef struct BeHeader{
 	//	"PE\0\0"
 	GenericMagic4			bMagic;
-	SectionNameBe				bSystemSection;
-	// ExecIcon			Icon;
-	RelativeVirtualOffset	bIconRVO;
-	// JsonManifest		Manifest;
-	RelativeVirtualOffset	bManifestRVO;
+	SectionNameBe			bSystemSection;
 	// The Number of Continuing Sections.
 	GenericLengthType		bNSections;
 	//	The Raw Size of the Header, Including the BeHeader.
 	GenericLengthType		bRawSize;
 	//	From the 1st Byte of the File.
 	RelativeVirtualOffset	bSectionTableOffset;
+	RelativeVirtualOffset	bEntryPoint;
 }__attribute__((packed)) BeHeader;
 
 typedef struct BeSectionDescriptor{
-	GenericMagic8		SectionMagic;
+	GenericMagic8		bSectionMagic;
 	SectionNameBe 		bName;
-	BeSectionFlags64	bFlags;
+	BeSectionFlags		bFlags;
 	Alignment			bAlignment;
 	uint64_t			bVirtualAddress;
 	uint64_t			bVirtualSize;
@@ -119,78 +136,44 @@ typedef struct BeSectionDescriptor{
 	uint64_t			bRawSize;
 }__attribute__((packed)) BeSectionDescriptor;
 
-enumdef(uint16_t, BeMountableResourceFormatType){
-	BMFTSimpleFileSystem, BMFTRandomPersistentData, 
-
-};
-typedef struct BeMountableResourceEntry{
-	//	The Alias to be Granted to the Resource when Mounted.
-	GenericMagic4					bAlias;
-	//	The Type of the Resource, It determines the Socket to use to Mount the Section.
-	BeMountableResourceFormatType	Format;
-	//	The Offset into the Resource Section to load the Array.
-	//	The Number of Bytes to Map to the Array.
-	uint64_t 						bBaseOffset, 
-									bRawSize;
-}__attribute__((packed)) BeMountableResourceEntry;
-
-enumdef(uint32_t, BeRelExportOrdinalEntryFlags){
+typedef struct BeExportHeader{
+	//	The Number of Total Exported Entries within the Whole Header.
+	GenericLengthType		bNExported;
+	RelativeVirtualOffset	bExportTableRVO;
+	RelativeVirtualOffset	bExportNameRVO;
+	GenericLengthType		bNExportAddresses;
+}__attribute__((packed)) BeExportHeader;
+enumdef(uint32_t, BeExportEntryFlags){
 	//	Ignore the Ordinal.
 	BREFUnknown = 0x0, 
 	//	Use the Ordinal.
 	BREFExportable = 0x1
 };
 // The Index of this corrseponds to the Index of the Symbol Hash.
-typedef struct BeRelExposeOrdinalEntry{
-	// The True Index into the Export Address Table.
-	GenericIndexType				bIndex;
-	//	The Flags for the Ordinal.
-	BeRelExportOrdinalEntryFlags	bFlags;
-}__attribute__((packed)) BeRelExposeOrdinalEntry;
-//	The Actual Exported "Address"
-typedef struct BeRelExportAddressEntry{
-	//	The Parent Section that the Address lies at.
-	SectionReference	bParent;
-	//	The Offset within the Parent.
-	uint64_t			bOffset;
-}__attribute__((packed)) BeRelExportAddressEntry;
-typedef struct BeRelExportHeader{
-	//	The Number of Total Exported Entries within the Whole Header.
-	GenericLengthType		bNExported;
-	//	The RVO of the Hash(uint64_t) Table of all Symbols that can be Exported, 
-	//		Sorted to be Binary-Searchable.
-	RelativeVirtualOffset	bImportSymbolHashTableRVO;
-	//	The RVO of the Ordinal Array([uint32_t, Flags] *).
-	//	The Entries refer to an Intermediate Index in the Export Address Table.
-	RelativeVirtualOffset	bIxportExposeTableRVO;
-	//	The RVO of the Export Address Table, (BeRelExportAddressEntry *).
-	RelativeVirtualOffset	bExportAddressTable;
-	//	The Exported Symbols.
-	//		This can differ from the Exposed Symbols
-	GenericLengthType		bNExportAddresses;
-}__attribute__((packed)) BeRelExportHeader;
-
-enumdef(uint32_t, BeRelImportFlags){
-	BRIFUnknown = 0, BRIFExternal = 0x1, BRIFInternal = 0x2
-};
-typedef struct BeRelImportEntry{
+typedef struct BeExportEntry{
+	GenericHashType			bSymbolHash;
+	RelativeVirtualOffset	bVirtualAddress;
+	BeExportEntryFlags		bFlags;
+	GenericIndexType		bNameIndex;
+}BeExportEntry;
+typedef struct BeImportEntry{
 	//	The Hash of the Imported Symbol.
 	GenericHashType		bHash;
 	//	This is the Index within the RelocationDirectoryTable that corresponds to the Import.
 	//	We use the bParent + bOffset stored within to save the Dll's Exported Pointer.
 	GenericIndexType	bRelocation;
-	//	The Flags for the Entry.
-	BeRelImportFlags	bFlags;
-}__attribute__((packed)) BeRelImportEntry;
-typedef struct BeRelImportDllRef{
+}__attribute__((packed)) BeImportEntry, 
+						BeImportTable[];
+typedef struct BeImportDll{
 	//	The Index within the Import Path Table that refers to the Path to the Import Image.
-	GenericIndexType		bImportPathIndex;
+	GenericIndexType	bImportPathIndex;
 	// //	RVO to the Symbol Hash Table.
 	// RelativeVirtualOffset	bImportSymbolHashTableRVO;
 	//	The Number of Entries.
-	GenericLengthType		bNHashes;
-}__attribute__((packed)) BeRelImportDllRef;
-typedef struct BeRelImportHeader{
+	GenericLengthType	bNImports;
+	BeImportTable		Table;
+}__attribute__((packed)) BeImportDll;
+typedef struct BeImportHeader{
 	//	The Number of Imported DLLs.
 	GenericLengthType		bNDllReferences;
 	//	The RVO of the Paths to the Imported DLLs.
@@ -198,74 +181,163 @@ typedef struct BeRelImportHeader{
 	RelativeVirtualOffset	bImportPathRVO;
 	//	The RVO to the (BeRelImportDllRef *) Import Table.
 	RelativeVirtualOffset	bImportTableRVO;
-}__attribute__((packed)) BeRelImportHeader;
+}__attribute__((packed)) BeImportHeader;
 
 enumdef(uint16_t, BeRelocationType){
 	//	Ignore this Relocation.
-	BRETAbsolute =		(0x0 >> 12) & 0x000F, 
+	BRETAbsolute =	0x1, 
 	//	16-bit Relocation.
-	BRET16 = 			(0x1 >> 12) & 0x000F, 
+	BRET16 = 		0x2, 
 	//	32-bit Relocation.
-	BRET32 =			(0x2 >> 12) & 0x000F, 
-	// Add the High 16-bits of the Difference in the Relocation.
-	BRET16High =		(0x4 >> 12) & 0x000F, 
-	// Add the Low 16-bits of the Difference in the Relocation.
-	BRET16Low =			BRET16, 
+	BRET32 =		0x3, 
 	//	64-bit Relocation.
-	BRET64 =			(0x10 >> 12) & 0x000F
+	BRET64 =		0x10
 };
 
 #define GET_RELOC_OFFSET(entry) ((entry).bRaw & 0x0FFF)
 #define GET_RELOC_TYPE(entry)   (((entry).bRaw >> 12) & 0x000F)
 // Entries in a Relocation Directory.
-typedef union BeRelocationDirectoryEntry{
-	uint16_t		bRaw;
+typedef union BeRelocationEntry{
+	uint32_t Raw;
 	struct{
-		//	The Offset into a 4kb Mapped Region.
-		//	A Type of BRETAbsolute will Move on to the Next Relocation.
-		uint16_t	bOffset:	12;
-		uint16_t	bType:		4;
-	}Bits;
-}__attribute__((packed)) BeRelocationDirectoryEntry, 
-						BeRelocationDirectoryTable[];
+		BeRelocationType	bType;
+		//	An Offset within the Directory
+		uint16_t			bOffset;
+	};
+}__attribute__((packed)) BeRelocationEntry;
 typedef struct BeRelocationDirectory{
-	SectionReference			bSection;
-	GenericLengthType			bOffset;
-	GenericLengthType			bDirectorySize;
-	BeRelocationDirectoryTable	bRelocationTable;
+	RelativeVirtualOffset	bAddress;
+	GenericLengthType		bDirectorySize;
 }__attribute__((packed)) BeRelocationDirectory;
 typedef struct BeRelocationHeader{
 	RelativeVirtualOffset	bRelocationDirTableRVO;
+	RelativeVirtualOffset	bUnusedRVO;
 	GenericLengthType		bNDirectories;
 }__attribute__((packed)) BeRelocationHeader;
 
+enumdef(uint16_t, BeResourceType){
+	BRTFile = 1, 
+	BRTDirectory = 2, 
+	BRTNameString = 3
+};
+enumdef(uint32_t, BeResourceDirectoryType){
+	BRDTNoType
+};
+enumdef(uint32_t, BeResourceFileType){
+	BRFTIcon, BRFTManifest, BRFTMetadata, 
+	BRFTRawData, BRFTBitmap, BRFTFont, BRFTString
+};
+typedef struct BeResourceConfigurator{
+	char *Name;
+	BeResourceType Type;
+	union{
+		struct{
+			BeResourceDirectoryType	Type;
+			struct BeResourceConfigurator
+									*NextDirectory;
+			struct BeResourceConfigurator
+									*Files;
+			GenericLengthType		nFiles;
+		}Directory;
+		struct{
+			BeResourceFileType		Type;
+			GenericLengthType		Length;
+			void *Data;
+		}File;
+	};
+}BeResourceConfigurator;
+typedef struct TraversalFrame{
+    BeResourceConfigurator *Config;
+    size_t SavedPathLength;
+} TraversalFrame;
+typedef struct BeResourceHeader{
+	RelativeVirtualOffset	bRootDirectoryRVO;
+	//	Points to the First Unused Byte, followed by Unused Contiguous Data, up till the end of the Section.
+	RelativeVirtualOffset	bUnusedBytesRVO;
+}BeResourceHeader;
+typedef struct BeResourceDirectory{
+	BeResourceType			bDirectoryMagic;
+	BeResourceDirectoryType	bDirectoryType;
+	RelativeVirtualOffset	bNextDirectoriesRVO[4];
+	RelativeVirtualOffset	bNextFileRVO;
+	RelativeVirtualOffset	bDirectoryNameRVO;
+}__attribute__((aligned(4))) BeResourceDirectory;
+typedef struct BeResourceFile{
+	BeResourceType			bFileMagic;
+	BeResourceFileType		bFileType;
+	RelativeVirtualOffset	bNextFileRVO;
+	RelativeVirtualOffset	bFileNameRVO;
+	RelativeVirtualOffset	bDataOffsetRVO;
+	GenericLengthType		bDataSize;
+}__attribute__((aligned(4))) BeResourceFile;
+typedef struct BeResourceString{
+	BeResourceType	bStringMagic;
+	uint16_t		bStringLength;
+	char			String[];
+}__attribute__((aligned(4))) BeResourceString;
+
+typedef struct BeExceptionHandler{
+	RelativeVirtualOffset	bVirtualAddressRVO;
+	struct{
+		bool bUnknownFunctionSize;
+		union{
+			RelativeVirtualOffset	bVirtualEndRVO;
+			GenericLengthType 		bNInstructions;
+		};
+	}End;
+	RelativeVirtualOffset	bHandlerRVO;
+}BeExceptionHandler;
 
 
-void GenerateBeHeader(
-	const char *path, SectionNameBe SystemSecton, 
-	ExecIcon Icon, JsonManifest Manifest, 
-	GenericLengthType RawDataSize
-);
+
+void GenerateBeHeader(const char *path, SectionNameBe SystemSecton, GenericLengthType RawDataSize, uint64_t EntryPoint);
+void DumpBe(const char *path);
 void *ReadBeHeader(const char *path);
 bool DumpBeHeader(const char *path, void *bheader);
 uint64_t RvoToFileOffsetBe(RelativeVirtualOffset RVO, BeSectionDescriptor *Section);
 RelativeVirtualOffset FileOffsetToRvoBe(uint64_t Offset, BeSectionDescriptor *Section);
 BeSectionDescriptor *FindSectionBe(void *bheader, SectionNameBe name);
 void *ReadSectionBe(const char *path, void *bheader, SectionNameBe name);
-bool WriteSectionBe(const char *path, void *bheader, SectionNameBe name, void *Data, RelativeVirtualOffset RVO, GenericLengthType NBytes);
+bool WriteSectionBe(const char *path, void *bheader, SectionNameBe name, 
+	void *Data, RelativeVirtualOffset RVO, GenericLengthType NBytes
+);
 bool UpdateJsonSchemaBe(const char *path, const char *target, JsonType Type, ...);
-void *ReadSectionFromManifest(const char *path, char *manifestpath);
-bool AddSectionBe(const char *path, SectionNameBe Name, BeSectionFlags64 Flags, 
+void *ReadSectionFromManifestBe(const char *path, char *manifestpath);
+bool AddSectionBe(const char *path, SectionNameBe Name, BeSectionFlags Flags, 
 	void *RawData, uint64_t NBytes, uint64_t VirtualAddress, uint64_t VirtualSize, Alignment Align
 );
 bool RemoveSectionBe(const char *path, void *bheader, SectionNameBe name);
-bool CreateRelocationSectionBe(char *path, SectionNameBe Name, 
-	SectionNameBe *NamePerDirectory, uint16_t **OffsetPerDirectoryEntry, BeRelocationType **TypePerDirectoryEntry, 
-	GenericLengthType nDirectories, GenericLengthType *nPerDirectory 
+
+uint64_t FindRelocationBe(const char *path, uint64_t VirtualAddress);
+uint64_t AddRelocationsBe(const char *path, uint64_t VirtualBase, 
+	RelativeVirtualOffset *Addresses, BeRelocationType *Types, GenericLengthType N
+);
+
+bool CreateResourceSectionBe(char *path, SectionNameBe Name, uint64_t NTotalBytes);
+bool ModifyResourceBe(const char *path, const char *target, const char *name, BeResourceType Type, ...);
+bool ReadResourceBe(const char *path, const char *target, 
+    void *out, GenericLengthType NBytes, GenericLengthType *Remaining
+);
+bool UpdateResourceTreeBe(BeResourceConfigurator *root, size_t numFiles, const char **paths, ...);
+
+bool CreateRelocationSectionBe(const char *path, SectionNameBe Name, 
+	RelativeVirtualOffset *AddressPerDirectory, uint16_t **OffsetsPerDirectory, 
+	BeRelocationType **TypesPerDirectory, GenericLengthType nDirectories, 
+	GenericLengthType *nPerDirectory, GenericLengthType Additional
 );
 bool CreateImportSectionBe(
-	const char *path, SectionNameBe Name, char **DLLs, char ***imports, 
-	GenericLengthType *nImportsPerDll, GenericLengthType nImports, 
-	//	Info for Generating Relocations.
-	uint32_t BaseRelocationTableOffset
+	const char *path, SectionNameBe Name, char **DLLPaths, char ***imports, 
+	GenericLengthType *nImportsPerDll, GenericLengthType nDlls, 
+	RelativeVirtualOffset *VirtualPerEntry, BeRelocationType *TypePerEntry
 );
+bool CreateExceptionSectionBe(const char *path, SectionNameBe Name, 
+	RelativeVirtualOffset *VirtualAddresses, GenericLengthType *VirtualLengths, 
+	RelativeVirtualOffset *VirtualHandlers, GenericLengthType N, bool FunctionLengthsKnown
+);
+
+BeResourceFileType MapPeResourceType(PeResourceType id);
+void FreeBeResourceConfigurator(BeResourceConfigurator *node);
+char *ExtractResourceName(void *rsrcBase, uint32_t nameOffsetOrId, bool isString);
+BeResourceConfigurator *CreateResourceTreeFromPaths(size_t numFiles, const char **paths, ...);
+BeResourceConfigurator *ParseResourceDirectoryTree(ExpandedPeExecutable *Image, GenericLengthType *totalN, GenericLengthType *TotalBytes);
+BeResourceConfigurator ParseDirectoryNode(PeResourceDirectoryEntry *Directory, ExpandedPeExecutable *Image, GenericLengthType *TotalBytes);

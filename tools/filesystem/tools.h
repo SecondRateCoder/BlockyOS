@@ -11,11 +11,13 @@
 #include <inttypes.h>
 #include "ref/blake2.h"
 
-typedef size_t _GUID[2];
+typedef uint64_t _GUID[2];
 
-#define dualprintf(streamA, streamB, ...)	fprintf(streamA, __VA_ARGS__);	fprintf(streamB, __VA_ARGS__)
-extern volatile FILE *logf;
-#define LOGFOFFSET		"tools\\filesystem\\fsshell.log"
+#define FCODEHASHMASK	(UINT64_MAX ^ (UINT64_C(0xFFFF) << 48))
+#define dualprintf(streamA, streamB, ...)	fprintf((streamA), __VA_ARGS__);fprintf((streamB), __VA_ARGS__)
+#define syncprintf(stream)					fprintf(stream, "\nFRATSYNC");	fflush(stream)
+extern FILE *fs_logf;
+#define LOGFOFFSET      "tools\\filesystem\\fsshell.log"
 
 #if defined(_WIN32) || defined(_WIN64)
     #include <direct.h>
@@ -54,7 +56,7 @@ enumdef(strtokflags, uint32_t){
 
 typedef struct strtok_t{
 	/// @brief A duplicate of the Token.
-	char *dup;
+	char *dup, *dupr;
 	/// @brief The recovered Token.
 	char *tok;
 	/// @brief The configured delims;
@@ -66,16 +68,16 @@ typedef struct strtok_t{
 
 bool strcheck(char *s, char c);
 ssize_t strchecki(char *s, char c);
-void *memdup(void *mem, size_t s);
-size_t __getfcode(char *s_);
-char *readbuf(size_t s, const char *prefix);
+void *memdup(void *mem, uint64_t s);
+uint64_t *__getfcode(char *s_);
+char *readbuf(uint64_t s, const char *prefix);
 
 strtok_t *strtok_i(char *in, char *delims, uint32_t enables);
 char *strtok_ff(strtok_t *tstate);
 char *strtok_k(strtok_t *tstate);
 void strtok_d(strtok_t *tstate);
 
-int trng__(void *buffer, size_t len);
+int trng__(void *buffer, uint64_t len);
 
 char *str_tolower(char *s);
 

@@ -1,49 +1,49 @@
 #include "tools.h"
 
-volatile FILE *logf;
+FILE *fs_logf;
 
 bool strcheck(char *s, char c){
-	for(size_t cc = 0; cc < strlen(s); ++cc){
+	for(uint64_t cc = 0; cc < strlen(s); ++cc){
 		if(s[cc] == c){return true;}
 	}
 	return false;
 }
 
 ssize_t strchecki(char *s, char c){
-	for(size_t cc = 0; cc < strlen(s); ++cc){
+	for(uint64_t cc = 0; cc < strlen(s); ++cc){
 		if(c == s[cc]){return cc;}
 	}
 	return -1;
 }
 
-void *memdup(void *mem, size_t s){
+void *memdup(void *mem, uint64_t s){
 	void *out = malloc(s);
 	memcpy(out, mem, s);
 	return out;
 }
 
-size_t __getfcode(char *s_){
+uint64_t *__getfcode(char *s_){
+	static uint64_t hash[2];
 	char *s = strdup(s_);
 	for(uint32_t cc = 0; cc < strlen(s_); ++cc){
 		if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}
 	}
-	size_t hash;
 	blake2b_state hashstate;
-	blake2b_init(&hashstate, 8);
+	blake2b_init(&hashstate, sizeof(uint64_t) * 2);
 	blake2b_update(&hashstate, s, strlen(s));
-	blake2b_final(&hashstate, &hash, 8);
-	hash &= 0x3FFFFFFFFFF;
+	blake2b_final(&hashstate, &hash, sizeof(uint64_t) * 2);
+	hash[1] &= (UINT64_MAX & ~(UINT16_MAX << 48));
 	free(s);
 	return hash;
 }
 
-char *readbuf(size_t s, const char *prefix){
-    dualprintf(logf, stdout, "%s", prefix);
+char *readbuf(uint64_t s, const char *prefix){
+    dualprintf(fs_logf, stdout, "%s", prefix);
     fflush(stdout);
     if(s > 0){
         char *out = calloc(s + 1, sizeof(char));
         if(!out){return NULL;}
-        size_t i = 0;
+        uint64_t i = 0;
         int c;
         while(i < s && (c = getc(stdin)) != EOF && c != '\n' && c != '\r'){
             out[i++] = (char)c;
@@ -57,8 +57,8 @@ char *readbuf(size_t s, const char *prefix){
     }
 
     // Dynamic read
-    size_t cap = 32;
-    size_t len = 0;
+    uint64_t cap = 32;
+    uint64_t len = 0;
     char *out = malloc(cap);
     if(!out){return NULL;}
     int c;
@@ -89,7 +89,8 @@ strtok_t *strtok_i(char *in, char *delims, uint32_t enables){
 	){return NULL;}
 	if(flagcheck(enables, strtok__ForceSameBorderingDelims) && flagcheck(enables, strtok__ForceDifferentBorderingDelims)){return NULL;}
 	strtok_t *out = calloc(1, sizeof(strtok_t));
-	out->dup = strdup(in);
+	out->dupr = strdup(in);
+	out->dup = out->dupr;
 	out->delims = strdup(delims);
 	out->sdelim = *in;
 	out->edelim = in[strlen(in) - 1];
@@ -198,7 +199,7 @@ char *strtok_ff(strtok_t *tstate){
 }
 
 void strtok_d(strtok_t *tstate){
-	free(tstate->dup);
+	free(tstate->dupr);
 	free(tstate->delims);
 	free(tstate);
 }
@@ -209,7 +210,7 @@ void strtok_d(strtok_t *tstate){
 #include <unistd.h>
 #include <stdint.h>
 
-int trng__(void *key, size_t keylen){
+int trng__(void *key, uint64_t keylen){
 	int fd = open("/dev/urandom", O_RDONLY);
 	if (fd < 0) return -1;
 	ssize_t r = read(fd, key, keylen);
@@ -224,7 +225,7 @@ int trng__(void *key, size_t keylen){
 
 #pragma comment(lib, "bcrypt.lib")
 
-int trng__(void *key, size_t keylen){
+int trng__(void *key, uint64_t keylen){
 	NTSTATUS st = BCryptGenRandom(
 		NULL,
 		key,
@@ -271,9 +272,9 @@ bool match_rec(const char *p, const char *s){
 
 bool __pattmatch(const char *pattern, const char *str){
 	// Preprocess pattern to handle escapes
-	size_t len = strlen(pattern);
+	uint64_t len = strlen(pattern);
 	char *proc = malloc(len + 1);
-	size_t i = 0, j = 0;
+	uint64_t i = 0, j = 0;
 	while(pattern[i]){
 		if(pattern[i] == '\\' && pattern[i+1]){
 			proc[j++] = pattern[i+1];
@@ -289,7 +290,7 @@ bool __pattmatch(const char *pattern, const char *str){
 
 GPTeNSTR *makeGPTeNSTR(char *str){
 	GPTeNSTR *out = calloc(sizeof(GPTeNSTR), 1);
-	for(size_t cc = 0; cc < __min(strlen(str), GPTeNAMELEN); ++cc){
+	for(uint64_t cc = 0; cc < __min(strlen(str), GPTeNAMELEN); ++cc){
 		(*out)[cc] = (uint16_t)(str[cc]);
 	}
 	return out;
@@ -298,14 +299,14 @@ GPTeNSTR *makeGPTeNSTR(char *str){
 char *str_replace(const char *str, const char *old, const char *newstr){
 	if(!str || !old || !newstr){return NULL;}
 
-	size_t len_str = strlen(str);
-	size_t len_old = strlen(old);
-	size_t len_new = strlen(newstr);
+	uint64_t len_str = strlen(str);
+	uint64_t len_old = strlen(old);
+	uint64_t len_new = strlen(newstr);
 
 	if(len_old == 0){return NULL;} // avoid infinite loop
 
 	// Count occurrences of old substring
-	size_t count = 0;
+	uint64_t count = 0;
 	const char *p = str;
 	while((p = strstr(p, old)) != NULL){
 		count++;
@@ -316,7 +317,7 @@ char *str_replace(const char *str, const char *old, const char *newstr){
 	if(count == 0){return strdup(str);}
 
 	// Allocate new buffer
-	size_t new_len = len_str + count * (len_new - len_old);
+	uint64_t new_len = len_str + count * (len_new - len_old);
 	char *result = malloc(new_len + 1);
 	if(!result){return NULL;}
 
@@ -325,7 +326,7 @@ char *str_replace(const char *str, const char *old, const char *newstr){
 
 	// Perform replacements
 	while((p = strstr(in, old)) != NULL){
-		size_t prefix_len = p - in;
+		uint64_t prefix_len = p - in;
 		memcpy(out, in, prefix_len);
 		out += prefix_len;
 		memcpy(out, newstr, len_new);

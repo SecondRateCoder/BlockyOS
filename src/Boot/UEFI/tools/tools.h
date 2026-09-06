@@ -1,23 +1,22 @@
 #pragma once
 
 // #include <string.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
 
 #include "efi.h"
 #include "efilib.h"
 
-#include "src/Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
+#include "kernel/libcrt/math/math.h"
+#include "kernel/libcrt/def.h"
+#include "Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
-#ifdef __DEBUG__
+#ifdef _DEBUG
 #define DEBUGPRINT		Print
 #else
 // Make sure the Define consumes the data.
 #define DEBUGPRINT(...)
 #endif
 
-#ifdef __DEBUG__
+#ifdef _DEBUG
 #define DEBUGDO			if(true)
 #else
 #define DEBUGDO			if(false)
@@ -49,12 +48,12 @@ typedef cword_t GPTeNSTR[GPTeNAMELEN];
 #define PATHnoSEP '\\'
 #define CMDiMAX 256
 
-#define enumdef(name, type)     typedef type name;  enum
+#define enumdef(type, name)     typedef type name;  enum
 #define bufdef(name, ptr, scale)		typedef struct name{ptr *name;		scale len;}name;
 
-#define flagcheck(v, f) ((v & f) == f)
-#define flagset(v, f)   (v |= f)
-#define flagunset(v, f) (v &= ~f)
+#define flagcheck(v, f) (((v) & (f)) == (f))
+#define flagset(v, f)   ((v) |= (f))
+#define flagunset(v, f) ((v) &= ~(f))
 
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
@@ -65,9 +64,9 @@ static inline VOID IoWrite8Inline(UINT16 Port, UINT8 Value){
         :
         : "a"(Value), "Nd"(Port)
     );}
-#ifdef __DEBUG__
+#ifdef _DEBUG
 extern const EFI_PHYSICAL_ADDRESS DebugPort;
-#define BUFDEFPRINT(mem, nbytes, countername)	for(UINTN countername = 0; countername < abs(nbytes); ++countername){IoWrite8Inline(DebugPort, ((uint8_t *)mem)[countername]);}
+#define BUFDEFPRINT(mem, nbytes, countername)	for(UINT64 countername = 0; countername < abs(nbytes); ++countername){IoWrite8Inline(DebugPort, ((uint8_t *)mem)[countername]);}
 #else
 #define BUFDEFPRINT(...)
 #endif
@@ -102,15 +101,15 @@ typedef struct {
 #define __efiStepRight(node, memory) (node = (!__efiIsFirst(node)? *((node)->local__.parent)->local__.parent->local__.children[memory++]))
 #define __efiStepLeft(node, memory) (node = (!__efiIsFirst(node)? *((node)->local__.parent)->local__.parent->local__.children[memory--]))
 
-__efiDevNode **loadDNodes(UINTN *nNodes);
+__efiDevNode **loadDNodes(UINT32 *nNodes);
 EFI_DEVICE_PATH *getDevPath(EFI_DEVICE_PATH *dPath, UINT32 dType, UINT32 sType);
 void DebugDevicePath(EFI_DEVICE_PATH *ROOT);
 CHAR16 *DescribeDeviceNode(EFI_DEVICE_PATH *Node);
 __efiDevNode *BuildDeviceTree(EFI_DEVICE_PATH *Path);
 static CHAR16 *EfiMemoryTypeToStr(UINT32 type);
-EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSize, UINT32 *descVersion);
+EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINT32 *mapSize, UINT32 *mapKey, UINT32 *descSize, UINT32 *descVersion);
 
-enumdef(strtokflags, uint32_t){
+enumdef(UINT32, strtokflags){
 	strtok__ForceSameBorderingDelims = 0x1,
 	strtok__ForceDifferentBorderingDelims,
 	strtok__ForceStartingDelim = 0x80000000,
@@ -134,9 +133,9 @@ BOOLEAN isdigit(char c);
 
 BOOLEAN strcheck(char *s, char c);
 INT64 strchecki(char *s, char c);
-void *__memdup(void *mem, UINTN s);
-UINT64 __getfcode(char *s_);
-char *readbuf(UINTN s, CHAR16 *prefix);
+void *__memdup(void *mem, UINT64 s);
+UINT64 *__getfcode(char *s_);
+char *readbuf(UINT64 s, CHAR16 *prefix);
 EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID);
 EFI_STATUS ValidateImageHandle(EFI_HANDLE Image);
 
@@ -144,7 +143,7 @@ strtok_t *strtok_i(char *in, char *delims, UINT32 enables);
 char *strtok_k(strtok_t *tstate);
 void strtok_d(strtok_t *tstate);
 
-EFI_STATUS trng__(void *buffer, UINTN size);
+EFI_STATUS trng__(void *buffer, UINT64 size);
 
 char tolower(char upper);
 char *str_tolower(char *s);
@@ -156,11 +155,11 @@ char *__strdup(char *s);
 UINT64 __strspn(const char *s, const char *reject);
 
 void __memset(void *dst, UINT8 val, UINT64 len);
-void __safecopy(void *dst, void *src, UINT64 len);
+void __safecopy(void * __restrict__ dst, void * __restrict__ src, UINT64 len);
 void __memcpy(void * __restrict__ dst, void * __restrict__ src, UINT64 len);
 UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len);
 
-#ifdef __DEBUG__
+#ifdef _DEBUG
 #define __free(buffer)  \
 	Print(L"\n[%s:%u]   Freeing Buffer    %p", (L"" __FILE__), __LINE__, buffer);   \
 	FreePool(buffer);
@@ -169,14 +168,14 @@ UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len);
 	FreePool(buffer);
 #endif
 
-#ifdef __DEBUG__
+#ifdef _DEBUG
 #define __calloc(nlen, nsize)		__calloc_(nlen, nsize);				Print(L"\n[%s:%u]", (L"" __FILE__), __LINE__);
 #else
 #define __calloc(nlen, nsize)		__calloc_(nlen, nsize);
 #endif
 void  *__calloc_(UINT64 nLen, UINT64 nSize);
 
-#ifdef __DEBUG__
+#ifdef _DEBUG
 #define __realloc(mem, nlen, nsize) __realloc_(mem, nlen, nsize);	Print(L"    [%s:%u]", (L"" __FILE__), __LINE__);
 #else
 #define __realloc(mem, nlen, nsize)	__realloc_(mem, nlen, nsize);
@@ -193,4 +192,8 @@ VOID RestartSystem();
 void *sysbase(EFI_HANDLE Image);
 void *getptr(void *ptr);
 
-double __strtod(const char *str);
+double __strtod(const char *str, char **end);
+void floattoa(double number, INT32 precision,
+	char *output_integral, UINT64 output_integral_size,
+	char *output_fraction, UINT64 output_fraction_size
+);

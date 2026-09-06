@@ -11,10 +11,6 @@
 	*  PE / COFF definitions
 	* ========================= 
 */
-#define PeHeaderOffsetAddress			0x3C
-#define PeDefaultNDataDirectories		16
-#define PeHeaderMagicStr				((char[4]){'P', 'E', 0, 0})
-#define PeHeaderMagicU32				(((uint32_t)0) << 24) | (((uint32_t)0) << 16) | (((uint32_t)'E') << 8) | ((uint32_t)'P')
 
 // Read the Offset of the PeHeader from Address 0x3C.
 typedef struct PeHeader{
@@ -24,24 +20,24 @@ typedef struct PeHeader{
 		uint32_t mUMagic;
 	};
 	// The number that identifies the type of target machine.
-	PeMachineType	mMachine;
+	PeMachineType		mMachine;
 	//	The number of sections.
 	//	This indicates the size of the section table.
-	uint16_t	mNumberOfSections;
+	uint16_t			mNumberOfSections;
 	//	The low 32 bits of the number of seconds since 00:00 January 1, 1970.
 	//	When the file was created.
-	uint32_t	mTimeDateStamp;
+	uint32_t			mTimeDateStamp;
 	//	The file offset of the COFF symbol table.
 	//		Zero if no COFF symbol table is present.
-	uint32_t	mPointerToSymbolTable;
+	uint32_t			mPointerToSymbolTable;
 	//	The number of entries in the symbol table.
 	//	This data can be used to locate the string(The ASCII-Sorted Strings that The PeExportsTableHeader.mNamePointerRVA RVA's refers to) table.
 	//		It immediately follows the symbol table.
-	uint32_t	mNumberOfSymbols;
+	uint32_t			mNumberOfSymbols;
 	//	The size of the optional header, which is required for executable files.
-	uint16_t	mSizeOfOptionalHeader;
+	uint16_t			mSizeOfOptionalHeader;
 	//	The flags that indicate the attributes of the file.
-	uint16_t	mCharacteristics;
+	PeCharacteristics	mCharacteristics;
 }__attribute__((packed)) PeHeader;
 
 //* Source: "https://wiki.osdev.org/PE?__cf_chl_f_tk=.T9lp0m3.pXqaiO7WEjHNnPHRi0IizT0Sdh0f8gCWoc-1783009675-1.0.1.1-2_VObqX4vqRP0wizoNJxGCEW3LE17pF155H4lNteJTw"
@@ -148,36 +144,81 @@ typedef struct PeImageSectionHeader{ // size 40 bytes
 }__attribute__((packed)) PeImageSectionHeader;
 
 // At PeDataDirectory[0]
-typedef struct PeExportsTableHeader{ // size 40 bytes
-	uint32_t	mExportFlags;
-    uint32_t	mTimeDateStamp;
-    uint16_t	mMajorVersion;
-    uint16_t	mMinorVersion;
-    uint32_t	mNameRVA;
-    uint32_t	mOrdinalBase;
-    uint32_t	mAddressTableEntryCount;
-    uint32_t	mNamePointerEntryCount;
-	//	Points to a Table of Export Addresses.
-    uint32_t	mAddressTableRVA;
-	//	Each element is an RVA that leads to a NULL-terminated string representing a symbol. 
-	//	The table is sorted by ASCII values to make binary searches possible. 
-    uint32_t	mNamePointerRVA;
-	//  Since the name pointer table is sorted by name, there needs to be an additional source of information to map names to ordinals. 
-	//	This Pairs Symbol Indexes, to indices within the Export Address Table.
-    uint32_t	mNameOrdinalTableRVA;
-}__attribute__((packed)) PeExportsTableHeader;
 
-typedef struct PeDebugDirectoryEntry{
-	// Reserved, must be zero. 
-	uint32_t	mCharacteristics;
-	// The time and date that the debug data was created. 
-	uint32_t	mTimeDateStamp;
-	uint16_t	mVersionMajor, mVersionMinor;
-	PeDebugType	mdebugType;
-	uint32_t	mSizeOfData;
-	uint32_t	mRawDataOffset;
-	uint32_t	mRawDataPtr;
-}__attribute__((packed)) PeDebugDirectoryEntry;
+typedef struct{
+	uint32_t	mVirtualAddress;
+	uint32_t	mVirtualEnd;
+	uint32_t	mHandler;
+	uint32_t	mHandlerData;
+	uint32_t	mVirtualPrologAddress;
+}__attribute__((packed)) Pe32MIPSExceptionDataEntry;
+typedef struct{
+	uint32_t	mAddressRVA;
+	uint32_t	mEndRVA;
+	uint32_t	mUnwindRVA;
+}__attribute__((packed)) Pe32PlusExceptionDataEntry, PeItaniumExceptionDataEntry;
+typedef struct{
+	uint32_t	mVirtualAddress;
+	uint32_t	mPrologLength	:	8;
+	uint32_t	mFunctionLength	:	22;
+	uint32_t	mIs32Bit		:	1;
+	uint32_t	mHasHandler		:	1;
+}__attribute__((packed)) PeARMExceptionDataEntry, PePowerPCExceptionDataEntry, PeSH3WinCEExceptionDataEntry, PeSH4WinCEExceptionDataEntry;
+
+typedef struct PeResourceRootDirectory{
+	PeResourceType					mCharacteristics;
+	uint32_t						mDateTimeStamp;
+	uint16_t						mVersionMajor, mVersionMinor;
+	//	The number of directory entries immediately following the table that use strings to identify Type, 
+	//		Name, 
+	//		Language entries
+	//	(depending on the level of the table). 
+	uint16_t						mNNameEntries;
+	//	The number of directory entries immediately following the Name entries that use numeric IDs for Type,
+	//		Name, 
+	//		Language entries. 
+	uint16_t						mNIDEntres;
+}__attribute__((packed)) PeResourceRootDirectory;
+typedef struct PeResourceDirectoryEntry{
+	union{
+		//	The actual Integer ID.
+		struct {
+			//	Offset to PeResourceString if mNameIsString is 1
+            uint32_t mNameOffset   : 31;
+			//	1 = Name is a string
+			//	0 = Name is an Integer ID
+            uint32_t mNameIsString : 1;
+        };
+		uint32_t	mID;
+	};
+	union{
+		struct{
+			//	This points to either a PeResourceDirectoryEntry, or to a PeResourceDataEntry.
+			uint32_t mOffset		:	31;
+			//	1 = Points to another Directory
+			//	0 = Points to a PeResourceDataEntry
+			uint32_t mIsDirectory	:	1;
+		};
+	};
+}__attribute__((packed)) PeResourceDirectoryEntry;
+
+typedef struct PeResourceString{
+	uint16_t mLength;
+	//	Binary		Comments
+	//	0xxxxxxx	Only byte of a 1-byte character encoding
+	//	10xxxxxx	Continuation byte: one of 1-3 bytes following the first
+	//	110xxxxx	First byte of a 2-byte character encoding
+	//	1110xxxx	First byte of a 3-byte character encoding
+	//	11110xxx	First byte of a 4-byte character encoding
+	char string[];
+}PeResourceString;
+typedef struct PeResourceDataEntry{
+	uint32_t	mDataRVA;
+	uint32_t	mDataSize;
+	//	The code page that is used to decode code point values within the resource data.
+	//	Typically, the code page would be the Unicode code page. 
+	uint32_t	mCodePage;
+}PeResourceDataEntry;
 
 typedef struct PeExportAddressEntry{
 	//	The address of the exported symbol when loaded into memory, relative to the image base. 
@@ -185,7 +226,8 @@ typedef struct PeExportAddressEntry{
 	uint16_t mExportRVA;
 	//	The pointer to a null-terminated ASCII string in the export section.
 	//	This string must be within the range that is given by the export table data directory entry.
-	//	This string gives the DLL name and the name of the export e.g "MYDLL.expfunc" or the DLL name and the ordinal number of the export e.g "MYDLL.#27". 
+	//	This string gives the DLL name and the name of the export e.g "MYDLL.expfunc" 
+	//		or the DLL name and the ordinal number of the export e.g "MYDLL.#27". 
 	uint16_t mForwarderRVA;
 }__attribute__((packed)) PeExportAddressEntry;
 //	The Name Pointer refers to the Exported Name for an Index, 
@@ -197,13 +239,10 @@ typedef struct PeExportDirectoryEntry{
 	uint32_t 	TimeDateStamp;
 	uint16_t 	mVersionMajor, mVersionMinor;
 	uint32_t 	NameRVA;
-	uint32_t 	OrdinalBase;
+	uint32_t 	mOrdinalBase;
 	uint32_t 	mNTableEntries;
 	uint32_t 	mNNamePointers;
-	//	The export name table contains the actual string data that was pointed to by the export name pointer table.
-	//	The strings in this table are public names that other images can use to import the symbols.
-	//	These public export names are not necessarily the same as the private symbol names
-	//		that the symbols have in their own image file and source code, although they can be.
+	//	The export Address Table
 	uint32_t	mExportTableRVA;
 	//	The export name pointer table is an array of addresses (RVAs) into the export name table.
 	//	The pointers are 32 bits each and are relative to the image base.
@@ -252,7 +291,7 @@ typedef union PeImportLookupEntry32{
         // Bit 31: 1 if imported by ordinal, 0 if imported by name
         uint32_t ImportByOrdinal        : 1;
     }Bits;
-}__attribute__((packed)) PeImportLookupEntry32, PeImportAddressEntry32;
+}__attribute__((packed)) PeImportLookupEntry32;
 // Import Lookup Table Entry (ILT) - PE32+
 //	Bit(s)		Size		Bit-field				Description
 //	63			1			Ordinal/Name Flag		If this bit is set, import by ordinal. Otherwise, import by name.
@@ -271,7 +310,7 @@ typedef union PeImportLookupEntry64{
         // Bit 63: 1 if imported by ordinal, 0 if imported by name
         uint64_t ImportByOrdinal        : 1;
     }Bits;
-}__attribute__((packed)) PeImportLookupEntry64, PeImportAddressEntry64;
+}__attribute__((packed)) PeImportLookupEntry64;
 
 // Import Name Entry (when importing by name)
 typedef struct PeImportNameEntry{
@@ -300,46 +339,84 @@ typedef struct PeBaseRelocationBlock{
     uint32_t PageRVA;
 	// Total Size of this relocation block, Being All Relocation Entries + Relocation Base
     uint32_t BlockSize;
-	PeRelocationTable relocations;
 }__attribute__((packed)) PeBaseRelocationBlock;
 
+typedef union PeUnwindCode{
+    struct {
+		/* Offset in the prolog where the operation occurs */
+        uint8_t CodeOffset;     
+		/* UnwindOpCode enum value */
+        uint8_t UnwindOp : 4;   
+		/* Operation-specific info (e.g. register number) */
+        uint8_t OpInfo   : 4;   
+    };
+	/* Used as raw 16-bit offset by ALLOC_LARGE, SAVE_NONVOL, etc. */
+    uint16_t FrameOffset;       
+}PeUnwindCode;
+/*
+ * Note: Variable fields follow the UnwindCode array based on alignment and flags:
+ * * 1. If CountOfCodes is odd: 
+ * 		1 unused padding slot (UnwindCode) follows for 32-bit alignment.
+ * 2. If (Flags & UNW_FLAG_EHANDLER) or (Flags & UNW_FLAG_UHANDLER):
+ *		uint32_t ExceptionHandler;	// RVA of language-specific handler
+ *		uint8_t  ExceptionData[];	// Language-specific payload
+ * 3. Else if (Flags & UNW_FLAG_CHAININFO):
+ * 		RuntimeFunction ChainedFunction;	// Primary function bounds/unwind info
+ */
+typedef struct PeUnwindInfo{
+	/* Unwind info version (currently 1 or 2) */
+    uint8_t Version       : 3;
+	/* Bitmask of UnwindFlags */
+    uint8_t Flags         : 5;
+	/* Length of the function prolog in bytes */
+    uint8_t SizeOfProlog;
+	/* Number of slots in the UnwindCode array */
+    uint8_t CountOfCodes;
+	/* FP register index (0 if no frame pointer used) */
+    uint8_t FrameRegister : 4;
+	/* Scaled frame pointer offset: FP = RSP - (FrameOffset * 16) */
+    uint8_t FrameOffset   : 4;
+	/* Variable-length array of UnwindCode entries [CountOfCodes] */
+    PeUnwindCode UnwindCode[];
 
+}PeUnwindInfo;
 
 
 typedef struct ExpandedPeExecutable{
 	void *Raw;
+	char *Path;
 	struct {
 		PeHeader *Header;
 		union{
+			PeOHeaderType HeaderType;
 			Pe32OptionalHeader *Pe32;
 			Pe32PlusOptionalHeader *Pe32Plus;
-		}Optional;
+		}Opt;
 		PeRVAnSize *RVAs;
 		PeImageSectionHeader *SectionTable;
 		
 		struct{
+			void *Raw;
 			PeExportDirectoryEntry *exportEntries;
 			uint32_t nExports;
 			uint32_t *NamePointerRVAs;
-			uint16_t *NormalisedOrdinalPointerRVAs;
+			uint16_t *NormalisedOrdinals;
 			PeExportAddressEntry *RawExportAddresses;
-		}exports;
+		}exp;
 
 		struct{
+			void *Raw;
 			PeImportDirectoryEntry *imports;
 			uint32_t nImports;
+			uint32_t *nEntries;
 			struct{
 				char **Names;
 				union{
 					PeImportLookupEntry32 **ImportLookups32;
 					PeImportLookupEntry64 **ImportLookups64;
 				}lookups;
-				union{
-					PeImportLookupEntry32 **ImportAddresses32;
-					PeImportLookupEntry64 **ImportAddresses64;
-				}addresses;
 			}perImport;
-		}imports;
+		}imp;
 
 		struct{
 			union{
@@ -348,5 +425,26 @@ typedef struct ExpandedPeExecutable{
 			}data;
 			uint32_t nRelocationBlocks, *nRelocationEntriesPerBlock;
 		}reloc;
-	}Format;
+		union{
+			void *Raw;
+			Pe32MIPSExceptionDataEntry	*ExceptionTableMIPS;
+			Pe32PlusExceptionDataEntry	*ExceptionTable64;
+			PeItaniumExceptionDataEntry	*ExceptionTableItanium;
+			PeARMExceptionDataEntry		*ExceptionTableARM;
+			PePowerPCExceptionDataEntry	*ExceptionTablePowerPC;
+			PeSH3WinCEExceptionDataEntry*ExceptionTableSH3WinCE;
+			PeSH4WinCEExceptionDataEntry*ExceptionTableSH4WinCE;
+		}exception;
+		struct{
+			void *Raw;
+			PeResourceRootDirectory	*RootDirectory;
+			struct{
+				union{
+					void *Raw;
+					PeResourceDirectoryEntry	*ResourceEntries;
+				};
+			}REntries;
+			// void *Data;
+		}rsrc;
+	}Fmt;
 }ExpandedPeExecutable;

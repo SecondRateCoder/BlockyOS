@@ -89,14 +89,15 @@ Revision History
     typedef uint64_t            uintptr_t;
     typedef int64_t             intptr_t;
 #else
-    #include <stdint.h>
+    #include "src/kernel/libcrt/math/int.h"
 #endif
 
 //
 // Basic EFI types of various widths
 //
 
-#include <stddef.h>
+// #include <stddef.h>
+#include "src/kernel/libcrt/def.h"
 
 typedef uint16_t CHAR16;
 #define WCHAR CHAR16

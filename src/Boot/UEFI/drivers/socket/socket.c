@@ -11,7 +11,7 @@ socket_ret socketopen(UINT32 driver, UINTN nARGbytes, ...){
 		void *data = NULL;
 		switch(driver){
 			case 0: {
-				data = __froot_sckopen(device, nARGbytes - sizeof(UINT32), &args);
+				data = (__froot_sckopen(device, nARGbytes - sizeof(UINT32), &args)).data;
 				break;
 			} default: {
 				va_end(args);

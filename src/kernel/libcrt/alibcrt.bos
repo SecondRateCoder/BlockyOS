@@ -1,0 +1,63 @@
+#FSFRAT.RUNTIME:ENABLED
+#JSON:ENABLED
+#CACHE:ENABLED
+
+{
+	"LOG": "C:/GitHub/BlockyOS/src/kernel/libcrt/alibcrt.log", 
+	"SCRIPT.VERSION": 999, 
+	"FS.IMAGE": "C:/GitHub/BlockyOS/Build/Build-nodate/disk.img", 
+	"FS.FORMAT": {
+		"TARGET.PARTITION": "ROOT", 
+		"TARGET.BLOCK.SIZE": 2048, 
+		"TARGET.LOG.BLOCKS": 32, 
+		"TARGET.VERSION": "1:0"
+	}, 
+	"INPUT": {
+		"EXECUTABLE": [
+			{
+				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/objs/libcrt.dll", 
+				"CARGS": "-I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc", 
+				"LARGS": "-shared -Bsymbolic", 
+				"FILES": [
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/RNG/RNG.asm", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/RNG/RNG.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/GDT/GDT.asm", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/GDT/GDT.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.asm", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/SSE/SSE.asm", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/SSE/SSE.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.c" , 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/memory/string.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/palloc.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IO/IO.asm", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/IDT.asm", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.asm", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/APIC.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/IOAPIC.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/hardware.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2b-ref.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2bp-ref.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2s-ref.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2sp-ref.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2xb-ref.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2xs-ref.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.c", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/SSE/UTILS.asm", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/alibcrt.def", 
+				]
+			}
+		]
+	}
+}
+
+PE2EXEC.MAKE -i "C:/GitHub/BlockyOS/Build/Build-nodate/objs/libcrt.dll" -od -o "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.service"
+FSFRAT.OPEN -p "SYSD/LIBCRT.app" -a "LCRTAPP" -la "fc"
+FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/objs/libcrt.service" -ia "LCRTAPP" -p 0 -n 0

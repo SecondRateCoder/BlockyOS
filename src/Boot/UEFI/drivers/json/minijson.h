@@ -2,41 +2,53 @@
 
 #include "efi.h"
 #include "efilib.h"
-
+#include "kernel/libcrt/def.h"
 #include "src/Boot/UEFI/tools/tools.h"
 
-#define MiniJsonFPrefix static inline
-
 typedef enum{
-	JTYPE_STRING,
-	JTYPE_NUMBER,
-	JTYPE_BOOL,
-	JTYPE_NULL,
-	JTYPE_OBJECT
+    JTYPE_STRING,
+    JTYPE_NUMBER,
+    JTYPE_BOOL,
+    JTYPE_NULL,
+    JTYPE_OBJECT
 }JsonType;
 
-// Forward declaration
 struct JsonValue;
 
 typedef struct JsonPair{
-	char* key;
-	struct JsonValue* value;
+    char* key;
+    struct JsonValue* value;
 }JsonPair;
 
-// JSON value structure
 typedef struct JsonValue{
-	JsonType type;
-	union{
-		char* stringValue;
-		double numberValue;
-		int boolValue;
-		struct{
-			JsonPair* pairs;
-			int count;
-		}objectValue;
-	};
+    JsonType type;
+    struct JsonValue* parent;
+    struct JsonValue* next;
+    union{
+        char* stringValue;
+        double numberValue;
+        int boolValue;
+        struct{
+            JsonPair* pairs;
+            int count;
+            int capacity;
+        }objectValue;
+    };
 }JsonValue;
 
-void printValue(JsonValue* value);
-JsonValue* readValue(const char** text);
-JsonValue* getValue(JsonValue* root, const char* path);
+// Internal structure to handle safe dynamic string appending
+typedef struct{
+    char* buffer;
+    size_t offset;
+    size_t capacity;
+}StringBuilder;
+
+// Parser Core
+JsonValue* JsonParse(const char* text);
+JsonValue* JsonreadValue(const char** text);
+void JsonFree(JsonValue* root);
+
+// Path resolution and management suite
+JsonValue* JsongetValue(JsonValue* root, const char* path);
+
+// Disk utilities

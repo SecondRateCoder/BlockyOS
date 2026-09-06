@@ -135,10 +135,12 @@ extern "C" {
 	} blake2xb_state;
 
 	/* Padded structs result in a compile-time error */
-	enum {
-		BLAKE2_DUMMY_1 = 1/(int)(sizeof(blake2s_param) == BLAKE2S_OUTBYTES),
-		BLAKE2_DUMMY_2 = 1/(int)(sizeof(blake2b_param) == BLAKE2B_OUTBYTES)
-	};
+	// enum {
+	// 	BLAKE2_DUMMY_1 = 1/(int)(sizeof(blake2s_param) == BLAKE2S_OUTBYTES),
+	// 	BLAKE2_DUMMY_2 = 1/(int)(sizeof(blake2b_param) == BLAKE2B_OUTBYTES)
+	// };
+	// typedef char blake2s_size_check[(sizeof(blake2s_param) == BLAKE2S_OUTBYTES) ? 1 : -1];
+	// typedef char blake2b_size_check[(sizeof(blake2b_param) == BLAKE2B_OUTBYTES) ? 1 : -1];
 
 	/* Streaming API */
 	int blake2s_init( blake2s_state *S, UINT64 outlen );

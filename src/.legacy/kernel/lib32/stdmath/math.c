@@ -137,7 +137,7 @@ float sqrtf(float x){
 }
 
 // Fixed-point integer square root (for when you need exact integer result)
-uint32_t isqrt(uint32_t n){
+uint32_t sqrti(uint32_t n){
     if(n == 0){return 0;}
     
     uint32_t x = n;

@@ -1,0 +1,224 @@
+[SHELL OUT]: >> 
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:193]  >>  Mounting FS Root: [C:/GitHub/BlockyOS/Build/Build-nodate/disk.img]
+[SHELL OUT]: Verifying Disk GPT
+[SHELL OUT]: [Parent:00007ff6f6fbd8f9] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  ConfBlockSize: 512    Starting Disk Env ID: 
+True
+False
+False
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: [Parent:00007ff6f6fbd914] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: [Parent:00007ff6f6fbeba4] >> Reading [36 bytes(s)->1 block(s)] to LBA[2048(1048576)-2049(1049088)]
+[SHELL OUT]: Verifying Disk GPT
+[SHELL OUT]: [Parent:00007ff734e6d8f9] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  ConfBlockSize: 512    Starting Disk Env ID: 
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: [Parent:00007ff734e6d914] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+True
+False
+False
+[SHELL OUT]: GPT Dump:
+[SHELL OUT]:     Sig: "EFI PART"
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:193]  >>  Mounting FS Root: [C:/GitHub/BlockyOS/Build/Build-nodate/disk.img]
+[SHELL OUT]:     Rev: 65536
+[SHELL OUT]:     Header-Size: 92
+[SHELL OUT]:     Header Checksum: 2549734900
+[SHELL OUT]: FSFRAT DRIVER
+[SHELL OUT]: >> 
+[SHELL OUT]: [C:\GitHub\BlockyOS\tools\filesystem\frat.c:193]  >>  Mounting FS Root: [C:/GitHub/BlockyOS/Build/Build-nodate/disk.img]
+True
+False
+False
+[SHELL OUT]: Verifying Disk GPT
+[SHELL OUT]: [Parent:00007ff734e6d8f9] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  ConfBlockSize: 512    Starting Disk Env ID: 
+[SHELL OUT]: Reading Bytes
+[SHELL OUT]: [Parent:00007ff734e6d914] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+
+
+
+
+
+
+[SHELL OUT]: >> 
+True
+False
+False
+
+
+[SHELL OUT]: FSFRAT DRIVER
+[SHELL OUT]: >> 
+[SHELL OUT]: FS-Root Blob:
+[SHELL OUT]:     Version: [0:524288]
+True
+False
+False
+[SHELL OUT]:     Sig: 
+[SHELL OUT]:     Configured Log Sectors: 2
+[SHELL OUT]:     Configured Block Size: 0
+[SHELL OUT]:     Configured Cluster-Map Size: 16711743
+[SHELL]	AstCommand
+
+[SHELL]	AstCommand
+
+
+[SHELL]	AstCommand
+[SHELL OUT]: FSFRAT DRIVER
+[SHELL OUT]: >> 
+[SHELL OUT]: FS-Root Blob:
+True
+False
+False
+[SHELL OUT]:     Version: [0:524288]
+[SHELL OUT]:     Sig: 
+[SHELL OUT]:     Configured Log Sectors: 2
+[SHELL OUT]:     Configured Block Size: 0
+[SHELL]	
+
+
+[SHELL]	
+[SHELL OUT]: >> 
+True
+False
+False
+	Name
+	Flags
+	Args
+	Line
+[SHELL]	
+	Name
+	Flags
+	Args
+	Line
+[SHELL]	
+
+
+	Name
+	Flags
+	Args
+	Line
+[SHELL]	
+[SHELL OUT]: >> 
+True
+False
+False
+	Name
+	Flags
+	Args
+	Line
+[SHELL]	
+
+	Name
+	Flags
+	Args
+	Line
+[SHELL]	
+
+
+	Name
+	Flags
+    	[-p]
+	Args
+	Line
+[SHELL]	
+[SHELL OUT]: >> 
+True
+False
+False
+[SHELL]	SHELL.REBUILD
+
+
+[SHELL]	SHELL.EXECUTE
+[SHELL OUT]: >> 
+[SHELL OUT]: FS-Root Blob:
+[SHELL OUT]:     Version: [0:524288]
+[SHELL OUT]:     Sig: 
+True
+False
+False
+[SHELL OUT]:     Configured Log Sectors: 2
+[SHELL OUT]:     Configured Block Size: 0
+[SHELL OUT]:     Configured Cluster-Map Size: 16711743
+[SHELL OUT]: FS-Root Blob:
+[SHELL]	SHELL.REBUILD
+
+
+[SHELL]	SHELL.EXECUTE
+[SHELL OUT]:     Configured Block Size: 512
+[SHELL OUT]:     Configured Cluster-Map Size: 81920
+[SHELL OUT]: FRATSYNC
+[SHELL OUT]: >> 
+True
+False
+False
+[SHELL OUT]: FRATSYNC
+[SHELL OUT]: >> 
+[SHELL]	SHELL.EXECUTE
+[SHELL OUT]: >> 
+True
+False
+False
+[SHELL]	SHELL.EXECUTE
+[SHELL OUT]: >> 
+True
+False
+False
+[SHELL]	SHELL.EXECUTE
+[SHELL]	SHELL.EXECUTE
+[SHELL]	SHELL.EXECUTE
+[SHELL]	SHELL.EXECUTE
+[SHELL OUT]: FSFRAT DRIVER
+[SHELL OUT]: >> 
+[SHELL OUT]: FS-Root Blob:
+True
+False
+False
+[SHELL OUT]:     Version: [0:524288]
+[SHELL OUT]:     Sig: 
+[SHELL OUT]:     Configured Log Sectors: 2
+[SHELL OUT]:     Configured Block Size: 0
+[SHELL]	SHELL.REBUILD
+
+
+[SHELL]	SHELL.EXECUTE
+[SHELL OUT]: FSFRAT DRIVER
+[SHELL OUT]: FS-Root Blob:
+[SHELL OUT]: >> 
+[SHELL OUT]:     Version: [0:524288]
+True
+False
+False
+[SHELL OUT]:     Configured Log Sectors: 2
+[SHELL OUT]:     Sig: 
+[SHELL OUT]:     Configured Block Size: 0
+[SHELL OUT]:     Configured Cluster-Map Size: 16711743
+[SHELL]	SHELL.REBUILD
+
+
+[SHELL]	SHELL.EXECUTE
+[SHELL]	SHELL.REBUILD
+
+
+[SHELL]	SHELL.EXECUTE
+[SHELL OUT]: >> 
+True
+False
+False
+[SHELL]	SHELL.REBUILD
+
+
+[SHELL]	SHELL.EXECUTE
+[SHELL OUT]:     Configured Log Sectors: 5
+[SHELL OUT]:     Configured Block Size: 512
+[SHELL OUT]:     Configured Cluster-Map Size: 81920
+True
+False
+False
+[SHELL OUT]: >> 
+[SHELL OUT]: >> 
+[SHELL]	SHELL.REBUILD
+
+
+[SHELL]	SHELL.EXECUTE
+[SHELL OUT]: >> 
+True
+False
+False
