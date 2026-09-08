@@ -195,7 +195,7 @@ conf_fsroot *fmount(rawenv re, GUID _GUID, GUID altGUID){
 		conf_fsroot *largeroot = mcalloc(1, sizeof(conf_fsroot));
 		*largeroot = (conf_fsroot){
 			ReSetGUID(._GUID, _GUID), ReSetGUID(.altGUID, altGUID), 
-			.loc = 0x00, .root = fsroot_, .lastClusterAlloc = 0x00,
+			.loc = partition.base, .root = fsroot_, .lastClusterAlloc = 0x00,
 			.logblocks = {
 				.logBlock = ReadRawHandleBlocks(re, partition.base + LOGBLOCKOFFSET, ReBlocks(re, fsroot_->confBlockSize * fsroot_->confLogSectors)),
 				.nLogSectors = fsroot_->confLogSectors

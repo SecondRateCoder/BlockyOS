@@ -194,21 +194,27 @@ int main(int argc, char** argv){
 	}
 
 	//  Track which PE sections have been converted
-	bool beGenerated = false, *processedPeSections = calloc(epe->Fmt.Header->mNumberOfSections, sizeof(bool));
+	bool *processedPeSections = calloc(epe->Fmt.Header->mNumberOfSections, sizeof(bool));
 
 	//  Process defined pairs in the order specified by KnownSections
+	//	We need to pre-generate the BeHeader.
+	for(size_t k = 0; KnownSections[k].PeName[0] != 0; k++){
+		const char *peName = KnownSections[k].PeName, *beName = KnownSections[k].BeName;
+		if(!strncmp(peName, PeResourceSection, 8)){
+			GenerateBeHeader(In.OutputFile, peName, (4 * 1024)/*4 kB*/, 
+				epe->Fmt.Opt.Pe32->mMagic == Pe32? 
+					epe->Fmt.Opt.Pe32->mAddressOfEntryPoint: 
+					epe->Fmt.Opt.Pe32Plus->mAddressOfEntryPoint);
+			break;
+		}
+	}
 	for(size_t k = 0; KnownSections[k].PeName[0] != 0; k++){
 		const char *peName = KnownSections[k].PeName;
 		char targetBeName[16] = {0};
 		strncpy(targetBeName, KnownSections[k].BeName, sizeof(targetBeName) - 1);
 
 		// Check if CLI overrides target BE name (-S)
-		for(uint32_t c = 0; c < In.SCount; ++c){
-			if(strncmp(peName, In.SSections[c].PeName, 8) == 0){
-				strncpy(targetBeName, In.SSections[c].BeName, sizeof(targetBeName) - 1);
-				break;
-			}
-		}
+		for(uint32_t c = 0; c < In.SCount; ++c){if(strncmp(peName, In.SSections[c].PeName, 8) == 0){break;}}
 		// Find section header in PE binary
 		PeImageSectionHeader *secHeader = FindSectionPe(epe->Raw, peName);
 		if(secHeader){

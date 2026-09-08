@@ -224,7 +224,7 @@ conf_fsroot *fmount(char *path){
 		setblocksize(re, fsroot_->confBlockSize);
 		conf_fsroot *largeroot = calloc(1, sizeof(conf_fsroot));
 		*largeroot = (conf_fsroot){
-			.loc = 0x00,
+			.loc = PART.base,
 			.root = fsroot_,
 			.lastClusterAlloc = 0x00,
 			.logblocks = {

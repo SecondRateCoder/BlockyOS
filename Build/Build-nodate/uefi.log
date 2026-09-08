@@ -1,4 +1,4 @@
-Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c - up to date; source=2026-09-05T19:30:50.9185498Z, stored=09/05/2026 19:30:50
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c - up to date; source=2026-09-08T23:04:18.4802648Z, stored=09/08/2026 23:04:18
 Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c - up to date; source=2026-08-06T21:41:03.1611297Z, stored=08/06/2026 21:41:03
 Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2b-ref.c - up to date; source=2026-08-09T22:40:41.3627225Z, stored=08/09/2026 22:40:41
 Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2bp-ref.c - up to date; source=2026-08-09T22:40:41.3627225Z, stored=08/09/2026 22:40:41
@@ -19,6 +19,6 @@ gcc -nostdlib -shared -Bsymbolic -Wl,--emit-relocs -Wl,--relocatable -Wl,-Map,C:
 gcc C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so -shared -Bsymbolic -Wl,-T,C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/elf_x86_64_efi.lds -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\uefi-final-map.log -nostartfiles -nodefaultlibs C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o -L C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/ -l efi -l gnuefi -o C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so
 C:/GitHub/BlockyOS/compile/toolchain/prebuild/x86_64-elf/bin/../lib/gcc/x86_64-elf/15.2.0/../../../../x86_64-elf/bin/ld.exe: warning: C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so: missing .note.GNU-stack section implies executable stack
 C:/GitHub/BlockyOS/compile/toolchain/prebuild/x86_64-elf/bin/../lib/gcc/x86_64-elf/15.2.0/../../../../x86_64-elf/bin/ld.exe: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
-GNU objcopy (GNU Binutils) 2.45 Copyright (C) 2025 Free Software Foundation, Inc. This program is free software; you may redistribute it under the terms of the GNU General Public License version 3 or (at your option) any later version. This program has absolutely no warranty.
+GNU objcopy (GNU Binutils) 2.46 Copyright (C) 2026 Free Software Foundation, Inc. This program is free software; you may redistribute it under the terms of the GNU General Public License version 3 or (at your option) any later version. This program has absolutely no warranty.
 objcopy -j .text -j .data -j .sdata -j .rodata -j .dynamic -j .dynsym -j .rel -j .rel.* -j .rela -j .rela.* -j .reloc -O pei-x86-64 --subsystem=10 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob.efi
 

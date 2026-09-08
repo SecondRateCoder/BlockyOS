@@ -9,8 +9,6 @@ $TOOLSDIR = Join-Path (Get-Location) 'tools/'
 $PE2EXEC = (Join-Path $TOOLSDIR '/executable-format/exechandler.exe')
 $FSCONTROLLEREXEPATH = (Join-Path $TOOLSDIR '/filesystem/fs.exe')
 $FSCONTROLLER = New-Object System.Diagnostics.Process
-$FSOUTEVENT = $null
-$FSERREVENT = $null
 $CUSTOMGCC = Join-Path $TOOLSDIR 'build-suite/gcc.ps1'
 $CUSTOMASM = Join-Path $TOOLSDIR 'build-suite/asm.ps1'
 
@@ -792,8 +790,10 @@ function FUN-CGCC{
 function FUN-PE2EXEC{
 	param([AstCommand[]]$COMMANDS)
 	foreach($COMMAND in $COMMANDS){
-		Write-Log "$($PE2EXEC) $($COMMAND.Flags["-i"]) $($COMMAND.Flags["-o"])$(if($COMMAND.Flags.ContainsKey("-id")){" -id"})$(if($COMMAND.Flags.ContainsKey("-od")){" -od"})"
-		(& $PE2EXEC $COMMAND.Flags["-i"] $COMMAND.Flags["-o"] $(if($COMMAND.Flags.ContainsKey("-id")){"-id"}) $(if($COMMAND.Flags.ContainsKey("-od")){"-od"}) '-L' $script:BuildFeatures.LOG) 2>&1
+		$CMD = "$($COMMAND.Flags["-i"]) $($COMMAND.Flags["-o"])$(if($COMMAND.Flags.ContainsKey("-od")){" -od"})$(if($COMMAND.Flags.ContainsKey("-id")){" -id"}) -L $($script:BuildFeatures.'LOG')"
+		Write-Log "$($PE2EXEC) $($CMD)"
+		$OUT = (& $PE2EXEC (($CMD -replace '/','\') -split ' ')) 2>&1
+		Write-Log "[$PE2EXEC|$LASTEXITCODE]`n$($OUT -join "`n")"
 	}
 	return $true
 }
@@ -804,46 +804,52 @@ function FRAT-RUNTIME-START{
 	$BLOCKSIZE = if($AST.Header.'FS.FORMAT'.'TARGET.BLOCK.SIZE'){"-bs $($AST.Header.'FS.FORMAT'.'TARGET.BLOCK.SIZE')"}else{$null}
 	$LOGBLOCKS = if($AST.Header.'FS.FORMAT'.'TARGET.LOG.BLOCKS'){"-lb $($AST.Header.'FS.FORMAT'.'TARGET.LOG.BLOCKS')"}else{$null}
 	$VERSION = if($AST.Header.'FS.FORMAT'.'TARGET.VERSION'){"-v $($AST.Header.'FS.FORMAT'.'TARGET.VERSION')"}else{$null}
-	if($DISKPATH){$MOUNTCMD = ",u $($DISKPATH) $($PARTITIONNAME) $($BLOCKSIZE) $($LOGBLOCKS) $($VERSION)"}
+	if($DISKPATH){$MOUNTCMD = "e.disk $($DISKPATH) $($PARTITIONNAME) $($BLOCKSIZE) $($LOGBLOCKS) $($VERSION)"}
 
 	$psi = New-Object System.Diagnostics.ProcessStartInfo
 	$psi.FileName = $FSCONTROLLEREXEPATH
 	$psi.Arguments = $null
 
-	$psi.RedirectStandardInput  = $true
+	$psi.RedirectStandardInput = $true
 	$psi.RedirectStandardOutput = $true
-	$psi.RedirectStandardError  = $true
-	$psi.UseShellExecute        = $false
-	$psi.CreateNoWindow         = $true
+	$psi.RedirectStandardError = $true
+	$psi.UseShellExecute = $false
+	$psi.CreateNoWindow = $true
 	$FSCONTROLLER.StartInfo = $psi
-	$FSOUTEVENT = Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "OutputDataReceived" -Action {
+	Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "OutputDataReceived" -Debug -Action {
 		if($EventArgs.Data){
-			if($EventArgs.Data -match 'FRATSYNC'){$script:FRAT_SYNC_RECEIVED = $false}else{
-				Write-Log -MSG "[SHELL OUT]: $($EventArgs.Data -replace 'FRATSYNC','')" -COLOR Cyan
-				$script:FRAT_SYNC_RECEIVED = $true
+			# if($EventArgs.Data -match 'FRATSYNC'){$script:FRAT_SYNC_RECEIVED = $false}else{$script:FRAT_SYNC_RECEIVED = $true}
+			# Write-Log -MSG "[SHELL OUT]: $($EventArgs.Data)" -COLOR Cyan
+			if($EventArgs.Data -match 'FRATSYNC'){$script:FRAT_SYNC_RECEIVED = $true}else{
+				$cleanedData = $EventArgs.Data -replace 'FRATSYNC', ''
+				if(-not [string]::IsNullOrWhiteSpace($cleanedData)){Write-Log "[SHELL OUT]: $cleanedData" -COLOR Cyan}
 			}
-		}}
-	$FSERREVENT = Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "ErrorDataReceived" -Action {
-		if($EventArgs.Data){Write-Log -MSG "[SHELL ERR]: $($EventArgs.Data)" -COLOR Red}}
+		}} | Out-Null
+	Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "ErrorDataReceived" -Debug -Action {
+		if($EventArgs.Data){Write-Log -MSG "[SHELL ERR]: $($EventArgs.Data)" -COLOR Red}} | Out-Null
 	$FSCONTROLLER.Start() | Out-Null
 	$FSCONTROLLER.BeginOutputReadLine()
 	$FSCONTROLLER.BeginErrorReadLine()
 	Write-Log -MSG "[SHELL]`tFSFRAT.MOUNT" -COLOR Blue
-	$FSCONTROLLER.StandardInput.WriteLine($MOUNTCMD)
-	FRAT-RUNTIME-SYNC
+	FRAT-RUNTIME-PASS-COMMAND $MOUNTCMD
 	$script:FSSET = $true
 }
 
-function FRAT-RUNTIME-SYNC{
-	# if(-not $FSCONTROLLER -or $FSCONTROLLER.HasExited){throw "FS controller is not running."}
-	# while($script:FRAT_SYNC_RECEIVED){Start-Sleep -Milliseconds 20}
+function FRAT-RUNTIME-PASS-COMMAND{
+	param([string]$CMD)
+	$script:FRAT_SYNC_RECEIVED = $false
+	$FSCONTROLLER.StandardInput.WriteLine($CMD)
+	if((-not $FSCONTROLLER) -or $FSCONTROLLER.HasExited){throw "FS controller is not running."}
+	# while(-not $script:FRAT_SYNC_RECEIVED){Wait-Event -Timeout 1}
+	Wait-Event -Timeout 7
+	$FSCONTROLLER.StandardInput.WriteLine("`n")
 }
 
 function FRAT-RUNTIME-STOP{
 	if(-not $script:FSSET){return}
 	try{
 		if(-not $FSCONTROLLER.HasExited){
-			$FSCONTROLLER.StandardInput.WriteLine("exit")
+			$FSCONTROLLER.StandardInput.WriteLine("exit`n`r")
 			$FSCONTROLLER.WaitForExit()
 		}
 	}catch [System.InvalidOperationException]{
@@ -861,7 +867,7 @@ function FUN-FRAT{
 	$BLOCKSIZE = if($AST.Header.'FS.FORMAT'.'TARGET.BLOCK.SIZE'){"-bs $($AST.Header.'FS.FORMAT'.'TARGET.BLOCK.SIZE')"}else{$null}
 	$LOGBLOCKS = if($AST.Header.'FS.FORMAT'.'TARGET.LOG.BLOCKS'){"-lb $($AST.Header.'FS.FORMAT'.'TARGET.LOG.BLOCKS')"}else{$null}
 	$VERSION = if($AST.Header.'FS.FORMAT'.'TARGET.VERSION'){"-v $($AST.Header.'FS.FORMAT'.'TARGET.VERSION')"}else{$null}
-	if($DISKPATH){$MOUNTCMD = ",u $($DISKPATH) $($PARTITIONNAME) $($BLOCKSIZE) $($LOGBLOCKS) $($VERSION)"}
+	if($DISKPATH){$MOUNTCMD = "e.disk $($DISKPATH) $($PARTITIONNAME) $($BLOCKSIZE) $($LOGBLOCKS) $($VERSION)"}
 	foreach($COMMAND in $COMMANDS){
 		switch($COMMAND.Name){
 			'FSFRAT.MOUNT' {
@@ -870,52 +876,49 @@ function FUN-FRAT{
 				$BLOCKSIZE = $(if($COMMAND.Flags["-bs"]){"-bs $($COMMAND.Flags["-bs"])"}else{$null})
 				$LOGBLOCKS = $(if($COMMAND.Flags["-lb"]){"-lb $($COMMAND.Flags["-lb"])"}else{$null})
 				$VERSION = $(if($COMMAND.Flags["-v"]){"-v $($COMMAND.Flags["-v"])"}else{$null})
-				if($IMAGEPATH){$TRUECMD += ",u $($IMAGEPATH) $($PARTITIONNAME) $($BLOCKSIZE) $($LOGBLOCKS) $($VERSION)"}
+				if($IMAGEPATH){$TRUECMD += "e.disk $($IMAGEPATH) $($PARTITIONNAME) $($BLOCKSIZE) $($LOGBLOCKS) $($VERSION)"}
 			} 'FSFRAT.ALIAS' {
 				$ALIAS = $(if($COMMAND.Flags["-%"]){"-% $($COMMAND.Flags["-%"])"}else{$null})
 				$DATA = $(if($COMMAND.Flags["-d"]){"-d $($COMMAND.Flags["-d"])"}else{$null})
 				$NDATA = $(if($DATA){"-n $($DATA.Length.ToString())"}else{'-n 0'})
-				if($ALIAS -and $DATA){$TRUECMD += ",s $($ALIAS) $($NDATA) $($DATA)"}
+				if($ALIAS -and $DATA){$TRUECMD += "e.sym $($ALIAS) $($NDATA) $($DATA)"}
 			} 'FSFRAT.OPEN' {
 				$PATH = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{$null})
 				$ALIAS = $(if($COMMAND.Flags["-a"]){"-a $($COMMAND.Flags["-a"])"}else{$null})
 				$LOADARGS = $(if($COMMAND.Flags["-la"]){"-la $($COMMAND.Flags["-la"])"}else{$null})
-				if($PATH -and $ALIAS -and $LOADARGS){$TRUECMD += ",o $($PATH) $($ALIAS) $($LOADARGS)"}
+				if($PATH -and $ALIAS -and $LOADARGS){$TRUECMD += "open $($PATH) $($ALIAS) $($LOADARGS)"}
 			} 'FSFRAT.CLOSE' {
 				$ALIAS = $(if($COMMAND.Flags["-a"]){"-a $($COMMAND.Flags["-a"])"}else{$null})
-				if($ALIAS){$TRUECMD += ",cl $($ALIAS)"}
+				if($ALIAS){$TRUECMD += "close $($ALIAS)"}
 			} 'FSFRAT.DELETE' {
 				$PATH = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{$null})
-				if($PATH){$TRUECMD += ",d $($PATH)"}
+				if($PATH){$TRUECMD += "delete $($PATH)"}
 			} 'FSFRAT.MAKE' {
 				$PATH = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{$null})
 				$ALIAS = $(if($COMMAND.Flags["-n"]){"-n $($COMMAND.Flags["-n"])"}else{$null})
 				$LOADARGS = $(if($COMMAND.Flags["-la"]){"-la $($COMMAND.Flags["-la"])"}else{$null})
-				if($PATH -and $ALIAS -and $LOADARGS){$TRUECMD += ",cr $($LOADARGS) $($PATH) $($ALIAS)"}
+				if($PATH -and $ALIAS -and $LOADARGS){$TRUECMD += "create $($LOADARGS) $($PATH) $($ALIAS)"}
 			} 'FSFRAT.READ' {
 				$PPATH = $(if($COMMAND.Flags["-pp"]){"-oa $($COMMAND.Flags["-pp"])"}else{$null})
-				$ALIAS = $(if($COMMAND.Flags["-ip"]){"-ia $($COMMAND.Flags["-ip"])"}else{$null})
+				$ALIAS = $(if($COMMAND.Flags["-ia"]){"-ia $($COMMAND.Flags["-ia"])"}else{$null})
 				$POS = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{'-p 0'})
 				$NBYTES = $(if($COMMAND.Flags["-n"]){"-n $($COMMAND.Flags["-n"])"}else{'-n 0'})
-				if($PPATH -and $ALIAS){$TRUECMD += ",fr $($PPATH) $($ALIAS) $($POS) $($NBYTES)"}
+				if($PPATH -and $ALIAS){$TRUECMD += "fread $($PPATH) $($ALIAS) $($POS) $($NBYTES)"}
 			} 'FSFRAT.WRITE' {
 				$PPATH = $(if($COMMAND.Flags["-pp"]){"-oa $($COMMAND.Flags["-pp"])"}else{$null})
-				$ALIAS = $(if($COMMAND.Flags["-ip"]){"-ia $($COMMAND.Flags["-ip"])"}else{$null})
+				$ALIAS = $(if($COMMAND.Flags["-ia"]){"-ia $($COMMAND.Flags["-ia"])"}else{$null})
 				$POS = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{'-p 0'})
 				$NBYTES = $(if($COMMAND.Flags["-n"]){"-n $($COMMAND.Flags["-n"])"}else{'-n 0'})
-				if($PPATH -and $ALIAS){$TRUECMD += ",fw $($PPATH) $($ALIAS) $($POS) $($NBYTES)"}
+				if($PPATH -and $ALIAS){$TRUECMD += "fwrite $($PPATH) $($ALIAS) $($POS) $($NBYTES)"}
 			} default {break}
 		}
 	}
 	if($script:BuildFeatures.'FSFRAT.RUNTIME'){
 		if(-not $script:FSSET){(FRAT-RUNTIME-START)}
 		foreach($CMD in $TRUECMD){
-			Write-Log -MSG "$($CMD)" -COLOR Blue
-			$FSCONTROLLER.StandardInput.WriteLine($CMD)
-			FRAT-RUNTIME-SYNC
+			FRAT-RUNTIME-PASS-COMMAND $CMD
 		}
 	}elseif($MOUNTCMD -and ($TRUECMD.Length -ge 1)){
-		Write-Log "$($FSCONTROLLEREXEPATH) $($MOUNTCMD) $($TRUECMD -join ' ')"
 		$FSOUT = (& $FSCONTROLLEREXEPATH $MOUNTCMD @TRUECMD) 2>&1
 		Write-Log ($FSOUT -join "`n")
 		return $true
@@ -1066,7 +1069,7 @@ foreach($Group in $GroupedCommands){# .Group contains the array of commands belo
         } '^SHELL.REBUILD$' {
             $PathFS = Join-Path (Get-Location) 'tools\filesystem\fs.ps1'
             $PathExec = Join-Path (Get-Location) 'tools\executable-format\exec.ps1'
-            Write-Log "$((& $PathFS -RELEASE $true) -join "`n")"
+            Write-Log "$((& $PathFS) -join "`n")"
             Write-Log "$((& $PathExec) -join "`n")"
 			continue
         } '^SHELL.EXECUTE$' {

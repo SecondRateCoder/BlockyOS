@@ -1809,5 +1809,5 @@ LOAD C:/GitHub/BlockyOS/src/kernel/libcrt/alibcrt.def
 
 .zdebug_gdb_scripts
  *(.zdebug_gdb_scripts)
-OUTPUT(C:/GitHub/BlockyOS/Build/Build-nodate/objs/libcrt.dll pei-x86-64)
+OUTPUT(C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.dll pei-x86-64)
 LOAD dll stuff

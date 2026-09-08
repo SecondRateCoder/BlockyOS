@@ -703,7 +703,8 @@ bool CreateImportSectionBe(
 	void *bheader = ReadBeHeader(path);
 	DecodeBeExecutableHeader(bheader);
 	BeSectionDescriptor *This = FindSectionBe(bheader, Name);
-	BeImportHeader *Header = Out;	*Header = (BeImportHeader){.bNDllReferences = nDlls, .bImportTableRVO = This->bRawPointer + sizeof(BeImportHeader), 
+	BeImportHeader *Header = Out;	*Header = (BeImportHeader){
+		.bNDllReferences = nDlls, .bImportTableRVO = This->bRawPointer + sizeof(BeImportHeader), 
 		.bImportPathRVO = This->bRawPointer + sizeof(BeImportHeader) + (sizeof(BeImportDll) * nDlls) + (sizeof(BeImportEntry) * totalNImports)};
 	for(register GenericLengthType cc = 0, Temp = sizeof(BeImportHeader), offset = 0; cc < nDlls; ++cc){
 		uint64_t RelBaseN = AddRelocationsBe(path, VirtualPerEntry[importCounter], VirtualPerEntry + importCounter, TypePerEntry + importCounter, nImportsPerDll[cc]);

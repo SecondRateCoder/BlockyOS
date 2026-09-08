@@ -1,0 +1,1007 @@
+
+C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob.efi:     file format pei-x86-64
+C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob.efi
+architecture: i386:x86-64, flags 0x00000133:
+HAS_RELOC, EXEC_P, HAS_SYMS, HAS_LOCALS, D_PAGED
+start address 0x00000000000205a4
+
+Characteristics 0x206
+	executable
+	line numbers stripped
+	debugging information removed
+
+Time/Date		Thu Jan 01 00:00:00 1970
+Magic			020b	(PE32+)
+MajorLinkerVersion	2
+MinorLinkerVersion	46
+SizeOfCode		0000000000023a00
+SizeOfInitializedData	0000000000005a00
+SizeOfUninitializedData	0000000000000000
+AddressOfEntryPoint	00000000000205a4
+BaseOfCode		0000000000004000
+ImageBase		0000000000000000
+SectionAlignment	00001000
+FileAlignment		00000200
+MajorOSystemVersion	0
+MinorOSystemVersion	0
+MajorImageVersion	0
+MinorImageVersion	0
+MajorSubsystemVersion	0
+MinorSubsystemVersion	0
+Win32Version		00000000
+SizeOfImage		0002f000
+SizeOfHeaders		00000400
+CheckSum		00033bf6
+Subsystem		0000000a	(EFI application)
+DllCharacteristics	00000000
+SizeOfStackReserve	0000000000000000
+SizeOfStackCommit	0000000000000000
+SizeOfHeapReserve	0000000000000000
+SizeOfHeapCommit	0000000000000000
+LoaderFlags		00000000
+NumberOfRvaAndSizes	00000010
+
+The Data Directory
+Entry 0 0000000000000000 00000000 Export Directory [.edata (or where ever we found it)]
+Entry 1 0000000000000000 00000000 Import Directory [parts of .idata]
+Entry 2 0000000000000000 00000000 Resource Directory [.rsrc]
+Entry 3 0000000000000000 00000000 Exception Directory [.pdata]
+Entry 4 0000000000000000 00000000 Security Directory
+Entry 5 0000000000029000 0000000c Base Relocation Directory [.reloc]
+Entry 6 0000000000000000 00000000 Debug Directory
+Entry 7 0000000000000000 00000000 Description Directory
+Entry 8 0000000000000000 00000000 Special Directory
+Entry 9 0000000000000000 00000000 Thread Storage Directory [.tls]
+Entry a 0000000000000000 00000000 Load Configuration Directory
+Entry b 0000000000000000 00000000 Bound Import Directory
+Entry c 0000000000000000 00000000 Import Address Table Directory
+Entry d 0000000000000000 00000000 Delay Import Directory
+Entry e 0000000000000000 00000000 CLR Runtime Header
+Entry f 0000000000000000 00000000 Reserved
+
+
+PE File Base Relocations (interpreted .reloc section contents)
+
+Virtual Address: 00000004 Chunk size 12 (0xc) Number of fixups 2
+	reloc    0 offset    0 [   4] ABSOLUTE
+	reloc    1 offset    0 [   4] ABSOLUTE
+
+Sections:
+Idx Name          Size      VMA               LMA               File off  Algn
+  0 .text         00023990  0000000000004000  0000000000004000  00000400  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000f08  0000000000028000  0000000000028000  00023e00  2**4
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .reloc        0000000c  0000000000029000  0000000000029000  00024e00  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  3 .rodata       000046fe  000000000002a000  000000000002a000  00025000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+SYMBOL TABLE:
+[  0](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000000000 IoWrite8Inline
+AUX tagndx 0 ttlsiz 0x1f lnnos 0 next 0
+[  2](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000004cda __dirr_matches
+AUX tagndx 0 ttlsiz 0xa7 lnnos 0 next 0
+[  4](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000004d81 __dirr_push
+AUX tagndx 0 ttlsiz 0x187 lnnos 0 next 0
+[  6](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000004f08 __dirr_pop
+AUX tagndx 0 ttlsiz 0x76 lnnos 0 next 0
+[  8](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006a1d load64
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[ 10](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006a47 store32
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[ 12](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006a71 store64
+AUX tagndx 0 ttlsiz 0x2b lnnos 0 next 0
+[ 14](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006a9c rotr64
+AUX tagndx 0 ttlsiz 0x20 lnnos 0 next 0
+[ 16](sec  4)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000001ca0 blake2b_IV
+[ 17](sec  4)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000001ce0 blake2b_sigma
+[ 18](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006abc blake2b_set_lastnode
+AUX tagndx 0 ttlsiz 0x1b lnnos 0 next 0
+[ 20](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006ad7 blake2b_is_lastblock
+AUX tagndx 0 ttlsiz 0x1f lnnos 0 next 0
+[ 22](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006af6 blake2b_set_lastblock
+AUX tagndx 0 ttlsiz 0x36 lnnos 0 next 0
+[ 24](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006b2c blake2b_increment_counter
+AUX tagndx 0 ttlsiz 0x4f lnnos 0 next 0
+[ 26](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006b7b blake2b_init0
+AUX tagndx 0 ttlsiz 0x5f lnnos 0 next 0
+[ 28](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000006f04 blake2b_compress
+AUX tagndx 0 ttlsiz 0x6ce7 lnnos 0 next 0
+[ 30](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000e04f store32
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[ 32](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000e079 secure_zero_memory
+AUX tagndx 0 ttlsiz 0x2c lnnos 0 next 0
+[ 34](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000008 memset_v.0
+[ 35](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000e0a5 blake2bp_init_leaf_param
+AUX tagndx 0 ttlsiz 0x41 lnnos 0 next 0
+[ 37](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000e0e6 blake2bp_init_leaf
+AUX tagndx 0 ttlsiz 0xdb lnnos 0 next 0
+[ 39](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000e1c1 blake2bp_init_root
+AUX tagndx 0 ttlsiz 0xd4 lnnos 0 next 0
+[ 41](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000ec2d load32
+AUX tagndx 0 ttlsiz 0x29 lnnos 0 next 0
+[ 43](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000ec56 store16
+AUX tagndx 0 ttlsiz 0x2d lnnos 0 next 0
+[ 45](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000ec83 store32
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[ 47](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000ecad rotr32
+AUX tagndx 0 ttlsiz 0x1c lnnos 0 next 0
+[ 49](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000ecc9 secure_zero_memory
+AUX tagndx 0 ttlsiz 0x2c lnnos 0 next 0
+[ 51](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000010 memset_v.0
+[ 52](sec  4)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000001da0 blake2s_IV
+[ 53](sec  4)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000001dc0 blake2s_sigma
+[ 54](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000ecf5 blake2s_set_lastnode
+AUX tagndx 0 ttlsiz 0x1a lnnos 0 next 0
+[ 56](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000ed0f blake2s_is_lastblock
+AUX tagndx 0 ttlsiz 0x1d lnnos 0 next 0
+[ 58](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000ed2c blake2s_set_lastblock
+AUX tagndx 0 ttlsiz 0x35 lnnos 0 next 0
+[ 60](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000ed61 blake2s_increment_counter
+AUX tagndx 0 ttlsiz 0x45 lnnos 0 next 0
+[ 62](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000eda6 blake2s_init0
+AUX tagndx 0 ttlsiz 0x5d lnnos 0 next 0
+[ 64](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000000f0b1 blake2s_compress
+AUX tagndx 0 ttlsiz 0x3b6a lnnos 0 next 0
+[ 66](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000012fec store16
+AUX tagndx 0 ttlsiz 0x2d lnnos 0 next 0
+[ 68](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000013019 store32
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[ 70](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000013043 secure_zero_memory
+AUX tagndx 0 ttlsiz 0x2c lnnos 0 next 0
+[ 72](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000018 memset_v.0
+[ 73](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001306f blake2sp_init_leaf_param
+AUX tagndx 0 ttlsiz 0x3e lnnos 0 next 0
+[ 75](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000130ad blake2sp_init_leaf
+AUX tagndx 0 ttlsiz 0xc1 lnnos 0 next 0
+[ 77](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001316e blake2sp_init_root
+AUX tagndx 0 ttlsiz 0xba lnnos 0 next 0
+[ 79](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000013b66 load32
+AUX tagndx 0 ttlsiz 0x29 lnnos 0 next 0
+[ 81](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000013b8f store32
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[ 83](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000013bb9 secure_zero_memory
+AUX tagndx 0 ttlsiz 0x2c lnnos 0 next 0
+[ 85](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000020 memset_v.0
+[ 86](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000141a6 load16
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[ 88](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000141d0 store16
+AUX tagndx 0 ttlsiz 0x2d lnnos 0 next 0
+[ 90](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000141fd store32
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[ 92](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000014227 secure_zero_memory
+AUX tagndx 0 ttlsiz 0x2c lnnos 0 next 0
+[ 94](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000028 memset_v.0
+[ 95](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000164aa skipSpaces
+AUX tagndx 0 ttlsiz 0x5c lnnos 0 next 0
+[ 97](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000016506 readString
+AUX tagndx 0 ttlsiz 0x118 lnnos 0 next 0
+[ 99](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001661e readNumber
+AUX tagndx 0 ttlsiz 0x3d lnnos 0 next 0
+[101](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001665b readBool
+AUX tagndx 0 ttlsiz 0x8b lnnos 0 next 0
+[103](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001673d readObject
+AUX tagndx 0 ttlsiz 0x2a3 lnnos 0 next 0
+[105](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000016b7d sb_init
+AUX tagndx 0 ttlsiz 0x8e lnnos 0 next 0
+[107](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000016c0b sb_append_format
+AUX tagndx 0 ttlsiz 0x218 lnnos 0 next 0
+[109](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000016e23 JsonFree.localalias
+AUX tagndx 0 ttlsiz 0x2d8 lnnos 0 next 0
+[111](sec  4)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000002118 nDrivers
+[112](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000e80 hash.1
+[113](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001991a strtok_k.localalias
+AUX tagndx 0 ttlsiz 0x1f4 lnnos 0 next 0
+[115](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000019d0d match_rec.localalias
+AUX tagndx 0 ttlsiz 0x134 lnnos 0 next 0
+[117](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000e90 out.0
+[118](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000040 installDISK
+[119](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x00000000000000e0 installDISK
+[120](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000000 bufLEN.0
+[121](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001bb1c EfiMemoryTypeToStr
+AUX tagndx 0 ttlsiz 0x1a3 lnnos 0 next 0
+[123](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000740 KnownGuids
+[124](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000720 ShellInterfaceProtocol
+[125](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000710 SEnvId
+[126](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x00000000000006f0 SProtId
+[127](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000700 SMapId
+[128](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x00000000000006e0 SAliasId
+[129](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001e260 ValueToHex.part.0
+AUX tagndx 0 ttlsiz 0x8e lnnos 0 next 0
+[131](sec  4)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x00000000000039f0 Hex
+[132](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001e2f0 ValueToString.part.0
+AUX tagndx 0 ttlsiz 0xfe lnnos 0 next 0
+[134](sec  4)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x00000000000039ea ca.0
+[135](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x000000000001e3f0 PPUTC
+AUX tagndx 0 ttlsiz 0xaa lnnos 0 next 0
+[137](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000020060 PPUTC
+AUX tagndx 0 ttlsiz 0xaa lnnos 0 next 0
+[139](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000020110 _Print
+AUX tagndx 0 ttlsiz 0xd6c lnnos 0 next 0
+[141](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021450 _DevPathEndInstance
+AUX tagndx 0 ttlsiz 0x12 lnnos 0 next 0
+[143](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021470 _DevPathBssBss
+AUX tagndx 0 ttlsiz 0x92 lnnos 0 next 0
+[145](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021510 _DevPathMediaProtocol
+AUX tagndx 0 ttlsiz 0x16 lnnos 0 next 0
+[147](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021530 _DevPathFilePath
+AUX tagndx 0 ttlsiz 0x16 lnnos 0 next 0
+[149](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021550 _DevPathCDROM
+AUX tagndx 0 ttlsiz 0x15 lnnos 0 next 0
+[151](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021570 _DevPathSata
+AUX tagndx 0 ttlsiz 0x1f lnnos 0 next 0
+[153](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021590 _DevPathUart
+AUX tagndx 0 ttlsiz 0x11b lnnos 0 next 0
+[155](sec  4)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x00000000000041e2 CSWTCH.43
+[156](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000216b0 _DevPathInfiniBand
+AUX tagndx 0 ttlsiz 0x32 lnnos 0 next 0
+[158](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000216f0 _DevPathUri
+AUX tagndx 0 ttlsiz 0x16 lnnos 0 next 0
+[160](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021710 _DevPathMacAddr
+AUX tagndx 0 ttlsiz 0xb3 lnnos 0 next 0
+[162](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000217d0 _DevPathI2O
+AUX tagndx 0 ttlsiz 0x15 lnnos 0 next 0
+[164](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000217f0 _DevPathUsb
+AUX tagndx 0 ttlsiz 0x1a lnnos 0 next 0
+[166](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021810 _DevPath1394
+AUX tagndx 0 ttlsiz 0x16 lnnos 0 next 0
+[168](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021830 _DevPathFibre
+AUX tagndx 0 ttlsiz 0x34 lnnos 0 next 0
+[170](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021870 _DevPathScsi
+AUX tagndx 0 ttlsiz 0x1a lnnos 0 next 0
+[172](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021890 _DevPathAtapi
+AUX tagndx 0 ttlsiz 0x3e lnnos 0 next 0
+[174](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x00000000000218d0 _DevPathAcpi
+AUX tagndx 0 ttlsiz 0x163 lnnos 0 next 0
+[176](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021a40 _DevPathController
+AUX tagndx 0 ttlsiz 0x15 lnnos 0 next 0
+[178](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021a60 _DevPathMemMap
+AUX tagndx 0 ttlsiz 0x1d lnnos 0 next 0
+[180](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021a80 _DevPathPccard
+AUX tagndx 0 ttlsiz 0x16 lnnos 0 next 0
+[182](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021aa0 _DevPathPci
+AUX tagndx 0 ttlsiz 0x1a lnnos 0 next 0
+[184](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021ac0 _DevPathNodeUnknown
+AUX tagndx 0 ttlsiz 0x137 lnnos 0 next 0
+[186](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021c00 _DevPathVendor
+AUX tagndx 0 ttlsiz 0xa9 lnnos 0 next 0
+[188](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021cb0 _DevPathHardDrive
+AUX tagndx 0 ttlsiz 0x51 lnnos 0 next 0
+[190](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021d10 CatPrintIPv6.isra.0
+AUX tagndx 0 ttlsiz 0xb1 lnnos 0 next 0
+[192](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000021dd0 _DevPathIPv6
+AUX tagndx 0 ttlsiz 0x279 lnnos 0 next 0
+[194](sec  1)(fl 0x00)(ty   20)(scl   3) (nx 1) 0x0000000000022050 _DevPathIPv4
+AUX tagndx 0 ttlsiz 0x1ff lnnos 0 next 0
+[196](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000170 dummy0
+[197](sec  2)(fl 0x00)(ty    0)(scl   3) (nx 0) 0x0000000000000174 dummy1
+[198](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d670 StpnCpy
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[200](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000004658 __fdirlist
+AUX tagndx 0 ttlsiz 0x482 lnnos 0 next 0
+[202](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000002882 __fread1
+AUX tagndx 0 ttlsiz 0x1a9 lnnos 0 next 0
+[204](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dfd0 InitializeLibPlatform
+AUX tagndx 0 ttlsiz 0x5 lnnos 0 next 0
+[206](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d7a0 AsciiStrnCmp
+AUX tagndx 0 ttlsiz 0x42 lnnos 0 next 0
+[208](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d350 BCDtoDecimal
+AUX tagndx 0 ttlsiz 0xd lnnos 0 next 0
+[210](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000065ed writebytes
+AUX tagndx 0 ttlsiz 0x18d lnnos 0 next 0
+[212](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022b60 LibCreateProtocolNotifyEvent
+AUX tagndx 0 ttlsiz 0x79 lnnos 0 next 0
+[214](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000023890 LShiftU64
+AUX tagndx 0 ttlsiz 0xd lnnos 0 next 0
+[216](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000013668 blake2sp_final
+AUX tagndx 0 ttlsiz 0x19c lnnos 0 next 0
+[218](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001812b __fhandle_sckOPENchild
+AUX tagndx 0 ttlsiz 0x46b lnnos 0 next 0
+[220](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d680 StrCat
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[222](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000001699 __ffremove
+AUX tagndx 0 ttlsiz 0x75 lnnos 0 next 0
+[224](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000015f5c ReadResourceBe
+AUX tagndx 0 ttlsiz 0x54e lnnos 0 next 0
+[226](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001c960 InitializeLib
+AUX tagndx 0 ttlsiz 0xfd lnnos 0 next 0
+[228](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001db30 RtCopyMem
+AUX tagndx 0 ttlsiz 0x71 lnnos 0 next 0
+[230](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d880 Atoi
+AUX tagndx 0 ttlsiz 0x43 lnnos 0 next 0
+[232](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001eca0 DbgPrint
+AUX tagndx 0 ttlsiz 0x11e9 lnnos 0 next 0
+[234](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000039d2 _freadinfo
+AUX tagndx 0 ttlsiz 0x28 lnnos 0 next 0
+[236](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000012d4c blake2s_final
+AUX tagndx 0 ttlsiz 0x145 lnnos 0 next 0
+[238](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001fe90 DumpHex
+AUX tagndx 0 ttlsiz 0x1c1 lnnos 0 next 0
+[240](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d5d0 LibStubStrLwrUpr
+AUX tagndx 0 ttlsiz 0x5 lnnos 0 next 0
+[242](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000ee8b blake2s_init
+AUX tagndx 0 ttlsiz 0xcb lnnos 0 next 0
+[244](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d750 AsciiStrCmp
+AUX tagndx 0 ttlsiz 0x42 lnnos 0 next 0
+[246](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000018c45 __froot_sckinfo
+AUX tagndx 0 ttlsiz 0x4b4 lnnos 0 next 0
+[248](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a949 libinit
+AUX tagndx 0 ttlsiz 0xb9 lnnos 0 next 0
+[250](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022e20 LibLocateProtocol
+AUX tagndx 0 ttlsiz 0x9e lnnos 0 next 0
+[252](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000ee03 blake2s_init_param
+AUX tagndx 0 ttlsiz 0x88 lnnos 0 next 0
+[254](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022cc0 WaitForEventWithTimeout
+AUX tagndx 0 ttlsiz 0x95 lnnos 0 next 0
+[256](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000002e5a fuloaddir
+AUX tagndx 0 ttlsiz 0x27f lnnos 0 next 0
+[258](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000194ff strcheck
+AUX tagndx 0 ttlsiz 0x53 lnnos 0 next 0
+[260](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a045 __realloc_
+AUX tagndx 0 ttlsiz 0xe7 lnnos 0 next 0
+[262](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d600 StrLwr
+AUX tagndx 0 ttlsiz 0x1d lnnos 0 next 0
+[264](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001c700 CompareGuid_1
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[266](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d6d0 StrDuplicate
+AUX tagndx 0 ttlsiz 0x41 lnnos 0 next 0
+[268](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001ebf0 TimeToString
+AUX tagndx 0 ttlsiz 0xa4 lnnos 0 next 0
+[270](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e710 Print
+AUX tagndx 0 ttlsiz 0xb7 lnnos 0 next 0
+[272](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001408b blake2xb
+AUX tagndx 0 ttlsiz 0x11b lnnos 0 next 0
+[274](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019c93 str_tolower
+AUX tagndx 0 ttlsiz 0x7a lnnos 0 next 0
+[276](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a6b7 GetDevicePath
+AUX tagndx 0 ttlsiz 0x5f lnnos 0 next 0
+[278](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000005dd5 DisableVerbose
+AUX tagndx 0 ttlsiz 0x17 lnnos 0 next 0
+[280](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000015c05 ReadAtRVOFromSectionBe
+AUX tagndx 0 ttlsiz 0xa3 lnnos 0 next 0
+[282](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001984e strtok_i
+AUX tagndx 0 ttlsiz 0xcc lnnos 0 next 0
+[284](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cc40 CopyMem_1
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[286](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cf30 LibGetVariable
+AUX tagndx 0 ttlsiz 0x17 lnnos 0 next 0
+[288](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000015b9a GetAtRVOFromSectionDataBe
+AUX tagndx 0 ttlsiz 0x6b lnnos 0 next 0
+[290](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cfc0 LibSetNVVariable
+AUX tagndx 0 ttlsiz 0x2b lnnos 0 next 0
+[292](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001aa02 efi_main
+AUX tagndx 0 ttlsiz 0x42f lnnos 0 next 0
+[294](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022a20 LibMatchDevicePaths
+AUX tagndx 0 ttlsiz 0x73 lnnos 0 next 0
+[296](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000017c97 __fhandle_sckwrite
+AUX tagndx 0 ttlsiz 0x199 lnnos 0 next 0
+[298](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000018847 __froot_sckOPENchild
+AUX tagndx 0 ttlsiz 0x3fe lnnos 0 next 0
+[300](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a716 RestartSystem
+AUX tagndx 0 ttlsiz 0x31 lnnos 0 next 0
+[302](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000005e6e startup
+AUX tagndx 0 ttlsiz 0x2fe lnnos 0 next 0
+[304](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000238a0 RShiftU64
+AUX tagndx 0 ttlsiz 0xd lnnos 0 next 0
+[306](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cab0 memcpy
+AUX tagndx 0 ttlsiz 0x23 lnnos 0 next 0
+[308](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a35d __strspn
+AUX tagndx 0 ttlsiz 0x6a lnnos 0 next 0
+[310](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e4a0 UnicodeSPrint
+AUX tagndx 0 ttlsiz 0x8e lnnos 0 next 0
+[312](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000015a0 allocatecluster
+AUX tagndx 0 ttlsiz 0xf9 lnnos 0 next 0
+[314](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000002c96 floadhdir
+AUX tagndx 0 ttlsiz 0x1c4 lnnos 0 next 0
+[316](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000013c11 blake2xb_init_key
+AUX tagndx 0 ttlsiz 0x22d lnnos 0 next 0
+[318](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022250 DevicePathFromHandle
+AUX tagndx 0 ttlsiz 0x38 lnnos 0 next 0
+[320](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000134b5 blake2sp_update
+AUX tagndx 0 ttlsiz 0x1b3 lnnos 0 next 0
+[322](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022770 AppendDevicePathInstance
+AUX tagndx 0 ttlsiz 0xe0 lnnos 0 next 0
+[324](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019c53 tolower
+AUX tagndx 0 ttlsiz 0x16 lnnos 0 next 0
+[326](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e010 _SPrint
+AUX tagndx 0 ttlsiz 0x121 lnnos 0 next 0
+[328](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000017422 __fhandle_sckinfo
+AUX tagndx 0 ttlsiz 0x875 lnnos 0 next 0
+[330](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000014c63 LoadService
+AUX tagndx 0 ttlsiz 0x491 lnnos 0 next 0
+[332](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d6a0 StrnLen
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[334](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dee0 RtStrLen
+AUX tagndx 0 ttlsiz 0x21 lnnos 0 next 0
+[336](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019ee1 __pattmatch
+AUX tagndx 0 ttlsiz 0x164 lnnos 0 next 0
+[338](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000012e91 blake2s
+AUX tagndx 0 ttlsiz 0x15b lnnos 0 next 0
+[340](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cc50 CopyMemC
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[342](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dd70 RtStpnCpy
+AUX tagndx 0 ttlsiz 0x82 lnnos 0 next 0
+[344](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019552 strchecki
+AUX tagndx 0 ttlsiz 0x54 lnnos 0 next 0
+[346](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000017cb __ffremovelh
+AUX tagndx 0 ttlsiz 0x168 lnnos 0 next 0
+[348](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e5c0 PoolPrint
+AUX tagndx 0 ttlsiz 0x98 lnnos 0 next 0
+[350](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000677a readbytes
+AUX tagndx 0 ttlsiz 0x225 lnnos 0 next 0
+[352](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000012c1b blake2s_update
+AUX tagndx 0 ttlsiz 0x131 lnnos 0 next 0
+[354](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000004f7e __dirr_free
+AUX tagndx 0 ttlsiz 0x119 lnnos 0 next 0
+[356](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d6c0 StrSize
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[358](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000006c69 blake2b_init
+AUX tagndx 0 ttlsiz 0xe5 lnnos 0 next 0
+[360](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000005dec EnableVerbose
+AUX tagndx 0 ttlsiz 0x17 lnnos 0 next 0
+[362](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001b144 DescribeDeviceNode
+AUX tagndx 0 ttlsiz 0x397 lnnos 0 next 0
+[364](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000015a54 FileOffsetToRvoBe
+AUX tagndx 0 ttlsiz 0x54 lnnos 0 next 0
+[366](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019732 readbuf
+AUX tagndx 0 ttlsiz 0x11c lnnos 0 next 0
+[368](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dfe0 _DbgOut
+AUX tagndx 0 ttlsiz 0x23 lnnos 0 next 0
+[370](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022be0 WaitForSingleEvent
+AUX tagndx 0 ttlsiz 0xdf lnnos 0 next 0
+[372](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d660 StpCpy
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[374](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000169e0 JsonreadValue
+AUX tagndx 0 ttlsiz 0x183 lnnos 0 next 0
+[376](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000015ee5 MatchResourceName
+AUX tagndx 0 ttlsiz 0x77 lnnos 0 next 0
+[378](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000003eb8 __fgetparent
+AUX tagndx 0 ttlsiz 0xf5 lnnos 0 next 0
+[380](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000005295 __fprint_info
+AUX tagndx 0 ttlsiz 0x24c lnnos 0 next 0
+[382](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000037a6 __fsize
+AUX tagndx 0 ttlsiz 0x16b lnnos 0 next 0
+[384](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000001933 __fcreate
+AUX tagndx 0 ttlsiz 0x497 lnnos 0 next 0
+[386](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000002a2b __fpush1
+AUX tagndx 0 ttlsiz 0x26b lnnos 0 next 0
+[388](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a80a __strtod
+AUX tagndx 0 ttlsiz 0x13f lnnos 0 next 0
+[390](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cb70 ReallocatePool_1
+AUX tagndx 0 ttlsiz 0x8b lnnos 0 next 0
+[392](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000238c0 DivU64x32
+AUX tagndx 0 ttlsiz 0x20 lnnos 0 next 0
+[394](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dd40 RtStpCpy
+AUX tagndx 0 ttlsiz 0x29 lnnos 0 next 0
+[396](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000021e4 __finit
+AUX tagndx 0 ttlsiz 0x3ac lnnos 0 next 0
+[398](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cc70 GrowBuffer
+AUX tagndx 0 ttlsiz 0xd7 lnnos 0 next 0
+[400](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000001f checkdisk
+AUX tagndx 0 ttlsiz 0x1ce lnnos 0 next 0
+[402](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000e8cb blake2bp
+AUX tagndx 0 ttlsiz 0x362 lnnos 0 next 0
+[404](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000003456 fuloadh
+AUX tagndx 0 ttlsiz 0x15b lnnos 0 next 0
+[406](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cc00 FreePool
+AUX tagndx 0 ttlsiz 0x1a lnnos 0 next 0
+[408](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cc20 ZeroMem
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[410](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022380 DevicePathSize
+AUX tagndx 0 ttlsiz 0x2f lnnos 0 next 0
+[412](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022340 DevicePathInstanceCount
+AUX tagndx 0 ttlsiz 0x40 lnnos 0 next 0
+[414](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001720e socketopen
+AUX tagndx 0 ttlsiz 0x214 lnnos 0 next 0
+[416](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000003a43 _fwrite
+AUX tagndx 0 ttlsiz 0x27a lnnos 0 next 0
+[418](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000e579 blake2bp_update
+AUX tagndx 0 ttlsiz 0x1b3 lnnos 0 next 0
+[420](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000018622 __froot_sckwrite
+AUX tagndx 0 ttlsiz 0x8c lnnos 0 next 0
+[422](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000005097 __dirr
+AUX tagndx 0 ttlsiz 0x1fe lnnos 0 next 0
+[424](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001eab0 ValueToString
+AUX tagndx 0 ttlsiz 0x1f lnnos 0 next 0
+[426](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000235e0 LibUninstallProtocolInterfaces
+AUX tagndx 0 ttlsiz 0xcd lnnos 0 next 0
+[428](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001df10 RtStrnLen
+AUX tagndx 0 ttlsiz 0x31 lnnos 0 next 0
+[430](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cff0 LibSetVariable
+AUX tagndx 0 ttlsiz 0x2b lnnos 0 next 0
+[432](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d7f0 xtoi
+AUX tagndx 0 ttlsiz 0x81 lnnos 0 next 0
+[434](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001ead0 FloatToString
+AUX tagndx 0 ttlsiz 0x111 lnnos 0 next 0
+[436](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000016e23 JsonFree
+AUX tagndx 0 ttlsiz 0x2d8 lnnos 0 next 0
+[438](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a210 __safecopy
+AUX tagndx 0 ttlsiz 0x89 lnnos 0 next 0
+[440](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000013e3e blake2xb_update
+AUX tagndx 0 ttlsiz 0x2d lnnos 0 next 0
+[442](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a7e8 getptr
+AUX tagndx 0 ttlsiz 0x22 lnnos 0 next 0
+[444](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000020f40 VPoolPrint
+AUX tagndx 0 ttlsiz 0x44 lnnos 0 next 0
+[446](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000023300 LibFileSystemInfo
+AUX tagndx 0 ttlsiz 0x84 lnnos 0 next 0
+[448](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001991a strtok_k
+AUX tagndx 0 ttlsiz 0x1f4 lnnos 0 next 0
+[450](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000013228 blake2sp_init
+AUX tagndx 0 ttlsiz 0xf5 lnnos 0 next 0
+[452](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000001dca __faddr
+AUX tagndx 0 ttlsiz 0x41a lnnos 0 next 0
+[454](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e930 IPrintAt
+AUX tagndx 0 ttlsiz 0x98 lnnos 0 next 0
+[456](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d8d0 MetaMatch
+AUX tagndx 0 ttlsiz 0x11e lnnos 0 next 0
+[458](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d4e0 StrnCmp
+AUX tagndx 0 ttlsiz 0x4a lnnos 0 next 0
+[460](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000013e6b blake2xb_final
+AUX tagndx 0 ttlsiz 0x220 lnnos 0 next 0
+[462](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019e41 makeGPTeNSTR
+AUX tagndx 0 ttlsiz 0xa0 lnnos 0 next 0
+[464](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001c710 IsZeroGuid
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[466](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000000d56 fmount
+AUX tagndx 0 ttlsiz 0x84a lnnos 0 next 0
+[468](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000159bb RvoToFileOffsetBe
+AUX tagndx 0 ttlsiz 0x99 lnnos 0 next 0
+[470](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000013804 blake2sp
+AUX tagndx 0 ttlsiz 0x362 lnnos 0 next 0
+[472](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d9f0 LibStubMetaiMatch
+AUX tagndx 0 ttlsiz 0xa0 lnnos 0 next 0
+[474](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000013be5 blake2xb_init
+AUX tagndx 0 ttlsiz 0x2c lnnos 0 next 0
+[476](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000238e0 _relocate
+AUX tagndx 0 ttlsiz 0xab lnnos 0 next 0
+[478](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000021320 Output
+AUX tagndx 0 ttlsiz 0x21 lnnos 0 next 0
+[480](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000004f5 formatpart
+AUX tagndx 0 ttlsiz 0x4cd lnnos 0 next 0
+[482](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x000000000001c5a4 _start
+[483](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e660 CatPrint
+AUX tagndx 0 ttlsiz 0xa8 lnnos 0 next 0
+[485](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000063c2 writeblocks
+AUX tagndx 0 ttlsiz 0x22b lnnos 0 next 0
+[487](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019d0d match_rec
+AUX tagndx 0 ttlsiz 0x134 lnnos 0 next 0
+[489](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000226b0 UnpackDevicePath
+AUX tagndx 0 ttlsiz 0xbe lnnos 0 next 0
+[491](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000014461 blake2xs_final
+AUX tagndx 0 ttlsiz 0x223 lnnos 0 next 0
+[493](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a747 sysbase
+AUX tagndx 0 ttlsiz 0xa1 lnnos 0 next 0
+[495](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000015d13 FindRelocationBe
+AUX tagndx 0 ttlsiz 0x1d2 lnnos 0 next 0
+[497](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dbc0 RtCompareMem
+AUX tagndx 0 ttlsiz 0x33 lnnos 0 next 0
+[499](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000150f4 ResolveRelS
+AUX tagndx 0 ttlsiz 0x649 lnnos 0 next 0
+[501](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000006bda blake2b_init_param
+AUX tagndx 0 ttlsiz 0x8f lnnos 0 next 0
+[503](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d6b0 StrLen
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[505](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dc00 RtCompareGuid
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[507](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a473 getDriveMediaID
+AUX tagndx 0 ttlsiz 0x176 lnnos 0 next 0
+[509](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cd50 LibMemoryMap
+AUX tagndx 0 ttlsiz 0xf1 lnnos 0 next 0
+[511](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000003cbd _fread
+AUX tagndx 0 ttlsiz 0x1fb lnnos 0 next 0
+[513](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000166e6 JsonCreateValue
+AUX tagndx 0 ttlsiz 0x57 lnnos 0 next 0
+[515](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000023270 LibFileInfo
+AUX tagndx 0 ttlsiz 0x84 lnnos 0 next 0
+[517](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001de00 RtStrCat
+AUX tagndx 0 ttlsiz 0x49 lnnos 0 next 0
+[519](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019612 isascii
+AUX tagndx 0 ttlsiz 0x14 lnnos 0 next 0
+[521](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000023210 LibOpenRoot
+AUX tagndx 0 ttlsiz 0x57 lnnos 0 next 0
+[523](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000003fad __fdiradd
+AUX tagndx 0 ttlsiz 0x415 lnnos 0 next 0
+[525](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019b0e strtok_d
+AUX tagndx 0 ttlsiz 0xad lnnos 0 next 0
+[527](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a330 __strdup
+AUX tagndx 0 ttlsiz 0x2d lnnos 0 next 0
+[529](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000dbeb blake2b_update
+AUX tagndx 0 ttlsiz 0x143 lnnos 0 next 0
+[531](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001941d _GUIDtoSTR
+AUX tagndx 0 ttlsiz 0x70 lnnos 0 next 0
+[533](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d530 LibStubStriCmp
+AUX tagndx 0 ttlsiz 0xa0 lnnos 0 next 0
+[535](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000017e30 __fhandle_sckread
+AUX tagndx 0 ttlsiz 0x1d2 lnnos 0 next 0
+[537](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001b069 DebugDevicePath
+AUX tagndx 0 ttlsiz 0xdb lnnos 0 next 0
+[539](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dc30 RtIsZeroGuid
+AUX tagndx 0 ttlsiz 0x10 lnnos 0 next 0
+[541](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000054e1 getloc
+AUX tagndx 0 ttlsiz 0x65 lnnos 0 next 0
+[543](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000016b63 JsonParse
+AUX tagndx 0 ttlsiz 0x1a lnnos 0 next 0
+[545](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a299 __memcpy
+AUX tagndx 0 ttlsiz 0x64 lnnos 0 next 0
+[547](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001c5d0 _entry
+AUX tagndx 0 ttlsiz 0x11c lnnos 0 next 0
+[549](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000ef56 blake2s_init_key
+AUX tagndx 0 ttlsiz 0x15b lnnos 0 next 0
+[551](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001948d prGUID
+AUX tagndx 0 ttlsiz 0x72 lnnos 0 next 0
+[553](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022aa0 LibDuplicateDevicePathInstance
+AUX tagndx 0 ttlsiz 0x6f lnnos 0 next 0
+[555](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000238b0 MultU64x32
+AUX tagndx 0 ttlsiz 0xc lnnos 0 next 0
+[557](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000015ca8 ReadSectionBe
+AUX tagndx 0 ttlsiz 0x6b lnnos 0 next 0
+[559](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e880 IPrint
+AUX tagndx 0 ttlsiz 0xaa lnnos 0 next 0
+[561](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d020 LibInsertToTailOfBootOrder
+AUX tagndx 0 ttlsiz 0x16d lnnos 0 next 0
+[563](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001df80 RtBCDtoDecimal
+AUX tagndx 0 ttlsiz 0x13 lnnos 0 next 0
+[565](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a1b5 __memset
+AUX tagndx 0 ttlsiz 0x5b lnnos 0 next 0
+[567](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019bbb trng__
+AUX tagndx 0 ttlsiz 0x98 lnnos 0 next 0
+[569](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001b4db getDevPath
+AUX tagndx 0 ttlsiz 0xa8 lnnos 0 next 0
+[571](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001ca60 memset
+AUX tagndx 0 ttlsiz 0x42 lnnos 0 next 0
+[573](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000005546 FindDiskHandleByGUID
+AUX tagndx 0 ttlsiz 0x88f lnnos 0 next 0
+[575](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022ec0 LibLocateHandleByDiskSignature
+AUX tagndx 0 ttlsiz 0x347 lnnos 0 next 0
+[577](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022850 LibDevicePathToInterface
+AUX tagndx 0 ttlsiz 0x85 lnnos 0 next 0
+[579](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000e007 blake2
+AUX tagndx 0 ttlsiz 0x48 lnnos 0 next 0
+[581](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022580 AppendDevicePathNode
+AUX tagndx 0 ttlsiz 0x80 lnnos 0 next 0
+[583](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d340 DecimaltoBCD
+AUX tagndx 0 ttlsiz 0xd lnnos 0 next 0
+[585](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001bcbf InitialiseVideoMemory
+AUX tagndx 0 ttlsiz 0x2d8 lnnos 0 next 0
+[587](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001479f LoadExecutable
+AUX tagndx 0 ttlsiz 0x4c4 lnnos 0 next 0
+[589](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cc60 CompareMem
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[591](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000035b1 __freadinfo
+AUX tagndx 0 ttlsiz 0x9b lnnos 0 next 0
+[593](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000195a6 __memdup
+AUX tagndx 0 ttlsiz 0x6c lnnos 0 next 0
+[595](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001da90 MetaiMatch
+AUX tagndx 0 ttlsiz 0x20 lnnos 0 next 0
+[597](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000005e03 getblocksize
+AUX tagndx 0 ttlsiz 0x15 lnnos 0 next 0
+[599](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000015aa8 FindSectionBe
+AUX tagndx 0 ttlsiz 0xf2 lnnos 0 next 0
+[601](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000364c __fupdatetstamp
+AUX tagndx 0 ttlsiz 0x15a lnnos 0 next 0
+[603](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dc40 RtStrCmp
+AUX tagndx 0 ttlsiz 0x4a lnnos 0 next 0
+[605](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e140 _PoolPrint
+AUX tagndx 0 ttlsiz 0x117 lnnos 0 next 0
+[607](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000e38a blake2bp_init_key
+AUX tagndx 0 ttlsiz 0x1ef lnnos 0 next 0
+[609](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000170fb JsongetValue
+AUX tagndx 0 ttlsiz 0x113 lnnos 0 next 0
+[611](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e9d0 AsciiPrint
+AUX tagndx 0 ttlsiz 0xb6 lnnos 0 next 0
+[613](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022d60 LibLocateHandle
+AUX tagndx 0 ttlsiz 0xbb lnnos 0 next 0
+[615](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a2fd __strlen
+AUX tagndx 0 ttlsiz 0x33 lnnos 0 next 0
+[617](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000023420 LibInstallProtocolInterfaces
+AUX tagndx 0 ttlsiz 0x1b3 lnnos 0 next 0
+[619](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000002590 __ffindh
+AUX tagndx 0 ttlsiz 0x14c lnnos 0 next 0
+[621](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000deac blake2b
+AUX tagndx 0 ttlsiz 0x15b lnnos 0 next 0
+[623](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a12c __calloc_
+AUX tagndx 0 ttlsiz 0x89 lnnos 0 next 0
+[625](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000039fa _fseek
+AUX tagndx 0 ttlsiz 0x1f lnnos 0 next 0
+[627](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cc30 SetMem
+AUX tagndx 0 ttlsiz 0xd lnnos 0 next 0
+[629](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001c900 EFIDebugVariable
+AUX tagndx 0 ttlsiz 0x53 lnnos 0 next 0
+[631](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d4d0 StrCmp
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[633](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001daf0 RtSetMem
+AUX tagndx 0 ttlsiz 0x38 lnnos 0 next 0
+[635](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001af90 BuildDeviceTree
+AUX tagndx 0 ttlsiz 0xd9 lnnos 0 next 0
+[637](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001573d ReadBeHeader
+AUX tagndx 0 ttlsiz 0x27e lnnos 0 next 0
+[639](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000284d __ffind
+AUX tagndx 0 ttlsiz 0x35 lnnos 0 next 0
+[641](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000236b0 LibReinstallProtocolInterfaces
+AUX tagndx 0 ttlsiz 0x1da lnnos 0 next 0
+[643](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000026dc __ffindhi
+AUX tagndx 0 ttlsiz 0x139 lnnos 0 next 0
+[645](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000043c2 __ftest
+AUX tagndx 0 ttlsiz 0x296 lnnos 0 next 0
+[647](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dab0 RtZeroMem
+AUX tagndx 0 ttlsiz 0x32 lnnos 0 next 0
+[649](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000170e __ffremoveh
+AUX tagndx 0 ttlsiz 0x8d lnnos 0 next 0
+[651](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d690 StrnCat
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[653](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dbb0 RtCopyMemC
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[655](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000186ae __froot_sckclose
+AUX tagndx 0 ttlsiz 0x199 lnnos 0 next 0
+[657](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e7d0 PrintAt
+AUX tagndx 0 ttlsiz 0xa2 lnnos 0 next 0
+[659](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000000bf5 queryfs
+AUX tagndx 0 ttlsiz 0x161 lnnos 0 next 0
+[661](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d650 StrnCpy
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[663](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000001ed loadpart
+AUX tagndx 0 ttlsiz 0x308 lnnos 0 next 0
+[665](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000003a19 _fseeko
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[667](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000020f90 _IPrint
+AUX tagndx 0 ttlsiz 0xf1 lnnos 0 next 0
+[669](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000030d9 __fdirrefresh
+AUX tagndx 0 ttlsiz 0x278 lnnos 0 next 0
+[671](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000018002 __fhandle_sckclose
+AUX tagndx 0 ttlsiz 0x129 lnnos 0 next 0
+[673](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001df50 RtStrSize
+AUX tagndx 0 ttlsiz 0x2e lnnos 0 next 0
+[675](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001ce50 LibGetVariableAndSize
+AUX tagndx 0 ttlsiz 0xdd lnnos 0 next 0
+[677](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dfa0 RtDecimaltoBCD
+AUX tagndx 0 ttlsiz 0x27 lnnos 0 next 0
+[679](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000002815 __ffindi
+AUX tagndx 0 ttlsiz 0x38 lnnos 0 next 0
+[681](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000003351 floadh
+AUX tagndx 0 ttlsiz 0x105 lnnos 0 next 0
+[683](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000020ef0 UnicodeVSPrint
+AUX tagndx 0 ttlsiz 0x46 lnnos 0 next 0
+[685](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000e295 blake2bp_init
+AUX tagndx 0 ttlsiz 0xf5 lnnos 0 next 0
+[687](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001b583 loadDNodes
+AUX tagndx 0 ttlsiz 0x2a5 lnnos 0 next 0
+[689](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d620 StrUpr
+AUX tagndx 0 ttlsiz 0x1d lnnos 0 next 0
+[691](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000210c0 AsciiVSPrint
+AUX tagndx 0 ttlsiz 0xdb lnnos 0 next 0
+[693](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001c6f0 InitializeGuid
+AUX tagndx 0 ttlsiz 0x5 lnnos 0 next 0
+[695](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000021420 Input
+AUX tagndx 0 ttlsiz 0x24 lnnos 0 next 0
+[697](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019c69 isdigit
+AUX tagndx 0 ttlsiz 0x2a lnnos 0 next 0
+[699](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000009c2 queryparttablefs
+AUX tagndx 0 ttlsiz 0x233 lnnos 0 next 0
+[701](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000018596 __froot_sckread
+AUX tagndx 0 ttlsiz 0x8c lnnos 0 next 0
+[703](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d400 LibGetUiString
+AUX tagndx 0 ttlsiz 0xc7 lnnos 0 next 0
+[705](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a3c7 __memcmp
+AUX tagndx 0 ttlsiz 0xac lnnos 0 next 0
+[707](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001e530 AsciiSPrint
+AUX tagndx 0 ttlsiz 0x8e lnnos 0 next 0
+[709](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a5e9 ValidateImageHandle
+AUX tagndx 0 ttlsiz 0x5c lnnos 0 next 0
+[711](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dc90 RtStrCpy
+AUX tagndx 0 ttlsiz 0x29 lnnos 0 next 0
+[713](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001b828 GetMemoryMap
+AUX tagndx 0 ttlsiz 0x2f4 lnnos 0 next 0
+[715](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000616c readblocks
+AUX tagndx 0 ttlsiz 0x256 lnnos 0 next 0
+[717](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000023390 LibFileSystemVolumeLabelInfo
+AUX tagndx 0 ttlsiz 0x84 lnnos 0 next 0
+[719](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000014684 blake2xs
+AUX tagndx 0 ttlsiz 0x11b lnnos 0 next 0
+[721](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000003911 __dsize
+AUX tagndx 0 ttlsiz 0x99 lnnos 0 next 0
+[723](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000014253 blake2xs_init
+AUX tagndx 0 ttlsiz 0x2c lnnos 0 next 0
+[725](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000dd2e blake2b_final
+AUX tagndx 0 ttlsiz 0x17e lnnos 0 next 0
+[727](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000020e80 _PoolCatPrint
+AUX tagndx 0 ttlsiz 0x6b lnnos 0 next 0
+[729](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001331d blake2sp_init_key
+AUX tagndx 0 ttlsiz 0x198 lnnos 0 next 0
+[731](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001dcc0 RtStrnCpy
+AUX tagndx 0 ttlsiz 0x77 lnnos 0 next 0
+[733](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001de50 RtStrnCat
+AUX tagndx 0 ttlsiz 0x88 lnnos 0 next 0
+[735](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000005e18 setblocksize
+AUX tagndx 0 ttlsiz 0x56 lnnos 0 next 0
+[737](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000006d4e blake2b_init_key
+AUX tagndx 0 ttlsiz 0x1b6 lnnos 0 next 0
+[739](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cf50 LibDeleteVariable
+AUX tagndx 0 ttlsiz 0x70 lnnos 0 next 0
+[741](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d360 LibGetSystemConfigurationTable
+AUX tagndx 0 ttlsiz 0xa0 lnnos 0 next 0
+[743](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000021350 IInput
+AUX tagndx 0 ttlsiz 0xce lnnos 0 next 0
+[745](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cb20 AllocateZeroPool
+AUX tagndx 0 ttlsiz 0x4b lnnos 0 next 0
+[747](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000179b __ffremovel
+AUX tagndx 0 ttlsiz 0x30 lnnos 0 next 0
+[749](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d5e0 StriCmp
+AUX tagndx 0 ttlsiz 0x1f lnnos 0 next 0
+[751](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d190 ValidMBR
+AUX tagndx 0 ttlsiz 0x1a1 lnnos 0 next 0
+[753](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001ae31 ProcessNode
+AUX tagndx 0 ttlsiz 0x15f lnnos 0 next 0
+[755](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000019626 __getfcode
+AUX tagndx 0 ttlsiz 0x10c lnnos 0 next 0
+[757](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001ea90 ValueToHex
+AUX tagndx 0 ttlsiz 0x17 lnnos 0 next 0
+[759](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001c720 GuidToString
+AUX tagndx 0 ttlsiz 0xeb lnnos 0 next 0
+[761](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000223b0 DuplicateDevicePath
+AUX tagndx 0 ttlsiz 0x60 lnnos 0 next 0
+[763](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001427f blake2xs_init_key
+AUX tagndx 0 ttlsiz 0x1b5 lnnos 0 next 0
+[765](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022b10 StatusToString
+AUX tagndx 0 ttlsiz 0x50 lnnos 0 next 0
+[767](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000039aa _dreadinfo
+AUX tagndx 0 ttlsiz 0x28 lnnos 0 next 0
+[769](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000014434 blake2xs_update
+AUX tagndx 0 ttlsiz 0x2d lnnos 0 next 0
+[771](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001cae0 AllocatePool
+AUX tagndx 0 ttlsiz 0x34 lnnos 0 next 0
+[773](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d640 StrCpy
+AUX tagndx 0 ttlsiz 0x9 lnnos 0 next 0
+[775](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000021090 VPrint
+AUX tagndx 0 ttlsiz 0x2b lnnos 0 next 0
+[777](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000228e0 DevicePathToStr
+AUX tagndx 0 ttlsiz 0x13d lnnos 0 next 0
+[779](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000699f dispose
+AUX tagndx 0 ttlsiz 0x7e lnnos 0 next 0
+[781](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001c810 InitializeUnicodeSupport
+AUX tagndx 0 ttlsiz 0xed lnnos 0 next 0
+[783](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001d720 AsciiStrLen
+AUX tagndx 0 ttlsiz 0x21 lnnos 0 next 0
+[785](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000000e72c blake2bp_final
+AUX tagndx 0 ttlsiz 0x19f lnnos 0 next 0
+[787](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000004ada __dirr_init
+AUX tagndx 0 ttlsiz 0x200 lnnos 0 next 0
+[789](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x00000000000190f9 __froot_sckopen
+AUX tagndx 0 ttlsiz 0x324 lnnos 0 next 0
+[791](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022600 FileDevicePath
+AUX tagndx 0 ttlsiz 0xb0 lnnos 0 next 0
+[793](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001bf97 gatherbootinfo
+AUX tagndx 0 ttlsiz 0x2a1 lnnos 0 next 0
+[795](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001c238 CreateBootEntry
+AUX tagndx 0 ttlsiz 0x36b lnnos 0 next 0
+[797](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x000000000001a645 IsPartition
+AUX tagndx 0 ttlsiz 0x72 lnnos 0 next 0
+[799](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022410 AppendDevicePath
+AUX tagndx 0 ttlsiz 0x16d lnnos 0 next 0
+[801](sec  1)(fl 0x00)(ty   20)(scl   2) (nx 1) 0x0000000000022290 DevicePathInstance
+AUX tagndx 0 ttlsiz 0xa2 lnnos 0 next 0
+[803](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000003f0 gEfiMpServicesProtocolGuid
+[804](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000ec8 LibInitialized
+[805](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000460 gEfiPlatformDriverOverrideProtocolGuid
+[806](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000ed0 GuidList
+[807](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000004c0 gEfiPciIoProtocolGuid
+[808](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000001c0 gEfiDebugSupportProtocolGuid
+[809](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000390 ErrorOutSpliterProtocol
+[810](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000660 EndInstanceDevicePath
+[811](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000250 Ip4ServiceBindingProtocol
+[812](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000eb8 ST
+[813](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000021250 efi_call8
+[814](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x000000000002119b efi_call0
+[815](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000212c8 efi_call10
+[816](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000ef0 LibRuntimeDebugOut
+[817](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000003a0 TextOutSpliterProtocol
+[818](sec  4)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000000 _DYNAMIC
+[819](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000004a0 gEfiDriverBindingProtocolGuid
+[820](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000001a0 ShellProtocolGuid
+[821](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000001e0 AbsolutePointerProtocol
+[822](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000023990 _etext
+[823](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000440 gEfiDriverFamilyOverrideProtocolGuid
+[824](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000480 gEfiComponentName2ProtocolGuid
+[825](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000240 Ip4Protocol
+[826](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000420 gEfiFileInfoGuid
+[827](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000200 Tcp4Protocol
+[828](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000ee8 LibRuntimeRaiseTPL
+[829](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000680 UnicodeInterface
+[830](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000001f0 SimplePointerProtocol
+[831](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000e80 __DTOR_END__
+[832](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000e80 __fini_array_end
+[833](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000004d0 gEFiUiInterfaceProtocolGuid
+[834](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000ea0 gZeroGuid
+[835](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000668 RootDevicePath
+[836](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000260 EfiDtbTableGuid
+[837](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000530 gEfiUnicodeCollationProtocolGuid
+[838](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000590 gEfiDxeServicesTableGuid
+[839](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000211b4 efi_call2
+[840](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000005c0 gEfiBlockIo2ProtocolGuid
+[841](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000003c0 LegacyBootProtocol
+[842](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000002a0 AcpiTableGuid
+[843](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000360 gEfiEdidDiscoveredProtocolGuid
+[844](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000004e0 gEfiNetworkInterfaceIdentifierProtocolGuid
+[845](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000664 EndDevicePath
+[846](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000003d0 VariableStoreProtocol
+[847](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000be0 ErrorCodeTable
+[848](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000540 gEfiDeviceIoProtocolGuid
+[849](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000005b0 gEfiDiskIoProtocolGuid
+[850](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000a00 EFIDebug
+[851](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000001b0 SimpleTextInputExProtocol
+[852](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000300 gEfiVT100PlusGuid
+[853](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000580 gEfiSimpleFileSystemProtocolGuid
+[854](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000610 gEfiDevicePathUtilitiesProtocolGuid
+[855](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000310 gEfiVT100Guid
+[856](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000650 gEfiGlobalVariableGuid
+[857](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000e80 __CTOR_LIST__
+[858](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000470 gEfiHashProtocolGuid
+[859](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000410 gEfiFileSystemInfoGuid
+[860](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000001d0 gEfiDebugImageInfoTableGuid
+[861](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000600 gEfiLoadedImageProtocolGuid
+[862](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000002f0 gEfiVTUTF8Guid
+[863](sec  4)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000002808 DebugPort
+[864](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000400 gEfiFileSystemVolumeLabelInfoIdGuid
+[865](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000021223 efi_call7
+[866](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000320 gEfiPcAnsiGuid
+[867](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000500 gEfiPxeBaseCodeProtocolGuid
+[868](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000000 _text
+[869](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000e80 __fini_array_start
+[870](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000005f0 gEfiSimpleTextInProtocolGuid
+[871](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000230 Udp4ServiceBindingProtocol
+[872](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000005d0 gEfiBlockIoProtocolGuid
+[873](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000340 gEfiEdidOverrideProtocolGuid
+[874](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000006a0 LibStubUnicodeInterface
+[875](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000430 gEfiEbcProtocolGuid
+[876](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000e80 __init_array_end
+[877](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000eb0 BS
+[878](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000002b0 MpsTableGuid
+[879](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000350 gEfiEdidActiveProtocolGuid
+[880](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000211e7 efi_call5
+[881](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000630 gEfiDevicePathToTextProtocolGuid
+[882](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000380 TextInSpliterProtocol
+[883](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000e80 __CTOR_END__
+[884](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000211c2 efi_call3
+[885](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000021200 efi_call6
+[886](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000e80 __DTOR_LIST__
+[887](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x000000000000066c PoolAllocationType
+[888](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000520 gEfiSerialIoProtocolGuid
+[889](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000270 SalSystemTableGuid
+[890](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000560 gEfiLoadFileProtocolGuid
+[891](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000004f0 gEfiPxeBaseCodeCallbackProtocolGuid
+[892](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000450 gEfiBusSpecificDriverOverrideProtocolGuid
+[893](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000220 Udp4Protocol
+[894](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000290 gEfiSmbiosTableGuid
+[895](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000190 ShellParametersProtocolGuid
+[896](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000ef8 LibFwInstance
+[897](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000000 _data
+[898](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000490 gEfiComponentNameProtocolGuid
+[899](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000180 ShellDynamicCommandProtocolGuid
+[900](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000640 gEfiDevicePathProtocolGuid
+[901](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000620 gEfiDevicePathFromTextProtocolGuid
+[902](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000550 gEfiLoadFile2ProtocolGuid
+[903](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000021287 efi_call9
+[904](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000f00 RT
+[905](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000280 gEfiSmbios3TableGuid
+[906](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000004b0 gEfiPciRootBridgeIoProtocolGuid
+[907](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000f08 _edata
+[908](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000330 AdapterDebugProtocol
+[909](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000ee0 LibRuntimeRestoreTPL
+[910](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000510 gEfiSimpleNetworkProtocolGuid
+[911](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000002d0 EfiPartTypeLegacyMbrGuid
+[912](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000570 gEfiLoadedImageDevicePathProtocolGuid
+[913](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000ec0 LibImageHandle
+[914](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000003b0 VgaClassProtocol
+[915](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000005a0 gEfiDiskIo2ProtocolGuid
+[916](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000e80 __init_array_start
+[917](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000370 gEfiGraphicsOutputProtocolGuid
+[918](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000210 Tcp4ServiceBindingProtocol
+[919](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000211a6 efi_call1
+[920](sec  1)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000211d3 efi_call4
+[921](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000005e0 gEfiSimpleTextOutProtocolGuid
+[922](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x0000000000000a20 DevPathTable
+[923](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000002e0 EfiPartTypeSystemPartitionGuid
+[924](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000002c0 UnknownDevice
+[925](sec  2)(fl 0x00)(ty    0)(scl   2) (nx 0) 0x00000000000003e0 InternalShellProtocol
+
+

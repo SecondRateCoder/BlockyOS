@@ -204,7 +204,7 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 		setblocksize(re, fsroot_->confBlockSize);
 		conf_fsroot *largeroot = __calloc(1, sizeof(conf_fsroot));
 		*largeroot = (conf_fsroot){
-			.loc = 0x00,
+			.loc = partition.base,
 			.root = fsroot_,
 			.lastClusterAlloc = 0x00,
 			.logblocks = {

@@ -13,7 +13,7 @@
 		},
 		{
 			"name": "ROOT",
-			"size": 1073741800,
+			"size": 134217728,
 			"type": "EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000",
 			"unique": "EBD033A2-B9E5-4433-A02D-B4B8D3D3F000",
 			"attributes": ["required"],

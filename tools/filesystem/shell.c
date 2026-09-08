@@ -471,20 +471,14 @@ cmd_errout __shellexit(uint64_t *buffer, void **persistent){
 	if(!mountcd || !symcd || !symcd->persistent){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Dependency e.mount has not been defined"};}
 	for(uint32_t cc = 0; cc < ((symrefbuffer *)symcd->persistent)->len; ++cc){
 		switch(((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].type){
-			case symtype_e__fhandle: {fuloadh((fhandle *)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);		continue;}
-			case symtype_e__dirhandle: {fuloaddir((dirhandle *)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);	continue;}
+			case symtype_e__fhandle:	{fuloadh((fhandle *)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);		continue;}
+			case symtype_e__dirhandle:	{fuloaddir((dirhandle *)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);	continue;}
 			default: {continue;}
 		}
 	}
 	fuloadroot(mountcd->persistent);
 	fclose(fs_logf);
 	exit(EXIT_SUCCESS);
-}
-
-cmd_errout __shellsync(uint64_t *buffer, void **persistent){
-	printf("\n__FRAT_SYNC__\n");
-	fflush(stdout);
-	return (cmd_errout){.errcode = 0, .msg = ""};
 }
 
 volatile cmddesc commands[] = {
@@ -605,9 +599,6 @@ volatile cmddesc commands[] = {
 				{.flag = "-n", .type = cmddescargtype__qword, .desc = "The #Bytes to read <a Value of 0 means \"Read full file\">"},
 			}, .nflags = 4
 		}
-	}, {
-		.cmd = "sync", .alias = ",sy", .desc = "Synchronize shell output", .func = __shellsync,
-		.persistent = NULL, .flags = {.flags = {0}, .nflags = 0}
 	}, {
 		.cmd = "exit", .alias = ",e", .desc = "Exit the Program", .func = __shellexit,
 		.persistent = NULL, .flags = {

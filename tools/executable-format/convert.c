@@ -52,6 +52,7 @@ uint32_t GetAlignmentBe(uint64_t Number){
 
 #define AddRVA32	AddRVA64
 static void AddRVA64(EATReferenceList *list, RelativeVirtualOffset rva){
+	if(!list){return;}
 	if (list->Count >= list->Capacity) {
 		list->Capacity = (list->Capacity == 0) ? 16 : list->Capacity * 2;
 		list->RVAs = realloc(list->RVAs, list->Capacity * sizeof(RelativeVirtualOffset));
@@ -77,6 +78,7 @@ EATReferenceList FindEATReferences32(
 	RelativeVirtualOffset eatRVA
 ){
 	EATReferenceList refs = {NULL, 0, 0};
+	if(!codeBytes || codeSize == 0){return refs;}
 	uint32_t targetAbsoluteAddress = imageBase + eatRVA;
 	size_t offset = 0;
 
@@ -100,7 +102,8 @@ EATReferenceList FindEATReferences32(
 				}
 			}
 			if(isDirectMatch && (immOffset + 4 <= codeSize)){
-				uint32_t candidateAddress = *(uint32_t *)&codeBytes[immOffset];
+				uint32_t candidateAddress;
+				memcpy(&candidateAddress, codeBytes + immOffset, sizeof(candidateAddress));
 				if(candidateAddress == targetAbsoluteAddress){
 					RelativeVirtualOffset currentInstrRVA = codeSectionRVA + (RelativeVirtualOffset)offset;
 					AddRVA32(&refs, currentInstrRVA);
@@ -126,6 +129,7 @@ EATReferenceList FindEATReferences64(
 	RelativeVirtualOffset eatRVA
 ){
 	EATReferenceList refs = { NULL, 0, 0 };
+	if(!codeBytes || codeSize == 0){return refs;}
 	size_t offset = 0;
 	while(offset < codeSize){
 		// x86_64 REX Prefixes range from 0x40 to 0x4F
@@ -141,7 +145,8 @@ EATReferenceList FindEATReferences64(
 			// 0x8D = LEA, 0x8B = MOV
 			// ModR/M byte with Mod=00 and RM=101 indicates RIP-relative addressing in x86_64
 			if((opcode == 0x8D || opcode == 0x8B) && (modrm & 0xC7) == 0x05){
-				int32_t disp = *(int32_t *)&codeBytes[offset + prefixLen + 2];
+				int32_t disp;
+				memcpy(&disp, codeBytes + offset + prefixLen + 2, sizeof(disp));
 				
 				// Total length of instruction = Prefix + Opcode (1) + ModRM (1) + Disp32 (4)
 				size_t instrLen = prefixLen + 6;
@@ -160,6 +165,7 @@ EATReferenceList FindEATReferences64(
 
 #define AddIATRef	AddIATRef64
 static void AddIATRef64(IATReferenceList *list, RelativeVirtualOffset rva){
+	if(!list){return;}
 	if(list->Count >= list->Capacity){
 		list->Capacity = (list->Capacity == 0) ? 16 : list->Capacity * 2;
 		list->RVAs = realloc(list->RVAs, list->Capacity * sizeof(RelativeVirtualOffset));
@@ -185,6 +191,7 @@ IATReferenceList FindIATReferences64(
 	uint32_t iatSize
 ){
 	IATReferenceList refs = {NULL, 0, 0};
+	if(!codeBytes || codeSize == 0){return refs;}
 	size_t offset = 0;
 	RelativeVirtualOffset iatEndRVA = iatStartRVA + iatSize;
 
@@ -197,7 +204,8 @@ IATReferenceList FindIATReferences64(
 				isIndirectMov     = (opcode == 0x8B && (modrm & 0xC7) == 0x05);
 
 			if(isIndirectCallJmp || isIndirectMov){
-				int32_t disp = *(int32_t *)&codeBytes[offset + prefixLen + 2];
+				int32_t disp;
+				memcpy(&disp, codeBytes + offset + prefixLen + 2, sizeof(disp));
 				size_t instrLen = prefixLen + 6;
 				RelativeVirtualOffset currentInstrRVA = codeSectionRVA + (RelativeVirtualOffset)offset, 
 										nextInstrRVA = currentInstrRVA + (RelativeVirtualOffset)instrLen, 
@@ -231,6 +239,7 @@ IATReferenceList FindIATReferences32(
 	uint32_t iatSize
 ){
 	IATReferenceList refs = { NULL, 0, 0 };
+	if(!codeBytes || codeSize == 0){return refs;}
 	uint32_t iatStartAbs = imageBase + iatStartRVA, 
 			iatEndAbs   = iatStartAbs + iatSize;
 	size_t offset = 0;
@@ -240,7 +249,8 @@ IATReferenceList FindIATReferences32(
 			if(opcode == 0xFF && (offset + 6 <= codeSize)){
 				uint8_t modrm = codeBytes[offset + 1];
 				if(modrm == 0x15 || modrm == 0x25){
-					uint32_t candidateAbs = *(uint32_t *)&codeBytes[offset + 2];
+					uint32_t candidateAbs;
+					memcpy(&candidateAbs, codeBytes + offset + 2, sizeof(candidateAbs));
 					if(candidateAbs >= iatStartAbs && candidateAbs < iatEndAbs){
 						AddIATRef(&refs, codeSectionRVA + (RelativeVirtualOffset)offset);
 					}
@@ -248,7 +258,8 @@ IATReferenceList FindIATReferences32(
 			}else if(opcode == 0x8B && (offset + 6 <= codeSize)){
 				uint8_t modrm = codeBytes[offset + 1];
 				if((modrm & 0xC7) == 0x05){
-					uint32_t candidateAbs = *(uint32_t *)&codeBytes[offset + 2];
+					uint32_t candidateAbs;
+					memcpy(&candidateAbs, codeBytes + offset + 2, sizeof(candidateAbs));
 					if(candidateAbs >= iatStartAbs && candidateAbs < iatEndAbs){
 						AddIATRef(&refs, codeSectionRVA + (RelativeVirtualOffset)offset);
 					}
@@ -258,6 +269,79 @@ IATReferenceList FindIATReferences32(
 		offset++;
 	}
 	return refs;
+}
+
+static void AppendEATReferences(EATReferenceList *destination, EATReferenceList source){
+	if(!destination){free(source.RVAs); return;}
+	if(source.Count == 0){free(source.RVAs); return;}
+	if(destination->Count + source.Count > destination->Capacity){
+		destination->Capacity = destination->Count + source.Count;
+		destination->RVAs = realloc(destination->RVAs,
+			destination->Capacity * sizeof(RelativeVirtualOffset));
+	}
+	if(destination->RVAs){
+		memcpy(destination->RVAs + destination->Count, source.RVAs,
+			source.Count * sizeof(RelativeVirtualOffset));
+		destination->Count += source.Count;
+	}
+	free(source.RVAs);
+}
+
+static void AppendIATReferences(IATReferenceList *destination, IATReferenceList source){
+	if(!destination){free(source.RVAs); return;}
+	if(source.Count == 0){free(source.RVAs); return;}
+	if(destination->Count + source.Count > destination->Capacity){
+		destination->Capacity = destination->Count + source.Count;
+		destination->RVAs = realloc(destination->RVAs,
+			destination->Capacity * sizeof(RelativeVirtualOffset));
+	}
+	if(destination->RVAs){
+		memcpy(destination->RVAs + destination->Count, source.RVAs,
+			source.Count * sizeof(RelativeVirtualOffset));
+		destination->Count += source.Count;
+	}
+	free(source.RVAs);
+}
+
+static EATReferenceList FindEATReferencesInInitializedSections(
+	ExpandedPeExecutable *image, RelativeVirtualOffset eatRVA
+){
+	EATReferenceList references = {0};
+	if(!image || !image->Raw || !image->Fmt.Header){return references;}
+	for(uint16_t i = 0; i < image->Fmt.Header->mNumberOfSections; ++i){
+		PeImageSectionHeader *section = &image->Fmt.SectionTable[i];
+		if(!section->mSizeOfRawData ||
+			!(section->mCharacteristics & (PeSectionCharacteristics_CODE | PeSectionCharacteristics_INITDATA))){continue;}
+		void *data = ReadSectionPe(image->Path, image->Raw, section->mName);
+		EATReferenceList current = image->Fmt.Opt.Pe32->mMagic == Pe32 ?
+			FindEATReferences32(data, section->mSizeOfRawData, section->mVirtualAddress,
+				image->Fmt.Opt.Pe32->mImageBase, eatRVA) :
+			FindEATReferences64(data, section->mSizeOfRawData, section->mVirtualAddress, eatRVA);
+		AppendEATReferences(&references, current);
+		free(data);
+	}
+	return references;
+}
+
+static IATReferenceList FindIATReferencesInInitializedSections(
+	ExpandedPeExecutable *image, RelativeVirtualOffset iatRVA, uint32_t iatSize
+){
+	IATReferenceList references = {0};
+	if(!image || !image->Raw || !image->Fmt.Header){return references;}
+	for(uint16_t i = 0; i < image->Fmt.Header->mNumberOfSections; ++i){
+		PeImageSectionHeader *section = &image->Fmt.SectionTable[i];
+		if(!section->mSizeOfRawData ||
+			!(section->mCharacteristics & (PeSectionCharacteristics_CODE | PeSectionCharacteristics_INITDATA))){continue;}
+		void *data = ReadSectionPe(image->Path, image->Raw, section->mName);
+		IATReferenceList current = image->Fmt.Opt.Pe32->mMagic == Pe32 ?
+			FindIATReferences32(data, section->mSizeOfRawData, section->mVirtualAddress,
+				image->Fmt.Opt.Pe32->mImageBase, iatRVA, iatSize) :
+			FindIATReferences64(data, section->mSizeOfRawData, section->mVirtualAddress,
+				iatRVA, iatSize);
+		AppendIATReferences(&references, current);
+		free(data);
+	}
+	return references;
 }
 
 // //	Convert the Pe-Executable Import Sections into Blocky-Executable Style Imports.
@@ -291,9 +375,7 @@ bool InitImportSection(
 				for(uint32_t exportI = 0; exportI < DLLHeader->Fmt.exp.nExports; ++exportI){
 					OrdinalIndex = 0;
 					for(; OrdinalIndex < DLLHeader->Fmt.exp.exportEntries[exportI].mNNamePointers; ++OrdinalIndex){
-						if(DLLHeader->Fmt.exp.NormalisedOrdinals[OrdinalIndex] == (Ordinal - DLLHeader->Fmt.exp.exportEntries[exportI].mOrdinalBase)){
-							break;
-						}
+						if(DLLHeader->Fmt.exp.Ordinals[OrdinalIndex] == (Ordinal - DLLHeader->Fmt.exp.exportEntries[exportI].mOrdinalBase)){break;}
 					}
 				}
 				ImportSymbols[cc][cc_] = strdup(GetAtRVAFromSectionDataPe(DLLHeader->Fmt.exp.NamePointerRVAs[OrdinalIndex], PeExportSection, 
@@ -414,37 +496,21 @@ bool InitExportSection(const char *path, ExpandedPeExecutable *Image, SectionNam
 	if(!Image->Fmt.exp.nExports){return false;}
 	char **Symbols = calloc(Image->Fmt.exp.nExports, sizeof(char *));
 	BeExportEntryFlags *FlagsPerEntry = calloc(Image->Fmt.exp.nExports, sizeof(BeExportEntryFlags));
-	EATReferenceList List = {0};	{
-		const uint8_t *Text = ReadSectionPe(Image->Path, Image->Raw, PeCodeSection);
-		PeImageSectionHeader *TextH = FindSectionPe(Image->Raw, PeCodeSection);
-		List = Image->Fmt.Opt.Pe32->mMagic == Pe32? FindEATReferences32(Text, TextH->mSizeOfRawData, TextH->mVirtualAddress, 
-				Image->Fmt.Opt.Pe32->mImageBase, Image->Fmt.exp.exportEntries->mExportTableRVA): 
-			FindEATReferences64(Text, TextH->mSizeOfRawData, TextH->mVirtualAddress, Image->Fmt.exp.exportEntries->mExportTableRVA);
-		free(Text);
-	}
+	// EATReferenceList List = {0};	{
+	// 	const uint8_t *Text = ReadSectionPe(Image->Path, Image->Raw, PeCodeSection);
+	// 	PeImageSectionHeader *TextH = FindSectionPe(Image->Raw, PeCodeSection);
+	// 	List = Image->Fmt.Opt.Pe32->mMagic == Pe32? FindEATReferences32(Text, TextH->mSizeOfRawData, TextH->mVirtualAddress, 
+	// 			Image->Fmt.Opt.Pe32->mImageBase, Image->Fmt.exp.exportEntries->mExportTableRVA): 
+	// 		FindEATReferences64(Text, TextH->mSizeOfRawData, TextH->mVirtualAddress, Image->Fmt.exp.exportEntries->mExportTableRVA);
+	// 	free(Text);
+	// }
 	//	We need to re-sort the Name Table according to the Ordinal Table Indices, so they are accurate to the Export Address Table.
-	uint16_t Diff = 0;
-	uint32_t CurrentIndex = 0;
-	for(register uint32_t cc = 0; cc < Image->Fmt.exp.nExports; ++cc){
-		Diff = UINT16_MAX;
-		for(register uint32_t cc_ = 0; cc_ < Image->Fmt.exp.nExports; ++cc_){
-			uint16_t Temp = Image->Fmt.exp.NormalisedOrdinals[cc_] > 
-				Image->Fmt.exp.NormalisedOrdinals[cc]? 
-					(Image->Fmt.exp.NormalisedOrdinals[cc_] - Image->Fmt.exp.NormalisedOrdinals[cc]): 
-					(Image->Fmt.exp.NormalisedOrdinals[cc] - Image->Fmt.exp.NormalisedOrdinals[cc_]);
-			if(Image->Fmt.exp.NormalisedOrdinals[CurrentIndex] != Image->Fmt.exp.NormalisedOrdinals[cc_]){
-				if(Temp < Diff){CurrentIndex = cc_;		Diff = Temp;}
-			}
-		}
-		Symbols[cc] = ReadStringAtRVAFromSectionPe(
-			RvaToFileOffsetPe((Image->Fmt.exp.NormalisedOrdinals[CurrentIndex] * sizeof(uint16_t)) + 
-				Image->Fmt.exp.exportEntries->OrdinalPointerRVA, FindSectionPe(Image->Raw, PeExportSection)), 
-			PeExportSection, Image->Path, Image->Raw
-		);
-	}
-
 	uint64_t TotalNBytes = sizeof(BeExportHeader) + (Image->Fmt.exp.nExports * sizeof(BeExportEntry));
-	for(register GenericLengthType cc = 0; cc < Image->Fmt.exp.nExports; ++cc){TotalNBytes += strlen(Symbols[cc]);}
+	for(register uint32_t cc = 0; cc < Image->Fmt.exp.nExports; ++cc){
+		Symbols[cc] = GetAtRVAFromSectionDataPe(Image->Fmt.exp.NamePointerRVAs[cc], PeExportSection, Image->Fmt.exp.Raw, Image->Raw);
+		if(Symbols[cc]){TotalNBytes += strlen(Symbols[cc]);}
+		FlagsPerEntry[cc] = BREFExportable;
+	}
 	void *Data = calloc(1, TotalNBytes);
 	
 	//	Discardable, as such resolves with the Raw Pointer.
@@ -457,9 +523,10 @@ bool InitExportSection(const char *path, ExpandedPeExecutable *Image, SectionNam
 		.bNExported = Image->Fmt.exp.nExports
 	};
 	for(register GenericLengthType cc = 0; cc < Image->Fmt.exp.nExports; ++cc){
+		//	We need to get each entry, get the Virtual Address.
+		uint64_t RVA = Image->Fmt.exp.RawExportAddresses[Image->Fmt.exp.Ordinals[cc]].mExportRVA;
 		*((BeExportEntry *)(Data + sizeof(BeExportHeader) + (cc * sizeof(BeExportEntry)))) = (BeExportEntry){
-			.bFlags = FlagsPerEntry[cc], .bNameIndex = cc, .bSymbolHash = {0}, .bVirtualAddress = List.RVAs[cc]
-		};
+			.bFlags = FlagsPerEntry[cc], .bNameIndex = cc, .bSymbolHash = {0}, .bVirtualAddress = RVA};
 		strcpy(Data + sizeof(BeExportHeader) + (Image->Fmt.exp.nExports * sizeof(BeExportEntry)), Symbols[cc]);
 		blake2b_state bstate;
 		blake2b_init(&bstate, sizeof(GenericHashType));

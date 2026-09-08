@@ -400,7 +400,7 @@ typedef struct ExpandedPeExecutable{
 			PeExportDirectoryEntry *exportEntries;
 			uint32_t nExports;
 			uint32_t *NamePointerRVAs;
-			uint16_t *NormalisedOrdinals;
+			uint16_t *Ordinals;
 			PeExportAddressEntry *RawExportAddresses;
 		}exp;
 

@@ -814,8 +814,8 @@ function Write-GptHeader {
         [UInt32]$EntryCount,
         [UInt32]$EntrySize,
         [Guid]$DiskGuid,
-        [Int32]$EntriesCRC32 = 0,
-        [Int32]$HeaderCRC32 = 0
+        [UInt32]$EntriesCRC32 = 0,
+        [UInt32]$HeaderCRC32 = 0
     )
 
     $hdr = New-Object byte[] 512
@@ -956,7 +956,12 @@ $backupHdr = Write-GptHeader `
     -EntriesCRC32 $backupEntriesCRC `
     -HeaderCRC32 0
 
-$backupHeaderCRC = [Uint32](Compute-CRC32 $backupHdr[0..91])
+$backupHdrCopy = $backupHdr.Clone()
+$backupHdrCopy[16] = 0
+$backupHdrCopy[17] = 0
+$backupHdrCopy[18] = 0
+$backupHdrCopy[19] = 0
+$backupHeaderCRC = [Uint32](Compute-CRC32 $backupHdrCopy[0..91])
 [BitConverter]::GetBytes($backupHeaderCRC).CopyTo($backupHdr,16)
 
 Seek-Bytes ($backupHeaderLBA * $sectorSize)

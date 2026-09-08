@@ -1,20 +1,136 @@
 
-[248:    :8:    :0:    :20:    :58:    :13]
+[251:    :8:    :3:    :0:    :37:    :4]
 >> 
-,u -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0
+e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:193]  >>  Mounting FS Root: [C:/GitHub/BlockyOS/Build/Build-nodate/disk.img]
+Verifying Disk GPT
+GPT Dump:
+    Sig: "EFI PART"
+    Rev: 65536
+    Header-Size: 92
+    Header Checksum: 1671478813
+    localLBA: 1
+    altLBA: 788482
+    firstUsable: 2048
+    lastUsable: 788480
+    Disk-GUID: 
+    Partition-Table: 2
+    # of Partition-Entries: 3
+    Partition-Entry Size: 128
+    Partition-Table Checksum: 2610811153
+GPT Exists? true
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:134]  >>  Querying Part Table
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:142]  >>  GPT-Entry: BOOT{2048:526335 -> 524287}
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:156]  >>  Querying FS at 2048
 FS-Root Blob:
-    Version: [0:524288]
+    Version: [0:0]
     Sig: 
-    Configured Log Sectors: 2
+    Configured Log Sectors: 0
     Configured Block Size: 0
-    Configured Cluster-Map Size: 16711743
+    Configured Cluster-Map Size: 0
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:142]  >>  GPT-Entry: ROOT{526336:788479 -> 262143}
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:156]  >>  Querying FS at 526336
 FS-Root Blob:
-    Version: [1:0]
-    Sig: FRAT_FILESYSTEM
-    Configured Log Sectors: 5
-    Configured Block Size: 512
-    Configured Cluster-Map Size: 81920
+    Version: [0:0]
+    Sig: 
+    Configured Log Sectors: 0
+    Configured Block Size: 0
+    Configured Cluster-Map Size: 0
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:142]  >>  GPT-Entry: TEST{788480:788480 -> 0}
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:156]  >>  Querying FS at 788480
+FS-Root Blob:
+    Version: [0:0]
+    Sig: 
+    Configured Log Sectors: 0
+    Configured Block Size: 0
+    Configured Cluster-Map Size: 0
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:84]  >>  Formatting Partition:    ROOT
+[C:\GitHub\BlockyOS\tools\filesys
 >> 
-,o -p SYSD/LIBCRT.app -a LCRTAPP -la fc
+t.c:48]  >>  Loading Partition:    ROOT
+Verifying Disk GPT
+GPT Dump:
+    Sig: "EFI PART"
+    Rev: 65536
+    Header-Size: 92
+    Header Checksum: 1671478813
+    localLBA: 1
+    altLBA: 788482
+    firstUsable: 2048
+    lastUsable: 788480
+    Disk-GUID: 
+    Partition-Table: 2
+    # of Partition-Entries: 3
+    Partition-Entry Size: 128
+    Partition-Table Checksum: 2610811153
+GPT Exists? true
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:61]  >>  Found Partition: 526336:788479
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:97]  >>  Format Target: 526336:788479 -> 262143 Blocks
+    Version-Code: [0:1]
+    Configured Block-Size: 2048
+    Configured Cluster-Size: 2560
+    Configured # of Log-Sectors: 32
+    Configured Log-Size: 576
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:128]  >>  Formatted Partition
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:193]  >>  Mounting FS Root: [C:/GitHub/BlockyOS/Build/Build-nodate/disk.img]
+Verifying Disk GPT
+GPT Dump:
+    Sig: "EFI PART"
+    Rev: 65536
+    Header-Size: 92
+    Header Checksum: 1671478813
+    localLBA: 1
+    altLBA: 788482
+    firstUsable: 2048
+    lastUsable: 788480
+    Disk-GUID: 
+    Partition-Table: 2
+    # of Partition-Entries: 3
+    Partition-Entry Size: 128
+    Partition-Table Checksum: 2610811153
+GPT Exists? true
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:134]  >>  Querying Part Table
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:142]  >>  GPT-Entry: BOOT{2048:526335 -> 524287}
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:156]  >>  Querying FS at 2048
+FS-Root Blob:
+    Version: [0:0]
+    Sig: 
+    Configured Log Sectors: 0
+    Configured Block Size: 0
+    Configured Cluster-Map Size: 0
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:142]  >>  GPT-Entry: ROOT{526336:788479 -> 262143}
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:156]  >>  Querying FS at 526336
+FS-Root Blob:
+    Version: [0:0]
+    Sig: 
+    Configured Log Sectors: 0
+    Configured Block Size: 0
+    Configured Cluster-Map Size: 0
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:142]  >>  GPT-Entry: TEST{788480:788480 -> 0}
+[C:\GitHub\BlockyOS\tools\filesystem\frat.c:156]  >>  Querying FS at 788480
+FS-Root Blob:
+    Version: [0:0]
+    Sig: 
+    Configured Log Sectors: 0
+    Configured Block Size: 0
+    Configured Cluster-Map Size: 0
+[2]: "Failed to load Partition"
 >> 
-exit
+
+>> 
+
+>> 
+open -p SYSD/LIBCRT.app -a LCRTAPP -la fc
+[2]: "Dependency e.mount has not been defined"
+>> 
+
+>> 
+
+>> 
+write -oa C:/GitHub/BlockyOS/Build/Build-nodate/objs/libcrt.service -ia %LCRTAPP% -p 0 -n 0
+[2]: "Non-optional arg(s) not set"
+>> 
+
+>> 
+
+>> 

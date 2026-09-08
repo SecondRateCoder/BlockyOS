@@ -49,19 +49,23 @@ int main(int argc, char *argv[]){
 		free(logfile);
 		char *temp = calloc(64, sizeof(char));
 		time_t t;			time(&t);
-		struct tm *t_ = calloc(1, sizeof(struct tm));
+		struct tm t_ = {0};
 #if defined(_WIN32) || defined(_WIN64)
 		// Windows safe version (arguments are inverted)
-		localtime_s(t_, &t);
+		localtime_s(&t_, &t);
 #else
 		// POSIX (Linux/macOS) safe version
-		localtime_r(t_, &t);
+		localtime_r(^t_, &t);
 #endif
 		snprintf(temp, 64, "\n[%u:    :%u:    :%u:    :%u:    :%u:    :%u]", 
-			t_->tm_yday, t_->tm_mon, t_->tm_wday, t_->tm_hour, t_->tm_min, t_->tm_sec
+			t_.tm_yday, t_.tm_mon, t_.tm_wday, t_.tm_hour, t_.tm_min, t_.tm_sec
 		);
 		fwrite(temp, sizeof(char), strlen(temp), fs_logf);				fflush(fs_logf);
-		free(t_);
+		// printf("Hi");
+		// fprintf(stdout, "HiSTDOUT");
+
+		setvbuf(stdout, NULL, _IONBF, 0);
+
 		do{
 			char *bf = readbuf(0, "\n>> ");
 			fwrite("\n", sizeof(char), 1, fs_logf);

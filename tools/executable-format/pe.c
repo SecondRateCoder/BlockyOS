@@ -5,12 +5,12 @@ void *ReadPeExecutableHeader(const char *path){
 	if(!(f = fopen(path, "rb"))){return NULL;}
 	fseek(f, PeHeaderOffsetAddress, SEEK_SET);
 	uint32_t PeHeaderOffset;
-	uint64_t outputSize = sizeof(PeHeader) + __max(sizeof(Pe32OptionalHeader), sizeof(Pe32PlusOptionalHeader));
 	if(fread(&PeHeaderOffset, sizeof(uint32_t), 1, f) != 1){
 		fclose(f);
 		return NULL;
 	}
 	fseek(f, PeHeaderOffset, SEEK_SET);
+	uint64_t outputSize = sizeof(PeHeader) + __max(sizeof(Pe32OptionalHeader), sizeof(Pe32PlusOptionalHeader));
 	void *out = calloc(1, outputSize);
 	if(fread(out, sizeof(PeHeader), 1, f) != 1){
 		free(out);
@@ -25,7 +25,7 @@ void *ReadPeExecutableHeader(const char *path){
 			if(((Pe32OptionalHeader *)(out + sizeof(PeHeader)))->mMagic == Pe32){
 			}else{
 				outputSize = sizeof(PeHeader) + sizeof(Pe32OptionalHeader) + 
-					(((Pe32OptionalHeader *)(out + sizeof(PeHeader)))->mNumberOfRvaAndSizes * sizeof(PeRVAnSize));
+				(((Pe32OptionalHeader *)(out + sizeof(PeHeader)))->mNumberOfRvaAndSizes * sizeof(PeRVAnSize));
 				out = realloc(out, outputSize);
 				fread(out + sizeof(PeHeader) + sizeof(Pe32OptionalHeader), sizeof(PeRVAnSize), 
 					((Pe32OptionalHeader *)(out + sizeof(PeHeader)))->mNumberOfRvaAndSizes, f);
@@ -37,7 +37,7 @@ void *ReadPeExecutableHeader(const char *path){
 			if(((Pe32PlusOptionalHeader *)(out + sizeof(PeHeader)))->mMagic == Pe32Plus){
 				outputSize = sizeof(PeHeader) + sizeof(Pe32PlusOptionalHeader) + 
 					(((Pe32PlusOptionalHeader *)(out + sizeof(PeHeader)))->mNumberOfRvaAndSizes * sizeof(PeRVAnSize));
-				out = realloc(out, outputSize);
+					out = realloc(out, outputSize);
 				fread(out + sizeof(PeHeader) + sizeof(Pe32PlusOptionalHeader), sizeof(PeRVAnSize), 
 					((Pe32PlusOptionalHeader *)(out + sizeof(PeHeader)))->mNumberOfRvaAndSizes, f);
 			}
@@ -69,86 +69,85 @@ void *ReadPeExecutableHeader(const char *path){
 	fclose(f);
 	return out;
 }
+// #include <windows.h>
 // void *ReadPeExecutableHeader(const char *path){
-//     FILE *f = fopen(path, "rb");
-//     if(!f){return NULL;}
+//     DWORD bytesRead = 0;
 
-//     fseek(f, PeHeaderOffsetAddress, SEEK_SET);
-//     uint32_t PeHeaderOffset = 0;
-//     if(fread(&PeHeaderOffset, sizeof(uint32_t), 1, f) != 1){
-//         fclose(f);
+//     //	Open the file using Win32 API with permissive shared access
+//     HANDLE hFile = CreateFileA(
+//         path, GENERIC_READ,
+//         FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, // Prevents DLL lock errors
+//         NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+//     if(hFile == INVALID_HANDLE_VALUE){return NULL;}
+
+//     //	Read e_lfanew offset from DOS Header (located at offset 0x3C)
+//     uint32_t peHeaderOffset = 0;
+//     if(SetFilePointer(hFile, 0x3C, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER){
+//         CloseHandle(hFile);
 //         return NULL;
 //     }
 
-//     fseek(f, PeHeaderOffset, SEEK_SET);
+//     if(!ReadFile(hFile, &peHeaderOffset, sizeof(uint32_t), &bytesRead, NULL) || bytesRead != sizeof(uint32_t)){
+//         CloseHandle(hFile);
+//         return NULL;
+//     }
+
+//     //	Seek to the start of the PE/COFF Header
+//     if(SetFilePointer(hFile, peHeaderOffset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER){
+//         CloseHandle(hFile);
+//         return NULL;
+//     }
+
+//     //	Read the COFF Header
 //     PeHeader peHeader;
-//     if(fread(&peHeader, sizeof(PeHeader), 1, f) != 1){
-//         fclose(f);
+//     if(!ReadFile(hFile, &peHeader, sizeof(PeHeader), &bytesRead, NULL) || bytesRead != sizeof(PeHeader)){
+//         CloseHandle(hFile);
 //         return NULL;
 //     }
 
-//     // Validate "PE\0\0" signature
-//     if(peHeader.mMagic[0] != 'P' || peHeader.mMagic[1] != 'E' ||
-//     peHeader.mMagic[2] != '\0' || peHeader.mMagic[3] != '\0'){
-//         fclose(f);
+//     //	Verify PE Magic ("PE\0\0")
+//     if(strncmp(peHeader.mMagic, PeHeaderMagicStr, 4) != 0){
+//         CloseHandle(hFile);
 //         return NULL;
 //     }
 
-//     uint16_t optMagic = 0;
-//     long optHeaderStartPos = ftell(f);
-//     if (fread(&optMagic, sizeof(uint16_t), 1, f) != 1) {
-//         fclose(f);
-//         return NULL;
-//     }
-//     fseek(f, optHeaderStartPos, SEEK_SET);
+//     //	Calculate precise buffer allocation size
+//     uint16_t optHeaderSize = peHeader.mSizeOfOptionalHeader;
+//     uint16_t numSections = peHeader.mNumberOfSections;
 
-//     bool isPe32Plus = (optMagic == Pe32Plus);
-//     size_t optHeaderSize = isPe32Plus ? sizeof(Pe32PlusOptionalHeader) : sizeof(Pe32OptionalHeader);
+//     size_t totalBufferSize = sizeof(PeHeader) + optHeaderSize + (numSections * sizeof(PeImageSectionHeader));
 
-//     uint8_t optBuffer[sizeof(Pe32PlusOptionalHeader)] = {0};
-//     if(fread(optBuffer, optHeaderSize, 1, f) != 1){
-//         fclose(f);
-//         return NULL;
-//     }
-
-//     uint32_t numRvaAndSizes = isPe32Plus 
-//         ? ((Pe32PlusOptionalHeader *)optBuffer)->mNumberOfRvaAndSizes 
-//         : ((Pe32OptionalHeader *)optBuffer)->mNumberOfRvaAndSizes;
-
-//     size_t totalDataDirSize = numRvaAndSizes * sizeof(PeRVAnSize), 
-// 			totalSectionHeadersSize = peHeader.mNumberOfSections * sizeof(PeImageSectionHeader), 
-// 			totalBufferSize = sizeof(PeHeader) + optHeaderSize + totalDataDirSize + totalSectionHeadersSize;
-
-//     uint8_t *out = calloc(1, totalBufferSize);
+//     uint8_t *out = (uint8_t *)calloc(1, totalBufferSize);
 //     if(!out){
-//         fclose(f);
+//         CloseHandle(hFile);
 //         return NULL;
 //     }
 
+//     // Copy COFF Header into output buffer
 //     memcpy(out, &peHeader, sizeof(PeHeader));
-//     memcpy(out + sizeof(PeHeader), optBuffer, optHeaderSize);
 
-//     if(numRvaAndSizes > 0){
-//         size_t dataDirOffset = sizeof(PeHeader) + optHeaderSize;
-//         if(fread(out + dataDirOffset, sizeof(PeRVAnSize), numRvaAndSizes, f) != numRvaAndSizes){
-//             free(out);
-//             fclose(f);
-//             return NULL;
-//         }
+//     //	Read Optional Header
+//     uint8_t *optHeaderPtr = out + sizeof(PeHeader);
+//     if (!ReadFile(hFile, optHeaderPtr, optHeaderSize, &bytesRead, NULL) || bytesRead != optHeaderSize) {
+//         free(out);
+//         CloseHandle(hFile);
+//         return NULL;
 //     }
 
-//     DecodePeExecutableHeader(out);
+//     //	Read Section Headers sequentially using mNumberOfSections
+//     uint8_t *sectionHeadersPtr = optHeaderPtr + optHeaderSize;
+//     DWORD totalSectionsSize = numSections * sizeof(PeImageSectionHeader);
 
-//     size_t sectionHeaderOffset = sizeof(PeHeader) + optHeaderSize + totalDataDirSize;
-//     if(peHeader.mNumberOfSections > 0){
-//         if(fread(out + sectionHeaderOffset, sizeof(PeImageSectionHeader), peHeader.mNumberOfSections, f) != peHeader.mNumberOfSections){
-//             free(out);
-//             fclose(f);
-//             return NULL;
-//         }
+//     if(!ReadFile(hFile, sectionHeadersPtr, totalSectionsSize, &bytesRead, NULL) || bytesRead != totalSectionsSize){
+//         free(out);
+//         CloseHandle(hFile);
+//         return NULL;
 //     }
-//     fclose(f);
-//     return out;
+
+//     // Clean up handle
+//     CloseHandle(hFile);
+//     return (void *)out;
 // }
 
 uint32_t RvaToFileOffsetPe(uint32_t rva, PeImageSectionHeader *Section){
@@ -173,16 +172,7 @@ PeImageSectionHeader *FindSectionPe(void *header, char name[8]){
 
 void *GetAtRVAFromSectionDataPe(uint32_t RVA, char name[8], void *data, void *header){
     PeImageSectionHeader *Section = FindSectionPe(header, name);
-    if(!Section){return NULL;}
-    // Verify the RVA actually lands within this section's virtual boundaries
-    if((RVA >= Section->mVirtualAddress) && RVA < (Section->mVirtualAddress + Section->mVirtualSize)){
-        // Calculate the byte offset from the start of this section's memory space
-        uint32_t sectionOffset = RVA - Section->mVirtualAddress;
-        // Return the pointer shifted by that offset
-        return (void *)((uint8_t *)data + sectionOffset);
-    }
-    
-    return NULL;
+    if(Section){return (void *)((uint8_t *)data + RvaToFileOffsetPe(RVA, Section) - Section->mPointerToRawData);}else{return NULL;}
 }
 
 void *ReadAtRVAFromSectionPe(uint32_t RVA, uint32_t Size, char name[8], char *path, void *header){
@@ -271,7 +261,7 @@ ExpandedPeExecutable *ExpandPeExecutableFormat(const char *path){
 	//	Indices of Various Addresses Exported in the Export Directory Table.
 	//	Subtract the Ordinal Base from the Digit.
 	uint16_t *OrdinalPointerRVAs = exports? GetAtRVAFromSectionDataPe(exports->OrdinalPointerRVA, PeExportSection, exports, header): NULL;
-	if(exports){for(uint32_t cc = 0; cc < exports->mNNamePointers; ++cc){OrdinalPointerRVAs[cc] -= exports->mOrdinalBase;}}
+	// if(exports){for(uint32_t cc = 0; cc < exports->mNNamePointers; ++cc){OrdinalPointerRVAs[cc] -= exports->mOrdinalBase;}}
 	PeExportAddressEntry *exportAddressTable = exports? GetAtRVAFromSectionDataPe(exports->mExportTableRVA, PeExportSection, exports, header): NULL;
 
 	PeImportDirectoryEntry *imports = ReadSectionPe(path, header, PeImportSection);
@@ -330,7 +320,7 @@ ExpandedPeExecutable *ExpandPeExecutableFormat(const char *path){
 				.nExports = nExports,
 				.exportEntries = exports,
 				.NamePointerRVAs = NamePointerRVAs,
-				.NormalisedOrdinals = OrdinalPointerRVAs,
+				.Ordinals = OrdinalPointerRVAs,
 				.RawExportAddresses = exportAddressTable
 			}, .imp = {
 				.Raw = (void *)imports, 
