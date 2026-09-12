@@ -29,7 +29,7 @@ typedef struct{
     uint64_t Accessed				: 1;  
 	//	Free for OS use
 	//! Custom Flag
-    uint64_t UsedPage				: 1;   
+    uint64_t PageInMemory			: 1;   
 	//	Must be 0
     uint64_t 						: 1;  
 	//	Free for OS use
@@ -59,7 +59,7 @@ typedef struct{
     uint64_t Accessed				: 1;  
 	//	Free for OS use
 	//! Custom Flag
-    uint64_t UsedPage				: 1;  
+    uint64_t PageInMemory			: 1;  
 	//	Must be 0
     uint64_t Reserved1				: 1;  
 	//	Free for OS use
@@ -87,7 +87,7 @@ typedef struct{
     uint64_t Accessed				: 1;  
 	//	Free for OS use
 	//! Custom Flag
-    uint64_t UsedPage				: 1;  
+    uint64_t PageInMemory			: 1;  
 	//	MUST BE 0 (Points to Page Directory)
     uint64_t PageSize				: 1;  
 	//	Free for OS use
@@ -120,7 +120,7 @@ typedef struct{
     uint64_t Global					: 1;  
 	//	Free for OS use
 	//! Custom Flag
-	uint64_t UsedPage				: 1;
+	uint64_t PageInMemory			: 1;
     uint64_t Available1				: 2;  
 	//	PAT bit for 1GB pages
     uint64_t PageAttributeTable		: 1;  
@@ -151,7 +151,7 @@ typedef struct{
     uint64_t Accessed				: 1;  
 	//	Free for OS use
 	//! Custom Flag
-    uint64_t UsedPage				: 1;  
+    uint64_t PageInMemory			: 1;  
 	//	MUST BE 0 (Points to Page Table)
     uint64_t PageSize				: 1;  
 	//	Free for OS use
@@ -184,7 +184,7 @@ typedef struct{
     uint64_t Global					: 1;  
 	//	Free for OS use
 	//! Custom Flag
-	uint64_t UsedPage				: 1;
+	uint64_t PageInMemory			: 1;
     uint64_t Available1				: 2;  
 	//	PAT bit for 2MB pages
     uint64_t PageAttributeTable		: 1;  
@@ -223,7 +223,7 @@ typedef struct{
     uint64_t Global					: 1;  
 	//	Free for OS use
 	//! Custom Flag
-	uint64_t UsedPage				: 1;
+	uint64_t PageInMemory			: 1;
     uint64_t Available1				: 2;  
 	//	Physical frame address (4KB aligned)
     uint64_t PhysicalAddress		: 40; 

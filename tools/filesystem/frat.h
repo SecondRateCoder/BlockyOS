@@ -14,7 +14,7 @@
 
 
 #define FRATROOTOFFSET (0)
-#define LOGBLOCKOFFSET (FRATROOTOFFSET + 1)
+#define LOGBLOCKOFFSET (sizeof(fsroot) + FRATROOTOFFSET + 1)
 #define CLUSTERMAPOFFSET(nLogSectors) (LOGBLOCKOFFSET + (nLogSectors) + 1)
 #define DATAFIRSTOFFSET(nLogSectors, nClusterSectors) (CLUSTERMAPOFFSET(nLogSectors) + (nClusterSectors) + 1)
 #define DATAFIRST(root)	((root)->loc + DATAFIRSTOFFSET(root->logblocks.nLogSectors, root->clusterbuffer.nClusterSectors))
@@ -28,11 +28,12 @@
 #define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize) (__safediv(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) + ((confSectorSize) - 1), (confSectorSize)))
 
 enumdef(fsattribute, uint8_t){
-	__fsfile = 		0x0000,
-	__fsdirectory = 0x0001,
-	__fsreadonly = 	0x0002,
-	__fsmetadatacluster = 0x0004,
-	__fsproxy = 	0x0008
+	__fsfile =						0x0000,
+	__fsdirectory =					0x0001,
+	__fsreadonly =					0x0002,
+	__fsmetadatacluster =			0x0004, 
+	__fsproxy =						0x0008,
+	__fsextensionallocatedcluster =	0x0010,
 };
 
 enumdef(logoperation, uint16_t){
@@ -66,8 +67,22 @@ typedef struct meta_fsblock{
 		   writetime,
 		   accessdate,
 		   writedate;
-	char name[];
+	union{
+		char name[__FS_DEFAULTBLOCKSIZE - 72];
+		uint8_t	rsv[__FS_DEFAULTBLOCKSIZE - 72];
+	};
+	char ext[];
 }meta_fsblock;
+
+typedef struct{
+	union{
+		uint32_t	Code;
+		char		Sig[4];
+	};
+	uint8_t			Version[2];
+	uint16_t		FieldSize;
+	uint8_t			Data[];
+}fsextension;
 
 #define MAKEVERSION(MAJOR, MINOR)	{(uint32_t)(MAJOR), (uint32_t)(MINOR)}
 typedef struct fsroot{
@@ -76,6 +91,12 @@ typedef struct fsroot{
 			confBlockSize,
 			confClusterSize;
 	uint32_t verCode[2];
+	struct{
+		bool		ExtensionEnabled;
+		uint32_t	MinimumExtensionSupport, 
+					TotalExtensions;
+		LBA			ExtensionTable;
+	}extension;
 }__attribute__((packed)) fsroot;
 
 typedef struct conf_fsroot{
@@ -90,7 +111,8 @@ typedef struct conf_fsroot{
 	}logblocks;
 	struct clusterbuffer{
 		uint64_t clusterSize,
-		 	nClusterSectors;
+		 	nClusterSectors,
+		 	nClusterItems;
 		fsblock *clusterMap;	// The Cluster-Map
 	}clusterbuffer;
 }conf_fsroot;
@@ -174,7 +196,7 @@ meta_fsblock *_dreadinfo(dirhandle *handle);
 meta_fsblock *_freadinfo(fhandle *handle);
 fsblock *__faddr(conf_fsroot *root, fsblock *family);
 void _fseek(fhandle *handle, uint64_t progress);
-void _fseeko(fhandle *handle, uint64_t progress);
+void _fseeko(fhandle *handle, int64_t progress);
 
 fsblock *__ffind(conf_fsroot *root, char *path);
 fsblock *__ffindh(conf_fsroot *root, uint64_t hash[2]);

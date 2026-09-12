@@ -151,15 +151,16 @@ void MassStorageWrite(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, 
 	mfree(Temp);
 }
 rawenv OpenRawHandle(GenericMassStorageDeviceConfig *cfg, PCIDeviceSpecifier device, 
-	uint32_t Vector, uint32_t BlockSize, CommonMutex Mtx
+	uint32_t Vector, uint32_t BlockSize, LBA Partition, CommonMutex Mtx
 ){
 	rawenv re = mcalloc(1, sizeof(renv_t));
-	*re = (renv_t){
-		.CBlockSize = BlockSize, .Device = device, .Mutex = Mtx, 
-		.Handle = MassStorageHandle(cfg, device, Mtx)
-	};
-	MutexPoll(Mtx);
-	re->RBlockSize = GetMassStorageLogicalBlockSize(re->Handle, device, Mtx);
+	re->Device = device;
+	re->Mutex =
+	re->Handle = MassStorageHandle(cfg, device, Mtx);
+	uint64_t LBS = GetMassStorageLogicalBlockSize(re->Handle, device, Mtx);
+	re->CalcBlocks = (BlockSize / LBS) + ((BlockSize % LBS) != 0);
+	re->RealBlockSize = LBS;
+	re->PartitionBase = Partition;
 	re->Queue = AllocateMassStorageQueue(re->Handle, device, Mtx, Vector);
 }
 void CloseRawHandle(rawenv re){
@@ -172,27 +173,33 @@ void CloseRawHandle(rawenv re){
 	FreeMassStorageQueue(re->Handle, re->Device, re->Mutex, re->Queue);
 	mfree(re);
 }
-void *ReadRawHandleBlocks(rawenv re, LBA LBA, uint64_t BLOCKS){
-	void *Out = mcalloc(1, __roundup(re->CBlockSize * BLOCKS, re->RBlockSize));
+
+void *ReadRawHandleBlocks(rawenv re, LBA P, uint64_t BLOCKS){
+	P = __rounddown(P, re->RealBlockSize * re->CalcBlocks);
+	if(P < re->PartitionBase){return NULL;}
+	void *Out = mcalloc(re->CalcBlocks, __roundup(re->RealBlockSize * BLOCKS, re->RealBlockSize));
 	MassStorageRead(re->Handle, re->Device, re->Mutex, re->Queue, 
-		__roundup(re->CBlockSize * LBA, re->RBlockSize), 
-		__roundup(re->CBlockSize * BLOCKS, re->RBlockSize), Out);
+		(re->PartitionBase * re->RealBlockSize) + ((P - re->PartitionBase) * re->RealBlockSize * re->CalcBlocks), 
+		__roundup(re->CalcBlocks * re->RealBlockSize * BLOCKS, re->RealBlockSize), Out);
+	MutexPoll(re->Mutex);
 	return Out;
 }
-void WriteRawHandleBytes(rawenv re, uint64_t OFFSET, uint64_t BYTES, void *DATA){
-	void *temp = ReadRawHandleBlocks(re, OFFSET / re->CBlockSize, (BYTES / re->CBlockSize) + ((BYTES % re->CBlockSize) != 0));
-	memcpy(temp + (OFFSET % re->CBlockSize), DATA, BYTES);
-	WriteRawHandleBlocks(re, OFFSET / re->CBlockSize, (BYTES / re->CBlockSize) + ((BYTES % re->CBlockSize) != 0), temp);
-	mfree(temp);
-	return;
-}
-void WriteRawHandleBlocks(rawenv re, LBA LBA, uint64_t BLOCKS, void *DATA){
-	void *In = mcalloc(1, __roundup(re->CBlockSize * BLOCKS, re->RBlockSize));
-	memcpy(DATA, In, BLOCKS * re->CBlockSize);
+
+bool WriteRawHandleBlocks(rawenv re, LBA P, uint64_t BLOCKS, void *DATA){
+	if((P % re->RealBlockSize) != 0){return false;}
+	void *In = mcalloc(re->CalcBlocks, __roundup(re->RealBlockSize * BLOCKS, re->RealBlockSize));
+	memcpy(DATA, In, BLOCKS * re->RealBlockSize * re->CalcBlocks);
 	MassStorageWrite(re->Handle, re->Device, re->Mutex, re->Queue, 
-		__roundup(re->CBlockSize * LBA, re->RBlockSize), 
-		__roundup(re->CBlockSize * BLOCKS, re->RBlockSize), In);
+		(re->PartitionBase * re->RealBlockSize) + ((P - re->PartitionBase) * re->RealBlockSize * re->CalcBlocks), 
+		__roundup(re->CalcBlocks * re->RealBlockSize * BLOCKS, re->RealBlockSize), In);
 	MutexPoll(re->Mutex);
 	mfree(In);
+	return;
+}
+bool WriteRawHandleBytes(rawenv re, LBA P, uint64_t BYTES, void *DATA){
+	void *temp = ReadRawHandleBlocks(re, P, BYTES);
+	memcpy(temp + (P % re->RealBlockSize), DATA, BYTES);
+	WriteRawHandleBlocks(re, P, BYTES, temp);
+	mfree(temp);
 	return;
 }

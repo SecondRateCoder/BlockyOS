@@ -130,6 +130,7 @@ ISRCallbackTable __align(64) InterruptCallbacks = {
 };
 
 bool AllocateInterruptVector(uint8_t *Vector){
+	if(!Vector){return false;}
 	for(uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
 		if(InterruptCallbacks[cc] == GenericISR){
 			*Vector = cc;
@@ -141,6 +142,7 @@ bool AllocateInterruptVector(uint8_t *Vector){
 }
 
 bool QueryVectorByCallback(uint8_t *Vector, ISRCallback *CB){
+	if(!Vector || !CB){return false;}
 	for(uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
 		if(InterruptCallbacks[cc] == *CB){
 			*Vector = cc;
@@ -154,6 +156,7 @@ bool QueryVectorByCallback(uint8_t *Vector, ISRCallback *CB){
 ISRCallback *ISRSetCallback(void *acpibase, uint8_t Vector, uint8_t Privilege, uint8_t IST, 
 	void *StackHeader, IDTEntrySegmentSelector64 SS, bool TrapGate, ISRCallback *New
 ){
+	if(Vector >= IDTLength || !New){return NULL;}
 	if(InterruptCallbacks[Vector] == GenericISR){
 		InterruptCallbacks[Vector] = *New;
 		IDTR64 IR = {0};
@@ -181,6 +184,7 @@ ISRCallback *ISRSetCallback(void *acpibase, uint8_t Vector, uint8_t Privilege, u
 }
 
 bool ISRUSetCallback(uint32_t Vector){
+	if(Vector >= IDTLength){return false;}
 	if(InterruptCallbacks[Vector] != GenericISR){
 		InterruptCallbacks[Vector] = GenericISR;
 		IDTR64 IR = {0};
@@ -198,6 +202,7 @@ bool ISRUSetCallback(uint32_t Vector){
 }
 
 void *ISRGetStackHeader(uint32_t Vector){
+	if(Vector >= IDTLength){return NULL;}
 	if(InterruptCallbacks[Vector] != GenericISR){
 		IDTR64 IR = {0};
 		GDTR64 GR = {0};

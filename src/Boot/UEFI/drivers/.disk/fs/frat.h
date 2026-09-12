@@ -16,7 +16,7 @@
 #define __FS_DEFAULTBLOCKSIZE 512
 
 #define FRATROOTOFFSET (0)
-#define LOGBLOCKOFFSET (FRATROOTOFFSET + 1)
+#define LOGBLOCKOFFSET (sizeof(fsroot) + FRATROOTOFFSET + 1)
 #define CLUSTERMAPOFFSET(nLogSectors) (LOGBLOCKOFFSET + (nLogSectors) + 1)
 #define DATAFIRSTOFFSET(nLogSectors, nClusterSectors) (CLUSTERMAPOFFSET(nLogSectors) + (nClusterSectors) + 1)
 #define DATAFIRST(root)	((root)->loc + DATAFIRSTOFFSET(root->logblocks.nLogSectors, root->clusterbuffer.nClusterSectors))
@@ -30,11 +30,12 @@
 #define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize) (__safediv(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) + ((confSectorSize) - 1), (confSectorSize)))
 
 enumdef(UINT8, fsattribute){
-	__fsfile = 		0x0000,
-	__fsdirectory = 0x0001,
-	__fsreadonly = 	0x0002,
-	__fsmetadatacluster = 0x0004,
-	__fsproxy = 	0x0008
+	__fsfile =						0x0000,
+	__fsdirectory =					0x0001,
+	__fsreadonly =					0x0002,
+	__fsmetadatacluster =			0x0004,
+	__fsproxy =						0x0008, 
+	__fsextensionallocatedcluster =	0x0010,
 };
 
 enumdef(UINT16, logoperation){
@@ -67,8 +68,22 @@ typedef struct meta_fsblock{
 			writetime,
 			accessdate,
 			writedate;
-	char name[];
+	union{
+		char	name[__FS_DEFAULTBLOCKSIZE - 72];
+		UINT8	rsv[__FS_DEFAULTBLOCKSIZE - 72];
+	};
+	char ext[];
 }meta_fsblock;
+
+typedef struct{
+	union{
+		UINT32	Code;
+		char	Sig[4];
+	};
+	UINT8		Version[2];
+	UINT16		FieldSize;
+	UINT8		Data[];
+}fsextension;
 
 #define MAKEVERSION(MAJOR, MINOR)	{(UINT32)(MAJOR), (UINT32)(MINOR)}
 typedef struct fsroot{
@@ -77,6 +92,12 @@ typedef struct fsroot{
 			confBlockSize,
 			confClusterSize;
 	UINT32 verCode[2];
+	struct{
+		BOOLEAN	ExtensionEnabled;
+		UINT32	MinimumExtensionSupport, 
+				TotalExtensions;
+		LBA		ExtensionTable;
+	}extension;
 }__attribute__((packed)) fsroot;
 
 typedef struct conf_fsroot{

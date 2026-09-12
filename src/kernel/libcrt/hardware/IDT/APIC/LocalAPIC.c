@@ -21,18 +21,30 @@
  * 				The Highest bit in the ISR(In-Service Register) is cleared and the next Interrupt is Passed.
 */
 
+uint32_t GetLocalAPICID(){
+	uint32_t eax, ebx, ecx, edx;
+	__cpuid(1, eax, ebx, ecx, edx);
+	return (uint32_t)((uint8_t)(ebx >> 24) & UINT8_MAX);
+}
+
 void *GetLocalAPICBase(void *ACPIBase, bool *_RDST){
 	void *MADT = SearchACPITable("APIC", ACPIBase);
+	if(!MADT){return NULL;}
+
+	uint32_t currentApicId = GetLocalAPICID();
+
 	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
 		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(XSDT_MADT_t);
 		for(uint32_t cc = 0; RemBytes != 0; ++cc){
 			if(Table->Table[cc].Type == XSDT_ProcessorLocalAPIC){
 				XSDT_ProcessorLocalAPIC_t *Local = (XSDT_ProcessorLocalAPIC_t *)(Table->Table + cc);
-				if(_RDST){(*_RDST) = false;}
-				//	Make sure it's Online Capable, if so then Enable it.
-				//	Otherwise, return false. 
-				if(__check(Local->Flags, XSDT_ProcessorEnabled)){return Local;}
+				if(Local->ApicID == currentApicId){
+					if(_RDST){(*_RDST) = false;}
+					//	Make sure it's Online Capable, if so then Enable it.
+					//	Otherwise, return false. 
+					if(__check(Local->Flags, XSDT_ProcessorEnabled)){return MapVirtual((void *)Table->LocalAPICAddress);}
+				}
 			}
 			RemBytes -= Table->Table[cc].RecordTypeLength;
 		}
@@ -45,7 +57,9 @@ void *GetLocalAPICBase(void *ACPIBase, bool *_RDST){
 				(*_RDST) = true;
 				//	Make sure it's Online Capable, if so then Enable it.
 				//	Otherwise, return false. 
-				if(__check(Local->Flags, RSDT_ProcessorEnabled)){return Local;}
+				if(Local->ApicID == currentApicId && __check(Local->Flags, RSDT_ProcessorEnabled)){
+					return MapVirtual((void *)(uint64_t)Table->LocalAPICAddress);
+				}
 			}
 			RemBytes -= Table->Table[cc].RecordTypeLength;
 		}
@@ -56,75 +70,28 @@ bool InitLocalAPIC(void *ACPIBase, uint8_t InterruptBase, bool Enable){
 	//	Ensure Higher than 32
 	if(InterruptBase <= 32){return false;}
 	//	Ensure Low 4-bits set
-	if(!((InterruptBase & 0x1) & ((InterruptBase >> 1) & 0x1) & 
-		((InterruptBase >> 1) & 0x1) & ((InterruptBase >> 1) & 0x1))){return false;}
-	void *MADT = SearchACPITable("APIC", ACPIBase);
-	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
-		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
-		uint32_t RemBytes = Table->Header.Length - sizeof(XSDT_MADT_t);
-		for(uint32_t cc = 0; RemBytes != 0; ++cc){
-			if(Table->Table[cc].Type == XSDT_ProcessorLocalAPIC){
-				XSDT_ProcessorLocalAPIC_t *Local = (XSDT_ProcessorLocalAPIC_t *)(Table->Table + cc);
-				//	Make sure it's Online Capable, if so then Enable it.
-				//	Otherwise, return false. 
-				if(!__check(Local->Flags, XSDT_ProcessorEnabled)){
-					if(__check(Local->Flags, XSDT_OnlineCapable)){__set(Local->Flags, XSDT_ProcessorEnabled);}else{return false;}
-				}
-				break;
-			}
-			RemBytes -= Table->Table[cc].RecordTypeLength;
-		}
-		//	Update the Spurious Register
-		WriteAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, (uint32_t)InterruptBase & (Enable? LocalAPICEnableBit: ~LocalAPICEnableBit));
-	}else{
-		RSDT_MADT_t *Table = (RSDT_MADT_t *)MADT;
-		uint32_t RemBytes = Table->Header.Length - sizeof(RSDT_MADT_t);
-		for(uint32_t cc = 0; RemBytes != 0; ++cc){
-			if(Table->Table[cc].Type == RSDT_ProcessorLocalAPIC){
-				RSDT_ProcessorLocalAPIC_t *Local = (RSDT_ProcessorLocalAPIC_t *)(Table->Table + cc);
-				//	Make sure it's Online Capable, if so then Enable it.
-				//	Otherwise, return false. 
-				if(!__check(Local->Flags, RSDT_ProcessorEnabled)){
-					if(__check(Local->Flags, RSDT_OnlineCapable)){__set(Local->Flags, RSDT_ProcessorEnabled);}else{return false;}
-				}
-				break;
-			}
-			RemBytes -= Table->Table[cc].RecordTypeLength;
-		}
-		//	Update the Spurious Register
-		WriteAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, (uint32_t)InterruptBase & (Enable? LocalAPICEnableBit: ~LocalAPICEnableBit));
-	}
+	if((InterruptBase & 0x0F) != 0x0F){return false;}
+	bool _RSDT = false;
+	void *Base = GetLocalAPICBase(ACPIBase, &_RSDT);
+	if(!Base){return false;}
+	//	Update the Spurious Register
+	WriteAPICRegister(Base, LAR_SpuriousInterruptVector, (uint32_t)InterruptBase | (Enable? LocalAPICEnableBit: 0));
+	return true;
 }
 
 void EnableLocalAPIC(void *ACPIBase){
-	void *MADT = SearchACPITable("APIC", ACPIBase);
-	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
-		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
-		//	Update the Spurious Register
-		uint32_t Temp = 0;
-		ReadAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, Temp);
-		WriteAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, Temp & LocalAPICEnableBit);
-	}else{
-		RSDT_MADT_t *Table = (RSDT_MADT_t *)MADT;
-		//	Update the Spurious Register
-		uint32_t Temp = 0;
-		ReadAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, Temp);
-		WriteAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, Temp & LocalAPICEnableBit);
-	}
+	bool _RSDT = false;
+	uint32_t Temp = 0;
+	void *Base = GetLocalAPICBase(ACPIBase, &_RSDT);
+	if(!Base){return;}
+	ReadAPICRegister(Base, LAR_SpuriousInterruptVector, Temp);
+	WriteAPICRegister(Base, LAR_SpuriousInterruptVector, Temp | LocalAPICEnableBit);
 }
 void DisableLocalAPIC(void *ACPIBase){
-	void *MADT = SearchACPITable("APIC", ACPIBase);
-	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
-		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
-		//	Update the Spurious Register
-		uint32_t Temp = 0;
-		ReadAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, Temp);
-		WriteAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, Temp & ~LocalAPICEnableBit);
-	}else{
-		RSDT_MADT_t *Table = (RSDT_MADT_t *)MADT;
-		//	Update the Spurious Register
-		uint32_t Temp = 0;
-		ReadAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, Temp);
-		WriteAPICRegister(Table->LocalAPICAddress, LAR_SpuriousInterruptVector, Temp & ~LocalAPICEnableBit);
-	}
+	bool _RSDT = false;
+	uint32_t Temp = 0;
+	void *Base = GetLocalAPICBase(ACPIBase, &_RSDT);
+	if(!Base){return;}
+	ReadAPICRegister(Base, LAR_SpuriousInterruptVector, Temp);
+	WriteAPICRegister(Base, LAR_SpuriousInterruptVector, Temp & ~LocalAPICEnableBit);
 }

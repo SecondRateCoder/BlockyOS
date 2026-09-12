@@ -48,6 +48,7 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	}while(fs == NULL && ntries);
 	if(fs == NULL){Print(L"\nFailed to retrieve FS Socket");}
 	else{Print(L"\nGot FS Socket");}
+	if(!fs){return EFI_NOT_FOUND;}
 
 	// Load the Executable
 	char *path = KERNELEXE, *loadargs = "f";

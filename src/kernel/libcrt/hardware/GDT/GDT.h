@@ -5,7 +5,7 @@
 #include "kernel/libcrt/memory/memory.h"
 #include "TSS.h"
 
-#define GDTTableDefaultLength  (UINT16_MAX / sizeof(GDTDescriptor))
+#define GDTTableDefaultLength  ((UINT16_MAX / sizeof(GDTDescriptor)) + 1)
 
 typedef struct{
 	uint16_t    Limit;

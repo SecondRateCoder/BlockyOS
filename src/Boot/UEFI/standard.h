@@ -17,7 +17,11 @@
 #define BOOTDESC16 BOOTOPTION16
 
 typedef struct __bootinfo{
-	struct memory{
+	struct{
+		void	*Stack;
+		UINT32	StackSize;
+	}init;
+	struct{
 		UINT32 NMemoryDescriptors, 
 			MemoryDescriptorBufferSize, 
 			MemocryDescriptorMapKey, 
@@ -26,24 +30,24 @@ typedef struct __bootinfo{
 		UINT64 TotalMemorySize;
 		EFI_MEMORY_DESCRIPTOR *MemoryDescriptors;
 	}memory;
-	struct devices{
+	struct{
 		__efiDevNode **devices;
 		UINT32 nnodes;
 		EFI_CONFIGURATION_TABLE *CTable;
 		UINT32 CTableLength;
 	}devices;
-	struct bootentry{
+	struct{
 		CHAR16 BootEntryName[32];
 		UINT8 BootEntryCode;
 		void *bootMain;
-		struct{
+		struct This{
 			ExecutableSection *Sections;
 			UINT32 NSections;
-		}This;
-		struct{
+		};
+		struct Services{
 			LoadedService *Services;
 			UINT32 NServices;
-		}Services;
+		};
 	}bootentry;
 	struct{
 		void *videomemory;
@@ -60,6 +64,7 @@ typedef struct {
 } BOOT_ENTRY_RESULT;
 
 
-typedef void __sysvabi (*kernelmain)(__bootinfo * __restrict__ bootin, ExecutableSection *This, UINT32 N);
+#define KernalMainDef(NAME)		void __sysvabi __naked NAME##_km(__bootinfo * __restrict__ bootin, ExecutableSection *This, UINT32 N)
+typedef void __sysvabi __naked (*kernelmain)(__bootinfo * __restrict__ bootin, ExecutableSection *This, UINT32 N);
 __bootinfo *gatherbootinfo();
 UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarName);

@@ -80,7 +80,7 @@ void *WalkPageTree(uint32_t *Level, PageCoordinate Coordinate){
 				if(!Coordinate.EnableL5){return Temp;}else{
 					PML5Table *L5 = Temp;
 					if(L5Support){
-						if(Coordinate.L5 > PagingTableLength){return NULL;}
+						if(Coordinate.L5 >= PagingTableLength){return NULL;}
 						Temp = (void *)MapVirtual((void *)(L5[Coordinate.L5]->PhysicalAddress << 12));
 					}
 				}
@@ -88,30 +88,30 @@ void *WalkPageTree(uint32_t *Level, PageCoordinate Coordinate){
 			} case 4: {
 				if(!Coordinate.EnableL4){return Temp;}else{
 					PML4Table *L4 = Temp;
-					if(Coordinate.L4 > PagingTableLength){return NULL;}
+					if(Coordinate.L4 >= PagingTableLength){return NULL;}
 					Temp = (void *)MapVirtual((void *)(L4[Coordinate.L4]->PhysicalAddress << 12));
 				}
 				break;
 			} case 3: {
 				if(!Coordinate.EnableL3){return Temp;}else{
 					PDPTTable *L3 = Temp;
-					if(Coordinate.L3 > PagingTableLength){return NULL;}
-					if(L3->directories[Coordinate.L3].PageSize){return MapVirtual(L3->directories + Coordinate.L4);}
+					if(Coordinate.L3 >= PagingTableLength){return NULL;}
+					if(L3->directories[Coordinate.L3].PageSize){return L3->directories + Coordinate.L3;}
 					Temp = (void *)MapVirtual((void *)(L3->directories[Coordinate.L3].PhysicalAddress << 12));
 				}
 				break;
 			} case 2: {
 				if(!Coordinate.EnableL2){return Temp;}else{
 					PageDirectory *L2 = Temp;
-					if(Coordinate.L2 > PagingTableLength){return NULL;}
-					if(L2->tables[Coordinate.L2].PageSize){return MapVirtual(L2->tables + Coordinate.L2);}
+					if(Coordinate.L2 >= PagingTableLength){return NULL;}
+					if(L2->tables[Coordinate.L2].PageSize){return L2->tables + Coordinate.L2;}
 					Temp = (void *)MapVirtual((void *)(L2->tables[Coordinate.L2].PhysicalAddress << 12));
 				}
 				break;
 			} case 1: {
 				if(!Coordinate.EnableL1){return Temp;}else{
 					PageTable *L1 = Temp;
-					if(Coordinate.L1 > PagingTableLength){return NULL;}
+					if(Coordinate.L1 >= PagingTableLength){return NULL;}
 					return MapVirtual(L1 + Coordinate.L1);
 				}
 				break;

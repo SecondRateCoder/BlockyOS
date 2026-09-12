@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
 			fflush(fs_logf);
 			if(bf && (strlen(bf) > 2)){
 				cmd_errout info = __shellparse(bf);
-				if(info.errcode){dualprintf(fs_logf, stdout, "\n[%u]: \"%s\"", info.errcode, info.msg);}
+				dualprintf(fs_logf, stdout, "\n[%u]: \"%s\"", info.errcode, info.msg);
 				syncprintf(stdout);
 				free(bf);
 			}

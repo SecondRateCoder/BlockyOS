@@ -17,6 +17,7 @@ uint64_t TotalMappedMemory(void *ptr){
 	if(ptr){
 		void *Physical = MapPhysical(ptr);
 		InternalAllocationState *IS = GetIState();
+		if(!Physical || !IS->VirtualBase){return 0;}
 		while(IS->VirtualBase[(uint64_t)Physical / PAGE_SIZE].Local){out += PAGE_SIZE;}		
 	}
 	return out;
@@ -96,7 +97,7 @@ bool InitialiseAllocationState(void *D_, uint64_t N, uint64_t TotalMemory){
 //	Returns Physical Address.
 void *QueryFreeMemory(uint32_t _4KB){
 	InternalAllocationState *IS = GetIState();
-	if((_4KB * PAGE_SIZE) > (IS->TotalMemorySize / PAGE_SIZE)){return NULL;}
+	if(!_4KB || !IS->VirtualBase || _4KB > (IS->TotalMemorySize / PAGE_SIZE)){return NULL;}
 	for(uint64_t cc = 0; cc < (IS->TotalMemorySize / PAGE_SIZE); cc++){
 		switch(IS->VirtualBase[cc].Type){
 			case PAFNoFree:
@@ -144,6 +145,7 @@ void UpdateAllocationTable(uint64_t Physical, uint64_t Bytes, PageCoordinate *co
 
 void *AllocateAlignedPagesFromRange(void *Base, uint64_t Limit, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey, uint32_t Align){
 	void *PTR = AllocatePagesFromRange(Base, Limit, __roundup(NBytes + sizeof(uint64_t), Align), Flags, ProtectionKey);
+	if(!PTR){return NULL;}
 	*((uint64_t *)__roundup((uint64_t)PTR, Align)) = (uint64_t)PTR;
 	return (uint64_t *)__roundup((uint64_t)PTR, Align) + 1;
 }
@@ -188,15 +190,15 @@ void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint
 			case 0x05: {
 				if(L5){
 					PML5Entry *_L5 = (PML5Entry *)PT;
-					if(!(_L5->Present)){
+					if(!(_L5->Present || _L5->PageInMemory)){
 						(*_L5) = (PML5Entry){
-							.Present = true, .PhysicalAddress = (uint64_t)QueryFreeMemory(1), 
+							.PageInMemory = true, .Present = true, .PhysicalAddress = (uint64_t)QueryFreeMemory(1), 
 							.ExecuteDisable = !__check(Flags, ExecuteEnable), 
 							.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
 							.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
 							.ReadWrite = __check(Flags, ReadWritable), 
 							.UserSupervisor = __check(Flags, SupervisorMode), 
-							.UsedPage = true, 
+							.PageInMemory = true, 
 						};
 						//	We step back to make sure this entry is Processed.
 						UpdateAllocationTable(_L5->PhysicalAddress, PAGE_SIZE, &PC, 1, PAFUsed);
@@ -206,15 +208,15 @@ void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint
 				break;
 			} case 0x04: {
 				PML4Entry *L4 = (PML4Entry *)PT;
-				if(!(L4->Present)){
+				if(!(L4->Present || L4->PageInMemory)){
 					(*L4) = (PML4Entry){
-						.Present = true, .PhysicalAddress = (uint64_t)QueryFreeMemory(1), 
+						.PageInMemory = true, .Present = true, .PhysicalAddress = (uint64_t)QueryFreeMemory(1), 
 						.ExecuteDisable = !__check(Flags, ExecuteEnable), 
 						.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
 						.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
 						.ReadWrite = __check(Flags, ReadWritable), 
 						.UserSupervisor = __check(Flags, SupervisorMode), 
-						.UsedPage = true, 
+						.PageInMemory = true, 
 					};
 					UpdateAllocationTable(L4->PhysicalAddress, PAGE_SIZE, &PC, 1, PAFUsed);
 					//	We step back to make sure this entry is Processed.
@@ -233,14 +235,14 @@ void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint
 					}
 				}
 				for(uint64_t cc = 0x00; (PC.L3 + cc) < PagingTableLength; ++cc){
-					if(L3[cc].Present){Touchable = false;	break;}}
+					if(L3[cc].Present || L3[cc].PageInMemory){Touchable = false;	break;}}
 				if(Touchable){
 					void *BASE = MemoryIsMapped(Base)? Base: QueryFreeMemory(Usable? NBytes / PAGE_SIZE: PAGE_SIZE);
 					for(uint32_t cc = 0; (PC.L3 + cc) < PagingTableLength; cc++){
 						if(Usable){
 							UpdateAllocationTable((uint64_t)BASE + (cc * PAGE_SIZE3), PAGE_SIZE3, &PC, 1, PAFUsed);
 							((PDPTEntry1GB *)L3)[cc] = (PDPTEntry1GB){
-								.Present = true, .PhysicalAddress = (uint64_t)BASE + (cc * PAGE_SIZE3), 
+								.PageInMemory = true, .Present = true, .PhysicalAddress = (uint64_t)BASE + (cc * PAGE_SIZE3), 
 								.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
 								.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
 								.ExecuteDisable = !__check(Flags, ExecuteEnable), 
@@ -250,7 +252,7 @@ void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint
 							};
 						}else{
 							L3[cc] = (PDPTEntryDirectory){
-								.Present = true, .PhysicalAddress = (uint64_t)BASE, 
+								.PageInMemory = true, .Present = true, .PhysicalAddress = (uint64_t)BASE, 
 								.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
 								.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
 								.UserSupervisor = __check(Flags, SupervisorMode), 
@@ -280,14 +282,14 @@ void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint
 					}
 				}
 				for(uint64_t cc = 0x00; (PC.L2 + cc) < PagingTableLength; ++cc){
-					if(L2[cc].Present){Touchable = false;	break;}}
+					if(L2[cc].Present || L2[cc].PageInMemory){Touchable = false;	break;}}
 				if(Touchable){
 					void *BASE = Base? Base: QueryFreeMemory(Usable? NBytes / PAGE_SIZE: PAGE_SIZE);
 					for(uint32_t cc = 0; (PC.L2 + cc) < PagingTableLength; cc++){
 						if(Usable){
 							UpdateAllocationTable((uint64_t)BASE + (cc * PAGE_SIZE2), PAGE_SIZE2, &PC, 1, PAFUsed);
 							((PageDirectoryEntry2MB *)L2)[cc] = (PageDirectoryEntry2MB){
-								.Present = true, .PhysicalAddress = (uint64_t)BASE + (cc * PAGE_SIZE2), 
+								.PageInMemory = true, .Present = true, .PhysicalAddress = (uint64_t)BASE + (cc * PAGE_SIZE2), 
 								.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
 								.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
 								.UserSupervisor = __check(Flags, SupervisorMode), 
@@ -297,7 +299,7 @@ void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint
 							};
 						}else{
 							L2[cc] = (PageDirectoryEntry){
-								.Present = true, .PhysicalAddress = (uint64_t)BASE, 
+								.PageInMemory = true, .Present = true, .PhysicalAddress = (uint64_t)BASE, 
 								.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
 								.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
 								.UserSupervisor = __check(Flags, SupervisorMode), 
@@ -328,13 +330,13 @@ void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint
 				}
 				if(Usable){
 					for(uint64_t cc = 0x00; (PC.L1 + cc) < PagingTableLength; ++cc){
-						if(L1[cc].Present){Usable = false;	break;}}
+						if(L1[cc].Present || L1[cc].PageInMemory){Usable = false;	break;}}
 					void *BASE = Base? Base: QueryFreeMemory(__roundup(NBytes, PAGE_SIZE) / PAGE_SIZE);
 					if(Usable){
 						for(uint32_t cc = 0; (PC.L1 + cc) < PagingTableLength; cc++){
 							UpdateAllocationTable((uint64_t)BASE + (cc * PAGE_SIZE), PAGE_SIZE, &PC, 1, PAFUsed);
 							L1[cc] = (PageTableEntry4KB){
-								.Present = true, .PhysicalAddress = (uint64_t)BASE + (cc * PAGE_SIZE), 
+								.PageInMemory = true, .Present = true, .PhysicalAddress = (uint64_t)BASE + (cc * PAGE_SIZE), 
 								.ExecuteDisable = !__check(Flags, ExecuteEnable), 
 								.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
 								.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
@@ -358,13 +360,22 @@ void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint
 
 void *MapVirtual(void *Physical){
 	InternalAllocationState *IS = GetIState();
-	if((__roundup((uint64_t)Physical, PAGE_SIZE) / PAGE_SIZE) > (IS->TotalMemorySize / PAGE_SIZE)){return NULL;}
-	return (void *)*((uint64_t *)(&(IS->VirtualBase[(uint64_t)Physical / PAGE_SIZE].Coordinate))) + ((uint64_t)Physical % PAGE_SIZE);
+	if(!IS->VirtualBase || !Physical || ((uint64_t)Physical / PAGE_SIZE) >= (IS->TotalMemorySize / PAGE_SIZE)){return NULL;}
+	VirtualAddress Addr = {
+		.L1 = IS->VirtualBase[(uint64_t)Physical / PAGE_SIZE].Coordinate.L1, 
+		.L2 = IS->VirtualBase[(uint64_t)Physical / PAGE_SIZE].Coordinate.L2, 
+		.L3 = IS->VirtualBase[(uint64_t)Physical / PAGE_SIZE].Coordinate.L3, 
+		.L4 = IS->VirtualBase[(uint64_t)Physical / PAGE_SIZE].Coordinate.L4, 
+		.L5 = IS->VirtualBase[(uint64_t)Physical / PAGE_SIZE].Coordinate.L5, 
+	};
+	return (void *)VirtualAddressAToU64(Addr) + ((uint64_t)Physical % PAGE_SIZE);
 }
 
 void FreePages(void *Virtual){
+	if(!Virtual){return;}
 	void *Physical = MapPhysical((void *)__rounddown((uint64_t)Virtual, PAGE_SIZE));
 	InternalAllocationState *IS = GetIState();
+	if(!Physical || !IS->VirtualBase){return;}
 	uint64_t Bytes = 0x00;
 	while(IS->VirtualBase[__roundup((uint64_t)Physical, PAGE_SIZE) / PAGE_SIZE].Local){
 		uint32_t lvl = 0x05;
@@ -373,18 +384,21 @@ void FreePages(void *Virtual){
 			case 3: {
 				PDPTEntry1GB *E = PT;
 				E->Present = false;
+				E->PageInMemory = false;
 				InvalidatePage(Virtual + Bytes);
 				Bytes += PAGE_SIZE3;
 				break;
 			} case 2: {
 				PageDirectoryEntry2MB *E = PT;
 				E->Present = false;
+				E->PageInMemory = false;
 				InvalidatePage(Virtual + Bytes);
 				Bytes += PAGE_SIZE2;
 				break;
 			} case 1: {
 				PageTableEntry4KB *E = PT;
 				E->Present = false;
+				E->PageInMemory = false;
 				InvalidatePage(Virtual + Bytes);
 				Bytes += PAGE_SIZE;
 				break;

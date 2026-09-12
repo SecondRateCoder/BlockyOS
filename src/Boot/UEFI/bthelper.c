@@ -124,33 +124,33 @@ EFI_DEVICE_PATH *getDevPath(EFI_DEVICE_PATH *dPath, UINT32 dType, UINT32 sType){
 	return NULL;
 }
 
-__efiDevNode **loadDNodes(UINT32 *nNodes){
-	EFI_GUID dPathGUID = EFI_DEVICE_PATH_PROTOCOL_GUID;
-	EFI_HANDLE *handles = NULL;		UINTN nHandles = 0;
-	__efiDevNode **dnodes = NULL;	(*nNodes) = 0;
-	DEBUGPRINT(L"\nLoading Device Tree");
-	if(!EFI_ERROR(uefi_call_wrapper(gBS->LocateHandleBuffer, 0, AllHandles, NULL, NULL, &nHandles, &handles))){
-		dnodes = AllocatePool(sizeof(__efiDevNode *) * nHandles);
-		EFI_STATUS status;
-		DEBUGPRINT(L"\n");
-		for(UINTN cc = 0; cc < nHandles; ++cc){
-			EFI_DEVICE_PATH *dPath = NULL;
-			status = uefi_call_wrapper(gBS->HandleProtocol, 0, handles[cc], &dPathGUID, (void **)&dPath);
-			if(!EFI_ERROR(status)){
-				// DebugDevicePath(dPath);
-				dnodes[*nNodes] = BuildDeviceTree(dPath);
-				if(dnodes[*nNodes]){
-					Print(L"Call #%llu    \"%s\"\n", cc, dnodes[*nNodes]->nodeName);
-					(*nNodes)++;
-				}else{DEBUGPRINT(L"Call Error #%llu    ", cc);}
-			}else{DEBUGPRINT(L"Call Error#%u: %llu    ", cc, status & ~((UINTN)0xF000000000000000));}
-		}
-	}else{DEBUGPRINT(L"\nError Getting Handles");}
-	__free(handles);
-	dnodes = ReallocatePool(sizeof(__efiDevNode *) * nHandles, sizeof(__efiDevNode *) * (*nNodes), dnodes);
-	DEBUGPRINT(L"\nReturning Expanded Node Tree");
-	return dnodes;
-}
+// __efiDevNode **loadDNodes(UINT32 *nNodes){
+// 	EFI_GUID dPathGUID = EFI_DEVICE_PATH_PROTOCOL_GUID;
+// 	EFI_HANDLE *handles = NULL;		UINTN nHandles = 0;
+// 	__efiDevNode **dnodes = NULL;	(*nNodes) = 0;
+// 	DEBUGPRINT(L"\nLoading Device Tree");
+// 	if(!EFI_ERROR(uefi_call_wrapper(gBS->LocateHandleBuffer, 0, AllHandles, NULL, NULL, &nHandles, &handles))){
+// 		dnodes = AllocatePool(sizeof(__efiDevNode *) * nHandles);
+// 		EFI_STATUS status;
+// 		DEBUGPRINT(L"\n");
+// 		for(UINTN cc = 0; cc < nHandles; ++cc){
+// 			EFI_DEVICE_PATH *dPath = NULL;
+// 			status = uefi_call_wrapper(gBS->HandleProtocol, 0, handles[cc], &dPathGUID, (void **)&dPath);
+// 			if(!EFI_ERROR(status)){
+// 				// DebugDevicePath(dPath);
+// 				dnodes[*nNodes] = BuildDeviceTree(dPath);
+// 				if(dnodes[*nNodes]){
+// 					Print(L"Call #%llu    \"%s\"\n", cc, dnodes[*nNodes]->nodeName);
+// 					(*nNodes)++;
+// 				}else{DEBUGPRINT(L"Call Error #%llu    ", cc);}
+// 			}else{DEBUGPRINT(L"Call Error #%u: %llu    ", cc, status & ~((UINTN)0xF000000000000000));}
+// 		}
+// 	}else{DEBUGPRINT(L"\nError Getting Handles");}
+// 	__free(handles);
+// 	dnodes = ReallocatePool(sizeof(__efiDevNode *) * nHandles, sizeof(__efiDevNode *) * (*nNodes), dnodes);
+// 	DEBUGPRINT(L"\nReturning Expanded Node Tree");
+// 	return dnodes;
+// }
 
 EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINT32 *mapSize, UINT32 *mapKey, UINT32 *descSize, UINT32 *descVersion){
 	DEBUGPRINT(L"\nGetting the Memory Map");
@@ -229,10 +229,10 @@ EFI_GRAPHICS_OUTPUT_MODE_INFORMATION InitialiseVideoMemory(UINT64 *VideoMemory, 
 	//	Query all available Modes and set the Current Mode to that which is Largest and of the RGB Mode.
 	for(UINT32 i = 0; i < numModes; i++){
 		status = uefi_call_wrapper(gop->QueryMode, 4, gop, i, &SizeOfInfo, &info);
-		Print(L"mode %03d width %d height %d format %x%s",
-			i, info->HorizontalResolution, 
-			info->VerticalResolution, info->PixelFormat, 
-			i == nativeMode ? "(current)" : ""
+		Print(L"\nmode %03u width %u height %u format %u%s",
+			(UINT32)i, (UINT32)info->HorizontalResolution, 
+			(UINT32)info->VerticalResolution, (UINT32)info->PixelFormat, 
+			(i == nativeMode? "(current)": "")
 		);
 		if(
 			((gop->Mode->Info->PixelFormat != PixelRedGreenBlueReserved8BitPerColor) && info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) || 
@@ -257,7 +257,7 @@ __bootinfo *gatherbootinfo(){
 
 	*out = (__bootinfo){
 		.devices = {
-			.devices = loadDNodes(&out->devices.nnodes), .CTableLength = ST->NumberOfTableEntries, 
+			.devices = NULL, // loadDNodes(&out->devices.nnodes), .CTableLength = ST->NumberOfTableEntries, 
 			.CTable = __memdup(ST->ConfigurationTable, sizeof(EFI_CONFIGURATION_TABLE) * ST->NumberOfTableEntries)
 		}, 
 		.memory = {

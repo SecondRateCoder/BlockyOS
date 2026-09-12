@@ -162,7 +162,7 @@ cmd_errout __shellhelp(uint64_t *buffer, void **persistent){
 		}
 		return (cmd_errout){.errcode = 0, .msg = ""};
 	}
-	return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Command does not exist"};
+	return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "Command does not exist"};
 }
 
 cmd_errout __shelldisk(uint64_t *buffer, void **persistent){
@@ -207,11 +207,14 @@ cmd_errout __shellcreate(uint64_t *buffer, void **persistent){
 	char *type = (char *)(buffer[0]), *path = (char *)(buffer[1]), *name = (char *)(buffer[2]);
 	dualprintf(fs_logf, stdout, "\n%p:%s\t%p:%s\t%p:%s\t", type, type, path, path, name, name);
 	if(!type || !path || !name){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Non-optional arg(s) not set"};}
-	char *typedup = strdup(type);
-	uint64_t typeLen = strlen(type);
-	typedup = realloc(typedup, typeLen + 2);
-	typedup[typeLen] = 'c';
-	typedup[typeLen + 1] = '\0';
+	char *typedup = NULL;
+	if(!strcheck(type, 'c')){
+		typedup = strdup(type);
+		uint64_t typeLen = strlen(type);
+		typedup = realloc(typedup, typeLen + 2);
+		typedup[typeLen] = 'c';
+		typedup[typeLen + 1] = '\0';
+	}else{typedup = type;}
 	// Initialise Persistent
 	// Use persistent in "e.mount"
 	cmddesc *mountcd = getcmd("e.mount");
@@ -230,7 +233,7 @@ cmd_errout __shellcreate(uint64_t *buffer, void **persistent){
 		dualprintf(fs_logf, stdout, "\n[\t%s]", npath);
 		if(mountcd->persistent){fuloadh(floadh(mountcd->persistent, npath, typedup));}
 	}else{free(typedup); return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "\nError... Could not set Persistent"};}
-	free(typedup);
+	if(!strcheck(type, 'c')){free(typedup);}
 	return (cmd_errout){.errcode = 0, .msg = ""};
 }
 
@@ -384,11 +387,11 @@ cmd_errout __shellfwrite(uint64_t *buffer, void **persistent){
 		_fseek(file, pos);
 		if(!nbytes){fseek(f, 0, SEEK_END);	nbytes = ftell(f);		fseek(f, pos, SEEK_SET);}else{fseek(f, pos, SEEK_SET);}
 		void *data = calloc(1, nbytes);
-		if(fread(data, 1, nbytes, f) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Could Not read enough Bytes from Parent Filesystem Item"};}
-		if(_fwrite(file, nbytes, data) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Could Not write enough Bytes from FrAT Filesystem Item"};}
+		if(fread(data, 1, nbytes, f) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "Could Not read enough Bytes from Parent Filesystem Item"};}
+		if(_fwrite(file, nbytes, data) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "Could Not write enough Bytes from FrAT Filesystem Item"};}
 		free(data);
 		fclose(f);
-	}
+	}else{return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "File does not exist."};}
 	return (cmd_errout){.errcode = 0, .msg = ""};
 }
 
@@ -411,8 +414,8 @@ cmd_errout __shellfread(uint64_t *buffer, void **persistent){
 		fseek(f, pos, SEEK_SET);		_fseek(file, pos);
 		if(!nbytes){nbytes = __fsize(file);}
 		void *data = NULL;
-		if(_fread(file, nbytes, &data) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Could Not read enough Bytes from FrAT Filesystem Item"};}
-		if(fwrite(data, 1, nbytes, f) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Could Not write enough Bytes to Parent Filesystem Item"};}
+		if(_fread(file, nbytes, &data) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "Could Not read enough Bytes from FrAT Filesystem Item"};}
+		if(fwrite(data, 1, nbytes, f) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "Could Not write enough Bytes to Parent Filesystem Item"};}
 		fclose(f);
 	}
 	return (cmd_errout){.errcode = 0, .msg = ""};
@@ -427,8 +430,8 @@ cmd_errout __shellsymdump(uint64_t *buffer, void **persistent){
 	if(f){
 		void *data = inalias;
 		if(data){fwrite(data, 1, nbytes, f);		fclose(f);		return (cmd_errout){.errcode = 0, .msg = ""};
-		}else{return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "The Input Alias does not exist"};}
-	}else{return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "The Parent File-System item does not exist"};}
+		}else{return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "The Input Alias does not exist"};}
+	}else{return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "The Parent File-System item does not exist"};}
 }
 
 cmd_errout __shellsymprint(uint64_t *buffer, void **persistent){

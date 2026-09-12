@@ -1,5 +1,7 @@
 #pragma once
 
+#include "kernel/libcrt/mutex.h"
+
 #define DEF_H
 
 #define attribute(...)			__attribute__((__VA_ARGS__))

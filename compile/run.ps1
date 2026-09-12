@@ -339,12 +339,12 @@ if($InstallOS){
 		exit 1
 	}
 	#!	Temporarily disable FS Creation for Debugging Optimisation.
-	# Log-Write -color Yellow "InstallOS requested: formatting disk with FS.ps1."
-	# (& $FSScript -PartitionName 'Boot' -FileSystemType 'FAT32' -PartitionFlag 'efi-boot' -DiskImage $Image -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs-install.log") -Verbose)
-	# if($LASTEXITCODE -ne 0){
-	# 	Log-Write -color Red "FS formatting failed during InstallOS. Aborting."
-	# 	exit 1
-	# }
+	Log-Write -color Yellow "InstallOS requested: formatting disk with FS.ps1."
+	(& $FSScript -PartitionName 'Boot' -FileSystemType 'FAT32' -PartitionFlag 'efi-boot' -DiskImage $Image -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs-install.log") -Verbose)
+	if($LASTEXITCODE -ne 0){
+		Log-Write -color Red "FS formatting failed during InstallOS. Aborting."
+		exit 1
+	}
 	if(-not (Test-Path $InstallFile)){
 		Log-Write -color Red "Install file not found: $InstallFile"
 		exit 1
@@ -358,7 +358,7 @@ if($InstallOS){
 }
 
 # Optimise by Using ShortCut
-if($broadimage){New-Item -Path (Join-Path (Get-Location) '/Build/temp/image.img') -ItemType SymbolicLink -Value $Image}
+if($broadimage){New-Item -Path (Join-Path (Get-Location) '/Build/temp/image.img') -ItemType SymbolicLink -Value $Image -Force}
 
 if($run){
 	Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ') "

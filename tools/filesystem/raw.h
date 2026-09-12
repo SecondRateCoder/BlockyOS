@@ -5,6 +5,8 @@
 #define GPTsig "EFI PART"
 #define GPT_LBA 1
 
+#define DefaultRawDiskSize (512)
+
 typedef uint64_t LBA;
 
 typedef struct miniGPT{
@@ -41,6 +43,7 @@ typedef struct rawenv_t{
     /// @brief If true then the Interface is a Block IO Interface;
     FILE *file;
 	char *path;
+	LBA Partition;
     uint32_t CalcBlock, ConfBlock, RealBlock;
 #ifdef _DEBUG
     bool EnableVerbose;
@@ -53,10 +56,10 @@ void DisableVerbose(rawenv re);
 uint32_t getblocksize(rawenv re);
 void setblocksize(rawenv re, uint32_t new);
 
-rawenv startup(char *path, uint32_t configuredBlockSize);
+rawenv startup(char *path, LBA PartitionBase, uint32_t configuredBlockSize);
 
 void writebytes(rawenv re, void *data, uint64_t bytepos, uint64_t nbytes);
-void *writeblocks(rawenv re, void *data, LBA pos, uint64_t bytes);
+void writeblocks(rawenv re, void *data, LBA pos, uint64_t bytes);
 
 void *readbytes(rawenv re, LBA pos, uint16_t offset, uint64_t nbytes);
 void *readblocks(rawenv re, LBA pos, uint64_t bytes);

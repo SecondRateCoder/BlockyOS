@@ -8,7 +8,7 @@
 #define GPTsig "EFI PART"
 #define GPT_LBA 1
 
-typedef UINTN LBA;
+typedef UINT64 LBA;
 
 typedef struct miniGPT{
 	char sig[8];
@@ -32,18 +32,18 @@ typedef struct GPTentry{
 	EFI_GUID uGUID;
 	LBA sLBA;
 	LBA eLBA;
-	UINTN attr;
+	UINT64 attr;
 	GPTeNSTR name;
 }__attribute__((packed)) GPTentry;
 
 typedef struct rawenv_t{
     /// @brief If true then the Interface is a Block IO Interface;
-    bool isPart;
+    bool isPart, EnableVerbose;
 	EFI_HANDLE handle;
     EFI_BLOCK_IO *Blk;
     EFI_GUID GUID;
     UINT32 CalcBlock, ConfBlock, RealBlock;
-    bool EnableVerbose;
+	UINT64 Partition;
 }rawenv_t, *rawenv;
 
 void EnableVerbose(rawenv re);
@@ -52,12 +52,12 @@ void DisableVerbose(rawenv re);
 UINT32 getblocksize(rawenv re);
 void setblocksize(rawenv re, UINT32 new);
 
-rawenv startup(EFI_GUID GUID, EFI_GUID altGUID, UINT32 configuredBlockSize);
+rawenv startup(EFI_GUID GUID, EFI_GUID altGUID, LBA Partition, UINT32 configuredBlockSize);
 
-void writebytes(rawenv re, void *data, UINTN bytepos, UINTN nbytes);
-void writeblocks(rawenv re, void *data, LBA pos, UINTN bytes);
+void writebytes(rawenv re, void *data, UINT64 bytepos, UINT64 nbytes);
+void writeblocks(rawenv re, void *data, LBA pos, UINT64 bytes);
 
-void *readbytes(rawenv re, LBA pos, UINT16 offset, UINTN nbytes);
-void *readblocks(rawenv re, LBA pos, UINTN bytes);
+void *readbytes(rawenv re, LBA pos, UINT16 offset, UINT64 nbytes);
+void *readblocks(rawenv re, LBA pos, UINT64 bytes);
 
 void dispose(rawenv re);

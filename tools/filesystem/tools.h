@@ -14,8 +14,8 @@
 typedef uint64_t _GUID[2];
 
 #define FCODEHASHMASK	(UINT64_MAX ^ (UINT64_C(0xFFFF) << 48))
-#define dualprintf(streamA, streamB, ...)	fprintf(streamA, __VA_ARGS__);	fprintf(streamB, __VA_ARGS__)
-#define syncprintf(stream)					fprintf(stream, "\nFRATSYNC\n");fflush(stream)
+#define dualprintf(streamA, streamB, ...)	fprintf(streamA, __VA_ARGS__);		fprintf(streamB, __VA_ARGS__)
+#define syncprintf(stream)					fprintf(stream, "\n__FRATSYNC__\n");fflush(stream)
 extern FILE *fs_logf;
 #define LOGFOFFSET      "tools\\filesystem\\fsshell.log"
 

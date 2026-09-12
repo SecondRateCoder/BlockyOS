@@ -816,20 +816,20 @@ function FRAT-RUNTIME-START{
 	$psi.UseShellExecute = $false
 	$psi.CreateNoWindow = $true
 	$FSCONTROLLER.StartInfo = $psi
-	Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "OutputDataReceived" -Debug -Action {
-		if($EventArgs.Data){
-			# if($EventArgs.Data -match 'FRATSYNC'){$script:FRAT_SYNC_RECEIVED = $false}else{$script:FRAT_SYNC_RECEIVED = $true}
-			# Write-Log -MSG "[SHELL OUT]: $($EventArgs.Data)" -COLOR Cyan
-			if($EventArgs.Data -match 'FRATSYNC'){$script:FRAT_SYNC_RECEIVED = $true}else{
-				$cleanedData = $EventArgs.Data -replace 'FRATSYNC', ''
-				if(-not [string]::IsNullOrWhiteSpace($cleanedData)){Write-Log "[SHELL OUT]: $cleanedData" -COLOR Cyan}
-			}
-		}} | Out-Null
-	Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "ErrorDataReceived" -Debug -Action {
-		if($EventArgs.Data){Write-Log -MSG "[SHELL ERR]: $($EventArgs.Data)" -COLOR Red}} | Out-Null
+	# Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "OutputDataReceived" -Debug -Action {
+	# 	if($EventArgs.Data){
+	# 		# if($EventArgs.Data -match 'FRATSYNC'){$script:FRAT_SYNC_RECEIVED = $false}else{$script:FRAT_SYNC_RECEIVED = $true}
+	# 		# Write-Log -MSG "[SHELL OUT]: $($EventArgs.Data)" -COLOR Cyan
+	# 		if($EventArgs.Data -match "__FRATSYNC__"){$script:FRAT_SYNC_RECEIVED = $true}else{
+	# 			$cleanedData = $EventArgs.Data -replace '__FRATSYNC__', ''
+	# 			if(-not [string]::IsNullOrWhiteSpace($cleanedData)){Write-Log "[SHELL OUT]: $cleanedData" -COLOR Cyan}
+	# 		}
+	# 	}else{$script:FRAT_SYNC_RECEIVED = $true}} | Out-Null
+	# Register-ObjectEvent -InputObject $FSCONTROLLER -EventName "ErrorDataReceived" -Debug -Action {
+	# 	if($EventArgs.Data){Write-Log -MSG "[SHELL ERR]: $($EventArgs.Data)" -COLOR Red}} | Out-Null
 	$FSCONTROLLER.Start() | Out-Null
-	$FSCONTROLLER.BeginOutputReadLine()
-	$FSCONTROLLER.BeginErrorReadLine()
+	# $FSCONTROLLER.BeginOutputReadLine()
+	# $FSCONTROLLER.BeginErrorReadLine()
 	Write-Log -MSG "[SHELL]`tFSFRAT.MOUNT" -COLOR Blue
 	FRAT-RUNTIME-PASS-COMMAND $MOUNTCMD
 	$script:FSSET = $true
@@ -837,12 +837,21 @@ function FRAT-RUNTIME-START{
 
 function FRAT-RUNTIME-PASS-COMMAND{
 	param([string]$CMD)
-	$script:FRAT_SYNC_RECEIVED = $false
-	$FSCONTROLLER.StandardInput.WriteLine($CMD)
-	if((-not $FSCONTROLLER) -or $FSCONTROLLER.HasExited){throw "FS controller is not running."}
+	# $script:FRAT_SYNC_RECEIVED = $false
+	# $FSCONTROLLER.StandardInput.WriteLine($CMD)
+	# if((-not $FSCONTROLLER) -or $FSCONTROLLER.HasExited){throw "FS controller is not running."}
 	# while(-not $script:FRAT_SYNC_RECEIVED){Wait-Event -Timeout 1}
-	Wait-Event -Timeout 7
-	$FSCONTROLLER.StandardInput.WriteLine("`n")
+	# $FSCONTROLLER.StandardInput.WriteLine("`n")
+    # Send the command to the C program
+	Write-Log "[SHELL]`t$CMD" -COLOR Blue
+    $FSCONTROLLER.StandardInput.WriteLine("$CMD`n")
+    # $output = @()
+    # Read output line by line until the fence token is found
+    while($null -ne ($line = $FSCONTROLLER.StandardOutput.ReadLine())){
+		#	Fencing token detected, command is finished
+        if($line -eq "__FRATSYNC__"){break}
+		Write-Log "[SHELL OUT]:`t$line" -COLOR Cyan
+    }
 }
 
 function FRAT-RUNTIME-STOP{
@@ -899,13 +908,13 @@ function FUN-FRAT{
 				$LOADARGS = $(if($COMMAND.Flags["-la"]){"-la $($COMMAND.Flags["-la"])"}else{$null})
 				if($PATH -and $ALIAS -and $LOADARGS){$TRUECMD += "create $($LOADARGS) $($PATH) $($ALIAS)"}
 			} 'FSFRAT.READ' {
-				$PPATH = $(if($COMMAND.Flags["-pp"]){"-oa $($COMMAND.Flags["-pp"])"}else{$null})
+				$PPATH = $(if($COMMAND.Flags["-pp"]){"-pp $($COMMAND.Flags["-pp"])"}else{$null})
 				$ALIAS = $(if($COMMAND.Flags["-ia"]){"-ia $($COMMAND.Flags["-ia"])"}else{$null})
 				$POS = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{'-p 0'})
 				$NBYTES = $(if($COMMAND.Flags["-n"]){"-n $($COMMAND.Flags["-n"])"}else{'-n 0'})
 				if($PPATH -and $ALIAS){$TRUECMD += "fread $($PPATH) $($ALIAS) $($POS) $($NBYTES)"}
 			} 'FSFRAT.WRITE' {
-				$PPATH = $(if($COMMAND.Flags["-pp"]){"-oa $($COMMAND.Flags["-pp"])"}else{$null})
+				$PPATH = $(if($COMMAND.Flags["-pp"]){"-pp $($COMMAND.Flags["-pp"])"}else{$null})
 				$ALIAS = $(if($COMMAND.Flags["-ia"]){"-ia $($COMMAND.Flags["-ia"])"}else{$null})
 				$POS = $(if($COMMAND.Flags["-p"]){"-p $($COMMAND.Flags["-p"])"}else{'-p 0'})
 				$NBYTES = $(if($COMMAND.Flags["-n"]){"-n $($COMMAND.Flags["-n"])"}else{'-n 0'})
@@ -915,9 +924,7 @@ function FUN-FRAT{
 	}
 	if($script:BuildFeatures.'FSFRAT.RUNTIME'){
 		if(-not $script:FSSET){(FRAT-RUNTIME-START)}
-		foreach($CMD in $TRUECMD){
-			FRAT-RUNTIME-PASS-COMMAND $CMD
-		}
+		foreach($CMD in $TRUECMD){FRAT-RUNTIME-PASS-COMMAND $CMD}
 	}elseif($MOUNTCMD -and ($TRUECMD.Length -ge 1)){
 		$FSOUT = (& $FSCONTROLLEREXEPATH $MOUNTCMD @TRUECMD) 2>&1
 		Write-Log ($FSOUT -join "`n")
@@ -1051,7 +1058,7 @@ function Show-ObjectTree{
 foreach($Group in $GroupedCommands){# .Group contains the array of commands belonging to this specific line
     $CMDPERLINE = $Group.Group 
     $PrimaryCmd = $CMDPERLINE[0]
-	Write-Log -MSG "[SHELL]`t$(([AstCommand]$PrimaryCmd).Name)" -COLOR Blue
+	# Write-Log -MSG "[SHELL]`t$(([AstCommand]$PrimaryCmd).Name)" -COLOR Blue
 	# $CMDPERLINE | ForEach-Object{Write-Log -MSG "[SHELL]`t$(Show-ObjectTree $_ -COLOR Blue)" -COLOR Blue}
     switch -Regex ($PrimaryCmd.Name){
         '^FSFRAT\..+$' {

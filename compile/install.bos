@@ -15,5 +15,5 @@
     }, 
     "INPUT": {}
 }
-
+SHELL.REBUILD
 SHELL.EXECUTE -p "C:/GitHub/BlockyOS/src/kernel/libcrt/alibcrt.bos"

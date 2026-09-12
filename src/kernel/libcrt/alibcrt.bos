@@ -59,5 +59,6 @@
 }
 
 PE2EXEC.MAKE -i "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.dll" -od 1 -o "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.service"
-FSFRAT.OPEN -p "SYSD/LIBCRT.app" -a "LCRTAPP" -la "fc"
-FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/objs/libcrt.service" -ia "%LCRTAPP%" -p 0 -n 0
+FSFRAT.MAKE -p "SYSD/" -n "LIBCRT.app" -la "fc"
+FSFRAT.OPEN -p "SYSD/LIBCRT.app" -a "LCRTAPP" -la "f"
+FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.service" -ia "%LCRTAPP%" -p 0 -n 0

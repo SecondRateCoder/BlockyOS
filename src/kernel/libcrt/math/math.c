@@ -82,11 +82,12 @@ float powf_int_base(float x, int n){
 }
 
 ssize_t powll(signed long n, uint8_t pow){
-	const uint8_t pow_ = pow;
-	size_t out = n;
+	ssize_t out = 1;
+	ssize_t base = n;
 	while(pow){
-		out *= out;
-		pow--;
+		if(pow & 1){out *= base;}
+		base *= base;
+		pow >>= 1;
 	}
 	return out;
 }
@@ -112,7 +113,7 @@ float powf(float x, float y){
 	return fast_expf(y * lx);
 }
 
-uint8_t local_precision;
+uint8_t local_precision = 5;
 void setprecision(uint8_t new){local_precision = new;}
 
 // Newton-Raphson square root approximation

@@ -5,7 +5,7 @@ bool checkdisk(char *path){
 	dualprintf(fs_logf, stdout, "\nVerifying Disk GPT");
 #endif
 	bool out = false;
-	rawenv re = startup(path, __FS_DEFAULTBLOCKSIZE);
+	rawenv re = startup(path, 0x00, __FS_DEFAULTBLOCKSIZE);
 	uint8_t *block = readblocks(re, GPT_LBA, sizeof(miniGPT));
 	miniGPT *gpt = (miniGPT *)block;
 #ifdef _DEBUG
@@ -48,7 +48,7 @@ partdim loadpart(char *path, GPTeNSTR name){
 	dualprintf(fs_logf, stdout, "\n[%s:%u]  >>  Loading Partition:    %s", __FILE__, __LINE__, gptname);
 #endif
 	if(checkdisk(path)){
-		rawenv re = startup(path, __FS_DEFAULTBLOCKSIZE);
+		rawenv re = startup(path, 0x00, __FS_DEFAULTBLOCKSIZE);
 		miniGPT *gpt = (miniGPT *)readblocks(re, GPT_LBA, sizeof(miniGPT));
 		GPTentry *ge = (GPTentry *)readblocks(re, gpt->partEntryLoc, gpt->nPartEntries * sizeof(GPTentry));
 		dispose(re);
@@ -85,7 +85,7 @@ void formatpart(
 #endif
 	partdim part = loadpart(path, name);
 	if(!part.high){return;}
-	rawenv re = startup(path, confBlockSize);
+	rawenv re = startup(path, part.base, confBlockSize);
 #ifdef _DEBUG
 	dualprintf(fs_logf, stdout, 
 		"\n[%s:%u]  >>  Format Target: %llu:%llu -> %llu Blocks"
@@ -107,7 +107,10 @@ void formatpart(
 		.confLogSectors = confLogSectors,
 		.confBlockSize = confBlockSize,
 		.confClusterSize = CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize),
-		.verCode = MAKEVERSION(verMAJOR, verMINOR),
+		.verCode = MAKEVERSION(verMAJOR, verMINOR), .extension = {
+			.ExtensionEnabled = false, .ExtensionTable = UINT64_MAX, 
+			.MinimumExtensionSupport = UINT64_MAX, .TotalExtensions = 0X000
+		}
 	};
 	// Write FSROOT
 	memcpy(((fsroot *)block)->signature, FRATSIG, sizeof(FRATSIG));
@@ -195,10 +198,12 @@ conf_fsroot *fmount(char *path){
 	partdim PART;
 	if(checkdisk(path)){
 		// Get the LBA Info for a Partition
-		rawenv re = startup(path, __FS_DEFAULTBLOCKSIZE);
+		rawenv re = startup(path, 0x00, __FS_DEFAULTBLOCKSIZE);
 		void *block = readblocks(re, GPT_LBA, sizeof(miniGPT));
 		miniGPT *gpt = (miniGPT *)block;
-		if(!(PART = queryparttablefs(gpt, re)).high){free(gpt);    return NULL;}
+		if(!(PART = queryparttablefs(gpt, re)).high){free(gpt); dispose(re); return NULL;}
+		free(gpt);
+		re->Partition = PART.base;
 #ifdef _DEBUG
 		dualprintf(fs_logf, stdout, 
 			"\n[%s:%u]  >>  Found Formatted Partition: %llu:%llu -> %llu", 
@@ -228,13 +233,15 @@ conf_fsroot *fmount(char *path){
 			.root = fsroot_,
 			.lastClusterAlloc = 0x00,
 			.logblocks = {
-				.logBlock = readblocks(re, PART.base + LOGBLOCKOFFSET, fsroot_->confBlockSize * fsroot_->confLogSectors),
+				.logBlock = readblocks(re, (PART.base + LOGBLOCKOFFSET), fsroot_->confBlockSize * fsroot_->confLogSectors),
 				.nLogSectors = fsroot_->confLogSectors
 			},
 			.clusterbuffer = {
 				.nClusterSectors = __safediv(fsroot_->confClusterSize, fsroot_->confBlockSize),
 				.clusterSize = fsroot_->confClusterSize,
-				.clusterMap = readblocks(re, PART.base + CLUSTERMAPOFFSET(fsroot_->confLogSectors), fsroot_->confClusterSize)
+				.nClusterItems = __safediv(fsroot_->confClusterSize, sizeof(fsblock)),
+				.clusterMap = readblocks(re, 
+					(PART.base + CLUSTERMAPOFFSET(fsroot_->confLogSectors)), fsroot_->confClusterSize)
 			},
 			._GUID[0x00] = PART.e.GUID[0x00],	._GUID[1] = PART.e.GUID[1],
 			.altGUID[0x00] = PART.e.uGUID[0x00],	.altGUID[1] = PART.e.uGUID[1],
@@ -244,13 +251,13 @@ conf_fsroot *fmount(char *path){
 		dualprintf(fs_logf, stdout, "\n    Verifying FS Root Items #items: %llu", (uint64_t)(fsroot_->confClusterSize / sizeof(fsblock)));
 		EnableVerbose(re);
 #endif
-		for(uint64_t i = 0x00; i < (fsroot_->confClusterSize / sizeof(fsblock)); ++i){
+		for(uint64_t i = 0x00; i < largeroot->clusterbuffer.nClusterItems; ++i){
 			// Read and verify ROOTS
 			fsblock *f = largeroot->clusterbuffer.clusterMap + i;
 			if(f->fcodehigh && f->fcodelow){
 				if(flagcheck(f->attributes, __fsmetadatacluster) && f->fcodehigh && f->fcodelow){
 					meta_fsblock *temp = readblocks(re, getloc(largeroot, f), sizeof(meta_fsblock));
-					if(memcmp(temp->fsig, FRATBLOCKSIG, 8)){
+					if(temp && memcmp(temp->fsig, FRATBLOCKSIG, 8)){
 #ifdef _DEBUG
 						dualprintf(fs_logf, stdout, 
 							"\n[%s:%u]  >>  ERROR!    Corrupted FileSystem Root Block    ERASING ENTRY!!"
@@ -259,7 +266,7 @@ conf_fsroot *fmount(char *path){
 						);
 #endif
 						memset(temp, 0x00, 512);
-						f->fcodehigh = 0x00;	f->fcodelow = 0x00;
+						*f = (fsblock){0};
 						writeblocks(re, temp, getloc(largeroot, f), sizeof(meta_fsblock));
 					}
 					free(temp);
@@ -267,13 +274,14 @@ conf_fsroot *fmount(char *path){
 			}
 		}
 		dispose(re);
+		fuloadroot(largeroot);
 		return largeroot;
 	}
 	return NULL;
 }
 
 fsblock *allocatecluster(conf_fsroot *root){
-	for(uint64_t i = root->lastClusterAlloc; i < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++i){
+	for(uint64_t i = root->lastClusterAlloc; i < root->clusterbuffer.nClusterItems; ++i){
 		if(root->clusterbuffer.clusterMap[i].fcodelow == 0x00 && root->clusterbuffer.clusterMap[i].fcodehigh == 0x00){
 			root->lastClusterAlloc = i;
 			return root->clusterbuffer.clusterMap + i;
@@ -297,7 +305,7 @@ void __ffremovel(conf_fsroot *root, char *path){return __ffremovelh(root, __getf
 
 void __ffremovelh(conf_fsroot *root, uint64_t hash[2]){
 	hash[1] &= FCODEHASHMASK;
-	for(uint64_t cc = 0x00; cc < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
+	for(uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
 		if(root->clusterbuffer.clusterMap[cc].fcodelow == hash[0x00] && 
 			root->clusterbuffer.clusterMap[cc].fcodehigh == hash[1]
 		){root->clusterbuffer.clusterMap[cc].fcodelow = 0x00;	root->clusterbuffer.clusterMap[cc].fcodehigh = 0x00;}
@@ -325,7 +333,7 @@ void __fcreate(conf_fsroot *root, char *path, char *flags){
 		fb->fcodelow = fcode[0];
 		fb->index = 0x00;
 		dirhandle *dhandle = __fgetparent(root, path);
-		if(dhandle && (dhandle->file->fcodelow != fb->fcodelow || dhandle->file->fcodehigh != fb->fcodehigh)){
+		if(dhandle && (dhandle->file->fcodelow != fb->fcodelow && dhandle->file->fcodehigh != fb->fcodehigh)){
 			__fdiradd(dhandle, fb);
 			fuloaddir(dhandle);
 		}
@@ -343,7 +351,7 @@ fsblock *__faddr(conf_fsroot *root, fsblock *family){
 	fsblock *fb = allocatecluster(root);
 	if(fb){
 		fb->index = 0x00;
-		for(uint64_t i = 0x00; i < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++i){
+		for(uint64_t i = 0x00; i < root->clusterbuffer.nClusterItems; ++i){
 			if(root->clusterbuffer.clusterMap[i].fcodelow == family->fcodelow && root->clusterbuffer.clusterMap[i].fcodehigh == family->fcodehigh){fb->index++;}
 		}
 		fb->attributes = family->attributes;
@@ -357,7 +365,7 @@ fsblock *__faddr(conf_fsroot *root, fsblock *family){
 #ifdef _DEBUG
 		dualprintf(fs_logf, stdout, "\n\tWriting 0x00-Block: %llu", loc);
 #endif
-		rawenv re = startup(root->path, root->root->confBlockSize);
+		rawenv re = startup(root->path, root->loc, root->root->confBlockSize);
 		writeblocks(re, bl0, loc, root->root->confBlockSize);
 		free(bl0);
 		dispose(re);
@@ -369,26 +377,26 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 #ifdef _DEBUG
 	dualprintf(fs_logf, stdout, "\nInitialising File MetaData: ./%s", path);
 #endif
-	LBA loc = getloc(root, fb);
+	// LBA loc = getloc(root, fb);
 	meta_fsblock *metadata = (meta_fsblock *)calloc(1, root->root->confBlockSize);
-	time_t _time;	time(&_time);	struct tm *_t = calloc(1, sizeof(struct tm));
+	time_t _time;	time(&_time);	struct tm _t = {0};
 #if defined(_WIN32) || defined(_WIN64)
-    localtime_s(_t, &_time);
+    localtime_s(&_t, &_time);
 #else
-    localtime_r(_t, &_time);
+    localtime_r(&_t, &_time);
 #endif
-	char *name;
-	for(uint64_t i = strlen(path) - 1; i > -1; i--){
+	char *name = NULL;
+	for(uint64_t i = strlen(path); i > 0; i--){
 		if(i > GPTeNAMELEN){path[i] = '\0x00';}else{
-			if(path[i] == '/' || path[i] == '\\'){
-				name = path + strlen(path) - i;  break;
-			}else if(!isascii(path[i])){path[i] = 0x00;}
+			if(path[i] == PATHnoSEP || path[i] == PATHSEP){name = path + i++;	break;}else 
+			if(!isascii(path[i])){path[i] = 0x00;}
 		}
 	}
+	if(!name){name = path;}
 	*metadata = (meta_fsblock){
-		.accessdate = _t->tm_yday,
+		.accessdate = _t.tm_yday,
 		.writedate = 0x00,
-		.accesstime = (_t->tm_hour * 3600) + (_t->tm_min * 60) + _t->tm_sec,
+		.accesstime = (_t.tm_hour * 3600) + (_t.tm_min * 60) + _t.tm_sec,
 		.writetime = 0x00,
 		.f = {.attributes = fb->attributes, 
 			.fcodelow = (flagcheck(fb->attributes, __fsproxy)? 0x00: fb->fcodelow), 
@@ -398,14 +406,14 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 	flagunset(metadata->f.attributes, __fsmetadatacluster);
 	memset(metadata->name, 0x00, GPTeNAMELEN);
 	memcpy(metadata->name, name, strlen(name));
-	rawenv re = startup(root->path, root->root->confBlockSize);
-	writeblocks(re, metadata, loc, sizeof(meta_fsblock));
+	rawenv re = startup(root->path, root->loc, root->root->confBlockSize);
+	writeblocks(re, metadata, getloc(root, fb), sizeof(meta_fsblock));
 	dispose(re);
 }
 
 fsblock *__ffindhi(conf_fsroot *root, uint64_t hash[2], uint64_t index){
 	fsblock _temp = {.fcodehigh = hash[1], .fcodelow = hash[0], .index = index, .attributes = 0x00};
-	for(uint64_t cc = 0x00; cc < (root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
+	for(uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
 		if((root->clusterbuffer.clusterMap[cc].fcodehigh == _temp.fcodehigh) && 
 			(root->clusterbuffer.clusterMap[cc].fcodelow == _temp.fcodelow) && 
 			root->clusterbuffer.clusterMap[cc].index == _temp.index
@@ -429,31 +437,50 @@ fsblock *__ffind(conf_fsroot *root, char *path){
 	return __ffindh(root, hash);
 }
 
-void *__fread1(conf_fsroot *root, fsblock *fb, uint64_t index){
+void *__fread1(conf_fsroot *root, fsblock *fb, uint64_t *index){
 	LBA loc = 0x00;
-	if(index != fb->index){
-		fsblock *fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, index);
-		if(fb_ == NULL){return NULL;}
+	if(!root || !fb || !index){return NULL;}
+	if(*index != fb->index){
+		fsblock *fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, *index);
+		if(fb_ == NULL){return NULL;}else{
+			while(fb_ && flagcheck(fb_->attributes, __fsextensionallocatedcluster)){
+				fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, *index);
+				(*index)++;
+			}
+		}
+		if(!fb_){return NULL;}
 		loc = getloc(root, fb_);
 	}else{loc = getloc(root, fb);}
 #ifdef _DEBUG
-	dualprintf(fs_logf, stdout, "\nReading File Block at %llu, Item: %llu.    Root: [%llu:%llu]", loc, index, fb->fcodelow, fb->fcodehigh);
+	dualprintf(fs_logf, stdout, "\nReading File Block at %llu, Item: %llu.    Root: [%llu:%llu]", loc, *index, fb->fcodelow, fb->fcodehigh);
 #endif
-	rawenv re = startup(root->path, root->root->confBlockSize);
+	rawenv re = startup(root->path, root->loc, root->root->confBlockSize);
 	void *out = readblocks(re, loc, root->root->confBlockSize);
 	dispose(re);
 	return out;
 }
 
-void __fpush1(conf_fsroot *root, fsblock *fb, uint64_t i, void *buffer){
+void __fpush1(conf_fsroot *root, fsblock *fb, uint64_t *i, void *buffer){
+	if(!root || !fb || !i || !buffer){return;}
 	LBA loc = 0x00;
-	if(i != fb->index){
+	if(*i != fb->index){
 		fsblock *fb_ = NULL;
-		if((fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, i)) == NULL){
+		if((fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, *i)) == NULL){
 			fb_ = __faddr(root, fb);
 			if(fb_){loc = getloc(root, fb_);
 			}else{return;}
-		}else{loc = getloc(root, fb_);}
+		}else{
+			while(fb_ && flagcheck(fb_->attributes, __fsextensionallocatedcluster)){
+				fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, *i);
+				(*i)++;
+			}
+			if(!fb_){
+				fb_ = __faddr(root, fb);
+				if(fb_){loc = getloc(root, fb_);
+				}else{return;}
+			}
+			loc = getloc(root, fb_);
+		}
 	}else{
 		if(flagcheck(fb->attributes, __fsmetadatacluster)){
 			// Reject the Write
@@ -465,9 +492,9 @@ void __fpush1(conf_fsroot *root, fsblock *fb, uint64_t i, void *buffer){
 		
 	}
 #ifdef _DEBUG
-	dualprintf(fs_logf, stdout, "\nWriting File Block at %llu, Item: %llu.\tRoot: [%llu:%llu]", loc, i, fb->fcodelow, fb->fcodehigh);
+	dualprintf(fs_logf, stdout, "\nWriting File Block at %llu, Item: %llu.\tRoot: [%llu:%llu]", loc, *i, fb->fcodelow, fb->fcodehigh);
 #endif
-	rawenv re = startup(root->path, root->root->confBlockSize);
+	rawenv re = startup(root->path, root->loc, root->root->confBlockSize);
 	writeblocks(re, buffer, loc, root->root->confBlockSize);
 	dispose(re);
 }
@@ -502,10 +529,8 @@ void fuloaddir(dirhandle *handle){
 	dualprintf(fs_logf, stdout, "\nUn-Mounting Directory [%s]", handle->path);
 #endif
 	// Flush root
-	rawenv re = startup(handle->root->path, handle->root->root->confBlockSize);
-	writeblocks(re, handle->root->root, handle->root->loc, sizeof(fsroot));
-	// Flush cluster Array/Buffer
-	writeblocks(re, handle->root->clusterbuffer.clusterMap, handle->root->loc + CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors), handle->root->clusterbuffer.nClusterSectors);	
+	rawenv re = startup(handle->root->path, handle->root->loc, handle->root->root->confBlockSize);
+	fuloadroot(handle->root);
 	// Flush Entries
 	uint64_t entry = 0x00;
 	fsblock *f = NULL;
@@ -525,7 +550,7 @@ void fuloaddir(dirhandle *handle){
 }
 
 void fuloadroot(conf_fsroot *fr){
-	rawenv re = startup(fr->path, fr->root->confBlockSize);
+	rawenv re = startup(fr->path, fr->loc, fr->root->confBlockSize);
 	writeblocks(re, fr->root, fr->loc, sizeof(fsroot));
 	// Flush cluster Array/Buffer
 	writeblocks(re, fr->clusterbuffer.clusterMap, fr->loc + CLUSTERMAPOFFSET(fr->logblocks.nLogSectors), fr->clusterbuffer.clusterSize);
@@ -536,7 +561,7 @@ void __fdirrefresh(dirhandle *handle){
 #ifdef _DEBUG
 	dualprintf(fs_logf, stdout, "\nRefreshing Dir %s", handle->path);
 #endif
-	rawenv re = startup(handle->root->path, handle->root->root->confBlockSize);
+	rawenv re = startup(handle->root->path, handle->root->loc, handle->root->root->confBlockSize);
 	uint64_t blockprogress = 0x00;
 	bool exit_ = false;
 	do{
@@ -580,18 +605,14 @@ void fuloadh(fhandle *handle){
 	dualprintf(fs_logf, stdout, "\nUn-Mounting File [%llu:%llu]", handle->file->fcodelow, handle->file->fcodehigh);
 #endif
 	// Flush root
-	rawenv re = startup(handle->root->path, handle->root->root->confBlockSize);
-	writeblocks(re, handle->root->root, handle->root->loc, sizeof(fsroot));
-	// Flush cluster Array/Buffer
-	writeblocks(re, handle->root->clusterbuffer.clusterMap, handle->root->loc + CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors), handle->root->clusterbuffer.clusterSize);
+	fuloadroot(handle->root);
 	free(handle);
-	dispose(re);
 }
 
 
 meta_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 	LBA loc = getloc(root, fb);
-	rawenv re = startup(root->path, root->root->confBlockSize);
+	rawenv re = startup(root->path, root->loc, root->root->confBlockSize);
 #ifdef _DEBUG
 	dualprintf(fs_logf, stdout, "\nReading File Info");
 #endif
@@ -601,7 +622,7 @@ meta_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 }
 
 void __fupdatetstamp(conf_fsroot *root, fsblock *file, bool wt){
-	rawenv re = startup(root->path, root->root->confBlockSize);
+	rawenv re = startup(root->path, root->loc, root->root->confBlockSize);
 	meta_fsblock *finfo = __freadinfo(root, file);
 	LBA loc = getloc(root, file);
 	time_t _time;	time(&_time);
@@ -625,7 +646,7 @@ void __fupdatetstamp(conf_fsroot *root, fsblock *file, bool wt){
 
 uint64_t __fsize(fhandle *fh){
 	uint64_t size = 0x00;
-	for(uint64_t cc = 0x00; cc < (fh->root->clusterbuffer.clusterSize / sizeof(fsblock)); ++cc){
+	for(uint64_t cc = 0x00; cc < fh->root->clusterbuffer.nClusterItems; ++cc){
 		size += (
 			!flagcheck((fh->root->clusterbuffer.clusterMap + cc)->attributes, __fsmetadatacluster) &&
 				((fh->root->clusterbuffer.clusterMap + cc)->fcodelow == fh->file->fcodelow && 
@@ -646,8 +667,12 @@ uint64_t __dsize(dirhandle *dh){
 meta_fsblock *_dreadinfo(dirhandle *handle){return __freadinfo(handle->root, handle->file);}
 meta_fsblock *_freadinfo(fhandle *handle){return __freadinfo(handle->root, handle->file);}
 
-void _fseeko(fhandle *handle, uint64_t progress){_fseek(handle, handle->progress + progress);}
-void _fseek(fhandle *handle, uint64_t progress){handle->progress = (progress == 0x00? handle->root->root->confBlockSize: progress);}
+void _fseeko(fhandle *handle, int64_t progress){
+	if(!handle){return;}
+	if(progress < 0){handle->progress -= (uint64_t)(-progress);}
+	else{handle->progress += (uint64_t)progress;}
+}
+void _fseek(fhandle *handle, uint64_t progress){if(handle){handle->progress = progress;}}
 
 uint64_t _fwrite(fhandle *handle, uint64_t nbytes, const void *data){
     if(!handle || !data || nbytes == 0x00){return 0x00;}
@@ -662,13 +687,13 @@ uint64_t _fwrite(fhandle *handle, uint64_t nbytes, const void *data){
 				blkOffset = (uint64_t)(pos % blkSize), 
 				chunk = blkSize - blkOffset;
         if(chunk > left){chunk = left;}
-        void *blk = __fread1(handle->root, handle->file, blkIndex);
+        void *blk = __fread1(handle->root, handle->file, &blkIndex);
         if(!blk){
             blk = calloc(1, blkSize);
             if(!blk){break;}
         }
         memcpy(blk + blkOffset, data + written, chunk);
-        __fpush1(handle->root, handle->file, blkIndex, blk);
+		__fpush1(handle->root, handle->file, &blkIndex, blk);
         free(blk);
         written      += chunk;
         pos          += chunk;
@@ -678,7 +703,7 @@ uint64_t _fwrite(fhandle *handle, uint64_t nbytes, const void *data){
     return nbytes - left;
 }
 uint64_t _fread(fhandle *handle, uint64_t nbytes, void **dataout){
-    if(!handle || nbytes == 0x00){return 0x00;}
+	if(!handle || !dataout || nbytes == 0x00 || (handle->progress + nbytes) > __fsize(handle)){return 0x00;}
     uint64_t blkSize = handle->root->root->confBlockSize;
     uint64_t pos    = handle->progress;      // byte offset in file
     uint64_t left    = nbytes;
@@ -692,7 +717,7 @@ uint64_t _fread(fhandle *handle, uint64_t nbytes, void **dataout){
         uint64_t blkOffset  = (uint64_t)(pos % blkSize);
         uint64_t chunk      = blkSize - blkOffset;
 
-        void *blk = __fread1(handle->root, handle->file, blkIndex);
+        void *blk = __fread1(handle->root, handle->file, &blkIndex);
         if(!blk){break;}
         if(chunk > left){chunk = left;}
 

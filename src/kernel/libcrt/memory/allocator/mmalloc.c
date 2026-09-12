@@ -202,6 +202,8 @@ bool fusememory(
 * @remarks This Function already uses Mutex Locked Dependencies
 */
 volatile void *mrealloc(volatile void *__restrict ptr, size_t new){
+	if(!ptr){return mmalloc(new);}
+	if(!new){mfree((void *)ptr); return NULL;}
 	size_t originalsize = 0;
 	volatile allocstate_t *astate = getastate();
 	for(register uint32_t cc = 0; cc < astate->npools; cc++){
@@ -216,7 +218,8 @@ volatile void *mrealloc(volatile void *__restrict ptr, size_t new){
 	}
 	if(originalsize){
 		volatile void *out = mmalloc(new);
-		memcpy(out, ptr, originalsize);
+		if(!out){return NULL;}
+		memcpy(out, ptr, __min(originalsize, new));
 		mfree(ptr);
 		return out;
 	}
@@ -255,10 +258,12 @@ volatile void *mclone(void *original){
 	}
 	if(size){
 		void *out = mmalloczero(size);
+		if(!out){return NULL;}
 		memcpy(out, original, size);
 		MSafePrint("Cloning Memory 0x%p, outputting 0x%p of %llu bytes", out, original, out, size);
+		return out;
 	}
-	// MSafePrintNF("Could not Copy Memory", NULL);
+	return NULL;
 }
 
 bool mIsMapped(void *m){
@@ -287,14 +292,11 @@ volatile void *mclone_s(void *original, size_t target){
 		}
 		if(size){break;}
 	}
-	if(size){
-		void *out = mmalloczero(__max(size, target));
-		memcpy(out, original, __max(size, target));
-		MSafePrint("Cloning Memory Safely 0x%p, outputting 0x%p of %llu bytes", out, original, out, __max(size, target));
-	}
 	void *out = mmalloczero(target);
-	memcpy(out, original, target);
-	MSafePrint("Cloning Memory Safely 0x%p, outputting 0x%p of %llu bytes", out, original, out, target);
+	if(!out){return NULL;}
+	if(size){memcpy(out, original, __min(size, target));}
+	else{memcpy(out, original, target);}
+	return out;
 }
 
 /*
@@ -347,12 +349,13 @@ volatile void *mmalloc(size_t nbytes){
 * @remarks This Function only performs a small write, make sure that only the write is locked.
 */
 void mfree(void *__restrict ptr){
-	//	Valid for calling via FreePages.
-	bool valid = false;
+	if(!ptr){return;}
+	bool inPool = false;
+	bool freed = false;
 	volatile allocstate_t *state = getastate();
 	if(!state->pools){initastate(dBLOCKS, dPOOLS);}else{
 		for(uint32_t cc = 0; cc < state->npools; ++cc){
-			valid = !(ptr >= state->pools[cc].base && ptr < (state->pools[cc].base + (BLOCKSIZE * state->pools[cc].nblocks)));
+					inPool = ptr >= state->pools[cc].base && ptr < (state->pools[cc].base + (BLOCKSIZE * state->pools[cc].nblocks));
 			memdesc_t *md = getdescarrn((state->pools + cc));
 			for(size_t cc_ = (state->pools[cc].nDescriptors? state->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 				if(
@@ -361,13 +364,13 @@ void mfree(void *__restrict ptr){
 					__check(md[cc_].flags, memdesc_e__used)
 				){
 					__uset(md[cc_].flags, memdesc_e__used);
+					freed = true;
 					MSafePrintNR("Freeing Ptr 0x%p", ptr);
 				}
 			}
 		}
 	}
-	//	At this point it's impossible for the 
-	if(valid){FreePages(ptr);}
+	if(!inPool && !freed){FreePages(ptr);}
 }
 
 ml_t descinfo(volatile void *__restrict ptr){

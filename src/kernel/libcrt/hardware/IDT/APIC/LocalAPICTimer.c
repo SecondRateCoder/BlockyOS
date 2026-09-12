@@ -10,10 +10,14 @@ bool AddTimerEvent(uint32_t Vector, uint16_t Tick, uint16_t Countdown,
 	uint16_t StartupCooldown, LocalAPICTimerCallback *Event, void *persistent, CommonMutex signal
 ){
 	LocalAPICTimerEvent *TimerTable = ISRGetStackHeader(Vector);
-	void *LocalAPIC = (void *)TimerTable - (sizeof(uint64_t) * 4);
+	if(!TimerTable || !Event || !*Event || !Tick){return false;}
+	void *LocalAPIC = *((void **)((uint8_t *)TimerTable - (sizeof(uint64_t) * 4)));
+	if(!LocalAPIC){return false;}
 	//	Walk to the End of the Table.
 	//	Disable Interrupts.
-	DisableLocalAPIC(LocalAPIC);
+	uint32_t spurious = 0;
+	ReadAPICRegister(LocalAPIC, LAR_SpuriousInterruptVector, spurious);
+	WriteAPICRegister(LocalAPIC, LAR_SpuriousInterruptVector, spurious & ~LocalAPICEnableBit);
 	while(TimerTable->Next && TimerTable->Callback){TimerTable = TimerTable->Next;}
 	void *ptr = TimerTable->Next;
 	if(!TimerTable->Next){ptr = mcalloc(1, sizeof(LocalAPICTimerEvent));}
@@ -23,17 +27,20 @@ bool AddTimerEvent(uint32_t Vector, uint16_t Tick, uint16_t Countdown,
 		.ErasureCountdown = Countdown, .StartupCooldown = StartupCooldown, 
 		.signal = signal, .Tick = Tick
 	};
-	EnableLocalAPIC(LocalAPIC);
+	WriteAPICRegister(LocalAPIC, LAR_SpuriousInterruptVector, spurious | LocalAPICEnableBit);
 	return true;
 }
 
 ISRCallbackDefinition(APICTimerEventHandler){
-	LocalAPICTimerEvent *ETable = (LocalAPICTimerEvent *)Frame->StackHeader, *Selected = (LocalAPICTimerEvent *)ETable->Next;
-	void *LAPIC = GetLocalAPICBase(Frame->LocalAPIC, NULL);
+	LocalAPICTimerEvent *ETable = (LocalAPICTimerEvent *)Frame->StackHeader;
+	if(!ETable){ISRCallbackReturn;}
+	LocalAPICTimerEvent *Selected = (LocalAPICTimerEvent *)ETable->Next;
+	void *LAPIC = Frame->LocalAPIC;
 	uint32_t Current = 0x00;
 	ReadAPICRegister(LAPIC, LAR_TimerCurrentCount, Current);
-	while(ETable->Next){
+	while(ETable && ETable->Next){
 		if(Selected){
+			if(!Selected->Tick || !ETable->Tick){ETable = (LocalAPICTimerEvent *)ETable->Next; continue;}
 			if((Current % Selected->Tick) == 0){break;}else 
 			if((Current % Selected->Tick) > (Current % ETable->Tick)){Selected = ETable;}else 
 			//	Tick Error, we need to modify the Tick of Selected
@@ -41,6 +48,7 @@ ISRCallbackDefinition(APICTimerEventHandler){
 		}else{Selected = ETable;}
 		ETable = (LocalAPICTimerEvent *)ETable->Next;
 	}
+	if(!Selected || !Selected->Callback){ISRCallbackReturn;}
 	void *Temp = mcalloc(1, sizeof(LocalAPICTimerEvent));
 	void *_call = (void *)Selected->Callback(Temp, Current, Selected->persistent, Selected->call);
 	UnlockMutex(Selected->signal);

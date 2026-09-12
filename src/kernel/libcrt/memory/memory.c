@@ -81,6 +81,8 @@ void *memcpy(void * __restrict dst, const void * __restrict src, uint64_t len){
 
 GenericChecksum *ResolveGenericChecksum(void *ptr, uint64_t nbytes){
 	static GenericChecksum out = {0};
+	out[0] = 0;
+	out[1] = 0;
 	uint64_t split = (nbytes % 2) == 0? (nbytes / 2): (nbytes % 2) + 1;
 	while(nbytes--){
 		if(nbytes > split){out[0] ^= ((uint8_t *)ptr)[nbytes] & (((uint8_t *)ptr)[nbytes] << 2);}
@@ -94,6 +96,7 @@ errno_t memmove_s(void *__restrict a, uint64_t alen, void *__restrict b, uint64_
 	if(!a || !b){return NullError;}
 	if(blen > alen){return OutOfBoundsError;}
 	void *temp = AllocatePages(NULL, blen, (ReadWritable | UserMode), 0x00);
+	if(!temp){return OutOfMemoryError;}
 	memcpy(temp, b, blen);		memcpy(a, temp, blen);
 	FreePages(temp);
 	return 0x00;

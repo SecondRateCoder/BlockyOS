@@ -221,3 +221,4 @@ LibAPI void *GetLocalAPICBase(void *ACPIBase, bool *_RSDT);
 LibAPI bool InitLocalAPIC(void *ACPIBase, uint8_t InterruptBase, bool Enable);
 LibAPI void DisableLocalAPIC(void *ACPIBase);
 LibAPI void EnableLocalAPIC(void *ACPIBase);
+uint32_t GetLocalAPICID();

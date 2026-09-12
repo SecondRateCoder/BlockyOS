@@ -18,23 +18,27 @@ void setblocksize(rawenv re, uint32_t new){
 	re->CalcBlock = __safediv((new + re->RealBlock - 1), re->RealBlock);
 }
 
-rawenv startup(char *path, uint32_t configuredBlockSize){
+rawenv startup(char *path, LBA PartitionBase, uint32_t configuredBlockSize){
 #ifdef _DEBUG
-	printf("\n[Parent:%p] >>  %s  ConfBlockSize: %u    Starting Disk Env ID: ", 
-		__builtin_return_address(0), path, configuredBlockSize
+	printf("\n[Parent:%p] >>  %s  Base: %u    ConfBlockSize: %u    Starting Disk Env ID: ", 
+		__builtin_return_address(0), path, PartitionBase, configuredBlockSize
 	);
 #endif
 	rawenv re = calloc(1, sizeof(rawenv_t));
+	if(!re){return NULL;}
 #ifdef _DEBUG
 	re->EnableVerbose = true;
 #endif
 	*re = (rawenv_t){
 		.file = fopen(path, "rb+"),
 		.path = strdup(path),
-		.CalcBlock = 1,
-		.RealBlock = configuredBlockSize,
+		.Partition = PartitionBase,
+		.CalcBlock = (configuredBlockSize / DefaultRawDiskSize) + ((configuredBlockSize % DefaultRawDiskSize) != 0),
+		.RealBlock = DefaultRawDiskSize,
 		.ConfBlock = configuredBlockSize
 	};
+	if(!re->file){free(re->path); free(re); return NULL;}
+	if(!re->CalcBlock){re->CalcBlock = 1;}
 	return re;
 }
 
@@ -45,37 +49,48 @@ void *readblocks(rawenv re, LBA pos, uint64_t bytes){
 #endif
 		return NULL;
 	}
-
+	if(pos < re->Partition){printf("\nInvalid Read Position %llu", (uint64_t)pos);	return NULL;}
     uint64_t blockBytes = re->RealBlock * re->CalcBlock;
-    uint64_t nBlocks    = __safediv((bytes + blockBytes - 1), re->RealBlock);
+	uint64_t nBlocks    = __safediv((bytes + blockBytes - 1), blockBytes) * re->CalcBlock;
     uint64_t allocSize  = nBlocks * re->RealBlock;
 #ifdef _DEBUG
-	printf("\nReading Bytes\n[Parent:%p] >> Reading [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
-		__builtin_return_address(0), bytes, nBlocks, pos, pos * re->RealBlock * re->CalcBlock, pos + nBlocks, (pos + nBlocks) * re->RealBlock * re->CalcBlock);
+	printf("\nReading Bytes\n[Parent:%p] >> Reading [%u bytes(s)->%u block(s)] from LBA[%llu(%llu)-%llu(%llu)]",
+		__builtin_return_address(0), bytes, nBlocks, pos, 
+		(re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), pos + nBlocks, 
+		(re->Partition * re->RealBlock) + (((pos + nBlocks) - re->Partition) * re->RealBlock * re->CalcBlock));
 #endif
     void *data = calloc(1, allocSize);
     if(!data){return NULL;}
-	fseek(re->file, pos * re->RealBlock * re->CalcBlock, SEEK_SET);
-	fread(data, 1, allocSize, re->file);
+	if(fseek(re->file, (re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), SEEK_SET) != 0 ||
+		fread(data, 1, allocSize, re->file) != allocSize){
+		free(data);
+		return NULL;
+	}
     return data;
 }
-void *writeblocks(rawenv re, void *data, LBA pos, uint64_t bytes){
+void writeblocks(rawenv re, void *data, LBA pos, uint64_t bytes){
 	if(!re){
 #ifdef _DEBUG
 		printf("\nDisk Interface does not exist");
 #endif
-		return NULL;
+		return;
 	}
-	uint64_t nBlocks = __safediv((bytes + (re->RealBlock * re->CalcBlock) - 1), re->RealBlock);
+	if(!data || pos < re->Partition){printf("\nInvalid Write Position %llu", (uint64_t)pos);	return;}
+	uint64_t blockBytes = re->RealBlock * re->CalcBlock;
+	uint64_t nBlocks = __safediv((bytes + blockBytes - 1), blockBytes) * re->CalcBlock;
 	void *buf = calloc(nBlocks, re->RealBlock);
 #ifdef _DEBUG
-	printf("\nWriting Bytes\n[Parent:%p] >> Writing [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
-			__builtin_return_address(0), bytes, nBlocks, pos, pos * re->RealBlock * re->CalcBlock, pos + nBlocks, (pos + nBlocks) * re->RealBlock * re->CalcBlock);
+	printf("\nWriting Bytes\n[Parent:%p] >> Wrtiting [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
+		__builtin_return_address(0), bytes, nBlocks, pos, 
+		(re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), pos + nBlocks, 
+		(re->Partition * re->RealBlock) + (((pos + nBlocks) - re->Partition) * re->RealBlock * re->CalcBlock));
 #endif
 	if(buf){
 		memcpy(buf, data, bytes);
-		fseek(re->file, pos * re->RealBlock * re->CalcBlock, SEEK_SET);
-		fwrite(buf, re->RealBlock, nBlocks, re->file);
+		if(fseek(re->file, (re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), SEEK_SET) == 0){
+			fwrite(buf, re->RealBlock, nBlocks, re->file);
+		}
+		free(buf);
 	}else{
 #ifdef _DEBUG
         printf("    Failed to allocate Write-Buffer");
@@ -109,11 +124,11 @@ void *readbytes(rawenv re, LBA pos, uint16_t offset, uint64_t nbytes){
 }
 
 void dispose(rawenv re){
+	if(!re){return;}
 #ifdef _DEBUG
-	printf("\nClosing Disk Interface >> {%s}", re->path);
+	printf("\nClosing Disk Interface >> {%s}", re->path ? re->path : "");
 #endif
-	fflush(re->file);
-	fclose(re->file);
+	if(re->file){fflush(re->file); fclose(re->file);}
 	free(re->path);
 	free(re);
 }

@@ -110,23 +110,26 @@ typedef GenericDiskCommand	UsableDiskCommand;
 
 void *MassStorageHandle(GenericMassStorageDeviceConfig *cfg, PCIDeviceSpecifier device, CommonMutex Mtx);
 
-#define ReBlocks(re, size)		(((size) / (re)->CBlockSize) + (((size) % (re)->CBlockSize) != 0))
+#define ReBlocks(re, size)		(((size) / (re)->CalcBlocks) + (((size) % ((re)->RealBlockSize * (re)->CalcBlocks)) != 0))
 #define ReSetGUID(SET, VALUE)	SET = (GUID){VALUE[0], VALUE[1]}
+
+typedef uint64_t LBA;
 typedef struct{
 	PCIDeviceSpecifier	Device;
 	CommonMutex			Mutex;
 	uint64_t			Queue;
 	void				*Handle;
-	uint32_t			RBlockSize;
-	uint32_t			CBlockSize;
+	uint32_t			RealBlockSize;
+	uint32_t			CalcBlocks;
+	LBA					PartitionBase;
 }renv_t, *rawenv;
 
-DLLImport uint64_t AllocateMassStorageQueue(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint32_t Vector);
-DLLImport void FreeMassStorageQueue(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint64_t Queue);
-DLLImport void MassStorageRead(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint64_t Queue, uint64_t Offset, uint64_t Bytes, void *Data);
-DLLImport void MassStorageWrite(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint64_t Queue, uint64_t Offset, uint64_t Bytes, void *Data);
-DLLImport rawenv OpenRawHandle(GenericMassStorageDeviceConfig *cfg, PCIDeviceSpecifier device, uint32_t Vector, uint32_t BlockSize, CommonMutex Mtx);
-DLLImport void WriteRawHandleBytes(rawenv re, uint64_t OFFSET, uint64_t BYTES, void *DATA);
-DLLImport void WriteRawHandleBlocks(rawenv re, LBA LBA, uint64_t BLOCKS, void *DATA);
+LibAPI uint64_t AllocateMassStorageQueue(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint32_t Vector);
+LibAPI void FreeMassStorageQueue(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint64_t Queue);
+LibAPI void MassStorageRead(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint64_t Queue, uint64_t Offset, uint64_t Bytes, void *Data);
+LibAPI void MassStorageWrite(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint64_t Queue, uint64_t Offset, uint64_t Bytes, void *Data);
+LibAPI rawenv OpenRawHandle(GenericMassStorageDeviceConfig *cfg, PCIDeviceSpecifier device, uint32_t Vector, uint32_t BlockSize, CommonMutex Mtx);
+LibAPI bool WriteRawHandleBlocks(rawenv re, LBA P, uint64_t BLOCKS, void *DATA);
+LibAPI bool WriteRawHandleBytes(rawenv re, LBA P, uint64_t BYTES, void *DATA);
 #define ReadRawHandleBytes	ReadRawHandleBlocks
-DLLImport void *ReadRawHandleBlocks(rawenv re, LBA LBA, uint64_t BLOCKS);
+LibAPI void *ReadRawHandleBlocks(rawenv re, LBA LBA, uint64_t BLOCKS);

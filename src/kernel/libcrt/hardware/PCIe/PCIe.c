@@ -7,7 +7,7 @@ void *GetPCIeConfigurationBase(void *acpibase, uint32_t n){
 		void *Table = SearchACPITable("MCFG", acpibase);
 		if(*((uint32_t *)(Table + __offsetof(SDTHeader_t, Revision))) >= XSDPRevision){
 			XSDT_MCFG_t *_MCFG = (XSDT_MCFG_t *)Table;
-			if(n > ((_MCFG->Header.Length - sizeof(SDTHeader_t)) / sizeof(XSDT_MCFGConfigurationEntry_t))){return false;}
+			if(n >= ((_MCFG->Header.Length - sizeof(SDTHeader_t)) / sizeof(XSDT_MCFGConfigurationEntry_t))){return NULL;}
 			XSDT_MCFGConfigurationEntry_t *E = _MCFG->Table + n;
 			void *Virtual = NULL;
 			if(!(Virtual = MapVirtual((void *)E->ConfigurationBaseAddress))){
@@ -18,7 +18,7 @@ void *GetPCIeConfigurationBase(void *acpibase, uint32_t n){
 			return Virtual;
 		}else{
 			RSDT_MCFG_t *_MCFG = (RSDT_MCFG_t *)Table;
-			if(n > ((_MCFG->Header.Length - sizeof(SDTHeader_t)) / sizeof(RSDT_MCFGConfigurationEntry_t))){return false;}
+			if(n >= ((_MCFG->Header.Length - sizeof(SDTHeader_t)) / sizeof(RSDT_MCFGConfigurationEntry_t))){return NULL;}
 			RSDT_MCFGConfigurationEntry_t *E = _MCFG->Table + n;
 			void *Virtual = NULL;
 			if(!(Virtual = MapVirtual((void *)E->ConfigurationBaseAddress))){
@@ -79,7 +79,10 @@ void *PCIeResolveBar(PCIDevice *Device, uint8_t BAR){
 				(ReadWritable | SupervisorMode), 0x0, 0x20);
 		}
 	}
-	return ((PCIHeader0x0 *)Device)->BAR[BAR].IOBAR.IsIOSpace? (void *)((PCIHeader0x0 *)Device)->BAR[BAR].IOBAR._4ByteAlignedAddress: 0x00;
+	if(((PCIHeader0x0 *)Device)->BAR[BAR].IOBAR.IsIOSpace){
+		return (void *)(uint64_t)((PCIHeader0x0 *)Device)->BAR[BAR].IOBAR._4ByteAlignedAddress;
+	}
+	return out;
 }
 
 bool ReadPCIeVOIDPTR(void *acpibase, void *dataout, uint32_t datasize, uint32_t n, uint16_t bus, uint16_t slot, uint16_t func, uint16_t offset){
@@ -171,10 +174,11 @@ MSIxTableEntry_t *PCIeGetMSIxEntry(void *acpibase, uint32_t n, uint16_t bus, uin
 UndefinedPCIeCapability *SearchPCIeCapabilitiesN(void *acpibase, uint32_t n, uint16_t bus, uint16_t slot, uint32_t *func, PCIeCapabilitiesDeviceType type, uint32_t encounter){
 	for(uint32_t cc = 0; cc < PCIMaxPhysicalFunctions; ++cc){
 		UndefinedPCIeCapability *out = ReadPCIeCapabilities(acpibase, n, bus, slot, cc);
+		if(!out){continue;}
 		if((out->ExtHeader.ExtCAPID == type) && !encounter){
 			if(func){*func = cc;}
 			return out;
-		}else{encounter--;}
+		}else if(encounter){encounter--;}
 		mfree(out);
 	}
 	return NULL;
@@ -182,7 +186,9 @@ UndefinedPCIeCapability *SearchPCIeCapabilitiesN(void *acpibase, uint32_t n, uin
 
 UndefinedPCIeCapability *ReadPCIeCapabilities(void *acpibase, uint32_t n, uint16_t bus, uint16_t slot, uint16_t func){
 	void *Adr = GetPCIeConfigurationBase(acpibase, n);
+	if(!Adr){return NULL;}
 	PCIDevice *dev = (PCIDevice *)PCIeMakeAddress(Adr, bus, slot, func, 0x0);
+	if(!dev){return NULL;}
 	PCIeCapabilitiesHeader *Hdr = NULL;
 	switch(dev->HeaderType.Type){
 		case PCIGeneralDevice:		{Hdr = (PCIeCapabilitiesHeader *)(PCIeMakeAddress(Adr, bus, slot, func, ((PCIHeader0x0 *)dev)->CapabilitiesListOffset));	break;}
@@ -191,6 +197,7 @@ UndefinedPCIeCapability *ReadPCIeCapabilities(void *acpibase, uint32_t n, uint16
 		default: {return NULL;}
 	}
 	UndefinedPCIeCapability *Temp = NULL;
+	if(!Hdr){return NULL;}
 	switch(Hdr->ExtCAPID){
 		case PCIeMSIxCapability: {
 			Temp = (UndefinedPCIeCapability *)mmalloczero(sizeof(PCIeMSIxCapability_t));
