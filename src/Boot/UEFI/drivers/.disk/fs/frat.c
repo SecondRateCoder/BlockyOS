@@ -118,7 +118,8 @@ void formatpart(
 	__free(block);
 	block = __calloc(CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize), confBlockSize);
 	// __memset(block, 0x00, CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
-	writeblocks(re, block, part.base + CLUSTERMAPOFFSET(confLogSectors), CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
+	writeblocks(re, block, part.base + (CLUSTERMAPOFFSET(confLogSectors) * confBlockSize), 
+		CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
 	__free(block);
 	dispose(re);
 	DEBUGPRINT(L"\n[%s:%u]  >>  Formatted Partition", (L"" __FILE__), __LINE__);
@@ -219,7 +220,8 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 				.nClusterSectors = __safediv(fsroot_->confClusterSize, fsroot_->confBlockSize),
 				.clusterSize = fsroot_->confClusterSize,
 				.nClusterItems = __safediv(fsroot_->confClusterSize, sizeof(fsblock)),
-				.clusterMap = readblocks(re, partition.base + CLUSTERMAPOFFSET(fsroot_->confLogSectors), fsroot_->confClusterSize)
+				.clusterMap = readblocks(re, 
+					partition.base + (CLUSTERMAPOFFSET(fsroot_->confLogSectors) * fsroot_->confBlockSize), fsroot_->confClusterSize)
 			},
 			.GUID = GUID,
 			.altGUID = altGUID
@@ -485,7 +487,9 @@ void fuloaddir(dirhandle *handle){
 	rawenv re = startup(handle->root->GUID, handle->root->altGUID, handle->root->loc, handle->root->root->confBlockSize);
 	writeblocks(re, handle->root->root, handle->root->loc, sizeof(fsroot));
 	// Flush cluster Array/Buffer
-	writeblocks(re, handle->root->clusterbuffer.clusterMap, handle->root->loc + CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors), handle->root->clusterbuffer.clusterSize);
+	writeblocks(re, handle->root->clusterbuffer.clusterMap, 
+		handle->root->loc + (CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors) * handle->root->root->confBlockSize), 
+		handle->root->clusterbuffer.clusterSize);
 	// Flush Entries
 	UINT64 entry = 0x00;
 	fsblock *f = NULL;
@@ -554,7 +558,9 @@ void fuloadh(fhandle *handle){
 	rawenv re = startup(handle->root->GUID, handle->root->altGUID, handle->root->loc, handle->root->root->confBlockSize);
 	writeblocks(re, handle->root->root, handle->root->loc, sizeof(fsroot));
 	// Flush cluster Array/Buffer
-	writeblocks(re, handle->root->clusterbuffer.clusterMap, handle->root->loc + CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors), handle->root->clusterbuffer.clusterSize);
+	writeblocks(re, handle->root->clusterbuffer.clusterMap, 
+		handle->root->loc + (CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors) * handle->root->root->confBlockSize), 
+		handle->root->clusterbuffer.clusterSize);
 	__free(handle);
 	dispose(re);
 }
@@ -610,8 +616,15 @@ UINT64 __dsize(dirhandle *dh){
 meta_fsblock *_dreadinfo(dirhandle *handle){return __freadinfo(handle->root, handle->file);}
 meta_fsblock *_freadinfo(fhandle *handle){return __freadinfo(handle->root, handle->file);}
 
-void _fseek(fhandle *handle, UINT64 progress){handle->progress = progress;}
-void _fseeko(fhandle *handle, INTN progress){handle->progress += progress;}
+void _fseeko(fhandle *handle, int64_t progress){
+	if(!handle){return;}
+	if(progress < 0){handle->progress = __min(handle->progress - (uint64_t)progress, handle->root->root->confBlockSize);}
+	else{handle->progress += (uint64_t)progress;}
+}
+void _fseek(fhandle *handle, uint64_t progress){
+	if(progress > INT64_MAX){_fseeko(handle, INT64_MAX);}
+	_fseeko(handle, progress - INT64_MAX);
+}
 
 UINT64 _fwrite(fhandle *handle, UINT64 nbytes, const void *data){
     if(!handle || !data || nbytes == 0x00){return 0x00;}
@@ -626,14 +639,16 @@ UINT64 _fwrite(fhandle *handle, UINT64 nbytes, const void *data){
         UINT64  blkOffset  = (UINT64)(pos % blkSize);
         UINT64  chunk      = blkSize - blkOffset;
         if(chunk > left){chunk = left;}
-        void *blk = __fread1(handle->root, handle->file, &blkIndex);
-        if(!blk){
-            blk = __calloc(1, blkSize);
-            if(!blk){break;}
-        }
-        __safecopy(blk + blkOffset, data + written, chunk);
-        __fpush1(handle->root, handle->file, &blkIndex, blk);
-        __free(blk);
+		if(chunk < blkSize){
+			void *blk = __fread1(handle->root, handle->file, &blkIndex);
+			if(!blk){
+				blk = __calloc(1, blkSize);
+				if(!blk){break;}
+			}
+			__safecopy(blk + blkOffset, data + written, chunk);
+			__fpush1(handle->root, handle->file, &blkIndex, blk);
+			__free(blk);
+		}else{__fpush1(handle->root, handle->file, &blkIndex, data + written);}
         written      += chunk;
         pos          += chunk;
         left         -= chunk;
@@ -642,7 +657,7 @@ UINT64 _fwrite(fhandle *handle, UINT64 nbytes, const void *data){
     return (nbytes - left);
 }
 UINT64 _fread(fhandle *h, UINT64 nbytes, void **dataout){
-	if((h->progress + nbytes) > __fsize(h)){return 0x00;}
+	if(((h->progress - h->root->root->confBlockSize) + nbytes) > __fsize(h)){return 0x00;}
     UINT32 bsize = h->root->root->confBlockSize;
     UINT64 progress = h->progress;
 

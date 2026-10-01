@@ -11,15 +11,8 @@ $C_Header = @"
 
 #include "kboot.h"
 
-#define DEFINE_GLYPH(NAME, MATCHER, W, H, V_STRIDE, H_STRIDE, ...) \
-    const FontGlyph NAME = { \
-        .Matcher = MATCHER, \
-        .BitWidth = W, \
-        .BitHeight = H, \
-        .VerticalStride = V_STRIDE, \
-        .HorizontalStride = H_STRIDE, \
-        .Data = { __VA_ARGS__ } \
-    }
+#define DEFINE_GLYPH(NAME, MATCHER, W, H, V_STRIDE, H_STRIDE, ...)	static const FontGlyph NAME = {													\
+		.Matcher = MATCHER, .BitWidth = W, .BitHeight = H, .VerticalStride = V_STRIDE, .HorizontalStride = H_STRIDE, .Data = {__VA_ARGS__}}
 
 "@
 

@@ -194,12 +194,12 @@ bool WriteRawHandleBlocks(rawenv re, LBA P, uint64_t BLOCKS, void *DATA){
 		__roundup(re->CalcBlocks * re->RealBlockSize * BLOCKS, re->RealBlockSize), In);
 	MutexPoll(re->Mutex);
 	mfree(In);
-	return;
+	return true;
 }
 bool WriteRawHandleBytes(rawenv re, LBA P, uint64_t BYTES, void *DATA){
 	void *temp = ReadRawHandleBlocks(re, P, BYTES);
 	memcpy(temp + (P % re->RealBlockSize), DATA, BYTES);
-	WriteRawHandleBlocks(re, P, BYTES, temp);
+	bool out = WriteRawHandleBlocks(re, P, BYTES, temp);
 	mfree(temp);
-	return;
+	return out;
 }

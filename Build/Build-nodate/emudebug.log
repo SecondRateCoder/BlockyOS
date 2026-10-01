@@ -2,5 +2,9 @@
 UEFI bootloader compiled: C:\GitHub\BlockyOS\Build\Build-nodate\boot-part\efi\boot\bootx64.efi
 ===== Step 2: Validate or Create Disk Layout (GPT) =====
 Validating existing disk image: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
+GPT incorrect or invalid. Rebuilding GPT...
+Creating GPT disk: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
+Validating existing disk image: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
 GPT is healthy. Skipping GPT rebuild.
 InstallOS requested: formatting disk with FS.ps1.
+Running install.bos in current directory.

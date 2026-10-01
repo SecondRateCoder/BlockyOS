@@ -417,6 +417,7 @@ cmd_errout __shellfread(uint64_t *buffer, void **persistent){
 		if(_fread(file, nbytes, &data) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "Could Not read enough Bytes from FrAT Filesystem Item"};}
 		if(fwrite(data, 1, nbytes, f) != nbytes){return (cmd_errout){.errcode = cmddescerrtype_eom, .msg = "Could Not write enough Bytes to Parent Filesystem Item"};}
 		fclose(f);
+		free(data);
 	}
 	return (cmd_errout){.errcode = 0, .msg = ""};
 }

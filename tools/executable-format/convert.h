@@ -36,7 +36,7 @@ typedef struct{
 #define SpecialSection2	".reloc\0\0"
 
 void *memdup(void *mem, size_t n);
-char* PoolGetPath(const char* fileSnippet);
+char* PoolGetPath(const char* file);
 BeSectionFlags ConvertPeSectionFlagsBe(PeSectionCharacteristics Characteristics);
 
 bool InitImportSection(char *path, ExpandedPeExecutable *Image, SectionNameBe OutName);

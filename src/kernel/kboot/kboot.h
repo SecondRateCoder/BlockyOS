@@ -4,6 +4,7 @@
 #include "src/Boot/UEFI/tools/tools.h"
 #include "src/Boot/UEFI/drivers/executable/eload.h"
 #include "src/Boot/UEFI/guid.h"
+
 #include "kernel/libcrt/def.h"
 #include "kernel/libcrt/hardware/IDT/APIC/APIC.h"
 #include "kernel/libcrt/hardware/GDT/GDT.h"
@@ -25,5 +26,5 @@
 
 #include "kernel/services/IO/service.h"
 
-
+extern KernalMainDef(kboot);
 extern uint8_t CODEBASE, CODELIMIT, DATABASE, DATALIMIT;

@@ -11,8 +11,8 @@
 #include "kernel/libcrt/memory/allocator/malloc.h"
 
 #include "kernel/libcrt/mutex.h"
-#include "controllers/ATAPI.h"
-#include "controllers/NVMe.h"
+#include "controllers/_ATAPI.h"
+#include "controllers/_NVMe.h"
 
 #define GPTNameSize		72
 #define GPTNameLength	(GPTNameSize / sizeof(char16_t))
@@ -128,7 +128,8 @@ LibAPI uint64_t AllocateMassStorageQueue(void *Handle, PCIDeviceSpecifier Device
 LibAPI void FreeMassStorageQueue(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint64_t Queue);
 LibAPI void MassStorageRead(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint64_t Queue, uint64_t Offset, uint64_t Bytes, void *Data);
 LibAPI void MassStorageWrite(void *Handle, PCIDeviceSpecifier Device, CommonMutex Mtx, uint64_t Queue, uint64_t Offset, uint64_t Bytes, void *Data);
-LibAPI rawenv OpenRawHandle(GenericMassStorageDeviceConfig *cfg, PCIDeviceSpecifier device, uint32_t Vector, uint32_t BlockSize, CommonMutex Mtx);
+LibAPI rawenv OpenRawHandle(GenericMassStorageDeviceConfig *cfg, PCIDeviceSpecifier device, 
+	uint32_t Vector, uint32_t BlockSize, LBA Partition, CommonMutex Mtx);
 LibAPI bool WriteRawHandleBlocks(rawenv re, LBA P, uint64_t BLOCKS, void *DATA);
 LibAPI bool WriteRawHandleBytes(rawenv re, LBA P, uint64_t BYTES, void *DATA);
 #define ReadRawHandleBytes	ReadRawHandleBlocks

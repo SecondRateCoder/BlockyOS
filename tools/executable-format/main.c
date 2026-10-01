@@ -200,7 +200,7 @@ int main(int argc, char** argv){
 	//	We need to pre-generate the BeHeader.
 	for(size_t k = 0; KnownSections[k].PeName[0] != 0; k++){
 		const char *peName = KnownSections[k].PeName, *beName = KnownSections[k].BeName;
-		if(!strncmp(peName, PeResourceSection, 8)){
+		if(!strcmp(peName, PeResourceSection)){
 			GenerateBeHeader(In.OutputFile, peName, (4 * 1024)/*4 kB*/, 
 				epe->Fmt.Opt.Pe32->mMagic == Pe32? 
 					epe->Fmt.Opt.Pe32->mAddressOfEntryPoint: 
@@ -214,7 +214,7 @@ int main(int argc, char** argv){
 		strncpy(targetBeName, KnownSections[k].BeName, sizeof(targetBeName) - 1);
 
 		// Check if CLI overrides target BE name (-S)
-		for(uint32_t c = 0; c < In.SCount; ++c){if(strncmp(peName, In.SSections[c].PeName, 8) == 0){break;}}
+		for(uint32_t c = 0; c < In.SCount; ++c){if(strcmp(peName, In.SSections[c].PeName) == 0){break;}}
 		// Find section header in PE binary
 		PeImageSectionHeader *secHeader = FindSectionPe(epe->Raw, peName);
 		if(secHeader){
@@ -222,11 +222,11 @@ int main(int argc, char** argv){
 			size_t idx = secHeader - epe->Fmt.SectionTable;
 			processedPeSections[idx] = true;
 			//  Dispatch handling for existing PE section
-			if(!strncmp(peName, PeExportSection, 8)){InitExportSection(In.OutputFile, epe, targetBeName);}else
-			if(!strncmp(peName, PeImportSection, 8)){InitImportSection(In.OutputFile, epe, targetBeName);}else
-			if(!strncmp(peName, PeExceptionInfoSection, 8)){InitExceptionSection(In.OutputFile, epe, targetBeName);}else
-			if(!strncmp(peName, PeRelocDataSection, 8)){InitRelocationSection(In.OutputFile, epe, targetBeName);}else
-			if(!strncmp(peName, PeResourceSection, 8)){
+			if(!strcmp(peName, PeExportSection)){InitExportSection(In.OutputFile, epe, targetBeName);}else
+			if(!strcmp(peName, PeImportSection)){InitImportSection(In.OutputFile, epe, targetBeName);}else
+			if(!strcmp(peName, PeExceptionInfoSection)){InitExceptionSection(In.OutputFile, epe, targetBeName);}else
+			if(!strcmp(peName, PeRelocDataSection)){InitRelocationSection(In.OutputFile, epe, targetBeName);}else
+			if(!strcmp(peName, PeResourceSection)){
 				GenerateBeHeader(In.OutputFile, targetBeName, 0, 
 					epe->Fmt.Opt.Pe32->mMagic == Pe32? 
 						epe->Fmt.Opt.Pe32->mAddressOfEntryPoint: 
@@ -251,10 +251,10 @@ int main(int argc, char** argv){
 				}
 			}
 		}else{
-			if(strncmp(peName, PeExportSection, 8) == 0){InitExportSection(In.OutputFile, epe, targetBeName);}else
-			if(strncmp(peName, PeImportSection, 8) == 0){InitImportSection(In.OutputFile, epe, targetBeName);}else
-			if(strncmp(peName, PeExceptionInfoSection, 8) == 0){InitExceptionSection(In.OutputFile, epe, targetBeName);}else
-			if(strncmp(peName, PeRelocDataSection, 8) == 0){InitRelocationSection(In.OutputFile, epe, targetBeName);}
+			if(strcmp(peName, PeExportSection) == 0){InitExportSection(In.OutputFile, epe, targetBeName);}else
+			if(strcmp(peName, PeImportSection) == 0){InitImportSection(In.OutputFile, epe, targetBeName);}else
+			if(strcmp(peName, PeExceptionInfoSection) == 0){InitExceptionSection(In.OutputFile, epe, targetBeName);}else
+			if(strcmp(peName, PeRelocDataSection) == 0){InitRelocationSection(In.OutputFile, epe, targetBeName);}
 		}
 
 	}

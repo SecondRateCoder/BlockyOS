@@ -95,20 +95,35 @@
 #define DLLImport				__declspec(dllimport)
 
 
-#if defined(__DLL) || defined(__EXPORT) || defined(__IMPORT)
-#define LibAPIExport			DLLExport
-#define LibAPIImport			DLLImport
+// #if defined(__DLL) || defined(__EXPORT) || defined(__IMPORT)
+// #define LibAPIExport			DLLExport
+// #define LibAPIImport			DLLImport
+// #else
+// #define LibAPIExport
+// #define LibAPIImport
+// #endif
+
+// #ifdef __EXPORT
+// #define LibAPI					LibAPIExport
+// #elif defined(__IMPORT)
+// #define LibAPI					LibAPIImport
+// #else
+// #define LibAPI
+// #endif
+#if defined(_WIN32) || defined(__CYGWIN__)
+  #define DLLExport __declspec(dllexport)
+  #define DLLImport __declspec(dllimport)
 #else
-#define LibAPIExport
-#define LibAPIImport
+  #define DLLExport __attribute__((visibility("default")))
+  #define DLLImport
 #endif
 
-#ifdef __EXPORT
-#define LibAPI					LibAPIExport
+#if defined(__EXPORT)
+  #define LibAPI DLLExport
 #elif defined(__IMPORT)
-#define LibAPI					LibAPIImport
+  #define LibAPI DLLImport
 #else
-#define LibAPI
+  #define LibAPI
 #endif
 
 // Vendor strings from CPUs.

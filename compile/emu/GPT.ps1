@@ -422,7 +422,7 @@ function New-ProtectiveMBRFromJson{
     return $mbr
 }
 
-if ($Help){Show-Help; exit}
+if ($Help){Show-Help; return}
 
 # ============================================================
 # LOGGING
@@ -488,13 +488,13 @@ $sectorSize = 512
 # ============================================================
 if(-not $OutputImage){
     Log "OutputImage is required" "ERROR"
-    exit 1
+    return 1
 }
 
 if ($Validate -and -not $LayoutJson) {
     if (-not (Test-Path $OutputImage)) {
         Log "Output image not found for validation: $OutputImage" "ERROR"
-        exit 1
+        return 1
     }
 
     $validateResult = Validate-GptImage -ImagePath $OutputImage -SectorSize $sectorSize
@@ -513,21 +513,21 @@ if ($Validate -and -not $LayoutJson) {
 
     if ($validateResult.Passed) {
         Write-Host "GPT validation succeeded."
-        exit 0
+        return 0
     }
 
     Write-Host "GPT validation failed."
-    exit 1
+    return 1
 }
 
 if (-not $LayoutJson) {
     Log "LayoutJson is required" "ERROR"
-    exit 1
+    return 1
 }
 
 if(-not (Test-Path $LayoutJson)){
     Log "Partition layout JSON not found: $LayoutJson" "ERROR"
-    exit 1
+    return 1
 }
 
 # ============================================================
@@ -536,13 +536,13 @@ if(-not (Test-Path $LayoutJson)){
 try{$layout = Get-Content $LayoutJson -Raw | ConvertFrom-Json -AsHashtable
 }catch{
     Log "Failed to parse JSON: $_" "ERROR"
-    exit 1
+    return 1
 }
 
 $parts = $layout.partitions
 if(-not $parts -or $parts.Count -eq 0){
     Log "JSON contains no partitions" "ERROR"
-    exit 1
+    return 1
 }
 
 Log "Loaded $($parts.Count) partition definitions"
@@ -597,14 +597,14 @@ function Normalize-Give{
 # ============================================================
 if(-not $layout.disk -or -not $layout.disk.type){
     Log "disk.type GUID is required in layout JSON" "ERROR"
-    exit 1
+    return 1
 }
 
 try{
     $diskGuid = [Guid]$layout.disk.type
 }catch{
     Log "Invalid disk.type GUID: $($_.Exception.Message)" "ERROR"
-    exit 1
+    return 1
 }
 
 $sectorSize     = 512
@@ -614,14 +614,14 @@ $currentLBA     = $firstUsableLBA
 foreach($p in $parts){
     if(-not $p.type){
         Log "Partition '$($p.name)' is missing type GUID" "ERROR"
-        exit 1
+        return 1
     }
 
     try{
         $p.type = ([Guid]$p.type).ToString()
     }catch{
         Log "Partition '$($p.name)' has invalid type GUID: $($p.type)" "ERROR"
-        exit 1
+        return 1
     }
 
     if(-not $p.unique){
@@ -636,7 +636,7 @@ foreach($p in $parts){
 
     if(-not $p.size -or $p.size -le 0){
         Log "Partition '$($p.name)' has invalid size: $($p.size)" "ERROR"
-        exit 1
+        return 1
     }
 
     $p.give            = Normalize-Give $p.give
@@ -694,7 +694,7 @@ function Apply-GiveDirectives{
 
         if($overflow -gt 0){
             Log "Unable to fit partitions within disk using 'fit' directives" "ERROR"
-            exit 1
+            return 1
         }
     }
 
@@ -702,7 +702,7 @@ function Apply-GiveDirectives{
     $growParts = $Parts | Where-Object{$_.give -contains "grow"}
     if($growParts.Count -gt 1){
         Log "Multiple 'grow' partitions detected — only one allowed" "ERROR"
-        exit 1
+        return 1
     }
 
     [uint64]$totalAfterFit = ($Parts | Measure-Object -Property sectors -Sum).Sum
@@ -754,7 +754,7 @@ if($IsDrive){
     try{$fs = New-Object System.IO.FileStream($OutputImage, [System.IO.FileMode]::Open, $access, [System.IO.FileShare]::ReadWrite)
     }catch{
         Log "Failed to open physical drive: $_" "ERROR"
-        exit 1
+        return 1
     }
 }else{
     Log "Creating disk image: $OutputImage"
@@ -763,7 +763,7 @@ if($IsDrive){
         $fs.BaseStream.SetLength([int64]($totalSectors * $sectorSize))
     }catch{
         Log "Failed to create disk image: $_" "ERROR"
-        exit 1
+        return 1
     }
 }
 
@@ -990,14 +990,14 @@ if ($Validate) {
     if ($validateResult.Passed) {
         Write-Host "GPT validation succeeded."
         Log "GPT validation succeeded." "INFO"
-        exit 0
+        return 0
     }
 
     Write-Host "GPT validation failed."
     Log "GPT validation failed." "ERROR"
-    exit 1
+    return 1
 }
 
 Log "Disk build complete"
 Write-Host "Disk successfully built → $OutputImage"
-exit 0
+return 0

@@ -3,7 +3,6 @@
 #define MATH_INT_H
 
 #include "bool.h"
-#include "kernel/libcrt/def.h"
 
 #define bitselect(i, shift, mask)	((((uint64_t)(i)) >> (shift)) & (mask))
 
@@ -35,7 +34,10 @@ typedef signed int			int32_t;
 #define udword				uint32_t
 #define dword				int32_t
 
-enumdef(uint32_t, errno_t){OutOfBoundsError = 0x01, NullError = 0x01};
+// enumdef(uint32_t, ){};
+typedef uint32_t errno_t; enum{
+	OutOfBoundsError = 0x01, NullError = 0x01
+};
 
 #ifdef DEF_H
 typedef unsigned long long  __align(8)	uint64_t, uintptr_t;

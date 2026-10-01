@@ -16,9 +16,9 @@
             "preLaunchTask": "Build EXEC Utils",
             "program": "${workspaceFolder}//tools//executable-format//exechandler.exe",
             "args": [
-                "${workspaceFolder}/Build/Build-nodate/root-part/libcrt.dll", 
+                "${workspaceFolder}/Build/Build-nodate/root-part/kboot.exe", 
 				// "C:/GitHub/BlockyOS/tools/filesystem/fs.exe", 
-				"${workspaceFolder}/Build/Build-nodate/root-part/libcrt.service", 
+				"${workspaceFolder}/Build/Build-nodate/root-part/kboot.app", 
 				"-L", "${workspaceFolder}/src/kernel/libcrt/alibcrt.log"
             ],
             "stopAtEntry": false,

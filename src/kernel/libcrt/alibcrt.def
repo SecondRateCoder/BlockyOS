@@ -1,6 +1,3 @@
-; Auto-generated from LibAPI declarations in the kernel headers
-; Keep this file in sync with any new LibAPI exports.
-
 LIBRARY libcrt
 EXPORTS
     __inb
@@ -158,3 +155,22 @@ EXPORTS
     WriteMSR
     WritePCIeU32
     WritePCIeVOIDPTR
+	InterruptCallbacks
+	mcalloc
+	PCIeSearchDevice
+	SafeAllocatePages
+	AllocateAlignedPages
+	AllocatePages
+	GetLocalAPICBase
+	ISRSetCallback
+	MapPhysical
+	SearchACPITable
+	ISRGetStackHeader
+	mmalloc
+	mrealloc
+	SearchPCIeCapabilitiesN
+	PCIeResolveBar
+	memcpy
+	memset
+	WalkPageTreeByVirtual
+	GetLocalAPICID

@@ -3,7 +3,7 @@
 #CACHE:ENABLED
 
 {
-	"LOG": "C:/GitHub/BlockyOS/src/kernel/services/services.log", 
+	"LOG": "C:/GitHub/BlockyOS/src/kernel/services/Video/Video.log", 
 	"SCRIPT.VERSION": 999, 
 	"FS.IMAGE": "C:/GitHub/BlockyOS/Build/Build-nodate/disk.img", 
 	"FS.FORMAT": {
@@ -15,14 +15,19 @@
 	"INPUT": {
         "EXECUTABLE": [
             {
-				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.exe", 
-				"CARGS": "-I C:/GitHub/BlockyOS/ -I C:/GitHub/BlockyOS/src", 
-				"LARGS": "", 
-				"FILES": ["C:/GitHub/BlockyOS/src/kernel/services/Video/Video.c"]
+				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.dll", 
+				"CARGS": "-mcmodel=small -fno-stack-protector -nostdinc -fno-pie -fno-pic -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/", 
+				"LARGS": "-shared -flinker-output=dyn -Bsymbolic --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.dll.a", 
+				"FILES": [
+					"C:/GitHub/BlockyOS/src/kernel/services/Video/Video.c", 
+					"C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.dll", 
+					"C:/GitHub/BlockyOS/src/kernel/services/Video/Video.def"
+				]
 			}
         ]
     }
 }
-
-FSFRAT.OPEN -p "SYSD/Video.app" -a "VideoAPP" -la "fc"
-FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.exe" -ia "VideoAPP" -p 0 -n 0
+PE2EXEC.MAKE -i "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.dll" -od 1 -o "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.service"
+FSFRAT.MAKE -p "SYSD/" -n "Video.srv" -la "fc"
+FSFRAT.OPEN -p "SYSD/Video.srv" -a "VIDEOAPP" -la "f"
+FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.service" -ia "%VIDEOAPP%" -p 0 -n 0

@@ -1,54 +1,61 @@
-ENTRY(kboot_f)
-OUTPUT_FORMAT(pe-x86_64)
-STARTUP(asm.kboot.o)
+OUTPUT_FORMAT(pe-x86-64)
+ENTRY(kboot_km)
 
-SECTIONS
-{
-	. = ALIGN(4096);
-	.text :
-	{
-		CODEBASE = .;
+SECTIONS {
 
-		KEEP(*(.text))
-		KEEP(*(.text.*))
-		KEEP(*(.gnu.linkonce.t.*))
-		*(.init)
-		*(.fini)
-		*(.plt)
-		*(.plt.*)
-		*(.iplt)
-		*(.iplt.*)
+    /* 3. The Executable Code Block */
+    .text : ALIGN(4096) {
+        CODEBASE = .;
+        KEEP(*(.text))
+        KEEP(*(.text.*))
+        *(.init)
+        *(.fini)
+        . = ALIGN(16);
+        CODELIMIT = .;
+    }
 
-		. = ALIGN(16);
-		CODELIMIT = .;
-	}
+    /* 4. Page-align and define the Global Data Block */
+    .data : ALIGN(0x1000) {
+        DATABASE = .;
+        *(.IDT*)
+        *(.IDT.*)
+        *(.data*)
+        *(.rodata*)
+        *(.rdata*)
+        *(.bss*)
+        *(COMMON)
+        . = ALIGN(16);
+        DATALIMIT = .;
+    }
 
-	. = ALIGN(4096);
-	.data :
-	{
-		DATABASE = .;
+    /* 5. Separate .idata allows the Data Directory map to compute cleanly */
+    .idata : ALIGN(0x1000) {
+		/* KEEP (SORT(*)(.idata$2))
+		KEEP (SORT(*)(.idata$3))
+		KEEP (SORT(*)(.idata$4))
+		KEEP (SORT(*)(.idata$5))
+		KEEP (SORT(*)(.idata$6))
+		KEEP (SORT(*)(.idata$7)) */
+		KEEP (SORT(*)(.idata$2))
+		KEEP (SORT(*)(.idata$3))
+		/* These zeroes mark the end of the import list.  */
+		LONG (0); LONG (0); LONG (0); LONG (0); LONG (0);
+		. = ALIGN(8);
+		KEEP (SORT(*)(.idata$4))
+		__IAT_start__ = .;
+		SORT(*)(.idata$5)
+		__IAT_end__ = .;
+		KEEP (SORT(*)(.idata$6))
+		KEEP (SORT(*)(.idata$7))
+    }
 
-		*(.data)
-		*(.data.*)
-		*(.sdata)
-		*(.sdata.*)
-		*(.rodata)
-		*(.rodata.*)
-		*(.rdata)
-		*(.rdata.*)
-		*(.bss)
-		*(.bss.*)
-		*(.sbss)
-		*(.sbss.*)
-		*(COMMON)
-		*(.got)
-		*(.got.*)
-		*(.init_array*)
-		*(.fini_array*)
-		*(.ctors*)
-		*(.dtors*)
-
-		. = ALIGN(16);
-		DATALIMIT = .;
-	}
+    /DISCARD/ : {
+        *(.pdata)
+        *(.xdata)
+        *(.reloc)
+        *(.rela)
+        *(.rela.*)
+        *(.iplt)
+        *(.iplt.*)
+    }
 }

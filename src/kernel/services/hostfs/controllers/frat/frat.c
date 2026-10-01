@@ -84,6 +84,7 @@ void formatpart(
 	// }
 	partdim part = loadpart(re, _GUID, altGUID, name);
 	if(!part.high){return;}
+	re->PartitionBase = part.base;
 	re->CalcBlocks = (re->RealBlockSize / confBlockSize) + ((re->RealBlockSize % confBlockSize) != 0);
 
 	// Root-Block
@@ -111,7 +112,7 @@ void formatpart(
 	mfree(block);
 	block = mcalloc(CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize), confBlockSize);
 	// memset(block, 0x00, CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
-	WriteRawHandleBlocks(re, part.base + CLUSTERMAPOFFSET(confLogSectors), 
+	WriteRawHandleBlocks(re, part.base + (CLUSTERMAPOFFSET(confLogSectors) * confBlockSize), 
 		ReBlocks(re, CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize), block);
 	mfree(block);
 	
@@ -177,6 +178,7 @@ conf_fsroot *fmount(rawenv re, GUID _GUID, GUID altGUID){
 		void *block = ReadRawHandleBlocks(re, GPTLBA, ReBlocks(re, sizeof(miniGPT)));
 		miniGPT *gpt = (miniGPT *)block;
 		if((partition = queryparttablefs(gpt, re)).high){mfree(gpt);}else{mfree(gpt);    return NULL;}
+		re->PartitionBase = partition.base;
 		// DEBUGPRINT(
 		// 	L"\n[%s:%u]  >>  Found Formatted Partition: %llu:%llu -> %llu", 
 		// 	(L"" __FILE__),__LINE__, partition.base, partition.high, partition.high - partition.base
@@ -205,7 +207,8 @@ conf_fsroot *fmount(rawenv re, GUID _GUID, GUID altGUID){
 			}, .clusterbuffer = {
 				.nClusterItems = __safediv(fsroot_->confClusterSize, sizeof(fsblock)),
 				.nClusterSectors = __safediv(fsroot_->confClusterSize, fsroot_->confBlockSize), .clusterSize = fsroot_->confClusterSize,
-				.clusterMap = ReadRawHandleBlocks(re, partition.base + CLUSTERMAPOFFSET(fsroot_->confLogSectors), ReBlocks(re, fsroot_->confClusterSize))
+				.clusterMap = ReadRawHandleBlocks(re, 
+					partition.base + (CLUSTERMAPOFFSET(fsroot_->confLogSectors) * fsroot_->confBlockSize), ReBlocks(re, fsroot_->confClusterSize))
 			}, 
 		};
 		// DEBUGDO{
@@ -458,7 +461,7 @@ void fuloaddir(rawenv re, dirhandle *handle){
 	// Flush root
 	WriteRawHandleBlocks(re, handle->root->loc, ReBlocks(re, sizeof(fsroot)), handle->root->root);
 	// Flush cluster Array/Buffer
-	WriteRawHandleBlocks(re, handle->root->loc + CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors), 
+	WriteRawHandleBlocks(re, handle->root->loc + (CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors) * handle->root->root->confBlockSize), 
 		handle->root->clusterbuffer.nClusterSectors, handle->root->clusterbuffer.clusterMap);
 	// Flush Entries
 	uint64_t entry = 0x00;
@@ -524,7 +527,7 @@ void fuloadh(rawenv re, fhandle *handle){
 	// rawenv re = startup(handle->root->_GUID, handle->root->altGUID, handle->root->root->confBlockSize);
 	WriteRawHandleBlocks(re, handle->root->loc, ReBlocks(re, sizeof(fsroot)), handle->root->root);
 	// Flush cluster Array/Buffer
-	WriteRawHandleBlocks(re, handle->root->loc + CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors), 
+	WriteRawHandleBlocks(re, handle->root->loc + (CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors) * handle->root->root->confBlockSize), 
 		ReBlocks(re, handle->root->clusterbuffer.clusterSize), handle->root->clusterbuffer.clusterMap);
 	mfree(handle);
 }
@@ -576,8 +579,16 @@ uint64_t __dsize(dirhandle *dh){
 meta_fsblock *_dreadinfo(rawenv re, dirhandle *handle){return __freadinfo(re, handle->root, handle->file);}
 meta_fsblock *_freadinfo(rawenv re, fhandle *handle){return __freadinfo(re, handle->root, handle->file);}
 
-void _fseek(fhandle *handle, uint64_t progress){handle->progress = progress;}
-void _fseeko(fhandle *handle, int64_t progress){handle->progress += progress;}
+
+void _fseeko(fhandle *handle, int64_t progress){
+	if(!handle){return;}
+	if(progress < 0){handle->progress = __min(handle->progress - (uint64_t)progress, handle->root->root->confBlockSize);}
+	else{handle->progress += (uint64_t)progress;}
+}
+void _fseek(fhandle *handle, uint64_t progress){
+	if(progress > INT64_MAX){_fseeko(handle, INT64_MAX);}
+	_fseeko(handle, progress - INT64_MAX);
+}
 
 uint64_t _fwrite(rawenv re, fhandle *handle, uint64_t nbytes, const void *data){
     if(!handle || !data || nbytes == 0x00){return 0x00;}
@@ -592,14 +603,16 @@ uint64_t _fwrite(rawenv re, fhandle *handle, uint64_t nbytes, const void *data){
         uint64_t  blkOffset  = (uint64_t)(pos % blkSize);
         uint64_t  chunk      = blkSize - blkOffset;
         if(chunk > left){chunk = left;}
-        void *blk = __fread1(re, handle->root, handle->file, &blkIndex);
-        if(!blk){
-            blk = mcalloc(1, blkSize);
-            if(!blk){break;}
-        }
-        memcpy(blk + blkOffset, data + written, chunk);
-        __fpush1(re, handle->root, handle->file, &blkIndex, blk);
-        mfree(blk);
+		if(chunk < blkSize){
+			void *blk = __fread1(re, handle->root, handle->file, &blkIndex);
+			if(!blk){
+				blk = mcalloc(1, blkSize);
+				if(!blk){break;}
+			}
+			memcpy(blk + blkOffset, data + written, chunk);
+			__fpush1(re, handle->root, handle->file, &blkIndex, blk);
+			mfree(blk);
+		}else{__fpush1(re, handle->root, handle->file, &blkIndex, data + written);}
         written      += chunk;
         pos          += chunk;
         left         -= chunk;
@@ -608,7 +621,7 @@ uint64_t _fwrite(rawenv re, fhandle *handle, uint64_t nbytes, const void *data){
     return (nbytes - left);
 }
 uint64_t _fread(rawenv re, fhandle *h, uint64_t nbytes, void **dataout){
-	if((h->progress + nbytes) > __fsize(h)){return 0x00;}
+	if(((h->progress - h->root->root->confBlockSize) + nbytes) > __fsize(h)){return 0x00;}
     uint32_t bsize = h->root->root->confBlockSize;
     uint64_t progress = h->progress;
 

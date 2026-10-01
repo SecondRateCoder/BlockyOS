@@ -32,13 +32,13 @@ typedef struct{
 
 typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
 typedef ISRCallback ISRCallbackTable[IDTLength];
-extern ISRCallbackTable __align(64) InterruptCallbacks;
+extern volatile ISRCallbackTable __align(64) InterruptCallbacks;
 
 #define ISRCallbackReturn			WriteAPICRegister(Frame->LocalAPIC, LAR_EndOfInterrupt, (uint32_t)0x00);		return NULL;
 #define ISRCallbackDefinition(NAME)	void *__naked __sysvabi NAME##ISR(InterruptStackFrame *Frame)
 
 LibAPI void *ISRGetStackHeader(uint32_t Vector);
-LibAPI bool AllocateInterruptVector(uint8_t *Vector);
+LibAPI bool __noinline __used AllocateInterruptVector(uint8_t *Vector);
 LibAPI bool QueryVectorByCallback(uint8_t *Vector, ISRCallback *CB);
 LibAPI bool ISRUSetCallback(uint32_t Vector);
 LibAPI bool AllocateIST(uint8_t *IST, IDTEntrySegmentSelector64 *sselector);

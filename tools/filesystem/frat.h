@@ -14,10 +14,10 @@
 
 
 #define FRATROOTOFFSET (0)
-#define LOGBLOCKOFFSET (sizeof(fsroot) + FRATROOTOFFSET + 1)
+#define LOGBLOCKOFFSET (FRATROOTOFFSET + 1)
 #define CLUSTERMAPOFFSET(nLogSectors) (LOGBLOCKOFFSET + (nLogSectors) + 1)
 #define DATAFIRSTOFFSET(nLogSectors, nClusterSectors) (CLUSTERMAPOFFSET(nLogSectors) + (nClusterSectors) + 1)
-#define DATAFIRST(root)	((root)->loc + DATAFIRSTOFFSET(root->logblocks.nLogSectors, root->clusterbuffer.nClusterSectors))
+#define DATAFIRST(root)	((root)->loc + (DATAFIRSTOFFSET((root)->logblocks.nLogSectors, (root)->clusterbuffer.nClusterSectors) * (root)->root->confBlockSize))
 
 // #define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors)	(((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * sizeof(fsblock))
 // #define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize)	\
@@ -56,6 +56,7 @@ typedef struct fsblock{
 	// UINT32 logalias;
 	uint32_t index;
 }__attribute__((packed)) fsblock;
+unsigned _ = (2560 / 20) * 2048;
 
 /// @brief This is the expanded block of FileInfo
 typedef struct meta_fsblock{

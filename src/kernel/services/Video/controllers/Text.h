@@ -41,12 +41,13 @@ uint64_t PrintGlyph(void *Memory, uint64_t BufferWidth, FontGlyph Glyph, void *U
 	return (uint64_t)PixelMem - (uint64_t)Memory;
 }
 
-void PrintTextByGlyph(void *Memory, uint64_t BufferWidth, FontGlyph **GlyphTable, uint32_t TableLength, void *Unit, uint32_t UnitSize, char *Text){
-	uint64_t Offset = 0;
+void PrintTextByGlyph(void *Memory, uint64_t *Counter, uint64_t BufferWidth, FontGlyph **GlyphTable, uint32_t TableLength, void *Unit, uint32_t UnitSize, char *Text){
 	for(uint32_t c = 0; c < strlen(Text); ++c){
 		for(uint32_t cc = 0; cc < TableLength; ++cc){
 			if(Text[c] == GlyphTable[cc]->Matcher){
-				PrintGlyph(Memory + Offset, BufferWidth, *(GlyphTable[cc]), Unit, UnitSize);
+				if((*Counter % BufferWidth) < (UnitSize * (GlyphTable[cc]->BitWidth / 8))){*Counter = __roundup(*Counter, BufferWidth);}
+				PrintGlyph(Memory + *Counter, BufferWidth, *(GlyphTable[cc]), Unit, UnitSize);
+				Counter += UnitSize * (GlyphTable[cc]->BitWidth / 8);
 			}
 		}
 	}
@@ -117,18 +118,19 @@ enumdef(char, TextCopyFFormat){
 // 	}
 // }
 
-void TextCopyF(char *stream, uint64_t *size, const char **format, va_list ls){
-    if(!stream || (*size) == 0 || !format || !ls){return;}
+void TextCopyF(char *stream, uint64_t *size, const char **f, va_list ls){
+    if(!stream || (*size) == 0 || !f || !ls){return;}
 
     static const char sample[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     uint32_t counter = 0;
+	char *format = *f;
     
     //	Reserve 1 byte at the end for the null terminator (size - 1)
-    for(uint32_t cc = 0; (*format)[cc] != '\0' && counter < ((*size) - 1); ++cc){
+    for(uint32_t cc = 0; format[cc] != '\0' && counter < ((*size) - 1); ++cc){
         
-        if((*format)[cc] == FormatStart){
+        if(format[cc] == FormatStart){
             cc++; // Move past the start token
-            if((*format)[cc] == '\0'){break;}
+            if(format[cc] == '\0'){break;}
 
             uint64_t base = 10, 
 					value = 0;
@@ -137,7 +139,7 @@ void TextCopyF(char *stream, uint64_t *size, const char **format, va_list ls){
 
             //	SAFELY EXTRACT VARIADIC ARGUMENTS
             // Smaller integer types (char, short) are automatically promoted to int/unsigned int by the C compiler.
-            switch((*format)[cc]){
+            switch(format[cc]){
                 case FormatUInteger8:	{value = (uint64_t)(uint8_t) va_arg(ls, unsigned int);	break;}
                 case FormatUInteger16:	{value = (uint64_t)(uint16_t)va_arg(ls, unsigned int);	break;}
                 case FormatUInteger32:	{value = (uint64_t)va_arg(ls, uint32_t);				break;}
@@ -177,7 +179,7 @@ void TextCopyF(char *stream, uint64_t *size, const char **format, va_list ls){
                 } case FormatChar: {
                     stream[counter++] = (char)va_arg(ls, int);
                     continue; 
-                } default: {stream[counter++] = (*format)[cc];        continue;}//	If the token is unrecognized, print it as a literal
+                } default: {stream[counter++] = format[cc];        continue;}//	If the token is unrecognized, print it as a literal
 				
             }
 
@@ -200,11 +202,13 @@ void TextCopyF(char *stream, uint64_t *size, const char **format, va_list ls){
             for(int i = num_len - 1; i >= 0 && counter < ((*size) - 1); i--){stream[counter++] = num_buf[i];}
 
 		//	Normal character processing
-        }else{stream[counter++] = (*format)[cc];}
+        }else{stream[counter++] = format[cc];}
     }
 
     //	GUARANTEE NULL TERMINATION
     stream[counter] = '\0';
     
     va_end(ls);
+
+	*f = format;
 }

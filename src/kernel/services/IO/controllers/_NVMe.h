@@ -655,3 +655,306 @@ typedef struct{
     uint32_t Reserved0			: 21;
     uint32_t Reserved1[5];            // DW11-DW15
 }NVMeCommandStruct(DatasetManagement, 10);
+
+
+
+
+enumdef(uint8_t, NVMeSubmissionQueueFuseOperationType){
+	NVMeNormalOperation = 0x0, NVMeFusedOperationFirstCommand = 0x1, 
+	NVMeFusedOperationSecondCommand = 0x2
+};
+enumdef(uint8_t, NVMeSubmissionQueuePageType){_32AlignedPhysicalRegionPage = 0x00};
+enumdef(uint8_t, NVMeSubmissionQueueOperationTransferType){
+	NoDataTransfer = 0x00, HostToControllerDataTransfer = 0x01, 
+	ControllerToHostDataTransfer = 0x02, BiDirectionalDataTransfer = 0x03
+};
+typedef union{
+	uint128_t			SGLEntry;
+	struct{
+		uint64_t		PhysicalRegion0, 
+						PhysicalRegion1;
+					};
+}__packed NVMeSubmissionQueueDataPointer;
+
+enumdef(uint8_t, ControllerPowerScopeType){
+	Unreported = 0b00, ControllerScope = 0b01, 
+	DomainScope = 0b10, NVMSubsystemScope = 0b11
+};
+typedef const volatile struct{
+	uint64_t		MaximumQueueEntries			: 16;
+	uint64_t		ContiguousQueuesRequired	: 1;
+	//	Bits	Description
+	//	1		Vendor Specific (VS): Vendor Specific arbitration mechanism.
+	//	0		Weighted Round Robin with Urgent Priority Class WRRUPC(Weighted Round Robin with Urgent Priority Class arbitration mechanism).
+	uint64_t		ArbitrationMechanism		: 2;
+	uint64_t									: 5;
+	//	This field is in 500 millisecond units.
+	uint64_t		WorstCaseTimeout			: 8;
+	//	This field indicates the stride between doorbell registers.
+	//	The stride is specified as (2 ^ (2 + DSTRD)) in bytes.
+	uint64_t		DoorbellStride				: 4;
+	uint64_t		NVMCommandSetSupport		: 1;
+	uint64_t									: 5;
+	uint64_t		IOCommandSetSupport			: 1;
+	uint64_t		NoIOCommandSetSupport		: 1;
+	uint64_t		BootPartitionSupport		: 1;
+	uint64_t		ControllerPowerScope		: 2;
+	//	(2 ^ (12 + MinimumHostPageSize)).
+	uint64_t		MinimumHostPageSize			: 4;
+	//	(2 ^ (12 + MaximumHostPageSize)).
+	uint64_t		MaximumHostPageSize			: 4;
+	uint64_t		PersistentMemorySupported	: 1;
+	uint64_t		ControllerMemoryBuffer		: 1;
+	uint64_t		NVMSubsystemShutdown		: 1;
+	//	0b10:	The controller supports the Controller Ready Independent of Media mode.
+	//	0b01:	The controller supports the Controller Ready With Media mode.
+	uint64_t		ControllerReadyModes		: 2;
+	uint64_t		ShutdownEnhancement			: 1;
+	uint64_t									: 2;
+}__packed NVMeControllerCapabilitiesRegister;
+typedef volatile struct{
+	uint32_t		Enable									: 1;
+	uint32_t												: 3;
+	//	Set to 111b
+	uint32_t		IOCommandSetSelected					: 3;
+	uint32_t		MemoryPageSize							: 4;
+	uint32_t		SelectedArbitrationMechanism			: 3;
+	uint32_t		ShutdownNotification					: 2;
+	uint32_t		IOSubmissionQueueSize					: 4;
+	uint32_t		IOCompletionQueueSize					: 4;
+	uint32_t		ControllerReadyIndependentofMediaMode	: 1;
+	uint32_t												: 7;
+}__packed NVMeControllerConfigurationRegister;
+typedef const volatile struct{
+	uint32_t		TertiaryVersion				: 8;
+	uint32_t		MinorVersion				: 8;
+	uint32_t		MajorVersion				: 16;
+}__packed NVMeControllerVersionRegister;
+enumdef(uint8_t, NVMeControllerShutdownStatus){NoShutdown = 0b00, ShutdownInProgress = 0b01, ShutdownComplete = 0b10};
+typedef volatile struct{
+	const uint32_t			Ready						: 1;
+	const uint32_t			ControllerFatalStatus		: 1;
+	const uint32_t			ShutdownStatus				: 2;
+	uint32_t Write1ToClear	NVMSubsystemResetOccured	: 1;
+	//	This bit is only valid when CC.EN is set to ‘1’ and CSTS.RDY is set to ‘1’.
+	const uint32_t			ProcessingPaused			: 1;
+	//	If this bit is set to ‘1’, then CSTS.SHST is reporting the state of an NVM Subsystem
+	//		Shutdown and this bit remains set to ‘1’ until an NVM Subsystem Reset occurs.
+	//	If this bit is cleared to ‘0’, then CSTS.SHST is reporting the state of a controller shutdown.
+	const uint32_t			ShutdownType				: 1;
+	uint32_t											: 24;
+}__packed NVMeControllerStatus;
+typedef volatile struct{
+	uint32_t				AdminSubmissionQueueSize	: 12;
+	uint32_t											: 4;
+	uint32_t				AdminCompletionQueueSize	: 12;
+	uint32_t											: 4;
+}__packed NVMeControllerAdminQueueAttributes;
+//	Enabled by  CAP.CMB
+typedef const volatile struct{
+	uint32_t			BARIndex					: 3;
+	//	Controls whether Memory Restrictions will be propagated.
+	uint32_t			MixedMemorySupport			: 1;
+	//	If unset then Queues are forced to be contiguous.
+	uint32_t			ContiguousQueueEnforcement	: 1;
+	//	If unset then Configuration Data has to either be in device Memory or Host Memory, 
+	//	If set then Configuration Data can be in either.
+	uint32_t			MixedDataEnforcement		: 1;
+	//	If set then Pointers can point to Device Memory.
+	uint32_t			HostOnlyMemoryEnforcement	: 1;
+	//	If this bit is cleared to ‘0’, 
+	//		then the I/O Submission Queues and I/O Completion Queues contained in the Controller Memory Buffer are aligned 
+	//		as defined by the PRP1 field of a Create I/O Submission Queue command.
+	uint32_t			DwordAlignmentEnforcement	: 1;
+	uint32_t										: 4;
+	//	This is the Offset from the Base Memory that points to the Controller Buffer Memory.
+	uint32_t				Offset					: 20;
+}__packed NVMeControllerMemoryBufferLocation;
+enumdef(uint8_t, NVMeControllerMemoryBufferGranularity){
+	_4KiB = 0x0, _64KiB = 0x1, _1MiB = 0x2, _16MiB = 0x3, 
+	_256MiB = 0x4, _4GiB = 0x5, _64GiB = 0x6
+};
+typedef const volatile struct{
+	//	If this bit is set to ‘1’, then the controller supports Admin and I/O Completion Queues in the Controller Memory Buffer.
+	uint32_t	CompletionQueueStoreSupport		: 1;
+	//	If set then the controller supports PRP/SGL Lists being stored in Controller Memory Buffer. 
+	uint32_t	ListStoreSupport				: 1;
+	uint32_t	WriteSupport					: 1;
+	uint32_t	ReadSupport						: 1;
+	uint32_t									: 4;
+	uint32_t	Granularity						: 4;
+	uint32_t	Size							: 20;
+}__packed NVMeControllerMemoryBufferSize;
+typedef volatile struct{
+	uint64_t	CapabilitiesRegisterEnable		: 1;
+	uint64_t	ControllerMemorySpaceEnable		: 1;
+	uint64_t									: 10;
+	uint64_t	ControllerBaseAddrressHighSig	: 52;
+}__packed NVMeControllerMemorySpaceControl;
+typedef volatile struct{
+	NVMeControllerCapabilitiesRegister	Capabilities;
+	NVMeControllerVersionRegister		Version;
+	uint32_t							InterruptMaskSet;
+	uint32_t							InterruptMaskClear;
+	NVMeControllerConfigurationRegister	ControllerConfiguration;
+	uint32_t							rsv0;
+	NVMeControllerStatus				ControllerStatus;
+	//	 A write of the value 4E564D65h ("NVMe") to this field initiates an NVM Subsystem Reset.
+	union{
+		char							NVMeSubsystemResetSTR[4];
+		uint32_t						NVMeSubsystemReset;
+	};
+	NVMeControllerAdminQueueAttributes	AdminQueueAttributes;
+	uint64_t							AdminSubmissionQueuePhysicalBase;
+	uint64_t							AdminCompletionQueuePhysicalBase;
+	union{
+		uint8_t							Raw[0x1000 - 0x38];
+		struct{
+			const NVMeControllerMemoryBufferLocation	MemoryBufferPointer;
+			const NVMeControllerMemoryBufferSize		MemoryBufferSize;
+			uint8_t										UNUSED0[16];
+			NVMeControllerMemorySpaceControl			MemorySpaceControl;
+			uint32_t									UNUSED1;
+			uint32_t									ControllerBaseAddressInvalid	: 1;
+			uint32_t																	: 31;
+			uint32_t									UNUSED2;
+			//	0x00		Bytes/second
+			//	0x01		1KiB/second
+			//	0x02		1MiB/second
+			//	0x03		1GiB/second
+			uint32_t									SustainedWriteThrouputUnits		: 4; 
+			uint32_t																	: 4;
+			uint32_t									SustainedWriteThroughput		: 24;
+		};
+	}Vendor;
+	uint32_t							Doorbells[];
+}__packed NVMeController_t;
+
+typedef struct{
+	struct{
+		union{
+			NVMeAdminSubmissionQueueOperations			Operation;
+			struct{
+				uint8_t	Opcode				: 6;
+				uint8_t	Direction			: 2;
+			}OperationBits;
+		};
+		uint8_t			FuseOperationType	: 2;
+		uint8_t								: 4;
+		uint8_t			PageType			: 2;
+		uint16_t		CommandID;
+	}__packed			OperationDWORD;
+	uint32_t			NamespaceID;
+	//	DWORD 3 - 4
+	union{
+		uint32_t											CommandSpecificDWord0[2];
+		NVMeIOAdminAsynchronousEventRequestCompletion0_1_t	AER;
+	};
+	uint64_t			MetadataPointer;
+	union{
+		NVMeSubmissionQueueDataPointer						DataPointer;
+		NVMeIOAdminDirectiveRecieveCommandPTR_t				DirectiveRecieve;
+		NVMeIOAdminDirectiveSendCommandPTR_t				DirectiveSend;
+		NVMeIOAdminGetFeaturesCommandPTR_t					GetFeatures;
+		NVMeIOAdminGetLogPageCommandPTR_t					GetLogPage;
+	}DataDWORD;
+	//	Command DWORD 10 - 16
+	union{
+		uint32_t											DWords[5];
+		NVMeIOReadWriteCommand10_t							ReadWrite;
+		NVMeIODatasetManagementCommand10_t					DatasetManagement;
+
+		NVMeIOAdminIdentifyNamespaceCommand10_t				IdentifyNamespace;
+		NVMeIOAdminCreateControllerDataQueueCommand10_t		CreateDataQueue;
+		NVMeIOAdminDeleteControllerDataQueueCommand10_t		DeleteDataQueue;
+		NVMeIOAdminDeviceSelfTestCommand10_t				DeviceSelfTest;
+		NVMeIOAdminDirectiveRecieveCommand10_t				DirectiveRecieve;
+		NVMeIOAdminDirectiveSendCommand10_t					DirectiveSend;
+		NVMeIOAdminGetFeaturesCommand10_t					GetFeatures;
+		NVMeIOAdminGetLogPageCommand10_t					GetLogpage;
+		NVMeIOAdminCreateIOCompletionQueueCommand10_t		CreateCompletionQueue;
+		NVMeIOAdminDeleteIOCompletionQueueCommand10_t		DeleteCompletionQueue;
+		NVMeIOAdminCreateIOSubmissionQueueCommand10_t		CreateSubmissionQueue;
+		NVMeIOAdminDeleteIOSubmissionQueueCommand10_t		DeleteSubmissionQueue;
+	}CommandSpecific;
+}__packed NVMeSubmissionQueueSlot_t;
+
+enumdef(uint8_t, NVMeCompletionQueueStatusCodeType){
+	GenericCommandStatus = 0x00, CommandSpecificStatus = 0x01, 
+	MediaIntegrityErrorStatus = 0x02, DataIntegrityErrorStatus = 0x02, 
+	//	Indicates that the command specified by the Command and Submission Queue identifier in the completion queue entry has completed. 
+	//	These status values are generic across all command types. 
+	//	These values may indicate that additional process is required and indicate a status value that is specific to:
+	//		The connection between the host and the controller processing the command; or
+	//		The characteristics that support Asymmetric Namespace Access Reporting, 
+	//			the characteristics of the relationship between the controller processing the command and the specified namespace.
+	PathStatus = 0x03
+};
+enumdef(uint8_t, NVMeCompletionQueueGenericCommandStatus){
+	SuccessfulCompletion = 0x00, InvalidCommandOpcode = 0x01, 
+	InvalidCommandQueueField = 0x02, CommandIDConflict = 0x03, 
+	DataTransferError = 0x04, PowerLossCommandAbortNotification = 0x05, 
+	InternalError = 0x06, CommandAbortRequested = 0x07, 
+	SubmissionQueueDeleteCommandAbort = 0x08, 
+	FailedFuseOperationCommandAbort = 0x09, MissingFuseOperationCommandAbort = 0x0A, 
+	InvalidNamespaceError = 0x0B, InvalidFormatError = 0x0B, CommandSequenceError = 0x0C, 
+	InvalidSGLSegmentDescriptor = 0x0D, InvalidSGLDescriptorCount = 0x0E, 
+	InvalidSGL_Length = 0x0F, MetadataInvalidSGL_Length = 0x10, 
+	InvalidSGLDescriptorType = 0x11, InvalidControllerMemoryBufferUsage = 0x12, 
+	InvalidPRPOffset = 0x13, AtomicWriteUnitOverflow = 0x14, 
+	OperationDeniedError = 0x15, InvalidSGLOffset = 0x16, 
+	InconsistentHostIdentifierFormat = 0x18, KeepAliveTimerExpire = 0x19, 
+	KeepAliveTimeoutInvalid = 0x1A, CommandPreemptAbort = 0x1B, 
+	SanitiseFailError = 0x1C, SanitiseInProgress = 0x1D, 
+	InvalidSGLDataBlockGranularity = 0x1E, QueueInCMBError = 0x1F, 
+	WriteProtectedNamespaceError = 0x20, CommandInterupted = 0x21, 
+	TransientTransportError = 0x22, CommandLockdownProhibition = 0x23, FeatureLockdownProhibition = 0x23, 
+	AdminCommandMediaNotReady = 0x24, InvalidKeyTagError = 0x25, HostDispersedNamespaceSupportDisabled = 0x26, 
+	UnintialisedHostID = 0x27, IncorrectKeyError = 0x28, FDPDisabled = 0x29, 
+	InvalidPlacementHandleList = 0x2A, SanitiseNamespaceFailed = 0x2B, 
+	SanitiseNamespaceInProgress = 0x2C, ConfigurationRestoreFailure = 0x2D, 
+	OutOfRangeLBAError = 0x80, CapacityExceededError = 0x81, NamespaceNotReadyError = 0x82, 
+	ReservationConflictError = 0x83, FormatInProgress = 0x84, InvalidValueSize = 0x85, 
+	InvalidKeySize = 0x86, NonExistentKVKey = 0x87, UnrecoveredError = 0x88, KeyExists = 0x89
+};
+typedef struct{
+	union{
+		uint32_t											CommandSpecific[2];
+		NVMeIOAdminAbortCompletion0_t						Abort;
+		NVMeIOAdminAsynchronousEventRequestCompletion0_1_t	AER;
+		NVMeIOAdminGetFeaturesCompletion2_t					GetFeatures;
+	}CommandSpecific;
+	//	The value returned is the value of the SQ Head pointer when the completion queue entry was created. 
+	//	By the time a host consumes the completion queue entry, 
+	//		the controller may have an SQ Head pointer that has advanced beyond the value indicated.
+	uint16_t		SubmissionQueueHeadPtr;
+	uint16_t		SubmissionQueueID;
+	uint16_t		CommandID;
+	//	Indicates the identifier of the command that is being completed. This identifier is assigned by a host when the command is submitted to the Submission Queue. 
+	//	The combination of the SQ Identifier and Command Identifier uniquely identifies the command that is being completed. 
+	//	The maximum number of requests outstanding for a Submission Queue at one time is 65,535.
+	uint16_t		PhaseTag				: 1;
+	uint16_t		DoNotRetry				: 1;
+	uint16_t		AdditionalLogInfo		: 1;
+	//	If the DNR bit is cleared to ‘0’ and the host has set the Advanced Command Retry Enable (ACRE) field to 1h in the Host Behavior Support feature.
+	//		A 00b CRD value indicates a command retry delay time of zero (i.e., the host may retry the command immediately).
+	//		A 01b CRD value selects the Command Retry Delay Time 1 (CRDT1) field.
+	//		A 10b CRD value selects the Command Retry Delay Time 2 (CRDT2) field.
+	//		A 11b CRD value selects the Command Retry Delay Time 3 (CRDT3) field.
+	uint16_t		CommandRetryDelaySelect	: 2;
+	uint16_t		StatusCodeType			: 3;
+	uint16_t		StatusCode				: 8;
+}__packed NVMeCompletionQueueSlot_t;
+
+typedef struct NVMeHandle{
+	uint32_t					IVector;
+	NVMeController_t			*cntrl;
+	uint16_t					GlobalQueueCounter, AdminSQ, AdminCQ, *_SQ, *_CQ;
+	uint16_t					CommandCounter;
+	NVMeSubmissionQueueSlot_t	**Submissions;
+	uint32_t					*NPerSQueue, NSubmissions;
+	NVMeCompletionQueueSlot_t	**Completions;
+	uint32_t					*NPerCQueue, NCompletions;
+	uint8_t						FlushFlags;
+}NVMeHandle;
+

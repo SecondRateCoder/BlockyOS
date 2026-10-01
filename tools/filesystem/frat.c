@@ -124,7 +124,7 @@ void formatpart(
 	free(block);
 	block = calloc(CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize), confBlockSize);
 	// memset(block, 0x00, CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
-	writeblocks(re, block, part.base + CLUSTERMAPOFFSET(confLogSectors), CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
+	writeblocks(re, block, part.base + (CLUSTERMAPOFFSET(confLogSectors) * confBlockSize), CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
 	free(block);
 	dispose(re);
 #ifdef _DEBUG
@@ -241,7 +241,7 @@ conf_fsroot *fmount(char *path){
 				.clusterSize = fsroot_->confClusterSize,
 				.nClusterItems = __safediv(fsroot_->confClusterSize, sizeof(fsblock)),
 				.clusterMap = readblocks(re, 
-					(PART.base + CLUSTERMAPOFFSET(fsroot_->confLogSectors)), fsroot_->confClusterSize)
+					(PART.base + (CLUSTERMAPOFFSET(fsroot_->confLogSectors) * fsroot_->confBlockSize)), fsroot_->confClusterSize)
 			},
 			._GUID[0x00] = PART.e.GUID[0x00],	._GUID[1] = PART.e.GUID[1],
 			.altGUID[0x00] = PART.e.uGUID[0x00],	.altGUID[1] = PART.e.uGUID[1],
@@ -448,7 +448,12 @@ void *__fread1(conf_fsroot *root, fsblock *fb, uint64_t *index){
 				(*index)++;
 			}
 		}
-		if(!fb_){return NULL;}
+		if(!fb_){
+#ifdef _DEBUG
+			dualprintf(fs_logf, stdout, "\nInvalid File Block at %llu, Item: %llu.    Root: [%llu:%llu]", loc, *index, fb->fcodelow, fb->fcodehigh);
+#endif
+			return NULL;
+		}
 		loc = getloc(root, fb_);
 	}else{loc = getloc(root, fb);}
 #ifdef _DEBUG
@@ -468,7 +473,12 @@ void __fpush1(conf_fsroot *root, fsblock *fb, uint64_t *i, void *buffer){
 		if((fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, *i)) == NULL){
 			fb_ = __faddr(root, fb);
 			if(fb_){loc = getloc(root, fb_);
-			}else{return;}
+			}else{
+#ifdef _DEBUG
+				dualprintf(fs_logf, stdout, "\nInvalid File Block");
+#endif
+				return;
+			}
 		}else{
 			while(fb_ && flagcheck(fb_->attributes, __fsextensionallocatedcluster)){
 				fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, *i);
@@ -477,7 +487,12 @@ void __fpush1(conf_fsroot *root, fsblock *fb, uint64_t *i, void *buffer){
 			if(!fb_){
 				fb_ = __faddr(root, fb);
 				if(fb_){loc = getloc(root, fb_);
-				}else{return;}
+				}else{
+#ifdef _DEBUG
+					dualprintf(fs_logf, stdout, "\nInvalid File Block");
+#endif
+					return;
+				}
 			}
 			loc = getloc(root, fb_);
 		}
@@ -553,7 +568,7 @@ void fuloadroot(conf_fsroot *fr){
 	rawenv re = startup(fr->path, fr->loc, fr->root->confBlockSize);
 	writeblocks(re, fr->root, fr->loc, sizeof(fsroot));
 	// Flush cluster Array/Buffer
-	writeblocks(re, fr->clusterbuffer.clusterMap, fr->loc + CLUSTERMAPOFFSET(fr->logblocks.nLogSectors), fr->clusterbuffer.clusterSize);
+	writeblocks(re, fr->clusterbuffer.clusterMap, fr->loc + (CLUSTERMAPOFFSET(fr->logblocks.nLogSectors) * fr->root->confBlockSize), fr->clusterbuffer.clusterSize);
 	dispose(re);
 }
 
@@ -669,10 +684,13 @@ meta_fsblock *_freadinfo(fhandle *handle){return __freadinfo(handle->root, handl
 
 void _fseeko(fhandle *handle, int64_t progress){
 	if(!handle){return;}
-	if(progress < 0){handle->progress -= (uint64_t)(-progress);}
+	if(progress < 0){handle->progress = __min(handle->progress - (uint64_t)progress, handle->root->root->confBlockSize);}
 	else{handle->progress += (uint64_t)progress;}
 }
-void _fseek(fhandle *handle, uint64_t progress){if(handle){handle->progress = progress;}}
+void _fseek(fhandle *handle, uint64_t progress){
+	if(progress > INT64_MAX){_fseeko(handle, INT64_MAX);}
+	_fseeko(handle, progress - INT64_MAX);
+}
 
 uint64_t _fwrite(fhandle *handle, uint64_t nbytes, const void *data){
     if(!handle || !data || nbytes == 0x00){return 0x00;}
@@ -687,14 +705,16 @@ uint64_t _fwrite(fhandle *handle, uint64_t nbytes, const void *data){
 				blkOffset = (uint64_t)(pos % blkSize), 
 				chunk = blkSize - blkOffset;
         if(chunk > left){chunk = left;}
-        void *blk = __fread1(handle->root, handle->file, &blkIndex);
-        if(!blk){
-            blk = calloc(1, blkSize);
-            if(!blk){break;}
-        }
-        memcpy(blk + blkOffset, data + written, chunk);
-		__fpush1(handle->root, handle->file, &blkIndex, blk);
-        free(blk);
+		if(chunk < blkSize){
+			void *blk = __fread1(handle->root, handle->file, &blkIndex);
+			if(!blk){
+				blk = calloc(1, blkSize);
+				if(!blk){break;}
+			}
+			memcpy(blk + blkOffset, data + written, chunk);
+			__fpush1(handle->root, handle->file, &blkIndex, blk);
+			free(blk);
+		}else{__fpush1(handle->root, handle->file, &blkIndex, data + written);}
         written      += chunk;
         pos          += chunk;
         left         -= chunk;
@@ -703,19 +723,19 @@ uint64_t _fwrite(fhandle *handle, uint64_t nbytes, const void *data){
     return nbytes - left;
 }
 uint64_t _fread(fhandle *handle, uint64_t nbytes, void **dataout){
-	if(!handle || !dataout || nbytes == 0x00 || (handle->progress + nbytes) > __fsize(handle)){return 0x00;}
-    uint64_t blkSize = handle->root->root->confBlockSize;
-    uint64_t pos    = handle->progress;      // byte offset in file
-    uint64_t left    = nbytes;
-    uint64_t written = 0x00;
+	if(((handle->progress - handle->root->root->confBlockSize) + nbytes) > __fsize(handle)){return 0x00;}
+    uint64_t blkSize = handle->root->root->confBlockSize, 
+			pos      = handle->progress, 
+			left    = nbytes, 
+			written = 0x00;
 	__fupdatetstamp(handle->root, handle->file, false);
 
     void *out = calloc(1, nbytes);
     if(!out){return 0x00;}
     while(left > 0x00){
-        uint64_t blkIndex   = pos / blkSize;
-        uint64_t blkOffset  = (uint64_t)(pos % blkSize);
-        uint64_t chunk      = blkSize - blkOffset;
+        uint64_t blkIndex   = pos / blkSize, 
+				blkOffset   = (uint64_t)(pos % blkSize), 
+				chunk      = blkSize - blkOffset;
 
         void *blk = __fread1(handle->root, handle->file, &blkIndex);
         if(!blk){break;}

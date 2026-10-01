@@ -351,7 +351,7 @@ bool InitImportSection(
 ){
 	char **DLLPaths = calloc(Image->Fmt.imp.nImports, sizeof(char *)), ***ImportSymbols = calloc(Image->Fmt.imp.nImports, sizeof(char *));
 	for(register uint32_t cc = 0; cc < Image->Fmt.imp.nImports; ++cc){
-		DLLPaths[cc] = strdup(PoolGetPath(GetAtRVAFromSectionDataPe(Image->Fmt.imp.imports[cc].NameRVA, ".idata", Image->Fmt.imp.imports, Image->Raw)));
+		DLLPaths[cc] = PoolGetPath(GetAtRVAFromSectionDataPe(Image->Fmt.imp.imports[cc].NameRVA, ".idata", Image->Fmt.imp.imports, Image->Raw));
 		ExpandedPeExecutable *DLLHeader = ExpandPeExecutableFormat(DLLPaths[cc]);
 		//*	Foreach Lookup/Address.
 		for(register uint32_t cc_ = 0; (Image->Fmt.Opt.Pe32->mMagic == Pe32? 

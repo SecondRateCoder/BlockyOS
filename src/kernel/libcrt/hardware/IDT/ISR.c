@@ -53,7 +53,7 @@ ISRCallbackDefinition(ControlProtectionException);
 //	0x20		PIT Interrupt
 //	For each Controller/Device, an Interrupt is Allocated.
 //	0x21-...	MassStorageController#N Interrupt
-ISRCallbackTable __align(64) InterruptCallbacks = {
+volatile ISRCallbackTable __align(64) InterruptCallbacks = {
 	DebugExceptionISR, NonMaskableExtISR, 
 	BreakpointISR, OverflowISR, 
 	BoundRangeExceptionISR, InvalidOpcodeISR, 
@@ -129,7 +129,7 @@ ISRCallbackTable __align(64) InterruptCallbacks = {
 	GenericISR, GenericISR, GenericISR
 };
 
-bool AllocateInterruptVector(uint8_t *Vector){
+bool __noinline __used AllocateInterruptVector(uint8_t *Vector){
 	if(!Vector){return false;}
 	for(uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
 		if(InterruptCallbacks[cc] == GenericISR){

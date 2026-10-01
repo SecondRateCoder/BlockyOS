@@ -24,6 +24,7 @@ $Build = Join-Path (Get-Location) ('Build\Build-' + $PREFIX)
 $Image = Join-Path $Build 'disk.img'
 $BootPartitionDir = Join-Path $Build 'boot-part/'
 $RootPartitionDir = Join-Path $Build 'root-part/'
+$RootPartitionServicesDir = Join-Path $RootPartitionDir "services/"
 # $BootPartitionBlob = Join-Path $BootPartitionDir 'legacyblob.bin'
 $UEFIBootBlob = Join-Path $BootPartitionDir 'efi/boot/bootx64.efi'
 $BroadImageFile = Join-Path (Get-Location) 'Build\temp\image.img'
@@ -46,7 +47,7 @@ $bochsbinariesfolder = 'C:/msys64/mingw64/share/bochs/'
 $firmwarefolder = $firmwarefolder = Join-Path (Get-Location) "compile/toolchain/uefi/$($imagetype)"
 if(-not (Test-Path $firmwarefolder)){
 	Log-Write "Invalid Image Type: [$($imagetype)`t$($firmwarefolder)]"
-	exit 1
+	return 1
 }
 
 $ovmfcode = Join-Path $firmwarefolder "OVMF$(if($imagetype -notmatch "default"){'_CODE'}).fd"
@@ -224,18 +225,19 @@ function Prepare{
 	}
 	if(-not(Test-Path $Objdir)){New-Item -Path $Objdir -ItemType Directory -Force}
 	if(-not(Test-Path $RootPartitionDir)){New-Item -Path $RootPartitionDir -ItemType Directory -Force}
+	if(-not(Test-Path $RootPartitionServicesDir)){New-Item -Path $RootPartitionServicesDir -ItemType Directory -Force}
 	if(-not(Test-Path $BootPartitionDir)){New-Item -Path $BootPartitionDir -ItemType Directory -Force}
 	if(-not(Test-Path $debuglog)){New-Item -Path $debuglog -ItemType File -Force}
 	if(-not(Test-Path $Image)){New-Item -Path $Image -ItemType File -Force}
 	Write-Host (& $NASM -v)
 	if($LASTEXITCODE -ne 0){
 		Log-Write -color Red -Msg "NASM not found at $($NASM). Please install NASM."
-		exit 1
+		return 1
 	}
 	Write-Host (& 'gcc' -v)
 	if($LASTEXITCODE -ne 0){
 		Log-Write -color Red -Msg "GCC not found at $(GCC). Please install GCC."
-		exit 1
+		return 1
 	}
 	if(-not(Test-Path $BOCHSRC)){
 		New-Item -Path $BOCHSRC -ItemType File -Force
@@ -301,7 +303,7 @@ if(-not $nocompile){
 	# (& "$(Join-Path (Get-Location) 'src/Boot/Legacy/legacy.ps1')" -prefix $PREFIX -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir)
 	# if(-not (Test-Path $BootPartitionBlob)){
 	# 	Log-Write -color Red -Msg "Legacy Bootloader blob not created: $BootPartitionBlob"
-	# 	exit 1
+	# 	return 1
 	# }
 	# Log-Write -color Green "Legacy bootloader compiled: $BootPartitionBlob"
 
@@ -309,58 +311,57 @@ if(-not $nocompile){
 	(& "$(Join-Path (Get-Location) 'src/Boot/UEFI/UEFI.ps1')" -prefix $PREFIX -NASM $NASM -GCC $GCC -EMUOUT $BootPartitionDir -ENABLEDEBUGGABLE ($imagetype -eq 'debug') -layoutjson $DiskConfigJson)
 	if(-not (Test-Path $UEFIBootBlob)){
 		Log-Write -color Red -Msg "UEFI Bootloader blob not created: $UEFIBootBlob"
-		exit 1
+		return 1
 	}
 	Log-Write -color Green "UEFI bootloader compiled: $UEFIBootBlob"
 }
 
 Log-Write -color Cyan "===== Step 2: Validate or Create Disk Layout (GPT) ====="
+$GPTScriptErr = 0
 do{
     if(Test-Path $Image){
         Log-Write -color Yellow "Validating existing disk image: $($Image)"
-        try{& $GPTScript -OutputImage $Image -Validate -Verbose}catch{$LASTEXITCODE = 1}
-        if($LASTEXITCODE -eq 0){
+        try{$GPTScriptErr = (& $GPTScript -OutputImage $Image -Validate -Verbose)}catch{$GPTScriptErr = 1}
+        if($GPTScriptErr -eq 0){
             Log-Write -color Green "GPT is healthy. Skipping GPT rebuild."
             if(-not (Test-Path $DiskConfigJson)){
                 Log-Write -color Red -Msg "Disk config not found: $DiskConfigJson"
-                exit 1
+                return 1
             }
             break
         }else{Log-Write -color Red "GPT incorrect or invalid. Rebuilding GPT..."}
     }else{Log-Write -color Yellow "Disk image not found. Creating a new GPT disk..."}
     Log-Write -color Yellow "Creating GPT disk: $($Image)"
     (& $GPTScript -LayoutJson $DiskConfigJson -OutputImage $Image -LogFile (Join-Path $Build "gpt.log") -Verbose)
-    # (& $GPTScript -OutputImage $Image -Validate -Verbose)
-}while($LASTEXITCODE -ne 0)
+}while($GPTScriptErr -ne 0)
 
 if($InstallOS){
 	if(-not (Test-Path $FSScript)){
 		Log-Write -color Red "FS script not found: $FSScript"
-		exit 1
+		return 1
 	}
-	#!	Temporarily disable FS Creation for Debugging Optimisation.
 	Log-Write -color Yellow "InstallOS requested: formatting disk with FS.ps1."
-	(& $FSScript -PartitionName 'Boot' -FileSystemType 'FAT32' -PartitionFlag 'efi-boot' -DiskImage $Image -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs-install.log") -Verbose)
-	if($LASTEXITCODE -ne 0){
+	$FSErr = (& $FSScript -PartitionName 'Boot' -FileSystemType 'FAT32' -PartitionFlag 'efi-boot' -DiskImage $Image -SourceDirectory $BootPartitionDir -LogFile (Join-Path $Build "fs-install.log") -Verbose)
+	if($FSErr -ne 0){
 		Log-Write -color Red "FS formatting failed during InstallOS. Aborting."
-		exit 1
+		return 1
 	}
 	if(-not (Test-Path $InstallFile)){
 		Log-Write -color Red "Install file not found: $InstallFile"
-		exit 1
+		return 1
 	}
 	Log-Write -color Yellow "Running install.bos in current directory."
-	(& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
-	if($LASTEXITCODE -ne 0){
+	$ShellErr = (& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
+	if($ShellErr -ne 0){
 		Log-Write -color Red "install.bos execution failed during InstallOS. Aborting."
-		exit 1
+		return 1
 	}
 }
 
 # Optimise by Using ShortCut
 if($broadimage){New-Item -Path (Join-Path (Get-Location) '/Build/temp/image.img') -ItemType SymbolicLink -Value $Image -Force}
 
-if($run){
+if(run){
 	Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ') "
 	$QEMUOUT = ""
 	$env:OVMF_DEBUG = 'all'

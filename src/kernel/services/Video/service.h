@@ -12,7 +12,7 @@ LibAPI bool InitaliseVMA(void *videomemory, void *acpibase, uint32_t PixelSize, 
 LibAPI void *AllocateVideoMemory(uint32_t X, uint32_t Y, uint32_t *W, uint32_t *H);
 LibAPI bool PreflushVideoMemory(void *VM, CommonMutex Mtx);
 LibAPI bool FreeVideoMemory(void *VM);
-void *VMAIState(bool w, void *ptr);
+LibAPI __noinline void *VMAIState(bool w, void *ptr);
 
-bool VideoPrintf(uint64_t pixel, char *fmt, ...);
-void SelectVideoContext(void *vm, void **Glyph, uint32_t NGlyphs);
+LibAPI bool VideoPrintf(uint64_t pixel, char *fmt, ...);
+LibAPI void SelectVideoContext(void *vm, void **Glyph, uint32_t NGlyphs);

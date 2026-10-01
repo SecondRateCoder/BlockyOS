@@ -15,5 +15,9 @@
     }, 
     "INPUT": {}
 }
-SHELL.REBUILD
+
 SHELL.EXECUTE -p "C:/GitHub/BlockyOS/src/kernel/libcrt/alibcrt.bos"
+#	Components
+SHELL.EXECUTE -p "C:/GitHub/BlockyOS/src/kernel/services/services.bos"
+
+SHELL.EXECUTE -p "C:/GitHub/BlockyOS/src/kernel/kboot/kboot.bos"

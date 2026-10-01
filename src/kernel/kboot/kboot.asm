@@ -1,11 +1,13 @@
 bits 64
 
-extern main_km
-global kboot_f
+extern __main
+global kboot_km
+
+section .text
 ;	rax kboot_f(rdi(bootin), rsi(This), rdx(N))
-kboot_f:
+kboot_km:
 	;	We need to Initialise the Pointer etc.
 	lea rax, qword [rdi]
 	mov rsp, rax
 	add esp, dword [rdi + 8]
-	jmp main_km
+	jmp __main

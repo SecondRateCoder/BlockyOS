@@ -31,8 +31,8 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"// ,
-                // "NATIVE_LITTLE_ENDIAN"
+                "_UNICODE",
+                "__IMPORT"
             ],
             "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
             "compilerArgs": [

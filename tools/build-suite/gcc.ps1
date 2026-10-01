@@ -37,8 +37,9 @@ $_COMPILEARGS = @('-nostdlib', '-O0',
 if($DebugEnabled){$_COMPILEARGS += '-g'}
 foreach($arg in $c){[regex]::Matches($arg, $PATTERN) | ForEach-Object{$_COMPILEARGS += $_.ToString()}}
 
-$_LINKARGS = @('-fdiagnostics-color=always', '-fno-diagnostics-show-highlight-colors', '-nostartfiles', '-nodefaultlibs', '-flinker-output=dyn', '-nostdlib', '--emit-relocs')
-$_LINKSKIP = 4
+$_LINKARGS = @('-fdiagnostics-color=always', '-fno-diagnostics-show-highlight-colors', 
+	'-nostartfiles', '-nodefaultlibs', '-fno-asynchronous-unwind-tables', '-fno-unwind-tables', '-nostdlib')
+$_LINKSKIP = 6
 foreach($arg in $l){[regex]::Matches($arg, $PATTERN) | ForEach-Object{$_LINKARGS += $_.ToString()}}
 if($LogEnabled){
     $fullPath = [System.IO.Path]::GetFullPath($LogFile)
@@ -183,19 +184,19 @@ if($CacheEnabled){
 	$jsonCachePath = Join-Path $CACHEDIR 'cache.json'
 	foreach($srcPath in $f){
 		$srcItem = Get-Item $srcPath
-		$objPath = if(($srcItem.Extension -match 'asm') -or ($srcItem.Extension -match 'c')){
-			Join-Path $CACHEDIR "$($srcItem.Extension -replace '\.','').$($srcItem.BaseName).o"}else{$srcPath}
+		$objPath = $(if(($srcItem.Extension -match 'asm') -or ($srcItem.Extension -match 'c')){
+			(Join-Path $CACHEDIR "$($srcItem.Extension -replace '\.','').$($srcItem.BaseName).o")}else{$srcPath}) -replace '\\','/'
 		$cc = 0
 		while($objectFiles -contains $objPath){
 			$cc++
-			$objPath = if(($srcItem.Extension -match 'asm') -or ($srcItem.Extension -match 'c')){
-			Join-Path $CACHEDIR "$($srcItem.Extension -replace '\.','').$($srcItem.BaseName)($cc).o"}else{exit 1}
+			$objPath = $(if(($srcItem.Extension -match 'asm') -or ($srcItem.Extension -match 'c')){
+				Join-Path $CACHEDIR "$($srcItem.Extension -replace '\.','').$($srcItem.BaseName)($cc).o"}else{$null}) -replace '\\','/'
 		}
 		$tsInfo = Get-JsonTimestampInfo -JsonPath $jsonCachePath -FilePath $srcItem.FullName
 		if(Test-JsonTimestampIsOutdated -JsonPath $jsonCachePath -FilePath $srcItem.FullName){
 			$diffStr = Format-TimestampDiff -Delta $tsInfo.Delta
 			LogWrite "Stale source detected for $($srcItem.FullName). source=$($tsInfo.ActualTime.ToString('o')), stored=$($tsInfo.StoredTimestamp ?? 'none'), delta=$diffStr sec" Yellow
-			$compileCmd = @('-c', $srcItem.FullName, '-o', $objPath.ToString()) + $_COMPILEARGS
+			$compileCmd = (@('-c', $srcItem.FullName, '-o', $objPath.ToString()) + $_COMPILEARGS -replace '\\','/')
 			switch -Regex ($srcItem.Extension){
 				'asm' {
 					$nasmCMD = @('-s')
@@ -204,20 +205,20 @@ if($CacheEnabled){
 					for($cc = 0; $cc -lt $_COMPILEARGS.Count; ++$cc){
 						switch -Regex ($_COMPILEARGS[$cc]){
 							'^-I$' {
-								if(($cc + 1) -lt $_COMPILEARGS.Count){$cc++;	$nasmCMD += @('-I', $_COMPILEARGS[$cc])}
+								if(($cc + 1) -lt $_COMPILEARGS.Count){$cc++;	$nasmCMD += @('-I', $_COMPILEARGS[$cc] -replace '\\', '/')}
 								break
 							} '^-D$' {
-								if(($cc + 1) -lt $_COMPILEARGS.Count){$cc++;	$nasmCMD += @('-D', $_COMPILEARGS[$cc])}
+								if(($cc + 1) -lt $_COMPILEARGS.Count){$cc++;	$nasmCMD += @('-D', $_COMPILEARGS[$cc] -replace '\\', '/')}
 								break
 							} 
-							'^-m64$'					{$nasmCMD += @('-f', 'win64');				break} 
-							'^-m32$'					{$nasmCMD += @('-f', 'obj');				break} 
-							'^-O([0-3sgfast]|\w+)?$'	{$nasmCMD += $_COMPILEARGS[$cc];			break}
+							'^-m64$'					{$nasmCMD += @('-f', 'win64');						break} 
+							'^-m32$'					{$nasmCMD += @('-f', 'obj');						break} 
+							'^-O([0-3sgfast]|\w+)?$'	{$nasmCMD += $_COMPILEARGS[$cc] -replace '\\', '/';	break}
 						}
 					}
 					#	Default to 64-bit Obj format. 
 					if($nasmCMD -notcontains 'win64' -and $nasmCMD -notcontains 'obj'){$nasmCMD += @('-f', 'win64')}
-					$nasmCMD += @($srcPath, '-o', $objPath)
+					$nasmCMD += @(($srcPath -replace '\\', '/'), '-o', ($objPath -replace '\\', '/'))
 					LogWrite "$NASM $($nasmCMD -join ' ')" Yellow
 					
 					# Ensure NASM always executes regardless of logging
@@ -227,7 +228,7 @@ if($CacheEnabled){
 					LogWrite "$GCC $($compileCmd -join ' ')" Yellow
 					$gccOut = (& $GCC @compileCmd 2>&1)
 					if($gccOut){LogWrite ($gccOut -join "`n")}
-				}
+				} 
 			}
 			if(-not (Test-Path $objPath)){
 				LogWrite "Failure in compiling $($srcItem.FullName) -> $objPath" Red
@@ -240,11 +241,18 @@ if($CacheEnabled){
 		}else{LogWrite "Skipping $($srcItem.FullName) - up to date; source=$($tsInfo.ActualTime.ToString('o')), stored=$($tsInfo.StoredTimestamp)" Green}
 		$objectFiles += $objPath
 	}
-	
+	# $objectFiles | ForEach-Object{($_ -replace '\\','/') -replace ((Get-Location) -replace '\\','/'),''}
+	for($cc = 0; $cc -lt $objectFiles.Count; $cc++){
+		$objectFiles[$cc] = ([System.IO.Path]::GetRelativePath((Get-Location).Path, $objectFiles[$cc]) -replace '\\', '/')}
 	$LINKARGS = Format-LinkerArgs -ArgsList $_LINKARGS
 	$linkCmd = @() + $objectFiles + $LINKARGS
 	LogWrite "$GCC $($linkCmd -join ' ')" Yellow
 	$linkOut = (& $GCC @linkCmd 2>&1)
+	# if($LINKARGS -contains "-Wl,-shared"){
+	# 	$file = "$o.a"
+	# 	$linkOut += @('ranlib $file') + (& 'ranlib' $file)
+	# 	$linkOut += @("ar rcs $file $($objectFiles -join ' ')") + (& 'ar' 'rcs' $file @objectFiles)
+	# }
 	if($linkOut){LogWrite ($linkOut -join "`n")}
 }else{
 	# Direct compilation without caching

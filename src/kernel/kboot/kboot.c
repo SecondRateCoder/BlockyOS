@@ -17,52 +17,52 @@ IDTTable64 __linkersection(IDT) InterruptTable;
 static GDTSystemSegmentDescriptor64 GDTTable[(GDTTableDefaultLength / 2)] = {0};
 
 void InitialiseGDT(){
-	uint64_t codeLimit = (((uint64_t)&CODELIMIT - (uint64_t)&CODEBASE) >> 12) - 1;
-	uint64_t dataLimit = (((uint64_t)&DATALIMIT - (uint64_t)&DATABASE) >> 12) - 1;
-	GDTR64 R = {.Base = GDTTable, .Limit = sizeof(GDTTable)};
-	//*	Kernel Code Segment.
-	((GDTDescriptor *)GDTTable)[1] = (GDTDescriptor){
-		.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
-		.LimitHigh = codeLimit >> 16, .LimitLow = codeLimit, 
-		.BaseHigh = ((uint64_t)&CODEBASE) >> 24, .BaseLow = ((uint64_t)&CODEBASE), 
+	// uint64_t codeLimit = (((uint64_t)&CODELIMIT - (uint64_t)&CODEBASE) >> 12) - 1;
+	// uint64_t dataLimit = (((uint64_t)&DATALIMIT - (uint64_t)&DATABASE) >> 12) - 1;
+	// GDTR64 R = {.Base = (uint64_t)(void *)GDTTable, .Limit = sizeof(GDTTable)};
+	// //*	Kernel Code Segment.
+	// ((GDTDescriptor *)GDTTable)[1] = (GDTDescriptor){
+	// 	.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
+	// 	.LimitHigh = codeLimit >> 16, .LimitLow = codeLimit, 
+	// 	.BaseHigh = ((uint64_t)&CODEBASE) >> 24, .BaseLow = ((uint64_t)&CODEBASE), 
 		
-		.ABPresent = true, .ABPriviledgeLevel = 0x00, 
-		.ABReadWritableBit = false, .ABSystemSegmentBit = false, 
-		.ABAccessedBit = false, .ABExecutableBit = true, .ABDirectionBit = true, 
-	};
-	//*	Kernel Data Segment.
-	((GDTDescriptor *)GDTTable)[2] = (GDTDescriptor){
-		.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
-		.LimitHigh = dataLimit >> 16, .LimitLow = dataLimit, 
-		.BaseHigh = ((uint64_t)&DATABASE) >> 24, .BaseLow = ((uint64_t)&DATABASE), 
+	// 	.ABPresent = true, .ABPriviledgeLevel = 0x00, 
+	// 	.ABReadWritableBit = false, .ABSystemSegmentBit = false, 
+	// 	.ABAccessedBit = false, .ABExecutableBit = true, .ABDirectionBit = true, 
+	// };
+	// //*	Kernel Data Segment.
+	// ((GDTDescriptor *)GDTTable)[2] = (GDTDescriptor){
+	// 	.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
+	// 	.LimitHigh = dataLimit >> 16, .LimitLow = dataLimit, 
+	// 	.BaseHigh = ((uint64_t)&DATABASE) >> 24, .BaseLow = ((uint64_t)&DATABASE), 
 		
-		.ABPresent = true, .ABPriviledgeLevel = 0x00, 
-		.ABReadWritableBit = true, .ABSystemSegmentBit = false, 
-		.ABAccessedBit = false, .ABExecutableBit = false, .ABDirectionBit = false, 
-	};
-	//*	User Code Segment.
-	((GDTDescriptor *)GDTTable)[3] = (GDTDescriptor){
-		.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
-		.LimitHigh = codeLimit >> 16, .LimitLow = codeLimit, 
-		.BaseHigh = ((uint64_t)&CODEBASE) >> 24, .BaseLow = ((uint64_t)&CODEBASE), 
+	// 	.ABPresent = true, .ABPriviledgeLevel = 0x00, 
+	// 	.ABReadWritableBit = true, .ABSystemSegmentBit = false, 
+	// 	.ABAccessedBit = false, .ABExecutableBit = false, .ABDirectionBit = false, 
+	// };
+	// //*	User Code Segment.
+	// ((GDTDescriptor *)GDTTable)[3] = (GDTDescriptor){
+	// 	.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
+	// 	.LimitHigh = codeLimit >> 16, .LimitLow = codeLimit, 
+	// 	.BaseHigh = ((uint64_t)&CODEBASE) >> 24, .BaseLow = ((uint64_t)&CODEBASE), 
 		
-		.ABPresent = true, .ABPriviledgeLevel = 0x03, 
-		.ABReadWritableBit = false, .ABSystemSegmentBit = false, 
-		.ABAccessedBit = false, .ABExecutableBit = true, .ABDirectionBit = true, 
-	};
-	//*	User Data Segment.
-	((GDTDescriptor *)GDTTable)[4] = (GDTDescriptor){
-		.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
-		.LimitHigh = dataLimit >> 16, .LimitLow = dataLimit, 
-		.BaseHigh = ((uint64_t)&DATABASE) >> 24, .BaseLow = (uint64_t)&DATABASE, 
+	// 	.ABPresent = true, .ABPriviledgeLevel = 0x03, 
+	// 	.ABReadWritableBit = false, .ABSystemSegmentBit = false, 
+	// 	.ABAccessedBit = false, .ABExecutableBit = true, .ABDirectionBit = true, 
+	// };
+	// //*	User Data Segment.
+	// ((GDTDescriptor *)GDTTable)[4] = (GDTDescriptor){
+	// 	.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
+	// 	.LimitHigh = dataLimit >> 16, .LimitLow = dataLimit, 
+	// 	.BaseHigh = ((uint64_t)&DATABASE) >> 24, .BaseLow = (uint64_t)&DATABASE, 
 		
-		.ABPresent = true, .ABPriviledgeLevel = 0x03, 
-		.ABReadWritableBit = true, .ABSystemSegmentBit = false, 
-		.ABAccessedBit = false, .ABExecutableBit = false, .ABDirectionBit = false, 
-	};
-	//	All TSS's can be dynamically allocated later.
+	// 	.ABPresent = true, .ABPriviledgeLevel = 0x03, 
+	// 	.ABReadWritableBit = true, .ABSystemSegmentBit = false, 
+	// 	.ABAccessedBit = false, .ABExecutableBit = false, .ABDirectionBit = false, 
+	// };
+	// //	All TSS's can be dynamically allocated later.
 
-	LoadGDTR(&R);
+	// LoadGDTR(&R);
 }
 
 void InitialiseIDT(void *ACPI){
@@ -74,13 +74,13 @@ void InitialiseIDT(void *ACPI){
 			.OffsetLow = InterruptCallbacks[cc] && UINT16_MAX, .Present = true, .SegmentSelector = {0}
 		};
 	}
-	LoadIDT(&temp);
+	LoadIDTR(&temp);
 	InitLocalAPIC(ACPI, 0x00, false);
 }
 
 ISRCallbackDefinition(GenericIO){ISRCallbackReturn;}
 
-KernalMainDef(main){
+void __sysvabi __main(__bootinfo * __restrict__ bootin, ExecutableSection *This, uint32_t N){
 	//* Set Up Interrupt Descriptor Table (IDT) & GDT
 	InitialiseGDT();
 
@@ -102,7 +102,7 @@ KernalMainDef(main){
 	uint32_t W = bootin->Video.PixelWidth * bootin->Video.PixelSize, 
 			H = bootin->Video.PixelHeight * bootin->Video.PixelSize;
 	void *vm = AllocateVideoMemory(0, 0, &W, &H);
-	SelectVideoContext(vm, ASCII, ASCIILength);
+	SelectVideoContext(vm, (void **)ASCII, ASCIILength);
 
 	VideoPrintf(PixelFC(0.5, 0.5, 0.5, 0.5), "Hi");
 	
@@ -114,9 +114,9 @@ KernalMainDef(main){
 		.NVMe = {.Out = {0}}, .Priviledge = 0x00
 	};
 	InitMutex(Mtx);
-	uint32_t IV;
+	uint8_t IV;
 	AllocateInterruptVector(&IV);
-	rawenv re = OpenRawHandle(&cfg, GetPCIstruct(MassStorage_SATA_AHCI), IV, 512, Mtx);
+	rawenv re = OpenRawHandle(&cfg, GetPCIstruct(MassStorage_SATA_AHCI), IV, 512, 0x00, Mtx);
 
 	//* Take Over the Page Tables(Virtual Memory)
 	//* Initialize a Stack

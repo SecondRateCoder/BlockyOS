@@ -69,7 +69,7 @@ PARAMETERS
 "@
 }
 
-if ($Help) { Show-Help; exit }
+if ($Help) { Show-Help; return }
 
 $logBuffer = @()
 
@@ -116,28 +116,28 @@ Log-Message "Partition FS Driver Started"
 
 if (-not $DiskImage) {
 	Log-Error "DiskImage parameter is required"
-	exit 1
+	return 1
 }
 
 if (-not (Test-Path -Path $DiskImage -PathType Leaf)) {
 	Log-Error "Disk image not found: $DiskImage"
-	exit 1
+	return 1
 }
 
 if (-not $PartitionName) {
 	Log-Error "PartitionName parameter is required"
-	exit 1
+	return 1
 }
 
 if (-not $PartitionFlag) {
 	Log-Error "PartitionFlag parameter is required"
-	exit 1
+	return 1
 }
 
 $validFS = @("FAT16","FAT32","NTFS")
 if ($FileSystemType -notin $validFS) {
 	Log-Error "Invalid FileSystemType: $FileSystemType. Must be one of: $($validFS -join ', ')"
-	exit 1
+	return 1
 }
 
 function Get-GptAttributeMask {
@@ -156,7 +156,7 @@ function Get-GptAttributeMask {
 				return [UInt64]::Parse($Flag.Substring(2), "HexNumber")
 			} else {
 				Log-Error "Unknown PartitionFlag '$Flag'. Use known names or 0xHEXVALUE."
-				exit 1
+				return 1
 			}
 		}
 	}
@@ -171,7 +171,7 @@ try {
 	$br = New-Object System.IO.BinaryReader($fs.BaseStream)
 } catch {
 	Log-Error "Could not open disk image: $_"
-	exit 1
+	return 1
 }
 
 function Read-Sector {
@@ -188,7 +188,7 @@ if ($signature -ne "EFI PART") {
 	Log-Error "Disk image does not contain a valid GPT header at LBA 1 (signature: '$signature')"
 	$br.Close()
 	$fs.BaseStream.Close()
-	exit 1
+	return 1
 }
 
 $entriesLBA   = [BitConverter]::ToUInt64($gptHeader,72)
@@ -236,7 +236,7 @@ if (-not $selectedPartition) {
 	Log-Error "No partition found with Name='$PartitionName' and Flag='$PartitionFlag'"
 	$br.Close()
 	$fs.BaseStream.Close()
-	exit 1
+	return 1
 }
 
 $partitionSizeSectors = $selectedPartition.EndLBA - $selectedPartition.StartLBA + 1
@@ -274,6 +274,7 @@ function Create-FAT32BootSector {
         $dataSectors = $totalSectors - $reservedSectors - ($fatCopies * $fatSizeInSectors)
         $clusterCount = [uint32][Math]::Floor($dataSectors / $sectorsPerCluster)
         $fatSizeInSectors = [uint32][Math]::Ceiling((($clusterCount + 2) * 4.0) / $sectorSize)
+		if($previousFatSize -gt $fatSizeInSectors){break}
     } while ($fatSizeInSectors -ne $previousFatSize)
 
 	$bootbinaries = $null
@@ -356,7 +357,8 @@ function Get-FAT32ClusterSize{
 
 			$clusterCount = [uint32][Math]::Floor($dataSectors / $sectorsPerCluster)
 			$fatSizeInSectors = [uint32][Math]::Ceiling((($clusterCount + 2) * 4.0) / $sectorSize)
-		}while($fatSizeInSectors -ne $previousFatSize)
+			if($previousFatSize -gt $fatSizeInSectors){break}
+		}while($fatSizeInSectors -lt $previousFatSize)
 
 		if($clusterCount -ge 65525){return $clusterSize}
 	}
@@ -777,6 +779,7 @@ switch($FileSystemType){
 			$dataSectors = $partitionSizeSectors - 32 - (2 * $fatSizeInSectors)
 			$clusters = [uint32][Math]::Floor($dataSectors / $sectorsPerCluster)
 			$fatSizeInSectors = [uint32][Math]::Ceiling((($clusters + 2) * 4.0) / $sectorSize)
+			if($previousFatSize -gt $fatSizeInSectors){break}
 			$iteration++
 			if($iteration -gt $maxIterations){throw "FAT32 FAT table sizing did not converge after $maxIterations iterations"}
 		}while($fatSizeInSectors -ne $previousFatSize)
@@ -827,4 +830,4 @@ if ($Verbose -and $LogFile) {
 	Write-Host "Operations logged to: $LogFile"
 }
 
-exit 0
+return 0

@@ -16,8 +16,7 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2s-ref.o
 LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2sp-ref.o
 LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xb-ref.o
 LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xs-ref.o
-LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.eload.o
-LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.exec.o
+LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.pe.o
 LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.legacy.minijson.o
 LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
 LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
@@ -119,214 +118,211 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
 .plt.sec
  *(.plt.sec)
 
-.text           0x0000000000000000    0x1bd68
+.text           0x0000000000000000    0x202aa
  *(.text .stub)
- .text          0x0000000000000000     0x5772 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.frat.o
+ .text          0x0000000000000000     0x587e C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.frat.o
                 0x000000000000001f                checkdisk
                 0x00000000000001f3                loadpart
                 0x0000000000000501                formatpart
-                0x00000000000009ee                queryparttablefs
-                0x0000000000000c21                queryfs
-                0x0000000000000d82                fmount
-                0x00000000000015e1                allocatecluster
-                0x00000000000016da                __ffremove
-                0x000000000000174f                __ffremoveh
-                0x00000000000017dc                __ffremovel
-                0x000000000000180c                __ffremovelh
-                0x0000000000001974                __fcreate
-                0x0000000000001e0b                __faddr
-                0x000000000000222d                __finit
-                0x00000000000025ec                __ffindh
-                0x0000000000002738                __ffindhi
-                0x0000000000002871                __ffindi
-                0x00000000000028a9                __ffind
-                0x00000000000028de                __fread1
-                0x0000000000002b33                __fpush1
-                0x0000000000002e9a                floadhdir
-                0x000000000000305e                fuloaddir
-                0x00000000000032e8                __fdirrefresh
-                0x000000000000356b                floadh
-                0x0000000000003670                fuloadh
-                0x00000000000037d6                __freadinfo
-                0x0000000000003879                __fupdatetstamp
-                0x00000000000039db                __fsize
-                0x0000000000003b46                __dsize
-                0x0000000000003bdf                _dreadinfo
-                0x0000000000003c07                _freadinfo
-                0x0000000000003c2f                _fseek
-                0x0000000000003c4e                _fseeko
-                0x0000000000003c78                _fwrite
-                0x0000000000003eef                _fread
-                0x00000000000040e7                __fgetparent
-                0x00000000000041dc                __fdiradd
-                0x00000000000045f1                __ftest
-                0x0000000000004887                __fdirlist
-                0x0000000000004d09                __dirr_init
-                0x00000000000051ad                __dirr_free
-                0x00000000000052c6                __dirr
-                0x00000000000054c4                __fprint_info
-                0x0000000000005710                getloc
- .text          0x0000000000005772      0xe8b C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.raw.o
-                0x0000000000005772                FindDiskHandleByGUID
-                0x0000000000005d3b                DisableVerbose
-                0x0000000000005d40                EnableVerbose
-                0x0000000000005d45                getblocksize
-                0x0000000000005d49                setblocksize
-                0x0000000000005d69                startup
-                0x0000000000005f90                readblocks
-                0x000000000000612d                writeblocks
-                0x00000000000062f4                writebytes
-                0x000000000000641a                readbytes
-                0x0000000000006594                dispose
- .text          0x00000000000065fd     0x7632 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2b-ref.o
-                0x00000000000067ba                blake2b_init_param
-                0x0000000000006849                blake2b_init
-                0x000000000000692e                blake2b_init_key
-                0x000000000000d7cb                blake2b_update
-                0x000000000000d90e                blake2b_final
-                0x000000000000da8c                blake2b
-                0x000000000000dbe7                blake2
- .text          0x000000000000dc2f      0xbde C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2bp-ref.o
-                0x000000000000de75                blake2bp_init
-                0x000000000000df6a                blake2bp_init_key
-                0x000000000000e159                blake2bp_update
-                0x000000000000e30c                blake2bp_final
-                0x000000000000e4ab                blake2bp
- .text          0x000000000000e80d     0x43bf C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2s-ref.o
-                0x000000000000e9e3                blake2s_init_param
-                0x000000000000ea6b                blake2s_init
-                0x000000000000eb36                blake2s_init_key
-                0x00000000000127fb                blake2s_update
-                0x000000000001292c                blake2s_final
-                0x0000000000012a71                blake2s
- .text          0x0000000000012bcc      0xb7a C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2sp-ref.o
-                0x0000000000012e08                blake2sp_init
-                0x0000000000012efd                blake2sp_init_key
-                0x0000000000013095                blake2sp_update
-                0x0000000000013248                blake2sp_final
-                0x00000000000133e4                blake2sp
- .text          0x0000000000013746      0x640 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xb-ref.o
-                0x00000000000137c5                blake2xb_init
-                0x00000000000137f1                blake2xb_init_key
-                0x0000000000013a1e                blake2xb_update
-                0x0000000000013a4b                blake2xb_final
-                0x0000000000013c6b                blake2xb
- .text          0x0000000000013d86      0x5f9 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xs-ref.o
-                0x0000000000013e33                blake2xs_init
-                0x0000000000013e5f                blake2xs_init_key
-                0x0000000000014014                blake2xs_update
-                0x0000000000014041                blake2xs_final
-                0x0000000000014264                blake2xs
- .text          0x000000000001437f      0xf9e C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.eload.o
-                0x000000000001437f                LoadExecutable
-                0x0000000000014843                LoadService
-                0x0000000000014cd4                ResolveRelS
- .text          0x000000000001531d      0xd6d C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.exec.o
-                0x000000000001531d                ReadBeHeader
-                0x000000000001559b                RvoToFileOffsetBe
-                0x0000000000015634                FileOffsetToRvoBe
-                0x0000000000015688                FindSectionBe
-                0x000000000001577a                GetAtRVOFromSectionDataBe
-                0x00000000000157e5                ReadAtRVOFromSectionBe
-                0x0000000000015888                ReadSectionBe
-                0x00000000000158f3                FindRelocationBe
-                0x0000000000015ac5                MatchResourceName
-                0x0000000000015b3c                ReadResourceBe
- .text          0x000000000001608a        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.legacy.minijson.o
- .text          0x000000000001608a      0xd64 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
-                0x00000000000162c6                JsonCreateValue
-                0x00000000000165c0                JsonreadValue
-                0x0000000000016743                JsonParse
-                0x0000000000016a03                JsonFree
-                0x0000000000016cdb                JsongetValue
- .text          0x0000000000016dee      0x214 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
-                0x0000000000016dee                socketopen
- .text          0x0000000000017002     0x1ffb C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.sockets.o
-                0x0000000000017002                __fhandle_sckinfo
-                0x0000000000017877                __fhandle_sckwrite
-                0x0000000000017a10                __fhandle_sckread
-                0x0000000000017be2                __fhandle_sckclose
-                0x0000000000017d0b                __fhandle_sckOPENchild
-                0x0000000000018176                __froot_sckread
-                0x0000000000018202                __froot_sckwrite
-                0x000000000001828e                __froot_sckclose
-                0x0000000000018427                __froot_sckOPENchild
-                0x0000000000018825                __froot_sckinfo
-                0x0000000000018cd9                __froot_sckopen
- .text          0x0000000000018ffd     0x152c C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.tools.o
-                0x0000000000018ffd                _GUIDtoSTR
-                0x000000000001906d                prGUID
-                0x00000000000190df                strcheck
-                0x0000000000019132                strchecki
-                0x0000000000019186                __memdup
-                0x00000000000191f2                isascii
-                0x0000000000019206                __getfcode
-                0x0000000000019312                readbuf
-                0x000000000001942e                strtok_i
-                0x00000000000194fa                strtok_k
-                0x00000000000196ee                strtok_d
-                0x000000000001979b                trng__
-                0x0000000000019833                tolower
-                0x0000000000019849                isdigit
-                0x0000000000019873                str_tolower
-                0x00000000000198ed                match_rec
-                0x0000000000019a21                makeGPTeNSTR
-                0x0000000000019ac1                __pattmatch
-                0x0000000000019c25                __realloc_
-                0x0000000000019d0c                __calloc_
-                0x0000000000019d95                __memset
-                0x0000000000019df0                __safecopy
-                0x0000000000019e79                __memcpy
-                0x0000000000019edd                __strlen
-                0x0000000000019f10                __strdup
-                0x0000000000019f3d                __strspn
-                0x0000000000019fa7                __memcmp
-                0x000000000001a053                getDriveMediaID
-                0x000000000001a1c9                ValidateImageHandle
-                0x000000000001a225                IsPartition
-                0x000000000001a297                GetDevicePath
-                0x000000000001a2f6                RestartSystem
-                0x000000000001a327                sysbase
-                0x000000000001a3c8                getptr
-                0x000000000001a3ea                __strtod
- .text          0x000000000001a529      0x3ae C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.boot.o
-                0x000000000001a529                libinit
-                0x000000000001a5b0                efi_main
- .text          0x000000000001a8d7     0x1491 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
-                0x000000000001a8d7                ProcessNode
-                0x000000000001aa36                BuildDeviceTree
-                0x000000000001ab0f                DebugDevicePath
-                0x000000000001abea                DescribeDeviceNode
-                0x000000000001af81                getDevPath
-                0x000000000001b029                GetMemoryMap
-                0x000000000001b4c0                InitialiseVideoMemory
-                0x000000000001b798                gatherbootinfo
-                0x000000000001b9fd                CreateBootEntry
+                0x00000000000009f7                queryparttablefs
+                0x0000000000000c2a                queryfs
+                0x0000000000000d8b                fmount
+                0x00000000000015f4                allocatecluster
+                0x00000000000016ed                __ffremove
+                0x0000000000001762                __ffremoveh
+                0x00000000000017ef                __ffremovel
+                0x000000000000181f                __ffremovelh
+                0x0000000000001987                __fcreate
+                0x0000000000001e1e                __faddr
+                0x0000000000002240                __finit
+                0x00000000000025ff                __ffindh
+                0x000000000000274b                __ffindhi
+                0x0000000000002884                __ffindi
+                0x00000000000028bc                __ffind
+                0x00000000000028f1                __fread1
+                0x0000000000002b46                __fpush1
+                0x0000000000002ead                floadhdir
+                0x0000000000003071                fuloaddir
+                0x000000000000330c                __fdirrefresh
+                0x000000000000358f                floadh
+                0x0000000000003694                fuloadh
+                0x000000000000380b                __freadinfo
+                0x00000000000038ae                __fupdatetstamp
+                0x0000000000003a10                __fsize
+                0x0000000000003b7b                __dsize
+                0x0000000000003c14                _dreadinfo
+                0x0000000000003c3c                _freadinfo
+                0x0000000000003c64                _fseeko
+                0x0000000000003cce                _fseek
+                0x0000000000003d26                _fwrite
+                0x0000000000003fd4                _fread
+                0x00000000000041df                __fgetparent
+                0x00000000000042d4                __fdiradd
+                0x00000000000046e9                __ftest
+                0x000000000000497f                __fdirlist
+                0x0000000000004e01                __dirr_init
+                0x00000000000052a5                __dirr_free
+                0x00000000000053be                __dirr
+                0x00000000000055bc                __fprint_info
+                0x0000000000005808                getloc
+ .text          0x000000000000587e      0xe8b C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.raw.o
+                0x000000000000587e                FindDiskHandleByGUID
+                0x0000000000005e47                DisableVerbose
+                0x0000000000005e4c                EnableVerbose
+                0x0000000000005e51                getblocksize
+                0x0000000000005e55                setblocksize
+                0x0000000000005e75                startup
+                0x000000000000609c                readblocks
+                0x0000000000006239                writeblocks
+                0x0000000000006400                writebytes
+                0x0000000000006526                readbytes
+                0x00000000000066a0                dispose
+ .text          0x0000000000006709     0x7632 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2b-ref.o
+                0x00000000000068c6                blake2b_init_param
+                0x0000000000006955                blake2b_init
+                0x0000000000006a3a                blake2b_init_key
+                0x000000000000d8d7                blake2b_update
+                0x000000000000da1a                blake2b_final
+                0x000000000000db98                blake2b
+                0x000000000000dcf3                blake2
+ .text          0x000000000000dd3b      0xbde C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2bp-ref.o
+                0x000000000000df81                blake2bp_init
+                0x000000000000e076                blake2bp_init_key
+                0x000000000000e265                blake2bp_update
+                0x000000000000e418                blake2bp_final
+                0x000000000000e5b7                blake2bp
+ .text          0x000000000000e919     0x43bf C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2s-ref.o
+                0x000000000000eaef                blake2s_init_param
+                0x000000000000eb77                blake2s_init
+                0x000000000000ec42                blake2s_init_key
+                0x0000000000012907                blake2s_update
+                0x0000000000012a38                blake2s_final
+                0x0000000000012b7d                blake2s
+ .text          0x0000000000012cd8      0xb7a C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2sp-ref.o
+                0x0000000000012f14                blake2sp_init
+                0x0000000000013009                blake2sp_init_key
+                0x00000000000131a1                blake2sp_update
+                0x0000000000013354                blake2sp_final
+                0x00000000000134f0                blake2sp
+ .text          0x0000000000013852      0x640 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xb-ref.o
+                0x00000000000138d1                blake2xb_init
+                0x00000000000138fd                blake2xb_init_key
+                0x0000000000013b2a                blake2xb_update
+                0x0000000000013b57                blake2xb_final
+                0x0000000000013d77                blake2xb
+ .text          0x0000000000013e92      0x5f9 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xs-ref.o
+                0x0000000000013f3f                blake2xs_init
+                0x0000000000013f6b                blake2xs_init_key
+                0x0000000000014120                blake2xs_update
+                0x000000000001414d                blake2xs_final
+                0x0000000000014370                blake2xs
+ .text          0x000000000001448b     0x6141 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.pe.o
+                0x000000000001448b                ReadPeExecutableHeader
+                0x0000000000014d6d                RvaToFileOffsetPe
+                0x0000000000014dd1                FindSectionPe
+                0x0000000000014ed9                GetAtRVAFromSectionDataPe
+                0x0000000000014f3d                ReadAtRVAFromSectionPe
+                0x0000000000015012                ReadStringAtRVAFromSectionPe
+                0x0000000000015204                ReadSectionPe
+                0x000000000001536d                ExpandPeExecutableFormat
+                0x0000000000015d17                PeMachineTypeToString
+                0x0000000000016155                PeSubsystemToString
+                0x00000000000162a7                PeSectionCharacteristicsToString
+                0x0000000000017262                PeHeaderCharacteristicsToString
+                0x000000000001804a                PeDllCharacteristicsToString
+                0x0000000000018a7a                DumpPe
+ .text          0x000000000001a5cc        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.legacy.minijson.o
+ .text          0x000000000001a5cc      0xd64 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
+                0x000000000001a808                JsonCreateValue
+                0x000000000001ab02                JsonreadValue
+                0x000000000001ac85                JsonParse
+                0x000000000001af45                JsonFree
+                0x000000000001b21d                JsongetValue
+ .text          0x000000000001b330      0x214 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
+                0x000000000001b330                socketopen
+ .text          0x000000000001b544     0x1ffb C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.sockets.o
+                0x000000000001b544                __fhandle_sckinfo
+                0x000000000001bdb9                __fhandle_sckwrite
+                0x000000000001bf52                __fhandle_sckread
+                0x000000000001c124                __fhandle_sckclose
+                0x000000000001c24d                __fhandle_sckOPENchild
+                0x000000000001c6b8                __froot_sckread
+                0x000000000001c744                __froot_sckwrite
+                0x000000000001c7d0                __froot_sckclose
+                0x000000000001c969                __froot_sckOPENchild
+                0x000000000001cd67                __froot_sckinfo
+                0x000000000001d21b                __froot_sckopen
+ .text          0x000000000001d53f     0x152c C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.tools.o
+                0x000000000001d53f                _GUIDtoSTR
+                0x000000000001d5af                prGUID
+                0x000000000001d621                strcheck
+                0x000000000001d674                strchecki
+                0x000000000001d6c8                __memdup
+                0x000000000001d734                isascii
+                0x000000000001d748                __getfcode
+                0x000000000001d854                readbuf
+                0x000000000001d970                strtok_i
+                0x000000000001da3c                strtok_k
+                0x000000000001dc30                strtok_d
+                0x000000000001dcdd                trng__
+                0x000000000001dd75                tolower
+                0x000000000001dd8b                isdigit
+                0x000000000001ddb5                str_tolower
+                0x000000000001de2f                match_rec
+                0x000000000001df63                makeGPTeNSTR
+                0x000000000001e003                __pattmatch
+                0x000000000001e167                __realloc_
+                0x000000000001e24e                __calloc_
+                0x000000000001e2d7                __memset
+                0x000000000001e332                __safecopy
+                0x000000000001e3bb                __memcpy
+                0x000000000001e41f                __strlen
+                0x000000000001e452                __strdup
+                0x000000000001e47f                __strspn
+                0x000000000001e4e9                __memcmp
+                0x000000000001e595                getDriveMediaID
+                0x000000000001e70b                ValidateImageHandle
+                0x000000000001e767                IsPartition
+                0x000000000001e7d9                GetDevicePath
+                0x000000000001e838                RestartSystem
+                0x000000000001e869                sysbase
+                0x000000000001e90a                getptr
+                0x000000000001e92c                __strtod
+ .text          0x000000000001ea6b      0x3ae C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.boot.o
+                0x000000000001ea6b                libinit
+                0x000000000001eaf2                efi_main
+ .text          0x000000000001ee19     0x1491 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
+                0x000000000001ee19                ProcessNode
+                0x000000000001ef78                BuildDeviceTree
+                0x000000000001f051                DebugDevicePath
+                0x000000000001f12c                DescribeDeviceNode
+                0x000000000001f4c3                getDevPath
+                0x000000000001f56b                GetMemoryMap
+                0x000000000001fa02                InitialiseVideoMemory
+                0x000000000001fcda                gatherbootinfo
+                0x000000000001ff3f                CreateBootEntry
  *(.gnu.warning)
 
 .fini
  *(SORT_NONE(.fini))
 
-.rodata         0x0000000000000000     0x2886
+.rodata         0x0000000000000000     0x486e
  *(.rodata)
  .rodata        0x0000000000000000     0x14a2 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.frat.o
  *fill*         0x00000000000014a2       0x1e 
  .rodata        0x00000000000014c0      0x100 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2b-ref.o
  .rodata        0x00000000000015c0       0xc0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2s-ref.o
- .rodata        0x0000000000001680       0xd5 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.eload.o
- *fill*         0x0000000000001755        0x3 
- .rodata        0x0000000000001758       0xe3 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.exec.o
- *fill*         0x000000000000183b        0x5 
- .rodata        0x0000000000001840       0xf2 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
- *fill*         0x0000000000001932        0x6 
- .rodata        0x0000000000001938       0x5a C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
- *fill*         0x0000000000001992        0x6 
- .rodata        0x0000000000001998      0x30c C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.sockets.o
- *fill*         0x0000000000001ca4        0x4 
- .rodata        0x0000000000001ca8      0x370 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.tools.o
- .rodata        0x0000000000002018        0x8 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.boot.o
-                0x0000000000002018                DebugPort
- .rodata        0x0000000000002020      0x866 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
+ .rodata        0x0000000000001680     0x21a8 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.pe.o
+ .rodata        0x0000000000003828       0xf2 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
+ *fill*         0x000000000000391a        0x6 
+ .rodata        0x0000000000003920       0x5a C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
+ *fill*         0x000000000000397a        0x6 
+ .rodata        0x0000000000003980      0x30c C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.sockets.o
+ *fill*         0x0000000000003c8c        0x4 
+ .rodata        0x0000000000003c90      0x370 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.tools.o
+ .rodata        0x0000000000004000        0x8 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.boot.o
+                0x0000000000004000                DebugPort
+ .rodata        0x0000000000004008      0x866 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
 
 .rodata.str1.1  0x0000000000000000       0x46
  .rodata.str1.1
@@ -363,8 +359,7 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
  .eh_frame      0x0000000000000e30      0x178 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2sp-ref.o
  .eh_frame      0x0000000000000fa8      0x118 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xb-ref.o
  .eh_frame      0x00000000000010c0      0x138 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xs-ref.o
- .eh_frame      0x00000000000011f8       0x98 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.eload.o
- .eh_frame      0x0000000000001290      0x168 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.exec.o
+ .eh_frame      0x00000000000011f8      0x200 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.pe.o
  .eh_frame      0x00000000000013f8      0x198 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
  .eh_frame      0x0000000000001590       0x38 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
  .eh_frame      0x00000000000015c8      0x1c8 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.sockets.o
@@ -452,8 +447,7 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
  .data          0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2sp-ref.o
  .data          0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xb-ref.o
  .data          0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xs-ref.o
- .data          0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.eload.o
- .data          0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.exec.o
+ .data          0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.pe.o
  .data          0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.legacy.minijson.o
  .data          0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
  .data          0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
@@ -470,12 +464,15 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
  .data.rel.ro   0x0000000000000020        0x8 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xs-ref.o
 
 .data.rel.ro.local
-                0x0000000000000000      0x130
+                0x0000000000000000      0x1d0
  .data.rel.ro.local
-                0x0000000000000000       0x90 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.boot.o
+                0x0000000000000000       0x90 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.pe.o
  *fill*         0x0000000000000090       0x10 
  .data.rel.ro.local
-                0x00000000000000a0       0x90 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
+                0x00000000000000a0       0x90 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.boot.o
+ *fill*         0x0000000000000130       0x10 
+ .data.rel.ro.local
+                0x0000000000000140       0x90 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
 
 .data1
  *(.data1)
@@ -490,8 +487,7 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
  .bss           0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2sp-ref.o
  .bss           0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xb-ref.o
  .bss           0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xs-ref.o
- .bss           0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.eload.o
- .bss           0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.exec.o
+ .bss           0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.pe.o
  .bss           0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.legacy.minijson.o
  .bss           0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
  .bss           0x0000000000000000        0x0 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
@@ -527,7 +523,7 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
 .stab.indexstr
  *(.stab.indexstr)
 
-.comment        0x0000000000000000      0x143
+.comment        0x0000000000000000      0x130
  *(.comment)
  .comment       0x0000000000000000       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.frat.o
  .comment       0x0000000000000013       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.raw.o
@@ -537,15 +533,14 @@ LOAD C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
  .comment       0x000000000000005f       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2sp-ref.o
  .comment       0x0000000000000072       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xb-ref.o
  .comment       0x0000000000000085       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xs-ref.o
- .comment       0x0000000000000098       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.eload.o
- .comment       0x00000000000000ab       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.exec.o
- .comment       0x00000000000000be       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.legacy.minijson.o
- .comment       0x00000000000000d1       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
- .comment       0x00000000000000e4       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
- .comment       0x00000000000000f7       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.sockets.o
- .comment       0x000000000000010a       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.tools.o
- .comment       0x000000000000011d       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.boot.o
- .comment       0x0000000000000130       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
+ .comment       0x0000000000000098       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.pe.o
+ .comment       0x00000000000000ab       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.legacy.minijson.o
+ .comment       0x00000000000000be       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o
+ .comment       0x00000000000000d1       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o
+ .comment       0x00000000000000e4       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.sockets.o
+ .comment       0x00000000000000f7       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.tools.o
+ .comment       0x000000000000010a       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.boot.o
+ .comment       0x000000000000011d       0x13 C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o
 
 .gnu.build.attributes
  *(.gnu.build.attributes)

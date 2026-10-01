@@ -474,9 +474,12 @@ function Tokenize-Lines{
 			while($cursor -lt $lineText.Length){
 				$rest = $lineText.Substring($cursor)
 				$col = $cursor + 1
-	
+				
 				if($rest -match '^\s+'){ $cursor += $matches[0].Length; continue }
-	
+				
+				#	Handle comments.
+				if(($lineText[$cursor] -eq '#') -and -not ($rest -match '^"([^"\\]*(\\.[^"\\]*)*)"')){break}
+
 				# List literal @( ... ) capture balanced parentheses
 				if($rest -match '^@\('){
 					$depth = 1; $j = 2
@@ -844,7 +847,7 @@ function FRAT-RUNTIME-PASS-COMMAND{
 	# $FSCONTROLLER.StandardInput.WriteLine("`n")
     # Send the command to the C program
 	Write-Log "[SHELL]`t$CMD" -COLOR Blue
-    $FSCONTROLLER.StandardInput.WriteLine("$CMD`n")
+    $FSCONTROLLER.StandardInput.WriteLine("$CMD `n")
     # $output = @()
     # Read output line by line until the fence token is found
     while($null -ne ($line = $FSCONTROLLER.StandardOutput.ReadLine())){
@@ -935,7 +938,7 @@ function FUN-FRAT{
 
 if($HELP){
 	(Show-Help)
-	exit 0
+	return 0
 }
 
 # Pre-register built-in features and commands
@@ -1018,7 +1021,7 @@ Register-Command "FSFRAT.WRITE" 4 4 @{
 $AST = Parse-BuildFile $SHELLSCRIPT
 if(-not $AST){
 	Write-Log "Could not generate AST from Script"
-	exit 1
+	return 1
 }
 (Open-Log $AST.Header.'LOG')
 if($AST.Header.ContainsKey('CACHEDIR')){$Global:BuildFeatures.CACHEDIR = $AST.Header.'CACHEDIR'}
@@ -1058,14 +1061,17 @@ function Show-ObjectTree{
 foreach($Group in $GroupedCommands){# .Group contains the array of commands belonging to this specific line
     $CMDPERLINE = $Group.Group 
     $PrimaryCmd = $CMDPERLINE[0]
-	# Write-Log -MSG "[SHELL]`t$(([AstCommand]$PrimaryCmd).Name)" -COLOR Blue
-	# $CMDPERLINE | ForEach-Object{Write-Log -MSG "[SHELL]`t$(Show-ObjectTree $_ -COLOR Blue)" -COLOR Blue}
+	Write-Log -MSG "[SHELL]`t$(([AstCommand]$PrimaryCmd).Name)" -COLOR Blue
     switch -Regex ($PrimaryCmd.Name){
         '^FSFRAT\..+$' {
             FUN-FRAT -AST $AST -COMMANDS $CMDPERLINE
 			continue
         } '^PE2EXEC\..+$' {
-            FUN-PE2EXEC -COMMANDS $CMDPERLINE
+			Write-Log -MSG "PE2EXEC is Deprecated. Generating alias...`n" -COLOR Red
+			foreach($cmd in [AstCommand[]]$CMDPERLINE){
+				if(Test-Path $cmd.Flags['-o']){Remove-Item $cmd.Flags['-o']}
+				New-Item -Path $cmd.Flags['-o'] -ItemType SymbolicLink -Value $cmd.Flags['-i']}
+            # FUN-PE2EXEC -COMMANDS $CMDPERLINE
 			continue
         } '^CGCC\..+$' {
             FUN-CGCC -COMMANDS $CMDPERLINE
@@ -1101,4 +1107,4 @@ foreach($Group in $GroupedCommands){# .Group contains the array of commands belo
 }
 
 (FRAT-RUNTIME-STOP)
-exit 0
+return 0

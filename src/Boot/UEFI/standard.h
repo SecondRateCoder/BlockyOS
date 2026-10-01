@@ -4,7 +4,9 @@
 #include "guid.h"
 #include "efilib.h"
 #include "kernel/libcrt/def.h"
-#include "drivers/executable/eload.h"
+#include "drivers/executable/struct.h"
+#include "tools/tools.h"
+// #include "drivers/executable/eload.h"
 
 #define BOOT_OPTION_ATTR (LOAD_OPTION_ACTIVE)
 
@@ -40,14 +42,7 @@ typedef struct __bootinfo{
 		CHAR16 BootEntryName[32];
 		UINT8 BootEntryCode;
 		void *bootMain;
-		struct This{
-			ExecutableSection *Sections;
-			UINT32 NSections;
-		};
-		struct Services{
-			LoadedService *Services;
-			UINT32 NServices;
-		};
+		ExpandedPeExecutable *This;
 	}bootentry;
 	struct{
 		void *videomemory;
@@ -65,6 +60,6 @@ typedef struct {
 
 
 #define KernalMainDef(NAME)		void __sysvabi __naked NAME##_km(__bootinfo * __restrict__ bootin, ExecutableSection *This, UINT32 N)
-typedef void __sysvabi __naked (*kernelmain)(__bootinfo * __restrict__ bootin, ExecutableSection *This, UINT32 N);
+typedef void __sysvabi __naked (*kernelmain)(__bootinfo * __restrict__ bootin);
 __bootinfo *gatherbootinfo();
 UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarName);

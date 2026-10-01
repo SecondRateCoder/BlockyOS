@@ -15,7 +15,7 @@ bool InitaliseVMA(void *videomemory, void *acpibase, uint32_t PixelSize, uint32_
 }
 
 static void *vmcontext = NULL;
-static uint64_t vmcontextW, vmcontextH, vmcontextPS;
+static uint64_t vmcontextW, vmcontextH, vmcontextPS, vmcontextMemoryCounter;
 static char stdout[PAGE_SIZE] = {0};
 FontGlyph **gcontext = NULL;
 uint32_t ngcontext = 0;
@@ -29,19 +29,17 @@ void SelectVideoContext(void *vm, void **Glyph, uint32_t NGlyphs){
 		}
 	}
 	vmcontext = vm;
-	gcontext = Glyph;
+	gcontext = (FontGlyph **)Glyph;
 	ngcontext = NGlyphs;
+	vmcontextMemoryCounter = 0x00;
 }
 
 bool VideoPrintf(uint64_t pixel, char *fmt, ...){
 	if(!vmcontext || !gcontext || !ngcontext){return false;}
 	va_list ls;		va_start(ls, fmt);
 	uint64_t streamsize = sizeof(stdout);
-	while(*fmt || streamsize){TextCopyF(stdout, &streamsize, &fmt, ls);}
-	uint64_t temp = vmcontextW * vmcontextPS;
-	PrintTextByGlyph(vmcontext, &temp, gcontext, ngcontext, &pixel, vmcontextPS, stdout);
-	vmcontextW = temp / vmcontextPS;
-	
+	while(*fmt || streamsize){TextCopyF(stdout, &streamsize, (const char **)&fmt, ls);}
+	PrintTextByGlyph(vmcontext, &vmcontextMemoryCounter, vmcontextW * vmcontextPS, gcontext, ngcontext, &pixel, vmcontextPS, stdout);
 }
 
 void *AllocateVideoMemory(uint32_t X, uint32_t Y, uint32_t *W, uint32_t *H){

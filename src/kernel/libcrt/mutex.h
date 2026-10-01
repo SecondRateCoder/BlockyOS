@@ -2,8 +2,11 @@
 
 #include "kernel/libcrt/math/int.h"
 
-
-typedef uint8_t *CommonMutex;
+#ifdef MATH_INT_H
+typedef uint8_t						*CommonMutex;
+#else
+typedef unsigned char				*CommonMutex;
+#endif
 #define InvalidMutex                NULL
 #define MutexDisableFlag			0x01
 #define MutexEnableFlag				0x00
