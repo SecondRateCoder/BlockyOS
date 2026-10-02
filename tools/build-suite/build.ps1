@@ -14,14 +14,12 @@ $CUSTOMASM = Join-Path $TOOLSDIR 'build-suite/asm.ps1'
 
 function Open-Log{
 	param([string]$LOG)
-	if(-not $script:BuildFeatures.LOG){$script:BuildFeatures.LOG = $LOG}
+	if(-not (Test-Path $script:BuildFeatures.LOG)){$script:BuildFeatures.LOG = $LOG}
     if(-not (Test-Path $script:BuildFeatures.LOG)){New-Item -Path $script:BuildFeatures.LOG -ItemType File}
 }
 function global:Write-Log{
 	param([string]$MSG, [System.ConsoleColor]$COLOR)
-	if($script:BuildFeatures.LOG){
-		Add-Content -Path $script:BuildFeatures.LOG -Value $MSG
-	}
+	if($script:BuildFeatures.LOG){Add-Content -Path $script:BuildFeatures.LOG -Value $MSG}
 	if($COLOR){Write-Host $MSG -ForegroundColor $COLOR}
 	else{Write-Host $MSG}
 }
@@ -477,8 +475,8 @@ function Tokenize-Lines{
 				
 				if($rest -match '^\s+'){ $cursor += $matches[0].Length; continue }
 				
-				#	Handle comments.
-				if(($lineText[$cursor] -eq '#') -and -not ($rest -match '^"([^"\\]*(\\.[^"\\]*)*)"')){break}
+				# #	Handle comments.
+				# if(($lineText[$cursor] -eq '#') -and -not ($rest -match '^"([^"\\]*(\\.[^"\\]*)*)"')){break}
 
 				# List literal @( ... ) capture balanced parentheses
 				if($rest -match '^@\('){

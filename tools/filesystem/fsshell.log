@@ -1,5 +1,5 @@
 
-[273:    :9:    :4:    :1:    :1:    :25]
+[274:    :9:    :5:    :2:    :34:    :25]
 >> 
 e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0 
 [C:\GitHub\BlockyOS\tools\filesystem\frat.c:196]  >>  Mounting FS Root: [C:/GitHub/BlockyOS/Build/Build-nodate/disk.img]
@@ -54,81 +54,46 @@ FS-Root Blob:
 >> 
 
 >> 
-create -la fc -p SYSD/ -n KBOOT.app 
-00000206f52d5f1b:fc	00000206f52d5f21:SYSD/	00000206f52d5f2a:KBOOT.app	
-[	SYSD/KBOOT.app]
-Mounting File [SYSD/KBOOT.app] with "fc"
-Creating File at: ./SYSD/KBOOT.app
-Root is 00000206f52d9080
-	Fcode: [7249923597544166348:105411854310845]
-Mounting Dir [SYSD] with Args: "dc"
-Root is 00000206f52d9080
-Refreshing Dir SYSD
-Adding Entry:[7249923597544166348:105411854310845] to Dir [SYSD:[655946151726387169:223579696255234]
-Refreshing Dir SYSD
-Un-Mounting Directory [SYSD]
-Initialising File MetaData: ./\SYSD/KBOOT.app
-Root is 00000206f52d9080
-Un-Mounting File [7249923597544166348:105411854310845]
+create -la fc -p SYSD/ -n kboot.exe 
+0000028806cd5ecb:fc	0000028806cd5ed1:SYSD/	0000028806cd5eda:kboot.exe	
+[	SYSD/kboot.exe]
+Mounting File [SYSD/kboot.exe] with "fc"
+Creating File at: ./SYSD/kboot.exe
+Root is 0000028806cd9030
+Root is 0000028806cd9030
+Un-Mounting File [4397709807136810278:123480111967653]
 [0]: ""
 >> 
 
 >> 
-open -p SYSD/KBOOT.app -a KBOOTAPP -la f 
-Mounting File [SYSD/KBOOT.app] with "f"
-Root is 00000206f52d9080
+open -p SYSD/kboot.exe -a KBOOT -la f 
+Mounting File [SYSD/kboot.exe] with "f"
+Root is 0000028806cd9030
 [0]: ""
 >> 
 
 >> 
-fwrite -pp C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.app -ia %KBOOTAPP% -p 0 -n 0 
+fwrite -pp C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe -ia %KBOOT% -p 0 -n 0 
 Reading File Info
-Root is 00000206f52d9080
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225432
-Writing File Block at 225432, Item: 1.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225433
-Writing File Block at 225433, Item: 2.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225434
-Writing File Block at 225434, Item: 3.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225435
-Writing File Block at 225435, Item: 4.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225436
-Writing File Block at 225436, Item: 5.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225437
-Writing File Block at 225437, Item: 6.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225438
-Writing File Block at 225438, Item: 7.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225439
-Writing File Block at 225439, Item: 8.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225440
-Writing File Block at 225440, Item: 9.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225441
-Writing File Block at 225441, Item: 10.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225442
-Writing File Block at 225442, Item: 11.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225443
-Writing File Block at 225443, Item: 12.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225444
-Writing File Block at 225444, Item: 13.	Root: [7249923597544166348:105411854310845]
-Adding FS Table Entry: [7249923597544166348:105411854310845], Type: FILE
-	Writing 0x00-Block: 225445
-Writing File Block at 225445, Item: 14.	Root: [7249923597544166348:105411854310845]
+Root is 0000028806cd9030
+Writing File Block at 225596, Item: 1.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225597, Item: 2.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225598, Item: 3.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225599, Item: 4.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225600, Item: 5.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225601, Item: 6.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225602, Item: 7.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225603, Item: 8.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225604, Item: 9.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225605, Item: 10.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225606, Item: 11.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225607, Item: 12.	Root: [4397709807136810278:123480111967653]
+Writing File Block at 225608, Item: 13.	Root: [4397709807136810278:123480111967653]
+Reading File Block at 225609, Item: 14.    Root: [4397709807136810278:123480111967653]
+Writing File Block at 225609, Item: 14.	Root: [4397709807136810278:123480111967653]
 [0]: ""
 >> 
 
 >> 
 exit
-Un-Mounting File [7249923597544166348:105411854310845]
+Un-Mounting File [4397709807136810278:123480111967653]

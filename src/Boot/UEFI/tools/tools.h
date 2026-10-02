@@ -5,8 +5,8 @@
 #include "efi.h"
 #include "efilib.h"
 
-#include "kernel/libcrt/math/math.h"
 #include "kernel/libcrt/def.h"
+#include "kernel/libcrt/math/math.h"
 #include "Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
 #ifdef _DEBUG

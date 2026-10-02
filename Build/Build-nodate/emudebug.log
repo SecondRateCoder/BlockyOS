@@ -2,9 +2,464 @@
 UEFI bootloader compiled: C:\GitHub\BlockyOS\Build\Build-nodate\boot-part\efi\boot\bootx64.efi
 ===== Step 2: Validate or Create Disk Layout (GPT) =====
 Validating existing disk image: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
-GPT incorrect or invalid. Rebuilding GPT...
-Creating GPT disk: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
-Validating existing disk image: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
 GPT is healthy. Skipping GPT rebuild.
 InstallOS requested: formatting disk with FS.ps1.
 Running install.bos in current directory.
+Command:  qemu-system-x86_64 -vga std -cpu qemu64 -m 2048 -machine q35 -smp 2 -net none -serial stdio -L C:\GitHub\BlockyOS\compile\toolchain\uefi\default -drive if=pflash,format=raw,readonly=on,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\default\OVMF.fd -drive unit=0,file=C:\GitHub\BlockyOS\Build\Build-nodate\disk.img,format=raw,if=none,id=maindrive -device virtio-blk-pci,drive=maindrive -debugcon file:C:\GitHub\BlockyOS\Build\Build-nodate\debugger.log -global isa-debugcon.iobase=0x402 -usb -usbdevice keyboard -usbdevice mouse -display sdl -vga cirrus -drive if=pflash,format=raw,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\default\OVMF_VARS.fd 
+C:\msys64\mingw64\bin\qemu-system-x86_64.exe: warning: GLib-GIO: Failed to open application manifest `C:\Program Files\WindowsApps\ROBLOXCorporation.RobloxGDK_2.734.917.0_x64__55nm5eh3cm0pr\AppxManifest.xml' for package #102 (`ROBLOXCorporation.RobloxGDK_2.734.917.0_x64__55nm5eh3cm0pr'): error code 0x5
+[2J[001;001H[=3h[2J[001;001H[2J[001;001H[8;031;100t[2J[001;001H[2J[001;001H[8;056;240t[2J[001;001HBdsDxe: loading Boot0002 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
+BdsDxe: starting Boot0002 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
+
+Intitialising GNU-EFI
+ Image Base: 0x7DCA2000
+Post GNU-EFI Init
+Allocating 1 item(s) of 256 bytes    Out Buffer: 0x7DDFB018
+Setting 256 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\bthelper.c:253]
+Getting the Memory Map
+Allocating 1 item(s) of 240 bytes    Out Buffer: 0x7DDFBC18
+Setting 240 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:29]
+Copying 240 bytes
+Copying 44 bytes
+Copying 24 bytes
+mode 000 width 640 height 480 format 1
+mode 001 width 800 height 600 format 1µî¿þëÁµò▓þæ«)
+mode 002 width 1024 height 768 format 2
+Opening Socket    Driver: 0  nARGS: 36
+Socket Open    Opening FS Socket
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:180]  >>  Mounting FS Root: [EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000]    [EBD033A2-B9E5-4433-A02D-B4B8D3D3F000]
+Verifying Disk GPT
+[Parent:0x7DCA6087] >>   ConfBlockSize: 512    Starting Disk Env ID: EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000
+Allocating 1 item(s) of 64 bytes    Out Buffer: 0x7DDFBD98
+Setting 64 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:90]
+nHandles:	4
+Handle 0: BlockSize=512,    LastBlock=2230273,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7DDFB198
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:27]
+Comparing 8 bytes
+memcmp Return TRUE
+    Disk-GUID={5221C61C-23B3-43CA-861E-E72C53DF2141}
+Allocating 256 item(s) of 1 bytes    Out Buffer: 0x7DDFBA98
+Setting 256 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:40]
+    Target-GUID={EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}    Partition-Unique-GUID={C129A328-F81F-11D2-B88B-00A0C93EC93B}    Partition-GUID={C12A7328-F81F-11D2-B88B-00A0C93EC93B}
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+    Target-GUID={EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}    Partition-Unique-GUID={EBD033A2-B9E5-4433-A02D-B4B8D3D3F000}    Partition-GUID={EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return TRUE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:59]   Freeing Buffer    0x7DDFBA98
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:60]   Freeing Buffer    0x7DDFB198
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:61]   Freeing Buffer    0x7E5E1598
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7DCA60A1] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7DDFB198
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:140]    Read ...:0:
+GPT Dump:
+    Sig: "EFI PART"
+    Rev: 65536
+    Header-Size: 92
+    Header Checksum: 2621714706
+    localLBA: 1
+    altLBA: 2230273
+    firstUsable: 2048
+    lastUsable: 2230271
+    Disk-GUID: 5221C61C-23B3-43CA-861E-E72C53DF2141
+    Partition-Table: 2
+    # of Partition-Entries: 2
+    Partition-Entry Size: 128
+    Partition-Table Checksum: 896708427
+Comparing 8 bytes
+memcmp Return TRUE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:35]   Freeing Buffer    0x7DDFB198
+Closing Disk Interface >> {EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:201]   Freeing Buffer    0x7DDFBD98
+GPT Exists? TRUE
+[Parent:0x7DCA6EAB] >>   ConfBlockSize: 512    Starting Disk Env ID: EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000
+Allocating 1 item(s) of 64 bytes    Out Buffer: 0x7DDFBD98
+Setting 64 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:90]
+nHandles:	4
+Handle 0: BlockSize=512,    LastBlock=2230273,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7DDFB198
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:27]
+Comparing 8 bytes
+memcmp Return TRUE
+    Disk-GUID={5221C61C-23B3-43CA-861E-E72C53DF2141}
+Allocating 256 item(s) of 1 bytes    Out Buffer: 0x7DDFBA98
+Setting 256 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:40]
+    Target-GUID={EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}    Partition-Unique-GUID={C129A328-F81F-11D2-B88B-00A0C93EC93B}    Partition-GUID={C12A7328-F81F-11D2-B88B-00A0C93EC93B}
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+    Target-GUID={EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}    Partition-Unique-GUID={EBD033A2-B9E5-4433-A02D-B4B8D3D3F000}    Partition-GUID={EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return TRUE
+Found Handle
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:59]   Freeing Buffer    0x7DDFBA98
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:60]   Freeing Buffer    0x7DDFB198
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:61]   Freeing Buffer    0x7E5E1598
+Rawenv Dump
+    IsPart: FALSE
+    Real-Block Size: 512
+    Calculated-Block Size: 1
+Reading Bytes
+[Parent:0x7DCA6EC5] >> Reading [92 bytes(s)->1 block(s)] to LBA[1(512)-2(1024)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7DDFB198
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:140]    Read ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:129]  >>  Querying Part Table
+Reading Bytes
+[Parent:0x7DCA6A55] >> Reading [256 bytes(s)->1 block(s)] to LBA[2(1024)-3(1536)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7DDFB418
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:140]    Read ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:135]  >>  GPT-Entry: BOOT{2048:133119 -> 131071}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:147]  >>  Querying FS at 2048
+Reading Bytes
+[Parent:0x7DCA6C7A] >> Reading [60 bytes(s)->1 block(s)] to LBA[2048(1048576)-2049(1049088)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7DDFB698
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:140]    Read ...:0:
+FS-Root Blob:
+    Version: [0:131072]
+    Sig:                 
+    Configured Log Sectors: 2
+    Configured Block Size: 0
+    Configured Cluster-Map Size: 16711743
+Comparing 16 bytes
+memcmp Return FALSE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:175]   Freeing Buffer    0x7DDFB698
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:135]  >>  GPT-Entry: ROOT{133120:2230271 -> 2097151}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:147]  >>  Querying FS at 133120
+Reading Bytes
+[Parent:0x7DCA6C7A] >> Reading [60 bytes(s)->1 block(s)] to LBA[133120(68157440)-133121(68157952)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7DDFB698
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:140]    Read ...:0:
+FS-Root Blob:
+    Version: [0:1]
+    Sig:  FRAT_FILESYSTEM
+    Configured Log Sectors: 32
+    Configured Block Size: 2048
+    Configured Cluster-Map Size: 20480
+Comparing 16 bytes
+memcmp Return TRUE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:170]  >>  FS Found at [133120]:
+	Version-Code: [0:1]
+	Configured Block-Size: 2048
+	Configured Cluster-Size: 20480
+	Configured # of Log-Sectors: 32
+	Configured Log-Size: 448
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:175]   Freeing Buffer    0x7DDFB698
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:138]   Freeing Buffer    0x7DDFB418
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:188]   Freeing Buffer    0x7DDFB198
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:192]  >>  Found Formatted Partition: 133120:2230271 -> 2097151
+Reading Bytes
+[Parent:0x7DCA6FA4] >> Reading [60 bytes(s)->1 block(s)] to LBA[133120(68157440)-133121(68157952)]
+Allocating 1 item(s) of 512 bytes    Out Buffer: 0x7DDFB198
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:140]    Read ...:0:
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:204]  >>  Root: 133120:2230271 -> 2097151 LBAs
+	Version-Code: [0:1]
+	Configured Block-Size: 2048
+	Configured Cluster-Size: 20480
+	Configured # of Log-Sectors: 20480
+	Configured Log-Size: 32
+Allocating 1 item(s) of 104 bytes    Out Buffer: 0x7DDFB918
+Setting 104 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:210]
+Reading Bytes
+[Parent:0x7DCA7171] >> Reading [65536 bytes(s)->128 block(s)] to LBA[133121(68159488)-133249(68421632)]
+Allocating 1 item(s) of 65536 bytes    Out Buffer: 0x7DCFE018
+Setting 65536 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:140]    Read ...:0:
+Reading Bytes
+[Parent:0x7DCA7207] >> Reading [20480 bytes(s)->40 block(s)] to LBA[202752(210763776)-202792(210845696)]
+Allocating 1 item(s) of 20480 bytes    Out Buffer: 0x7DCF8018
+Setting 20480 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:140]    Read ...:0:
+    Verifying FS Root Items #items: 1024
+Closing Disk Interface >> {EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:201]   Freeing Buffer    0x7DDFBD98
+Allocating 1 item(s) of 64 bytes    Out Buffer: 0x7DDFBD98
+Setting 64 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c:338]
+Allocating 1 item(s) of 24 bytes    Out Buffer: 0x7DDFBA18
+Setting 24 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:29]
+Copying 24 bytes
+[C:\GitHub\BlockyOS\src\Boot\UEFI\boot.c:35]   Freeing Buffer    0x7DDFBA18
+Socket Open
+
+Path: 0x7DCD5428:SYSD/kboot.exe
+Load-Args: 0x7DCD268A:f
+Allocating 1 item(s) of 16 bytes    Out Buffer: 0x7DDFBA18
+Setting 16 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c:236]
+Allocating 1 item(s) of 15 bytes    Out Buffer: 0x7DDFBF98
+Setting 15 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:29]
+Copying 15 bytes
+Copying 4 bytes
+Copying 4 bytes
+Copying 4 bytes
+Setting 14 bytes to 0
+Setting 16 bytes to 0
+Setting 16 bytes to 0
+Setting 248 bytes to 0
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 14 bytes
+Setting 114 bytes to 0
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 16 bytes
+Setting 64 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:59]   Freeing Buffer    0x7DDFBF98
+Root is 0x7DDFB918
+Allocating 1 item(s) of 15 bytes    Out Buffer: 0x7DDFBF98
+Setting 15 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:29]
+Copying 15 bytes
+Copying 4 bytes
+Copying 4 bytes
+Copying 4 bytes
+Setting 14 bytes to 0
+Setting 16 bytes to 0
+Setting 16 bytes to 0
+Setting 248 bytes to 0
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 14 bytes
+Setting 114 bytes to 0
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 16 bytes
+Setting 64 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:59]   Freeing Buffer    0x7DDFBF98
+Root is 0x7DDFB918
+Mounting File [SYSD/kboot.exe] with "f"
+Allocating 1 item(s) of 15 bytes    Out Buffer: 0x7DDFBF98
+Setting 15 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:29]
+Copying 15 bytes
+Copying 4 bytes
+Copying 4 bytes
+Copying 4 bytes
+Setting 14 bytes to 0
+Setting 16 bytes to 0
+Setting 16 bytes to 0
+Setting 248 bytes to 0
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 14 bytes
+Setting 114 bytes to 0
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 8 bytes
+Copying 16 bytes
+Setting 64 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:59]   Freeing Buffer    0x7DDFBF98
+Root is 0x7DDFB918
+Allocating 1 item(s) of 64 bytes    Out Buffer: 0x7DDFBF98
+Setting 64 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c:244]
+Opened File SYSD/kboot.exe
+Socket Read
+Finished Socket Read
+Allocating 192 item(s) of 1 bytes    Out Buffer: 0x7DDFBA98
+Setting 192 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\executable\pe.c:92]
+Allocating 0 item(s) of 4 bytes    Out Buffer: 0x7DDFBB98
+Setting 0 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\executable\pe.c:108]
+Allocating 1 item(s) of 1 bytes    Out Buffer: 0x7DDFBE18
+Setting 1 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:29]
+Copying 1 bytes
+[┬║├ƒ}]
+Header: {
+  .Magic	(nul
+  .MachineType	PeMachineType_UNKNOWN
+  .NSections	0
+  .Time/Date-Stamp	0
+  .SymbolTablePtr	0x0x0
+  .NSymbols	0
+  .OptionalHeaderSize	0
+  .Characteristics	
+Allocating 1 item(s) of 0 bytes    Out Buffer: 0x7DDFBE98
+Setting 0 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\executable\eload.c:39]
+Allocated Executable SYSD/kboot.exe at Address 2111815320
+Allocating 2 item(s) of 8 bytes    Out Buffer: 0x7DDFBF18
+Setting 16 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\executable\eload.c:44]
+Allocating 1 item(s) of 48 bytes    Out Buffer: 0x7DDFB418
+Setting 48 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\executable\eload.c:50]
+Allocating 1 item(s) of 10 bytes    Out Buffer: 0x7DDFB618
+Setting 10 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c:29]
+Copying 10 bytes
+Socket Close
+Un-Mounting File [2147483648:0]
+[Parent:0x7DCA974A] >>   ConfBlockSize: 0    Starting Disk Env ID: 
+Allocating 1 item(s) of 64 bytes    Out Buffer: 0x7DDFB498
+Setting 64 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:90]
+nHandles:	4
+Handle 0: BlockSize=512,    LastBlock=2230273,    LogicalPartition? = FALSE,    MediaId=0,    Status=0
+Allocating 512 item(s) of 1 bytes    Out Buffer: 0x7DDFB698
+Setting 512 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:27]
+Comparing 8 bytes
+memcmp Return TRUE
+    Disk-GUID={5221C61C-23B3-43CA-861E-E72C53DF2141}
+Allocating 256 item(s) of 1 bytes    Out Buffer: 0x7DDF9018
+Setting 256 bytes to 0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:40]
+    Target-GUID={}    Partition-Unique-GUID={C129A328-F81F-11D2-B88B-00A0C93EC93B}    Partition-GUID={C12A7328-F81F-11D2-B88B-00A0C93EC93B}
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+    Target-GUID={}    Partition-Unique-GUID={EBD033A2-B9E5-4433-A02D-B4B8D3D3F000}    Partition-GUID={EBD0A0A2-B9E5-4433-A02D-B4B8D3D3F000}
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+Comparing 16 bytes
+memcmp Return FALSE
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:65]   Freeing Buffer    0x7DDF9018
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:66]   Freeing Buffer    0x7DDFB698
+Handle 1: BlockSize=512,    LastBlock=131071,    LogicalPartition? = TRUE,    MediaId=0,    Status=0
+Handle 2: BlockSize=512,    LastBlock=2097151,    LogicalPartition? = TRUE,    MediaId=0,    Status=0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:68]   Freeing Buffer    0x7E5E1698
+Handle Not Found Error
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:123]   Freeing Buffer    0x7DDFB498
+Disk Interface does not exist
+Disk Interface does not exist
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c:564]   Freeing Buffer    0x0
+Closing Disk Interface >> {}
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c:201]   Freeing Buffer    0x0
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c:166]   Freeing Buffer    0x7DDFBF98
+Finished Socket Close
+[C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\executable\eload.c:158]   Freeing Buffer    0x7DDFBF18[kboot.exe]:	0	0BdsDxe: loading Boot0000 "BootManagerMenuApp" from Fv(7CB8BDC9-F8EB-4F34-AAEA-3EE4AF6516A1)/FvFile(EEC25BDC-67F2-4D95-B1D5-F81B2039D11D)
+BdsDxe: starting Boot0000 "BootManagerMenuApp" from Fv(7CB8BDC9-F8EB-4F34-AAEA-3EE4AF6516A1)/FvFile(EEC25BDC-67F2-4D95-B1D5-F81B2039D11D)
+[2J[001;001H[1m[37m[44m[011;033HÔöî[011;034HÔöÇ[011;035HÔöÇ[011;036HÔöÇ[011;037HÔöÇ[011;038HÔöÇ[011;039HÔöÇ[011;040HÔöÇ[011;041HÔöÇ[011;042HÔöÇ[011;043HÔöÇ[011;044HÔöÇ[011;045HÔöÇ[011;046HÔöÇ[011;047HÔöÇ[011;048HÔöÇ[011;049HÔöÇ[011;050HÔöÇ[011;051HÔöÇ[011;052HÔöÇ[011;053HÔöÇ[011;054HÔöÇ[011;055HÔöÇ[011;056HÔöÇ[011;057HÔöÇ[011;058HÔöÇ[011;059HÔöÇ[011;060HÔöÇ[011;061HÔöÇ[011;062HÔöÇ[011;063HÔöÇ[011;064HÔöÇ[011;065HÔöÇ[011;066HÔöÇ[011;067HÔöÉ[012;033HÔöé[012;034H                                 [012;067HÔöé[013;033HÔö£[013;034HÔöÇ[013;035HÔöÇ[013;036HÔöÇ[013;037HÔöÇ[013;038HÔöÇ[013;039HÔöÇ[013;040HÔöÇ[013;041HÔöÇ[013;042HÔöÇ[013;043HÔöÇ[013;044HÔöÇ[013;045HÔöÇ[013;046HÔöÇ[013;047HÔöÇ[013;048HÔöÇ[013;049HÔöÇ[013;050HÔöÇ[013;051HÔöÇ[013;052HÔöÇ[013;053HÔöÇ[013;054HÔöÇ[013;055HÔöÇ[013;056HÔöÇ[013;057HÔöÇ[013;058HÔöÇ[013;059HÔöÇ[013;060HÔöÇ[013;061HÔöÇ[013;062HÔöÇ[013;063HÔöÇ[013;064HÔöÇ[013;065HÔöÇ[013;066HÔöÇ[013;067HÔöñ[014;033HÔöé[014;034H                                 [014;067HÔöé[015;033HÔöé[015;034H                                 [015;067HÔöé[016;033HÔöé[016;034H                                 [016;067HÔöé[017;033HÔö£[017;034HÔöÇ[017;035HÔöÇ[017;036HÔöÇ[017;037HÔöÇ[017;038HÔöÇ[017;039HÔöÇ[017;040HÔöÇ[017;041HÔöÇ[017;042HÔöÇ[017;043HÔöÇ[017;044HÔöÇ[017;045HÔöÇ[017;046HÔöÇ[017;047HÔöÇ[017;048HÔöÇ[017;049HÔöÇ[017;050HÔöÇ[017;051HÔöÇ[017;052HÔöÇ[017;053HÔöÇ[017;054HÔöÇ[017;055HÔöÇ[017;056HÔöÇ[017;057HÔöÇ[017;058HÔöÇ[017;059HÔöÇ[017;060HÔöÇ[017;061HÔöÇ[017;062HÔöÇ[017;063HÔöÇ[017;064HÔöÇ[017;065HÔöÇ[017;066HÔöÇ[017;067HÔöñ[018;033HÔöé[018;034H                                 [018;067HÔöé[019;033HÔöé[019;034H                                 [019;067HÔöé[020;033HÔöé[020;034H                                 [020;067HÔöé[021;033HÔöö[021;034HÔöÇ[021;035HÔöÇ[021;036HÔöÇ[021;037HÔöÇ[021;038HÔöÇ[021;039HÔöÇ[021;040HÔöÇ[021;041HÔöÇ[021;042HÔöÇ[021;043HÔöÇ[021;044HÔöÇ[021;045HÔöÇ[021;046HÔöÇ[021;047HÔöÇ[021;048HÔöÇ[021;049HÔöÇ[021;050HÔöÇ[021;051HÔöÇ[021;052HÔöÇ[021;053HÔöÇ[021;054HÔöÇ[021;055HÔöÇ[021;056HÔöÇ[021;057HÔöÇ[021;058HÔöÇ[021;059HÔöÇ[021;060HÔöÇ[021;061HÔöÇ[021;062HÔöÇ[021;063HÔöÇ[021;064HÔöÇ[021;065HÔöÇ[021;066HÔöÇ[021;067HÔöÿ[012;037HPlease select boot device:[014;034HEFI Firmware Setup[015;034HUEFI Misc Device[016;034HEFI Internal Shell[018;038HÔåæ and Ôåô to move selection[019;037HENTER to select boot device[020;045HESC to exit[0m[37m[40m[1m[37m[40m[014;034HEFI Firmware Setup[0m[37m[40m

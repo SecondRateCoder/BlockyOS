@@ -1,8 +1,7 @@
 #include "standard.h"
 #include "drivers/socket/socket.h"
 #include "tools/tools.h"
-#include "drivers/executable/eload.h"
-#include "drivers/executable/exec.h"
+#include "drivers/executable/pe.h"
 #include "drivers/.disk/fs/frat.h"
 
 const EFI_PHYSICAL_ADDRESS DebugPort = 0x402;
@@ -18,55 +17,26 @@ void libinit(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 }
 
 EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
-	DEBUGPRINT(L"Sanity Check[0]\nDEBUG: %p; %p", Image, Table);
-	DEBUGDO{DEBUGPRINT(L"\nGUID:");	prGUID((EFI_GUID)EFI_ZERO_GUID);}
+	// DEBUGPRINT(L"Sanity Check[0]\nDEBUG: %p; %p", Image, Table);
+	// DEBUGDO{DEBUGPRINT(L"\nGUID:");	prGUID((EFI_GUID)EFI_ZERO_GUID);}
+
 	// Initialise GNU-EFI
 	libinit(Image, Table);
+
 	// Initialise Hardware Device Tree
-	UINT32 ntries = 3, N = 0;
 	__bootinfo *bootout = gatherbootinfo();
 	// Open FrAT Socket
-	socket_t *fs = NULL;
-	do{
-		socket_ret socket = socketopen(0, sizeof(UINT32) + (sizeof(EFI_GUID) * 2), (UINT32)0, rootDesc.guid, rootDesc.uGuid);
-		if(socket.errout == __noerr){
-			// We have a Mounted FRaT Socket
-			socket_ret *tmp = (socket_ret *)socket.data;
-			if(tmp->errout == __noerr){
-			DEBUGPRINT(L"\nOpened FS Socket");
-				fs = (socket_t *)tmp->data;
-				Print(L"\nMounted FRaT Socket!");
-			}else{
-				__free(socket.data);
-				DEBUGPRINT(L"\nFailed to open FS Socket");
-			}
-		}else{DEBUGPRINT(L"\nFailed to open Socket");}
-		GPTeNSTR *str = makeGPTeNSTR(rootDesc.name);
-		formatpart(rootDesc.guid, rootDesc.uGuid, *str, __FS_DEFAULTBLOCKSIZE, 5, 1, 0);
-		__free(str);
-		ntries--;
-	}while(fs == NULL && ntries);
-	if(fs == NULL){Print(L"\nFailed to retrieve FS Socket");}
-	else{Print(L"\nGot FS Socket");}
-	if(!fs){return EFI_NOT_FOUND;}
-
-	// Load the Executable
-	char *path = KERNELEXE, *loadargs = "f";
-	DEBUGPRINT(L"\n\nPath: %p:%a\nLoad-Args: %p:%a", path, path, loadargs, loadargs);
-	socket_ret ret = fs->open(fs, sizeof(char *) * 2, path, loadargs);
-	if(flagcheck(ret.errout, __noerr)){
-		DEBUGPRINT(L"\nGot Executable File");
-		socket_t *exe = ret.data;
-		kernelmain main = NULL;
-		ExecutableSection *LoadedExe = LoadExecutable(fs, exe, &N);
-		for(uint32_t cc = 0; cc < N; ++cc){
-			if(!strncmpa(LoadedExe[cc].Name, DefCodeSectionName, sizeof(SectionNameBe))){
-				main = (kernelmain)LoadedExe[cc].Entry;		break;
-			}
-		}
-		DEBUGPRINT(L"\nExiting Boot Servies?");
-		uefi_call_wrapper(gBS->ExitBootServices, 0, Image, bootout->memory.MemocryDescriptorMapKey);
-		main(bootout, LoadedExe, N);
-	}else{DEBUGPRINT(L"\nError opening Executable");}
-	return EFI_ABORTED;
+	socket_ret rt = socketopen(0, sizeof(UINT32) + (sizeof(EFI_GUID) * 2), (UINT32)0, rootDesc.guid, rootDesc.uGuid);
+	socket_ret diskrt = *((socket_ret *)(rt.data));
+	
+	if(socketreterr(diskrt, sizeof(socket_t))){
+		DEBUGPRINT(L"\nError opening Disk [%llu:%llu:%llu:%llu]", (UINT64)diskrt.errout, (UINT64)diskrt.nData, (UINT64)diskrt.data, (UINT64)((conf_fsroot *)((socket_t *)diskrt.data))->clusterbuffer.nClusterSectors);
+		Exit(EFI_ABORTED, 0, NULL);
+	}else{__free(rt.data);}
+	
+	socket_t *disk = diskrt.data;
+	LoadedPeExecutable *KBOOT = LoadExecutable(disk, true, "SYSD/kboot.exe");
+	if(KBOOT){DEBUGPRINT(L"[%a]:\t%llu\t%llu", KBOOT->Name, (UINT64)KBOOT->NDependencies, (UINT64)KBOOT->NSections);
+	}else{DEBUGPRINT(L"\nError Loading Executable");	Exit(EFI_ABORTED, 0, NULL);}
+	return EFI_SUCCESS;
 }

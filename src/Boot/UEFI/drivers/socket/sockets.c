@@ -1,6 +1,6 @@
 #include "sockets.h"
 
-socket_ret socketfuncprefix __fhandle_sckinfo(struct socket_t *socket, UINT32 Property, UINT32 subProperty){
+socket_ret socketfuncprefix __fhandle_sckinfo(struct socket_t *socket, UINT64 nArgBytes, UINT32 Property, UINT32 subProperty, ...){
 	unhandle *uh = (unhandle *)socket->persistent;
 	switch(Property){
 		case 0: {	//	We now need to read the MetaData Block
@@ -113,10 +113,18 @@ socket_ret socketfuncprefix __fhandle_sckinfo(struct socket_t *socket, UINT32 Pr
 					.errout = __noerr, .nData = sizeof(uh->dhandle_->dirarray)
 				};
 			}
+		} case 6: {
+			if(uh->dir){
+				uint64_t size = __fsize(uh->fhandle_);
+				return (socket_ret){
+					.data = __memdup(&size, sizeof(size)), 
+					.errout = __noerr, .nData = sizeof(size)
+				};
+			}
 		} default: {return (socket_ret){.data = NULL, .nData = 0, .errout = __noexist};}
 	}
 }
-socket_ret socketfuncprefix __fhandle_sckwrite(socket_t * socket, void *data, UINT64 posBYTES, UINT64 nBYTES, UINT64 nARGbytes, ...){
+socket_ret socketfuncprefix __fhandle_sckwrite(socket_t * socket, UINT64 nArgBytes, void *data, UINT64 posBYTES, UINT64 nBYTES, ...){
 	DEBUGPRINT(L"\nSocket Write");
 	unhandle *uh = (unhandle *)socket->persistent;
 	if(!uh->dir){
@@ -132,14 +140,14 @@ socket_ret socketfuncprefix __fhandle_sckwrite(socket_t * socket, void *data, UI
 	DEBUGPRINT(L"\nFailed Socket Write");
 	return socketret__noimpl;
 }
-socket_ret socketfuncprefix __fhandle_sckread(socket_t * socket, UINT64 posBYTES, UINT64 readBYTES, UINT64 nARGbytes, ...){
+socket_ret socketfuncprefix __fhandle_sckread(socket_t * socket, UINT64 nArgBytes, UINT64 posBYTES, UINT64 readBYTES, ...){
 	DEBUGPRINT(L"\nSocket Read");
 	unhandle *uh = (unhandle *)socket->persistent;
 	if(!uh->dir){
 		_fseek(uh->fhandle_, posBYTES);
 		void *temp = NULL;
 		const UINT64 rstamp = readBYTES;
-		if(rstamp != (readBYTES = _fread(uh->fhandle_, readBYTES, &temp))){__free(temp);	temp = NULL;}
+		if(rstamp != (readBYTES = _fread(uh->fhandle_, readBYTES, &temp))){if(temp){__free(temp);	temp = NULL;}}
 		DEBUGPRINT(L"\nFinished Socket Read");
 		return (socket_ret){
 			.data = temp,
@@ -203,8 +211,8 @@ socket_ret socketfuncprefix __fhandle_sckOPENchild(socket_t * socket, UINT64 nAR
 	DEBUGPRINT(L"\nFailed Socket Write");
 	return socketret__noimpl;
 }
-socket_ret socketfuncprefix __froot_sckread(socket_t * socket, UINT64 posBYTES, UINT64 readBYTES, UINT64 nARGbytes, ...){return socketret__noimpl;}
-socket_ret socketfuncprefix __froot_sckwrite(socket_t * socket, void *data, UINT64 posBYTES, UINT64 nBYTES, UINT64 nARGbytes, ...){return socketret__noimpl;}
+socket_ret socketfuncprefix __froot_sckread(socket_t * socket, UINT64 nArgBytes, UINT64 posBYTES, UINT64 readBYTES, ...){return socketret__noimpl;}
+socket_ret socketfuncprefix __froot_sckwrite(socket_t * socket, UINT64 nArgBytes, void *data, UINT64 posBYTES, UINT64 nBYTES, ...){return socketret__noimpl;}
 socket_ret socketfuncprefix __froot_sckclose(socket_t * socket, UINT64 nARGbytes, ...){
 	DEBUGPRINT(L"\nSocket Close");
 	conf_fsroot *root = (conf_fsroot *)socket->persistent;
@@ -250,7 +258,7 @@ socket_ret socketfuncprefix __froot_sckOPENchild(socket_t * socket, UINT64 nARGb
 	}
 	return (socket_ret){__incompatible_arg, 0, NULL};
 }
-socket_ret socketfuncprefix __froot_sckinfo(struct socket_t *socket, UINT32 Property, UINT32 subProperty){
+socket_ret socketfuncprefix __froot_sckinfo(struct socket_t *socket, UINT64 nArgBytes, UINT32 Property, UINT32 subProperty, ...){
 	conf_fsroot *root = (conf_fsroot *)socket->persistent;
 	switch(Property){
 		case 0: {
@@ -323,10 +331,7 @@ socket_ret socketfuncprefix __froot_sckopen(UINT32 ignore, UINT64 nARGbytes, va_
 	DEBUGPRINT(L"\nSocket Open");
 	DEBUGPRINT(L"    Opening FS Socket");
 	socket_ret sret = {0};
-	if(nARGbytes < sizeof(EFI_GUID)){
-		sret = (socket_ret){.errout = __incompatible_arg, .data = NULL, .nData = 0};
-		return sret;
-	}
+	if(nARGbytes < sizeof(EFI_GUID)){return (socket_ret){.errout = __incompatible_arg, .data = NULL, .nData = 0};}
 	EFI_GUID guid = va_arg(*args, EFI_GUID), aGuid = va_arg(*args, EFI_GUID);
 	conf_fsroot *root = fmount(guid, aGuid);
 	if(root){
@@ -343,13 +348,7 @@ socket_ret socketfuncprefix __froot_sckopen(UINT32 ignore, UINT64 nARGbytes, va_
 				.write = (socketWRITEraw)getptr(__froot_sckwrite)
 			}
 		};
-		sret = (socket_ret){
-			.errout = __noerr,
-			.data = socket,
-			.nData = sizeof(socket)
-		};
-		return sret;
+		return (socket_ret){.errout = __noerr, .data = socket, .nData = sizeof(socket_t)};
 	}
-	sret = (socket_ret){__incompatible_arg, 0, NULL};
-	return sret;
+	return (socket_ret){.errout = __incompatible_arg, .nData = 0, .data = NULL};
 }

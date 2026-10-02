@@ -1,17 +1,18 @@
 #include "socket.h"
 #include "sockets.h"
-static const UINTN nDrivers = 1;
+static const UINT64 nDrivers = 1;
 
-socket_ret socketopen(UINT32 driver, UINTN nARGbytes, ...){
+socket_ret socketopen(UINT32 driver, UINT64 nARGbytes, ...){
 	DEBUGPRINT(L"\nOpening Socket    Driver: %u  nARGS: %u", driver, nARGbytes);
 	va_list args;
 	va_start(args, nARGbytes);
-	if((driver < nDrivers)){
+	if(driver < nDrivers){
 		UINT32 device = va_arg(args, UINT32);
 		void *data = NULL;
 		switch(driver){
 			case 0: {
-				data = (__froot_sckopen(device, nARGbytes - sizeof(UINT32), &args)).data;
+				socket_ret tmp = __froot_sckopen(device, nARGbytes - sizeof(UINT32), &args);
+				data = __memdup(&tmp, sizeof(socket_ret));
 				break;
 			} default: {
 				va_end(args);

@@ -27,7 +27,7 @@
         ]
     }
 }
-PE2EXEC.MAKE -i "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.dll" -od 1 -o "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.service"
-FSFRAT.MAKE -p "SYSD/" -n "Video.srv" -la "fc"
-FSFRAT.OPEN -p "SYSD/Video.srv" -a "VIDEOAPP" -la "f"
-FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.service" -ia "%VIDEOAPP%" -p 0 -n 0
+
+FSFRAT.MAKE -p "SYSD/" -n "Video.dll" -la "fc"
+FSFRAT.OPEN -p "SYSD/Video.dll" -a "VIDEO" -la "f"
+FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.dll" -ia "%VIDEO%" -p 0 -n 0

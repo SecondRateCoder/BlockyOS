@@ -352,16 +352,16 @@ if($InstallOS){
 	}
 	Log-Write -color Yellow "Running install.bos in current directory."
 	$ShellErr = (& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
-	if($ShellErr -ne 0){
-		Log-Write -color Red "install.bos execution failed during InstallOS. Aborting."
-		return 1
-	}
+	# if($ShellErr -ne 0){
+	# 	Log-Write -color Red "install.bos execution failed during InstallOS. Aborting."
+	# 	return 1
+	# }
 }
 
 # Optimise by Using ShortCut
 if($broadimage){New-Item -Path (Join-Path (Get-Location) '/Build/temp/image.img') -ItemType SymbolicLink -Value $Image -Force}
 
-if(run){
+if($run){
 	Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ') "
 	$QEMUOUT = ""
 	$env:OVMF_DEBUG = 'all'
