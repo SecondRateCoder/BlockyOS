@@ -54,7 +54,7 @@ Select Item: 0xE
 Cache FwCfg Name: BootMenu Item:0xE Size: 0x2 
 QemuFwCfgInitCache Pass!!!
 CMOS:
-00: 02 00 37 00 01 00 02 05 10 26 26 02 00 80 00 00
+00: 03 00 32 00 21 00 02 05 10 26 26 02 00 80 00 00
 10: 00 00 00 00 06 80 02 FF FF 00 00 00 00 00 00 00
 20: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 30: FF FF 20 00 00 7F 00 20 30 00 00 00 00 12 00 00
@@ -1698,24 +1698,28 @@ InstallProtocolInterface: DD9E7534-7762-4698-8C14-F58517A625AA 7E9C5040
 InstallProtocolInterface: D3B36F2B-D551-11D4-9A46-0090273FC14D 0
 EhcCreateUsb2Hc: capability length 32
 InstallProtocolInterface: 3E745226-9818-45B6-A2AC-D7CD0E8BA2BC 7E9840A0
-EhcDriverBindingStart: EHCI started for controller @ 7EAAC998
-InstallProtocolInterface: 3E745226-9818-45B6-A2AC-D7CD0E8BA2BC 7E97FB20
-InstallProtocolInterface: 240612B7-A063-11D4-9A3A-0090273FC14D 7E951020
+EhcInitHC: failed to enable period schedule
+EhcDriverBindingStart: failed to init host controller
+InstallProtocolInterface: 3E745226-9818-45B6-A2AC-D7CD0E8BA2BC 7E9840A0
+InstallProtocolInterface: 240612B7-A063-11D4-9A3A-0090273FC14D 7E9800A0
 Uhci2GetCapability: 2 ports
-UsbRootHubInit: root hub 7E951C98 - max speed 0, 2 ports
-UsbEnumeratePort: port 0 state - 2000, change - 01 on 7E951C98
+UsbRootHubInit: root hub 7E97FC18 - max speed 0, 2 ports
+UsbEnumeratePort: port 0 state - 2000, change - 01 on 7E97FC18
 UsbEnumeratePort: Device Connect/Disconnect Normally (port 0)
 UsbEnumeratePort: device disconnected event on port 0
-UsbEnumeratePort: port 1 state - 2000, change - 01 on 7E951C98
+UsbEnumeratePort: port 1 state - 2000, change - 01 on 7E97FC18
 UsbEnumeratePort: Device Connect/Disconnect Normally (port 1)
 UsbEnumeratePort: device disconnected event on port 1
-UsbBusStart: usb bus started on 7EAAD998, root hub 7E951C98
+UsbBusStart: usb bus started on 7EAAD998, root hub 7E97FC18
+EhcCreateUsb2Hc: capability length 32
+InstallProtocolInterface: 3E745226-9818-45B6-A2AC-D7CD0E8BA2BC 7E97FE20
+EhcDriverBindingStart: EHCI started for controller @ 7EAAC998
 InstallProtocolInterface: 3E745226-9818-45B6-A2AC-D7CD0E8BA2BC 7E950020
 InstallProtocolInterface: 240612B7-A063-11D4-9A3A-0090273FC14D 7E8EE020
 Uhci2GetCapability: 2 ports
 UsbRootHubInit: root hub 7E8EEC98 - max speed 0, 2 ports
 UsbBusStart: usb bus started on 7EAACB18, root hub 7E8EEC98
-InstallProtocolInterface: 3E745226-9818-45B6-A2AC-D7CD0E8BA2BC 7E97F2A0
+InstallProtocolInterface: 3E745226-9818-45B6-A2AC-D7CD0E8BA2BC 7E97F1A0
 InstallProtocolInterface: 240612B7-A063-11D4-9A3A-0090273FC14D 7E8D9020
 Uhci2GetCapability: 2 ports
 UsbRootHubInit: root hub 7E8ED918 - max speed 0, 2 ports
@@ -1737,6 +1741,7 @@ UsbBuildDescTable: device has 1 configures
 UsbGetOneConfig: total length is 34
 UsbParseConfigDesc: config 1 has 1 interfaces
 UsbParseInterfaceDesc: interface 0(setting 0) has 1 endpoints
+EhcUnlinkQhFromAsync: Failed to synchronize with doorbell
 UsbEnumerateNewDev: device 1 is now in CONFIGED state
 UsbSelectConfig: config 1 selected for device 1
 UsbSelectSetting: setting 0 selected for interface 0
@@ -1766,6 +1771,12 @@ UsbSelectConfig: config 1 selected for device 2
 UsbSelectSetting: setting 0 selected for interface 0
 InstallProtocolInterface: 09576E91-6D3F-11D2-8E39-00A0C969723B 7E8D2698
 InstallProtocolInterface: 2B2F68D6-0CD2-44CF-8E8B-BBA20B1B5B75 7E8D25C0
+UsbEnumeratePort: port 0 state - 2000, change - 01 on 7E97FC18
+UsbEnumeratePort: Device Connect/Disconnect Normally (port 0)
+UsbEnumeratePort: device disconnected event on port 0
+UsbEnumeratePort: port 1 state - 2000, change - 01 on 7E97FC18
+UsbEnumeratePort: Device Connect/Disconnect Normally (port 1)
+UsbEnumeratePort: device disconnected event on port 1
 UsbBusStart: usb bus started on 7EAAC998, root hub 7E8D8C18
 PciSioSerial: Create SIO child serial device - Device Error
 PciSioSerial: Create SIO child serial device - Device Error
@@ -2079,16 +2090,12 @@ FSOpen: Open '\EFI\BOOT\BOOTX64.EFI' Success
 [Security] 3rd party image[0] can be loaded after EndOfDxe: PciRoot(0x0)/Pci(0x2,0x0)/HD(1,GPT,C129A328-F81F-11D2-B88B-00A0C93EC93B,0x800,0x20000)/\EFI\BOOT\BOOTX64.EFI.
 None of Tcg2Protocol/CcMeasurementProtocol is installed.
 InstallProtocolInterface: 5B1B31A1-9562-11D2-8E3F-00A0C969723B 7E8C36C0
-Loading driver at 0x0007E190000 EntryPoint=0x0007E1A9250 
+Loading driver at 0x0007E18F000 EntryPoint=0x0007E1A8310 
 InstallProtocolInterface: BC62157E-3E33-4FEC-9920-2D3B36D750DF 7E8C3C18
 ProtectUefiImageCommon - 0x7E8C36C0
-  - 0x000000007E190000 - 0x000000000002A000
+  - 0x000000007E18F000 - 0x000000000002A000
 PixelBlueGreenRedReserved8BitPerColor
 PixelBlueGreenRedReserved8BitPerColor
 PixelBlueGreenRedReserved8BitPerColor
-FrameBufferBase: 0x80000000, FrameBufferSize: 0x240000
-0: shl:0 shr:0 mask:FF0000
-1: shl:0 shr:0 mask:FF00
-2: shl:0 shr:0 mask:FF
-Bytes per pixel: 3
+PixelBlueGreenRedReserved8BitPerColor
 MpInitChangeApLoopCallback() done!

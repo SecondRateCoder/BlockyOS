@@ -16,12 +16,12 @@
     "INPUT": {}
 }
 
+FSFRAT.MAKE -p "SYSD/" -n "icon.gif" -la "fc"
+FSFRAT.OPEN -p "SYSD/icon.gif" -a "ICON" -la "f"
+FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/compile/Loading_icon.gif" -ia "%ICON%" -p 0 -n 0
+
 
 SHELL.EXECUTE -p "C:/GitHub/BlockyOS/src/kernel/libcrt/alibcrt.bos"
 SHELL.EXECUTE -p "C:/GitHub/BlockyOS/src/kernel/services/services.bos"
 
 SHELL.EXECUTE -p "C:/GitHub/BlockyOS/src/kernel/kboot/kboot.bos"
-
-FSFRAT.MAKE -p "SYSD/" -n "icon.gif" -la "fc"
-FSFRAT.OPEN -p "SYSD/icon.gif" -a "ICON" -la "f"
-FSFRAT.WRITE -pp "C:\GitHub\BlockyOS\compile\Loading_icon.gif" -ia "%ICON%" -p 0 -n 0

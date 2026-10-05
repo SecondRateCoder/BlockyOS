@@ -10,5 +10,7 @@
         ],
         "args": []
     }
-}
+},
+"cmake.sourceDirectory": "C:/GitHub/BlockyOS/uACPI/tests/runner",
+"cmake.autoDetectSourceDirectory": false
 }

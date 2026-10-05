@@ -8,9 +8,9 @@ Name             Origin             Length             Attributes
 
 Linker script and memory map
 
-                0x0000000140000000                __image_base__ = 0x140000000
+                0x0000000000000000                __image_base__ = 0x0
                 0x0000000000000000                __dll__ = 0x0
-                0x0000000140000000                __ImageBase = 0x140000000
+                0x0000000000000000                __ImageBase = 0x0
                 0x0000000000001000                __section_alignment__ = 0x1000
                 0x0000000000001000                __file_alignment__ = 0x1000
                 0x0000000000000004                __major_os_version__ = 0x4
@@ -26,170 +26,1595 @@ Linker script and memory map
                 0x0000000000001000                __size_of_heap_commit__ = 0x1000
                 0x0000000000000000                __loader_flags__ = 0x0
                 0x0000000000000160                __dll_characteristics__ = 0x160
-LOAD compile/cache/c.kboot.o
-LOAD compile/cache/asm.kboot.o
-LOAD Build/Build-nodate/root-part/LibCrt.dll
-LOAD Build/Build-nodate/root-part/services/LibIO.dll
-LOAD Build/Build-nodate/root-part/services/LibVideo.dll
-                0x00000000000002f0                . = SIZEOF_HEADERS
+LOAD compile/cache/asm.float.o
+LOAD compile/cache/asm.RNG.o
+LOAD compile/cache/c.RNG.o
+LOAD compile/cache/asm.GDT.o
+LOAD compile/cache/c.GDT.o
+LOAD compile/cache/asm.paging.o
+LOAD compile/cache/c.paging.o
+LOAD compile/cache/asm.SSE.o
+LOAD compile/cache/c.SSE.o
+LOAD compile/cache/c.memory.o
+LOAD compile/cache/c.string.o
+LOAD compile/cache/c.palloc.o
+LOAD compile/cache/c.palloc(1).o
+LOAD compile/cache/c.mmalloc.o
+LOAD compile/cache/c.math.o
+LOAD compile/cache/asm.IO.o
+LOAD compile/cache/asm.IDT.o
+LOAD compile/cache/asm.ISR.o
+LOAD compile/cache/c.ISR.o
+LOAD compile/cache/c.ACPI.o
+LOAD compile/cache/c.APIC.o
+LOAD compile/cache/c.IOAPIC.o
+LOAD compile/cache/c.LocalAPIC.o
+LOAD compile/cache/c.LocalAPICTimer.o
+LOAD compile/cache/c.hardware.o
+LOAD compile/cache/c.blake2b-ref.o
+LOAD compile/cache/c.blake2bp-ref.o
+LOAD compile/cache/c.blake2s-ref.o
+LOAD compile/cache/c.blake2sp-ref.o
+LOAD compile/cache/c.blake2xb-ref.o
+LOAD compile/cache/c.blake2xs-ref.o
+LOAD compile/cache/c.PCIe.o
+LOAD compile/cache/asm.UTILS.o
+LOAD src/kernel/libcrt/alibcrt.def
+                0x00000000000002a0                . = SIZEOF_HEADERS
                 0x0000000000001000                . = ALIGN (__section_alignment__)
 
-.text           0x0000000140001000     0x1000
+.text           0x0000000000001000    0x22000
  *(SORT_NONE(.init))
  *(.text)
- .text          0x0000000140001000      0xe40 compile/cache/c.kboot.o
-                0x0000000140001000                PrintGlyph
-                0x0000000140001139                PrintTextByGlyph
-                0x00000001400012e7                TextCopyF
-                0x0000000140001912                InitialiseGDT
-                0x0000000140001914                InitialiseIDT
-                0x0000000140001a88                GenericIOISR
-                0x0000000140001aa5                __main
- .text          0x0000000140001e40        0xe compile/cache/asm.kboot.o
-                0x0000000140001e40                kboot_km
- *fill*         0x0000000140001e4e        0x2 
- .text          0x0000000140001e50        0x8 LibVideo_dll_d000001.o
-                0x0000000140001e50                AllocateVideoMemory
- .text          0x0000000140001e58        0x8 LibVideo_dll_d000002.o
-                0x0000000140001e58                InitaliseVMA
- .text          0x0000000140001e60        0x8 LibVideo_dll_d000003.o
-                0x0000000140001e60                SelectVideoContext
- .text          0x0000000140001e68        0x8 LibVideo_dll_d000004.o
-                0x0000000140001e68                VideoPrintf
- .text          0x0000000140001e70        0x8 LibIO_dll_d000007.o
-                0x0000000140001e70                OpenRawHandle
- .text          0x0000000140001e78        0x8 LibCrt_dll_d000010.o
-                0x0000000140001e78                AllocateInterruptVector
- .text          0x0000000140001e80        0x8 LibCrt_dll_d000011.o
-                0x0000000140001e80                GetLocalAPICID
- .text          0x0000000140001e88        0x8 LibCrt_dll_d000012.o
-                0x0000000140001e88                InitLocalAPIC
- .text          0x0000000140001e90        0x8 LibCrt_dll_d000013.o
-                0x0000000140001e90                InitialiseAllocationState
- .text          0x0000000140001e98        0x0 LibCrt_dll_d000014.o
- .text          0x0000000140001e98        0x8 LibCrt_dll_d000015.o
-                0x0000000140001e98                LoadIDTR
- .text          0x0000000140001ea0        0x8 LibCrt_dll_d000016.o
-                0x0000000140001ea0                memcmp
- .text          0x0000000140001ea8        0x8 LibCrt_dll_d000017.o
-                0x0000000140001ea8                memcpy
- .text          0x0000000140001eb0        0x8 LibCrt_dll_d000018.o
-                0x0000000140001eb0                memset
- .text          0x0000000140001eb8        0x8 LibCrt_dll_d000019.o
-                0x0000000140001eb8                strlen
+ .text          0x0000000000001000      0x99f compile/cache/asm.float.o
+                0x0000000000001000                __subsf3
+                0x0000000000001004                __addsf3
+                0x0000000000001156                __mulsf3
+                0x00000000000011e8                __divsf3
+                0x000000000000127f                __eqsf2
+                0x0000000000001297                __ltsf2
+                0x00000000000012d3                __lesf2
+                0x0000000000001313                __gtsf2
+                0x000000000000134f                __subdf3
+                0x0000000000001354                __adddf3
+                0x00000000000014e9                __muldf3
+                0x00000000000015a9                __divdf3
+                0x0000000000001662                __eqdf2
+                0x0000000000001685                __ltdf2
+                0x00000000000016d4                __ledf2
+                0x0000000000001728                __gtdf2
+                0x0000000000001777                __gedf2
+                0x00000000000017c1                __floatsisf
+                0x000000000000180e                __floatunsisf
+                0x000000000000184a                __floatsidf
+                0x0000000000001898                __floatundidf
+                0x00000000000018ea                __fixsfsi
+                0x0000000000001937                __truncdfsf2
+ *fill*         0x000000000000199f        0x1 
+ .text          0x00000000000019a0       0x27 compile/cache/asm.RNG.o
+                0x00000000000019a0                GetTrueRandom64
+ *fill*         0x00000000000019c7        0x9 
+ .text          0x00000000000019d0       0xd0 compile/cache/c.RNG.o
+                0x00000000000019d0                GetTrueRandomRange64
+                0x0000000000001a17                GetTrueRandomRange64U
+ .text          0x0000000000001aa0       0x38 compile/cache/asm.GDT.o
+                0x0000000000001aa0                _LoadGDTR
+                0x0000000000001aae                _ReadGDTR
+                0x0000000000001abc                _LoadLDTR
+                0x0000000000001aca                _ReadLDTR
+ *fill*         0x0000000000001ad8        0x8 
+ .text          0x0000000000001ae0      0x720 compile/cache/c.GDT.o
+                0x0000000000001ae0                LoadGDTR
+                0x0000000000001b6b                ReadGDTR
+                0x0000000000001bb7                LoadLDTR
+                0x0000000000001c42                ReadLDTR
+                0x0000000000001c8e                AllocateSystemDescriptor
+ .text          0x0000000000002200       0x87 compile/cache/asm.paging.o
+                0x0000000000002200                IsLA57Enabled
+                0x000000000000220e                EnableLA57
+                0x0000000000002225                IsLA57Supported
+                0x000000000000223c                LoadPageTree
+                0x000000000000226b                GetPageTable
+ *fill*         0x0000000000002287        0x9 
+ .text          0x0000000000002290     0x15a0 compile/cache/c.paging.o
+                0x0000000000002290                GetMaxPhysicalAddressBits
+                0x00000000000022bc                MapPhysical
+                0x0000000000002702                WalkPageTreeByPhysical
+                0x0000000000002748                WalkPageTreeByVirtual
+                0x00000000000028b8                InvalidatePages
+                0x0000000000002913                InvalidatePage
+                0x0000000000002922                WalkPageTree
+                0x0000000000002c9d                RepointVirtualAddress
+                0x000000000000328f                MapPTVirtual
+ .text          0x0000000000003830      0x2ed compile/cache/asm.SSE.o
+                0x0000000000003830                testSSE
+                0x000000000000384b                testSSEExtensions
+                0x00000000000038ec                decodeSIMDFeatureMask
+                0x0000000000003a02                enableSSE
+                0x0000000000003a2d                disableSSE
+                0x0000000000003a4f                pushSSE
+                0x0000000000003ab6                popSSE
+ *fill*         0x0000000000003b1d        0x3 
+ .text          0x0000000000003b20     0x12a0 compile/cache/c.SSE.o
+                0x0000000000003b20                StoreAlignedFloats
+                0x0000000000003b6f                LoadAlignedFloats
+                0x0000000000003bbe                StoreUAlignedFloats
+                0x0000000000003c0d                LoadUAlignedFloats
+                0x0000000000003c5c                StoreAlignedIntegers
+                0x0000000000003cab                LoadAlignedIntegers
+                0x0000000000003cfa                StoreUAlignedIntegers
+                0x0000000000003d49                LoadUAlignedIntegers
+                0x0000000000003d98                StoreAlignedDoubles
+                0x0000000000003de7                LoadAlignedDoubles
+                0x0000000000003e36                StoreUAlignedDoubles
+                0x0000000000003e85                LoadUAlignedDoubles
+                0x0000000000003ed4                StoreAlignedVectors
+                0x0000000000003f23                LoadAlignedVectors
+                0x0000000000003f72                StoreUAlignedVectors
+                0x0000000000003fc1                LoadUAlignedVectors
+                0x0000000000004010                AddFloatXmm
+                0x000000000000405f                SubFloatXmm
+                0x00000000000040ae                MulFloatXmm
+                0x00000000000040fd                DivFloatXmm
+                0x000000000000414c                SqrtFloatXmm
+                0x000000000000419b                AndFloatXmm
+                0x00000000000041ea                OrFloatXmm
+                0x0000000000004239                XorFloatXmm
+                0x0000000000004288                ClearFloatXmm
+                0x00000000000042ca                EqualToFloatXmm
+                0x0000000000004319                LessThanFloatXmm
+                0x0000000000004368                NotEqualToFloatXmm
+                0x00000000000043b7                GreaterThanFloatXmm
+                0x0000000000004406                BroadcastFloatLane0Xmm
+                0x0000000000004448                InterleaveLowFloatXmm
+                0x0000000000004497                ConvertFloatToInt32TruncXmm
+                0x00000000000044e6                AddIntegerXmm
+                0x0000000000004535                SubIntegerXmm
+                0x0000000000004584                MulIntegerXmm
+                0x00000000000045d3                AndIntegerXmm
+                0x0000000000004622                OrIntegerXmm
+                0x0000000000004671                XorIntegerXmm
+                0x00000000000046c0                ClearIntegerXmm
+                0x0000000000004702                AddDoubleXmm
+                0x0000000000004751                SubDoubleXmm
+                0x00000000000047a0                MulDoubleXmm
+                0x00000000000047ef                DivDoubleXmm
+                0x000000000000483e                SqrtDoubleXmm
+                0x000000000000488d                AddVectorYmm
+                0x00000000000048dc                SubVectorYmm
+                0x000000000000492b                MulVectorYmm
+                0x000000000000497a                AllocateSSERegister
+                0x0000000000004b09                FreeSSERegister
+                0x0000000000004bcb                pushStore
+                0x0000000000004cc7                popStore
+                0x0000000000004d4f                switchCurrentStore
+ .text          0x0000000000004dc0      0x650 compile/cache/c.memory.o
+                0x0000000000004dc0                memset
+                0x0000000000004f46                memcmp
+                0x00000000000050d8                memcpy
+                0x0000000000005255                ResolveGenericChecksum
+                0x000000000000534b                memmove_s
+ .text          0x0000000000005410      0x610 compile/cache/c.string.o
+                0x0000000000005410                strlen
+                0x0000000000005449                strchecks
+                0x00000000000054fa                strcmpc
+                0x000000000000554d                isdigit
+                0x000000000000556f                tobitcomplex
+                0x000000000000559b                tobyte
+                0x00000000000055f2                toword
+                0x000000000000567b                tolong
+                0x0000000000005701                tolonglong
+                0x00000000000058dd                pattmatch
+ .text          0x0000000000005a20     0x2e20 compile/cache/c.palloc.o
+                0x0000000000005a28                TotalMemorySize
+                0x0000000000005a3a                TotalMappedMemory
+                0x0000000000005acc                MemoryIsMapped
+                0x0000000000005b61                InitialiseAllocationState
+                0x0000000000006050                QueryFreeMemory
+                0x000000000000618d                UpdateAllocationTable
+                0x000000000000633e                AllocateAlignedPagesFromRange
+                0x0000000000006416                AllocatePagesFromRange
+                0x0000000000006490                AllocatePages
+                0x00000000000083b1                MapVirtual
+                0x000000000000860a                FreePages
+ .text          0x0000000000008840      0x880 compile/cache/c.palloc(1).o
+                0x0000000000008840                ReallocatePages
+                0x0000000000008ee9                FreeAlignedPages
+                0x0000000000008f0c                AllocateAlignedPages
+                0x0000000000008f5f                ReallocateAlignedPages
+                0x0000000000009033                SafeAllocatePages
+ .text          0x00000000000090c0     0x2220 compile/cache/c.mmalloc.o
+                0x00000000000090c8                allocatepool
+                0x00000000000092a3                querydescu
+                0x0000000000009378                fixmdarray
+                0x0000000000009621                fragmemory
+                0x0000000000009780                chaintip
+                0x00000000000097b4                memusedsize
+                0x00000000000098df                allocatedesc
+                0x0000000000009a86                fusememory
+                0x0000000000009ca0                mrealloc
+                0x0000000000009eeb                mcalloc
+                0x0000000000009f11                mmalloczero
+                0x0000000000009f50                mclone
+                0x000000000000a141                mIsMapped
+                0x000000000000a2d9                mclone_s
+                0x000000000000a502                mmalloc
+                0x000000000000aa0e                mfree
+                0x000000000000acee                descinfo
+                0x000000000000b010                mtest
+                0x000000000000b199                mdump
+ .text          0x000000000000b2e0     0x1230 compile/cache/c.math.o
+                0x000000000000b2e0                float_bits
+                0x000000000000b2f9                bits_float
+                0x000000000000b312                fast_log1p
+                0x000000000000b3cf                fast_logf
+                0x000000000000b490                fast_expf_small
+                0x000000000000b564                pow2_int
+                0x000000000000b5c5                fast_expf
+                0x000000000000b6af                powf_int_base
+                0x000000000000b74e                powll
+                0x000000000000b7ab                powf
+                0x000000000000b8f5                setprecision
+                0x000000000000b906                sqrtf_newton
+                0x000000000000b9c0                sqrtf
+                0x000000000000b9e2                sqrti
+                0x000000000000ba45                pow_10
+                0x000000000000bab5                log_10
+                0x000000000000bbb7                integral
+                0x000000000000bd4a                absf
+                0x000000000000bd7c                absi
+                0x000000000000bd8c                absl
+                0x000000000000bd9c                absll
+                0x000000000000bdb1                double_as_uint64
+                0x000000000000bddc                uint64_as_double
+                0x000000000000be07                fmod
+                0x000000000000c07f                wichmann_hill
+                0x000000000000c1dc                wh_rng
+                0x000000000000c1ea                wh_seed
+                0x000000000000c44b                mt_rng
+ .text          0x000000000000c510       0xc9 compile/cache/asm.IO.o
+                0x000000000000c510                __outb
+                0x000000000000c522                __inb
+                0x000000000000c52a                __outw
+                0x000000000000c53d                __inw
+                0x000000000000c546                __outl
+                0x000000000000c557                __inl
+                0x000000000000c55c                __outsb
+                0x000000000000c56f                __insb
+                0x000000000000c585                __outsw
+                0x000000000000c599                __insw
+                0x000000000000c5b0                __outsl
+                0x000000000000c5c3                __insl
+ *fill*         0x000000000000c5d9        0x7 
+ .text          0x000000000000c5e0       0x1c compile/cache/asm.IDT.o
+                0x000000000000c5e0                LoadIDTR
+                0x000000000000c5ee                ReadIDTR
+ *fill*         0x000000000000c5fc        0x4 
+ .text          0x000000000000c600      0xf2f compile/cache/asm.ISR.o
+                0x000000000000c657                isrCallback0
+                0x000000000000c666                isrCallback1
+                0x000000000000c675                isrCallback2
+                0x000000000000c684                isrCallback3
+                0x000000000000c693                isrCallback4
+                0x000000000000c6a2                isrCallback5
+                0x000000000000c6b1                isrCallback6
+                0x000000000000c6c0                isrCallback7
+                0x000000000000c6cf                isrCallback8
+                0x000000000000c6d9                isrCallback9
+                0x000000000000c6e8                isrCallback10
+                0x000000000000c6f2                isrCallback11
+                0x000000000000c6fc                isrCallback12
+                0x000000000000c706                isrCallback13
+                0x000000000000c710                isrCallback14
+                0x000000000000c71a                isrCallback15
+                0x000000000000c729                isrCallback16
+                0x000000000000c738                isrCallback17
+                0x000000000000c742                isrCallback18
+                0x000000000000c751                isrCallback19
+                0x000000000000c760                isrCallback20
+                0x000000000000c76f                isrCallback21
+                0x000000000000c779                isrCallback22
+                0x000000000000c788                isrCallback23
+                0x000000000000c797                isrCallback24
+                0x000000000000c7a6                isrCallback25
+                0x000000000000c7b5                isrCallback26
+                0x000000000000c7c4                isrCallback27
+                0x000000000000c7d3                isrCallback28
+                0x000000000000c7e2                isrCallback29
+                0x000000000000c7f1                isrCallback30
+                0x000000000000c800                isrCallback31
+                0x000000000000c80f                isrCallback32
+                0x000000000000c81e                isrCallback33
+                0x000000000000c82d                isrCallback34
+                0x000000000000c83c                isrCallback35
+                0x000000000000c84b                isrCallback36
+                0x000000000000c85a                isrCallback37
+                0x000000000000c869                isrCallback38
+                0x000000000000c878                isrCallback39
+                0x000000000000c887                isrCallback40
+                0x000000000000c896                isrCallback41
+                0x000000000000c8a5                isrCallback42
+                0x000000000000c8b4                isrCallback43
+                0x000000000000c8c3                isrCallback44
+                0x000000000000c8d2                isrCallback45
+                0x000000000000c8e1                isrCallback46
+                0x000000000000c8f0                isrCallback47
+                0x000000000000c8ff                isrCallback48
+                0x000000000000c90e                isrCallback49
+                0x000000000000c91d                isrCallback50
+                0x000000000000c92c                isrCallback51
+                0x000000000000c93b                isrCallback52
+                0x000000000000c94a                isrCallback53
+                0x000000000000c959                isrCallback54
+                0x000000000000c968                isrCallback55
+                0x000000000000c977                isrCallback56
+                0x000000000000c986                isrCallback57
+                0x000000000000c995                isrCallback58
+                0x000000000000c9a4                isrCallback59
+                0x000000000000c9b3                isrCallback60
+                0x000000000000c9c2                isrCallback61
+                0x000000000000c9d1                isrCallback62
+                0x000000000000c9e0                isrCallback63
+                0x000000000000c9ef                isrCallback64
+                0x000000000000c9fe                isrCallback65
+                0x000000000000ca0d                isrCallback66
+                0x000000000000ca1c                isrCallback67
+                0x000000000000ca2b                isrCallback68
+                0x000000000000ca3a                isrCallback69
+                0x000000000000ca49                isrCallback70
+                0x000000000000ca58                isrCallback71
+                0x000000000000ca67                isrCallback72
+                0x000000000000ca76                isrCallback73
+                0x000000000000ca85                isrCallback74
+                0x000000000000ca94                isrCallback75
+                0x000000000000caa3                isrCallback76
+                0x000000000000cab2                isrCallback77
+                0x000000000000cac1                isrCallback78
+                0x000000000000cad0                isrCallback79
+                0x000000000000cadf                isrCallback80
+                0x000000000000caee                isrCallback81
+                0x000000000000cafd                isrCallback82
+                0x000000000000cb0c                isrCallback83
+                0x000000000000cb1b                isrCallback84
+                0x000000000000cb2a                isrCallback85
+                0x000000000000cb39                isrCallback86
+                0x000000000000cb48                isrCallback87
+                0x000000000000cb57                isrCallback88
+                0x000000000000cb66                isrCallback89
+                0x000000000000cb75                isrCallback90
+                0x000000000000cb84                isrCallback91
+                0x000000000000cb93                isrCallback92
+                0x000000000000cba2                isrCallback93
+                0x000000000000cbb1                isrCallback94
+                0x000000000000cbc0                isrCallback95
+                0x000000000000cbcf                isrCallback96
+                0x000000000000cbde                isrCallback97
+                0x000000000000cbed                isrCallback98
+                0x000000000000cbfc                isrCallback99
+                0x000000000000cc0b                isrCallback100
+                0x000000000000cc1a                isrCallback101
+                0x000000000000cc29                isrCallback102
+                0x000000000000cc38                isrCallback103
+                0x000000000000cc47                isrCallback104
+                0x000000000000cc56                isrCallback105
+                0x000000000000cc65                isrCallback106
+                0x000000000000cc74                isrCallback107
+                0x000000000000cc83                isrCallback108
+                0x000000000000cc92                isrCallback109
+                0x000000000000cca1                isrCallback110
+                0x000000000000ccb0                isrCallback111
+                0x000000000000ccbf                isrCallback112
+                0x000000000000ccce                isrCallback113
+                0x000000000000ccdd                isrCallback114
+                0x000000000000ccec                isrCallback115
+                0x000000000000ccfb                isrCallback116
+                0x000000000000cd0a                isrCallback117
+                0x000000000000cd19                isrCallback118
+                0x000000000000cd28                isrCallback119
+                0x000000000000cd37                isrCallback120
+                0x000000000000cd46                isrCallback121
+                0x000000000000cd55                isrCallback122
+                0x000000000000cd64                isrCallback123
+                0x000000000000cd73                isrCallback124
+                0x000000000000cd82                isrCallback125
+                0x000000000000cd91                isrCallback126
+                0x000000000000cda0                isrCallback127
+                0x000000000000cdaf                isrCallback128
+                0x000000000000cdbe                isrCallback129
+                0x000000000000cdcd                isrCallback130
+                0x000000000000cddc                isrCallback131
+                0x000000000000cdeb                isrCallback132
+                0x000000000000cdfa                isrCallback133
+                0x000000000000ce09                isrCallback134
+                0x000000000000ce18                isrCallback135
+                0x000000000000ce27                isrCallback136
+                0x000000000000ce36                isrCallback137
+                0x000000000000ce45                isrCallback138
+                0x000000000000ce54                isrCallback139
+                0x000000000000ce63                isrCallback140
+                0x000000000000ce72                isrCallback141
+                0x000000000000ce81                isrCallback142
+                0x000000000000ce90                isrCallback143
+                0x000000000000ce9f                isrCallback144
+                0x000000000000ceae                isrCallback145
+                0x000000000000cebd                isrCallback146
+                0x000000000000cecc                isrCallback147
+                0x000000000000cedb                isrCallback148
+                0x000000000000ceea                isrCallback149
+                0x000000000000cef9                isrCallback150
+                0x000000000000cf08                isrCallback151
+                0x000000000000cf17                isrCallback152
+                0x000000000000cf26                isrCallback153
+                0x000000000000cf35                isrCallback154
+                0x000000000000cf44                isrCallback155
+                0x000000000000cf53                isrCallback156
+                0x000000000000cf62                isrCallback157
+                0x000000000000cf71                isrCallback158
+                0x000000000000cf80                isrCallback159
+                0x000000000000cf8f                isrCallback160
+                0x000000000000cf9e                isrCallback161
+                0x000000000000cfad                isrCallback162
+                0x000000000000cfbc                isrCallback163
+                0x000000000000cfcb                isrCallback164
+                0x000000000000cfda                isrCallback165
+                0x000000000000cfe9                isrCallback166
+                0x000000000000cff8                isrCallback167
+                0x000000000000d007                isrCallback168
+                0x000000000000d016                isrCallback169
+                0x000000000000d025                isrCallback170
+                0x000000000000d034                isrCallback171
+                0x000000000000d043                isrCallback172
+                0x000000000000d052                isrCallback173
+                0x000000000000d061                isrCallback174
+                0x000000000000d070                isrCallback175
+                0x000000000000d07f                isrCallback176
+                0x000000000000d08e                isrCallback177
+                0x000000000000d09d                isrCallback178
+                0x000000000000d0ac                isrCallback179
+                0x000000000000d0bb                isrCallback180
+                0x000000000000d0ca                isrCallback181
+                0x000000000000d0d9                isrCallback182
+                0x000000000000d0e8                isrCallback183
+                0x000000000000d0f7                isrCallback184
+                0x000000000000d106                isrCallback185
+                0x000000000000d115                isrCallback186
+                0x000000000000d124                isrCallback187
+                0x000000000000d133                isrCallback188
+                0x000000000000d142                isrCallback189
+                0x000000000000d151                isrCallback190
+                0x000000000000d160                isrCallback191
+                0x000000000000d16f                isrCallback192
+                0x000000000000d17e                isrCallback193
+                0x000000000000d18d                isrCallback194
+                0x000000000000d19c                isrCallback195
+                0x000000000000d1ab                isrCallback196
+                0x000000000000d1ba                isrCallback197
+                0x000000000000d1c9                isrCallback198
+                0x000000000000d1d8                isrCallback199
+                0x000000000000d1e7                isrCallback200
+                0x000000000000d1f6                isrCallback201
+                0x000000000000d205                isrCallback202
+                0x000000000000d214                isrCallback203
+                0x000000000000d223                isrCallback204
+                0x000000000000d232                isrCallback205
+                0x000000000000d241                isrCallback206
+                0x000000000000d250                isrCallback207
+                0x000000000000d25f                isrCallback208
+                0x000000000000d26e                isrCallback209
+                0x000000000000d27d                isrCallback210
+                0x000000000000d28c                isrCallback211
+                0x000000000000d29b                isrCallback212
+                0x000000000000d2aa                isrCallback213
+                0x000000000000d2b9                isrCallback214
+                0x000000000000d2c8                isrCallback215
+                0x000000000000d2d7                isrCallback216
+                0x000000000000d2e6                isrCallback217
+                0x000000000000d2f5                isrCallback218
+                0x000000000000d304                isrCallback219
+                0x000000000000d313                isrCallback220
+                0x000000000000d322                isrCallback221
+                0x000000000000d331                isrCallback222
+                0x000000000000d340                isrCallback223
+                0x000000000000d34f                isrCallback224
+                0x000000000000d35e                isrCallback225
+                0x000000000000d36d                isrCallback226
+                0x000000000000d37c                isrCallback227
+                0x000000000000d38b                isrCallback228
+                0x000000000000d39a                isrCallback229
+                0x000000000000d3a9                isrCallback230
+                0x000000000000d3b8                isrCallback231
+                0x000000000000d3c7                isrCallback232
+                0x000000000000d3d6                isrCallback233
+                0x000000000000d3e5                isrCallback234
+                0x000000000000d3f4                isrCallback235
+                0x000000000000d403                isrCallback236
+                0x000000000000d412                isrCallback237
+                0x000000000000d421                isrCallback238
+                0x000000000000d430                isrCallback239
+                0x000000000000d43f                isrCallback240
+                0x000000000000d44e                isrCallback241
+                0x000000000000d45d                isrCallback242
+                0x000000000000d46c                isrCallback243
+                0x000000000000d47b                isrCallback244
+                0x000000000000d48a                isrCallback245
+                0x000000000000d499                isrCallback246
+                0x000000000000d4a8                isrCallback247
+                0x000000000000d4b7                isrCallback248
+                0x000000000000d4c6                isrCallback249
+                0x000000000000d4d5                isrCallback250
+                0x000000000000d4e4                isrCallback251
+                0x000000000000d4f3                isrCallback252
+                0x000000000000d502                isrCallback253
+                0x000000000000d511                isrCallback254
+                0x000000000000d520                isrCallback255
+ *fill*         0x000000000000d52f        0x1 
+ .text          0x000000000000d530      0xea0 compile/cache/c.ISR.o
+                0x000000000000d530                AllocateInterruptVector
+                0x000000000000d5a2                QueryVectorByCallback
+                0x000000000000d622                ISRSetCallback
+                0x000000000000da50                ISRUSetCallback
+                0x000000000000dcc4                ISRGetStackHeader
+                0x000000000000de3e                AllocateIST
+                0x000000000000e13a                GenericISR
+                0x000000000000e157                DivideErrorISR
+                0x000000000000e184                DebugExceptionISR
+                0x000000000000e1a1                NonMaskableExtISR
+                0x000000000000e1be                BreakpointISR
+                0x000000000000e1db                OverflowISR
+                0x000000000000e1f8                BoundRangeExceptionISR
+                0x000000000000e215                InvalidOpcodeISR
+                0x000000000000e232                UnavailableDeviceISR
+                0x000000000000e24f                DoubleFaultISR
+                0x000000000000e26c                CoprocessorSegmentOverrunISR
+                0x000000000000e289                InvalidTSSISR
+                0x000000000000e2a6                SegmentNotPresentISR
+                0x000000000000e2c3                StackSegmentFaultISR
+                0x000000000000e2e0                GeneralProtectionISR
+                0x000000000000e2fd                PageFaultISR
+                0x000000000000e31a                x87FPUErrorISR
+                0x000000000000e337                AlignmentCheckISR
+                0x000000000000e354                MachineCheckISR
+                0x000000000000e371                SIMDFloatingPointExceptionISR
+                0x000000000000e38e                VirtualisationExceptionISR
+                0x000000000000e3ab                ControlProtectionExceptionISR
+ .text          0x000000000000e3d0      0x450 compile/cache/c.ACPI.o
+                0x000000000000e3d0                ValidateHeader
+                0x000000000000e43f                GetACPIRevision
+                0x000000000000e78c                SearchACPITable
+ .text          0x000000000000e820       0x40 compile/cache/c.APIC.o
+                0x000000000000e820                TestAPIC
+ .text          0x000000000000e860      0x840 compile/cache/c.IOAPIC.o
+                0x000000000000e860                MapAPIC
+                0x000000000000e8ad                DisableIoApicInterrupt
+                0x000000000000e94b                DisableIoApic
+                0x000000000000e9c4                EnableIoApicInterrupt
+                0x000000000000ea5c                EnableIoApic
+                0x000000000000ead5                _ReadIoApic
+                0x000000000000eb0a                ReadIoApicRegister
+                0x000000000000ecb0                _WriteIoApic
+                0x000000000000ecef                WriteIoApicRegister
+                0x000000000000eeaf                ReadIoApicInterruptRegister
+                0x000000000000ef61                WriteIoApicInterruptRegister
+                0x000000000000f00f                IoApicSetRedirection
+ .text          0x000000000000f0a0      0x360 compile/cache/c.LocalAPIC.o
+                0x000000000000f0a0                GetLocalAPICID
+                0x000000000000f0cf                GetLocalAPICBase
+                0x000000000000f2a9                InitLocalAPIC
+                0x000000000000f339                EnableLocalAPIC
+                0x000000000000f399                DisableLocalAPIC
+ .text          0x000000000000f400      0x570 compile/cache/c.LocalAPICTimer.o
+                0x000000000000f400                GetTimerVector
+                0x000000000000f420                AddTimerEvent
+                0x000000000000f5ce                APICTimerEventHandlerISR
+                0x000000000000f777                InitializeAndCalibrateAPICTimer
+ .text          0x000000000000f970      0x6e0 compile/cache/c.hardware.o
+                0x000000000000f970                TestMSR
+                0x000000000000f9b3                ReadMSR
+                0x000000000000f9e2                WriteMSR
+                0x000000000000fa19                _PITTickISR
+                0x000000000000fa66                InitializePIT
+                0x000000000000fc5a                SleepMS
+                0x000000000000fcc9                CMOSRead
+                0x000000000000fd16                CMOSGetElapsedDays
+                0x000000000000fdfa                CMOSGetTime
+ .text          0x0000000000010050     0x6f60 compile/cache/c.blake2b-ref.o
+                0x00000000000103a9                blake2b_init_param
+                0x0000000000010447                blake2b_init
+                0x000000000001053e                blake2b_init_key
+                0x0000000000016ac8                blake2b_update
+                0x0000000000016c29                blake2b_final
+                0x0000000000016df6                blake2b
+                0x0000000000016f55                blake2
+ .text          0x0000000000016fb0      0xdd0 compile/cache/c.blake2bp-ref.o
+                0x0000000000017273                blake2bp_init
+                0x000000000001737a                blake2bp_init_key
+                0x00000000000175a5                blake2bp_update
+                0x0000000000017788                blake2bp_final
+                0x0000000000017974                blake2bp
+ .text          0x0000000000017d80     0x4730 compile/cache/c.blake2s-ref.o
+                0x0000000000017fe8                blake2s_init_param
+                0x000000000001807f                blake2s_init
+                0x000000000001815a                blake2s_init_key
+                0x000000000001c09d                blake2s_update
+                0x000000000001c1ec                blake2s_final
+                0x000000000001c34c                blake2s
+ .text          0x000000000001c4b0      0xda0 compile/cache/c.blake2sp-ref.o
+                0x000000000001c774                blake2sp_init
+                0x000000000001c87b                blake2sp_init_key
+                0x000000000001ca85                blake2sp_update
+                0x000000000001cc68                blake2sp_final
+                0x000000000001ce51                blake2sp
+ .text          0x000000000001d250      0x730 compile/cache/c.blake2xb-ref.o
+                0x000000000001d348                blake2xb_init
+                0x000000000001d379                blake2xb_init_key
+                0x000000000001d5c7                blake2xb_update
+                0x000000000001d5f9                blake2xb_final
+                0x000000000001d851                blake2xb
+ .text          0x000000000001d980      0x6d0 compile/cache/c.blake2xs-ref.o
+                0x000000000001da9e                blake2xs_init
+                0x000000000001dacf                blake2xs_init_key
+                0x000000000001dcbf                blake2xs_update
+                0x000000000001dcf1                blake2xs_final
+                0x000000000001df2b                blake2xs
+ .text          0x000000000001e050     0x11a0 compile/cache/c.PCIe.o
+                0x000000000001e050                GetPCIeConfigurationBase
+                0x000000000001e257                ReadPCIeU32
+                0x000000000001e2e3                WritePCIeU32
+                0x000000000001e360                PCIeBARSize
+                0x000000000001e441                PCIeResolveBar
+                0x000000000001e67e                ReadPCIeVOIDPTR
+                0x000000000001e75b                WritePCIeVOIDPTR
+                0x000000000001e828                PCIeSearchDevice
+                0x000000000001e95b                PCIeDisableMsiX
+                0x000000000001eaff                PCIeEnableMsiX
+                0x000000000001eca1                PCIeGetMSIxEntry
+                0x000000000001ee07                SearchPCIeCapabilitiesN
+                0x000000000001eed6                ReadPCIeCapabilities
+ .text          0x000000000001f1f0     0x3300 compile/cache/asm.UTILS.o
+                0x000000000001f1f0                MovAlignedFloatsToXmm0
+                0x000000000001f20b                MovUAlignedFloatsToXmm0
+                0x000000000001f219                MovAlignedFloatsFromXmm0
+                0x000000000001f234                MovUAlignedFloatsFromXmm0
+                0x000000000001f242                AddFloatXmm0
+                0x000000000001f250                SubFloatXmm0
+                0x000000000001f25e                MulFloatXmm0
+                0x000000000001f26c                DivFloatXmm0
+                0x000000000001f27a                SqrtFloatXmm0
+                0x000000000001f288                AndFloatXmm0
+                0x000000000001f296                OrFloatXmm0
+                0x000000000001f2a4                XorFloatXmm0
+                0x000000000001f2b2                ClearFloatXmm0
+                0x000000000001f2c0                EqualToFloatXmm0
+                0x000000000001f2cf                LessThanFloatXmm0
+                0x000000000001f2de                NotEqualToFloatXmm0
+                0x000000000001f2ed                GreaterThanFloatXmm0
+                0x000000000001f2fc                BroadcastFloatLane0Xmm0
+                0x000000000001f30b                InterleaveLowFloatXmm0
+                0x000000000001f319                ConvertFloatToInt32TruncXmm0
+                0x000000000001f328                MovAlignedIntegersToXmm0
+                0x000000000001f344                MovUAlignedIntegersToXmm0
+                0x000000000001f353                MovAlignedIntegersFromXmm0
+                0x000000000001f36f                MovUAlignedIntegersFromXmm0
+                0x000000000001f37e                AddIntegerXmm0
+                0x000000000001f38d                SubIntegerXmm0
+                0x000000000001f39c                MulIntegerXmm0
+                0x000000000001f3ac                AndIntegerXmm0
+                0x000000000001f3bb                OrIntegerXmm0
+                0x000000000001f3ca                XorIntegerXmm0
+                0x000000000001f3d9                ClearIntegerXmm0
+                0x000000000001f3e8                MovAlignedDoublesToXmm0
+                0x000000000001f404                MovUAlignedDoublesToXmm0
+                0x000000000001f413                MovAlignedDoublesFromXmm0
+                0x000000000001f42f                MovUAlignedDoublesFromXmm0
+                0x000000000001f43e                AddDoubleXmm0
+                0x000000000001f44d                SubDoubleXmm0
+                0x000000000001f45c                MulDoubleXmm0
+                0x000000000001f46b                DivDoubleXmm0
+                0x000000000001f47a                SqrtDoubleXmm0
+                0x000000000001f489                MovAlignedVectorsToYmm0
+                0x000000000001f4a5                MovUAlignedVectorsToYmm0
+                0x000000000001f4b4                MovAlignedVectorsFromYmm0
+                0x000000000001f4d0                MovUAlignedVectorsFromYmm0
+                0x000000000001f4df                AddVectorYmm0
+                0x000000000001f4ee                SubVectorYmm0
+                0x000000000001f4fd                MulVectorYmm0
+                0x000000000001f50c                MovAlignedFloatsToXmm1
+                0x000000000001f527                MovUAlignedFloatsToXmm1
+                0x000000000001f535                MovAlignedFloatsFromXmm1
+                0x000000000001f550                MovUAlignedFloatsFromXmm1
+                0x000000000001f55e                AddFloatXmm1
+                0x000000000001f56c                SubFloatXmm1
+                0x000000000001f57a                MulFloatXmm1
+                0x000000000001f588                DivFloatXmm1
+                0x000000000001f596                SqrtFloatXmm1
+                0x000000000001f5a4                AndFloatXmm1
+                0x000000000001f5b2                OrFloatXmm1
+                0x000000000001f5c0                XorFloatXmm1
+                0x000000000001f5ce                ClearFloatXmm1
+                0x000000000001f5dc                EqualToFloatXmm1
+                0x000000000001f5eb                LessThanFloatXmm1
+                0x000000000001f5fa                NotEqualToFloatXmm1
+                0x000000000001f609                GreaterThanFloatXmm1
+                0x000000000001f618                BroadcastFloatLane0Xmm1
+                0x000000000001f627                InterleaveLowFloatXmm1
+                0x000000000001f635                ConvertFloatToInt32TruncXmm1
+                0x000000000001f644                MovAlignedIntegersToXmm1
+                0x000000000001f660                MovUAlignedIntegersToXmm1
+                0x000000000001f66f                MovAlignedIntegersFromXmm1
+                0x000000000001f68b                MovUAlignedIntegersFromXmm1
+                0x000000000001f69a                AddIntegerXmm1
+                0x000000000001f6a9                SubIntegerXmm1
+                0x000000000001f6b8                MulIntegerXmm1
+                0x000000000001f6c8                AndIntegerXmm1
+                0x000000000001f6d7                OrIntegerXmm1
+                0x000000000001f6e6                XorIntegerXmm1
+                0x000000000001f6f5                ClearIntegerXmm1
+                0x000000000001f704                MovAlignedDoublesToXmm1
+                0x000000000001f720                MovUAlignedDoublesToXmm1
+                0x000000000001f72f                MovAlignedDoublesFromXmm1
+                0x000000000001f74b                MovUAlignedDoublesFromXmm1
+                0x000000000001f75a                AddDoubleXmm1
+                0x000000000001f769                SubDoubleXmm1
+                0x000000000001f778                MulDoubleXmm1
+                0x000000000001f787                DivDoubleXmm1
+                0x000000000001f796                SqrtDoubleXmm1
+                0x000000000001f7a5                MovAlignedVectorsToYmm1
+                0x000000000001f7c1                MovUAlignedVectorsToYmm1
+                0x000000000001f7d0                MovAlignedVectorsFromYmm1
+                0x000000000001f7ec                MovUAlignedVectorsFromYmm1
+                0x000000000001f7fb                AddVectorYmm1
+                0x000000000001f80a                SubVectorYmm1
+                0x000000000001f819                MulVectorYmm1
+                0x000000000001f828                MovAlignedFloatsToXmm2
+                0x000000000001f843                MovUAlignedFloatsToXmm2
+                0x000000000001f851                MovAlignedFloatsFromXmm2
+                0x000000000001f86c                MovUAlignedFloatsFromXmm2
+                0x000000000001f87a                AddFloatXmm2
+                0x000000000001f888                SubFloatXmm2
+                0x000000000001f896                MulFloatXmm2
+                0x000000000001f8a4                DivFloatXmm2
+                0x000000000001f8b2                SqrtFloatXmm2
+                0x000000000001f8c0                AndFloatXmm2
+                0x000000000001f8ce                OrFloatXmm2
+                0x000000000001f8dc                XorFloatXmm2
+                0x000000000001f8ea                ClearFloatXmm2
+                0x000000000001f8f8                EqualToFloatXmm2
+                0x000000000001f907                LessThanFloatXmm2
+                0x000000000001f916                NotEqualToFloatXmm2
+                0x000000000001f925                GreaterThanFloatXmm2
+                0x000000000001f934                BroadcastFloatLane0Xmm2
+                0x000000000001f943                InterleaveLowFloatXmm2
+                0x000000000001f951                ConvertFloatToInt32TruncXmm2
+                0x000000000001f960                MovAlignedIntegersToXmm2
+                0x000000000001f97c                MovUAlignedIntegersToXmm2
+                0x000000000001f98b                MovAlignedIntegersFromXmm2
+                0x000000000001f9a7                MovUAlignedIntegersFromXmm2
+                0x000000000001f9b6                AddIntegerXmm2
+                0x000000000001f9c5                SubIntegerXmm2
+                0x000000000001f9d4                MulIntegerXmm2
+                0x000000000001f9e4                AndIntegerXmm2
+                0x000000000001f9f3                OrIntegerXmm2
+                0x000000000001fa02                XorIntegerXmm2
+                0x000000000001fa11                ClearIntegerXmm2
+                0x000000000001fa20                MovAlignedDoublesToXmm2
+                0x000000000001fa3c                MovUAlignedDoublesToXmm2
+                0x000000000001fa4b                MovAlignedDoublesFromXmm2
+                0x000000000001fa67                MovUAlignedDoublesFromXmm2
+                0x000000000001fa76                AddDoubleXmm2
+                0x000000000001fa85                SubDoubleXmm2
+                0x000000000001fa94                MulDoubleXmm2
+                0x000000000001faa3                DivDoubleXmm2
+                0x000000000001fab2                SqrtDoubleXmm2
+                0x000000000001fac1                MovAlignedVectorsToYmm2
+                0x000000000001fadd                MovUAlignedVectorsToYmm2
+                0x000000000001faec                MovAlignedVectorsFromYmm2
+                0x000000000001fb08                MovUAlignedVectorsFromYmm2
+                0x000000000001fb17                AddVectorYmm2
+                0x000000000001fb26                SubVectorYmm2
+                0x000000000001fb35                MulVectorYmm2
+                0x000000000001fb44                MovAlignedFloatsToXmm3
+                0x000000000001fb5f                MovUAlignedFloatsToXmm3
+                0x000000000001fb6d                MovAlignedFloatsFromXmm3
+                0x000000000001fb88                MovUAlignedFloatsFromXmm3
+                0x000000000001fb96                AddFloatXmm3
+                0x000000000001fba4                SubFloatXmm3
+                0x000000000001fbb2                MulFloatXmm3
+                0x000000000001fbc0                DivFloatXmm3
+                0x000000000001fbce                SqrtFloatXmm3
+                0x000000000001fbdc                AndFloatXmm3
+                0x000000000001fbea                OrFloatXmm3
+                0x000000000001fbf8                XorFloatXmm3
+                0x000000000001fc06                ClearFloatXmm3
+                0x000000000001fc14                EqualToFloatXmm3
+                0x000000000001fc23                LessThanFloatXmm3
+                0x000000000001fc32                NotEqualToFloatXmm3
+                0x000000000001fc41                GreaterThanFloatXmm3
+                0x000000000001fc50                BroadcastFloatLane0Xmm3
+                0x000000000001fc5f                InterleaveLowFloatXmm3
+                0x000000000001fc6d                ConvertFloatToInt32TruncXmm3
+                0x000000000001fc7c                MovAlignedIntegersToXmm3
+                0x000000000001fc98                MovUAlignedIntegersToXmm3
+                0x000000000001fca7                MovAlignedIntegersFromXmm3
+                0x000000000001fcc3                MovUAlignedIntegersFromXmm3
+                0x000000000001fcd2                AddIntegerXmm3
+                0x000000000001fce1                SubIntegerXmm3
+                0x000000000001fcf0                MulIntegerXmm3
+                0x000000000001fd00                AndIntegerXmm3
+                0x000000000001fd0f                OrIntegerXmm3
+                0x000000000001fd1e                XorIntegerXmm3
+                0x000000000001fd2d                ClearIntegerXmm3
+                0x000000000001fd3c                MovAlignedDoublesToXmm3
+                0x000000000001fd58                MovUAlignedDoublesToXmm3
+                0x000000000001fd67                MovAlignedDoublesFromXmm3
+                0x000000000001fd83                MovUAlignedDoublesFromXmm3
+                0x000000000001fd92                AddDoubleXmm3
+                0x000000000001fda1                SubDoubleXmm3
+                0x000000000001fdb0                MulDoubleXmm3
+                0x000000000001fdbf                DivDoubleXmm3
+                0x000000000001fdce                SqrtDoubleXmm3
+                0x000000000001fddd                MovAlignedVectorsToYmm3
+                0x000000000001fdf9                MovUAlignedVectorsToYmm3
+                0x000000000001fe08                MovAlignedVectorsFromYmm3
+                0x000000000001fe24                MovUAlignedVectorsFromYmm3
+                0x000000000001fe33                AddVectorYmm3
+                0x000000000001fe42                SubVectorYmm3
+                0x000000000001fe51                MulVectorYmm3
+                0x000000000001fe60                MovAlignedFloatsToXmm4
+                0x000000000001fe7b                MovUAlignedFloatsToXmm4
+                0x000000000001fe89                MovAlignedFloatsFromXmm4
+                0x000000000001fea4                MovUAlignedFloatsFromXmm4
+                0x000000000001feb2                AddFloatXmm4
+                0x000000000001fec0                SubFloatXmm4
+                0x000000000001fece                MulFloatXmm4
+                0x000000000001fedc                DivFloatXmm4
+                0x000000000001feea                SqrtFloatXmm4
+                0x000000000001fef8                AndFloatXmm4
+                0x000000000001ff06                OrFloatXmm4
+                0x000000000001ff14                XorFloatXmm4
+                0x000000000001ff22                ClearFloatXmm4
+                0x000000000001ff30                EqualToFloatXmm4
+                0x000000000001ff3f                LessThanFloatXmm4
+                0x000000000001ff4e                NotEqualToFloatXmm4
+                0x000000000001ff5d                GreaterThanFloatXmm4
+                0x000000000001ff6c                BroadcastFloatLane0Xmm4
+                0x000000000001ff7b                InterleaveLowFloatXmm4
+                0x000000000001ff89                ConvertFloatToInt32TruncXmm4
+                0x000000000001ff98                MovAlignedIntegersToXmm4
+                0x000000000001ffb4                MovUAlignedIntegersToXmm4
+                0x000000000001ffc3                MovAlignedIntegersFromXmm4
+                0x000000000001ffdf                MovUAlignedIntegersFromXmm4
+                0x000000000001ffee                AddIntegerXmm4
+                0x000000000001fffd                SubIntegerXmm4
+                0x000000000002000c                MulIntegerXmm4
+                0x000000000002001c                AndIntegerXmm4
+                0x000000000002002b                OrIntegerXmm4
+                0x000000000002003a                XorIntegerXmm4
+                0x0000000000020049                ClearIntegerXmm4
+                0x0000000000020058                MovAlignedDoublesToXmm4
+                0x0000000000020074                MovUAlignedDoublesToXmm4
+                0x0000000000020083                MovAlignedDoublesFromXmm4
+                0x000000000002009f                MovUAlignedDoublesFromXmm4
+                0x00000000000200ae                AddDoubleXmm4
+                0x00000000000200bd                SubDoubleXmm4
+                0x00000000000200cc                MulDoubleXmm4
+                0x00000000000200db                DivDoubleXmm4
+                0x00000000000200ea                SqrtDoubleXmm4
+                0x00000000000200f9                MovAlignedVectorsToYmm4
+                0x0000000000020115                MovUAlignedVectorsToYmm4
+                0x0000000000020124                MovAlignedVectorsFromYmm4
+                0x0000000000020140                MovUAlignedVectorsFromYmm4
+                0x000000000002014f                AddVectorYmm4
+                0x000000000002015e                SubVectorYmm4
+                0x000000000002016d                MulVectorYmm4
+                0x000000000002017c                MovAlignedFloatsToXmm5
+                0x0000000000020197                MovUAlignedFloatsToXmm5
+                0x00000000000201a5                MovAlignedFloatsFromXmm5
+                0x00000000000201c0                MovUAlignedFloatsFromXmm5
+                0x00000000000201ce                AddFloatXmm5
+                0x00000000000201dc                SubFloatXmm5
+                0x00000000000201ea                MulFloatXmm5
+                0x00000000000201f8                DivFloatXmm5
+                0x0000000000020206                SqrtFloatXmm5
+                0x0000000000020214                AndFloatXmm5
+                0x0000000000020222                OrFloatXmm5
+                0x0000000000020230                XorFloatXmm5
+                0x000000000002023e                ClearFloatXmm5
+                0x000000000002024c                EqualToFloatXmm5
+                0x000000000002025b                LessThanFloatXmm5
+                0x000000000002026a                NotEqualToFloatXmm5
+                0x0000000000020279                GreaterThanFloatXmm5
+                0x0000000000020288                BroadcastFloatLane0Xmm5
+                0x0000000000020297                InterleaveLowFloatXmm5
+                0x00000000000202a5                ConvertFloatToInt32TruncXmm5
+                0x00000000000202b4                MovAlignedIntegersToXmm5
+                0x00000000000202d0                MovUAlignedIntegersToXmm5
+                0x00000000000202df                MovAlignedIntegersFromXmm5
+                0x00000000000202fb                MovUAlignedIntegersFromXmm5
+                0x000000000002030a                AddIntegerXmm5
+                0x0000000000020319                SubIntegerXmm5
+                0x0000000000020328                MulIntegerXmm5
+                0x0000000000020338                AndIntegerXmm5
+                0x0000000000020347                OrIntegerXmm5
+                0x0000000000020356                XorIntegerXmm5
+                0x0000000000020365                ClearIntegerXmm5
+                0x0000000000020374                MovAlignedDoublesToXmm5
+                0x0000000000020390                MovUAlignedDoublesToXmm5
+                0x000000000002039f                MovAlignedDoublesFromXmm5
+                0x00000000000203bb                MovUAlignedDoublesFromXmm5
+                0x00000000000203ca                AddDoubleXmm5
+                0x00000000000203d9                SubDoubleXmm5
+                0x00000000000203e8                MulDoubleXmm5
+                0x00000000000203f7                DivDoubleXmm5
+                0x0000000000020406                SqrtDoubleXmm5
+                0x0000000000020415                MovAlignedVectorsToYmm5
+                0x0000000000020431                MovUAlignedVectorsToYmm5
+                0x0000000000020440                MovAlignedVectorsFromYmm5
+                0x000000000002045c                MovUAlignedVectorsFromYmm5
+                0x000000000002046b                AddVectorYmm5
+                0x000000000002047a                SubVectorYmm5
+                0x0000000000020489                MulVectorYmm5
+                0x0000000000020498                MovAlignedFloatsToXmm6
+                0x00000000000204b3                MovUAlignedFloatsToXmm6
+                0x00000000000204c1                MovAlignedFloatsFromXmm6
+                0x00000000000204dc                MovUAlignedFloatsFromXmm6
+                0x00000000000204ea                AddFloatXmm6
+                0x00000000000204f8                SubFloatXmm6
+                0x0000000000020506                MulFloatXmm6
+                0x0000000000020514                DivFloatXmm6
+                0x0000000000020522                SqrtFloatXmm6
+                0x0000000000020530                AndFloatXmm6
+                0x000000000002053e                OrFloatXmm6
+                0x000000000002054c                XorFloatXmm6
+                0x000000000002055a                ClearFloatXmm6
+                0x0000000000020568                EqualToFloatXmm6
+                0x0000000000020577                LessThanFloatXmm6
+                0x0000000000020586                NotEqualToFloatXmm6
+                0x0000000000020595                GreaterThanFloatXmm6
+                0x00000000000205a4                BroadcastFloatLane0Xmm6
+                0x00000000000205b3                InterleaveLowFloatXmm6
+                0x00000000000205c1                ConvertFloatToInt32TruncXmm6
+                0x00000000000205d0                MovAlignedIntegersToXmm6
+                0x00000000000205ec                MovUAlignedIntegersToXmm6
+                0x00000000000205fb                MovAlignedIntegersFromXmm6
+                0x0000000000020617                MovUAlignedIntegersFromXmm6
+                0x0000000000020626                AddIntegerXmm6
+                0x0000000000020635                SubIntegerXmm6
+                0x0000000000020644                MulIntegerXmm6
+                0x0000000000020654                AndIntegerXmm6
+                0x0000000000020663                OrIntegerXmm6
+                0x0000000000020672                XorIntegerXmm6
+                0x0000000000020681                ClearIntegerXmm6
+                0x0000000000020690                MovAlignedDoublesToXmm6
+                0x00000000000206ac                MovUAlignedDoublesToXmm6
+                0x00000000000206bb                MovAlignedDoublesFromXmm6
+                0x00000000000206d7                MovUAlignedDoublesFromXmm6
+                0x00000000000206e6                AddDoubleXmm6
+                0x00000000000206f5                SubDoubleXmm6
+                0x0000000000020704                MulDoubleXmm6
+                0x0000000000020713                DivDoubleXmm6
+                0x0000000000020722                SqrtDoubleXmm6
+                0x0000000000020731                MovAlignedVectorsToYmm6
+                0x000000000002074d                MovUAlignedVectorsToYmm6
+                0x000000000002075c                MovAlignedVectorsFromYmm6
+                0x0000000000020778                MovUAlignedVectorsFromYmm6
+                0x0000000000020787                AddVectorYmm6
+                0x0000000000020796                SubVectorYmm6
+                0x00000000000207a5                MulVectorYmm6
+                0x00000000000207b4                MovAlignedFloatsToXmm7
+                0x00000000000207cf                MovUAlignedFloatsToXmm7
+                0x00000000000207dd                MovAlignedFloatsFromXmm7
+                0x00000000000207f8                MovUAlignedFloatsFromXmm7
+                0x0000000000020806                AddFloatXmm7
+                0x0000000000020814                SubFloatXmm7
+                0x0000000000020822                MulFloatXmm7
+                0x0000000000020830                DivFloatXmm7
+                0x000000000002083e                SqrtFloatXmm7
+                0x000000000002084c                AndFloatXmm7
+                0x000000000002085a                OrFloatXmm7
+                0x0000000000020868                XorFloatXmm7
+                0x0000000000020876                ClearFloatXmm7
+                0x0000000000020884                EqualToFloatXmm7
+                0x0000000000020893                LessThanFloatXmm7
+                0x00000000000208a2                NotEqualToFloatXmm7
+                0x00000000000208b1                GreaterThanFloatXmm7
+                0x00000000000208c0                BroadcastFloatLane0Xmm7
+                0x00000000000208cf                InterleaveLowFloatXmm7
+                0x00000000000208dd                ConvertFloatToInt32TruncXmm7
+                0x00000000000208ec                MovAlignedIntegersToXmm7
+                0x0000000000020908                MovUAlignedIntegersToXmm7
+                0x0000000000020917                MovAlignedIntegersFromXmm7
+                0x0000000000020933                MovUAlignedIntegersFromXmm7
+                0x0000000000020942                AddIntegerXmm7
+                0x0000000000020951                SubIntegerXmm7
+                0x0000000000020960                MulIntegerXmm7
+                0x0000000000020970                AndIntegerXmm7
+                0x000000000002097f                OrIntegerXmm7
+                0x000000000002098e                XorIntegerXmm7
+                0x000000000002099d                ClearIntegerXmm7
+                0x00000000000209ac                MovAlignedDoublesToXmm7
+                0x00000000000209c8                MovUAlignedDoublesToXmm7
+                0x00000000000209d7                MovAlignedDoublesFromXmm7
+                0x00000000000209f3                MovUAlignedDoublesFromXmm7
+                0x0000000000020a02                AddDoubleXmm7
+                0x0000000000020a11                SubDoubleXmm7
+                0x0000000000020a20                MulDoubleXmm7
+                0x0000000000020a2f                DivDoubleXmm7
+                0x0000000000020a3e                SqrtDoubleXmm7
+                0x0000000000020a4d                MovAlignedVectorsToYmm7
+                0x0000000000020a69                MovUAlignedVectorsToYmm7
+                0x0000000000020a78                MovAlignedVectorsFromYmm7
+                0x0000000000020a94                MovUAlignedVectorsFromYmm7
+                0x0000000000020aa3                AddVectorYmm7
+                0x0000000000020ab2                SubVectorYmm7
+                0x0000000000020ac1                MulVectorYmm7
+                0x0000000000020ad0                MovAlignedFloatsToXmm8
+                0x0000000000020aec                MovUAlignedFloatsToXmm8
+                0x0000000000020afb                MovAlignedFloatsFromXmm8
+                0x0000000000020b17                MovUAlignedFloatsFromXmm8
+                0x0000000000020b26                AddFloatXmm8
+                0x0000000000020b35                SubFloatXmm8
+                0x0000000000020b44                MulFloatXmm8
+                0x0000000000020b53                DivFloatXmm8
+                0x0000000000020b62                SqrtFloatXmm8
+                0x0000000000020b71                AndFloatXmm8
+                0x0000000000020b80                OrFloatXmm8
+                0x0000000000020b8f                XorFloatXmm8
+                0x0000000000020b9e                ClearFloatXmm8
+                0x0000000000020bad                EqualToFloatXmm8
+                0x0000000000020bbd                LessThanFloatXmm8
+                0x0000000000020bcd                NotEqualToFloatXmm8
+                0x0000000000020bdd                GreaterThanFloatXmm8
+                0x0000000000020bed                BroadcastFloatLane0Xmm8
+                0x0000000000020bfd                InterleaveLowFloatXmm8
+                0x0000000000020c0c                ConvertFloatToInt32TruncXmm8
+                0x0000000000020c1c                MovAlignedIntegersToXmm8
+                0x0000000000020c39                MovUAlignedIntegersToXmm8
+                0x0000000000020c49                MovAlignedIntegersFromXmm8
+                0x0000000000020c66                MovUAlignedIntegersFromXmm8
+                0x0000000000020c76                AddIntegerXmm8
+                0x0000000000020c86                SubIntegerXmm8
+                0x0000000000020c96                MulIntegerXmm8
+                0x0000000000020ca7                AndIntegerXmm8
+                0x0000000000020cb7                OrIntegerXmm8
+                0x0000000000020cc7                XorIntegerXmm8
+                0x0000000000020cd7                ClearIntegerXmm8
+                0x0000000000020ce7                MovAlignedDoublesToXmm8
+                0x0000000000020d04                MovUAlignedDoublesToXmm8
+                0x0000000000020d14                MovAlignedDoublesFromXmm8
+                0x0000000000020d31                MovUAlignedDoublesFromXmm8
+                0x0000000000020d41                AddDoubleXmm8
+                0x0000000000020d51                SubDoubleXmm8
+                0x0000000000020d61                MulDoubleXmm8
+                0x0000000000020d71                DivDoubleXmm8
+                0x0000000000020d81                SqrtDoubleXmm8
+                0x0000000000020d91                MovAlignedVectorsToYmm8
+                0x0000000000020dad                MovUAlignedVectorsToYmm8
+                0x0000000000020dbc                MovAlignedVectorsFromYmm8
+                0x0000000000020dd8                MovUAlignedVectorsFromYmm8
+                0x0000000000020de7                AddVectorYmm8
+                0x0000000000020df6                SubVectorYmm8
+                0x0000000000020e05                MulVectorYmm8
+                0x0000000000020e14                MovAlignedFloatsToXmm9
+                0x0000000000020e30                MovUAlignedFloatsToXmm9
+                0x0000000000020e3f                MovAlignedFloatsFromXmm9
+                0x0000000000020e5b                MovUAlignedFloatsFromXmm9
+                0x0000000000020e6a                AddFloatXmm9
+                0x0000000000020e79                SubFloatXmm9
+                0x0000000000020e88                MulFloatXmm9
+                0x0000000000020e97                DivFloatXmm9
+                0x0000000000020ea6                SqrtFloatXmm9
+                0x0000000000020eb5                AndFloatXmm9
+                0x0000000000020ec4                OrFloatXmm9
+                0x0000000000020ed3                XorFloatXmm9
+                0x0000000000020ee2                ClearFloatXmm9
+                0x0000000000020ef1                EqualToFloatXmm9
+                0x0000000000020f01                LessThanFloatXmm9
+                0x0000000000020f11                NotEqualToFloatXmm9
+                0x0000000000020f21                GreaterThanFloatXmm9
+                0x0000000000020f31                BroadcastFloatLane0Xmm9
+                0x0000000000020f41                InterleaveLowFloatXmm9
+                0x0000000000020f50                ConvertFloatToInt32TruncXmm9
+                0x0000000000020f60                MovAlignedIntegersToXmm9
+                0x0000000000020f7d                MovUAlignedIntegersToXmm9
+                0x0000000000020f8d                MovAlignedIntegersFromXmm9
+                0x0000000000020faa                MovUAlignedIntegersFromXmm9
+                0x0000000000020fba                AddIntegerXmm9
+                0x0000000000020fca                SubIntegerXmm9
+                0x0000000000020fda                MulIntegerXmm9
+                0x0000000000020feb                AndIntegerXmm9
+                0x0000000000020ffb                OrIntegerXmm9
+                0x000000000002100b                XorIntegerXmm9
+                0x000000000002101b                ClearIntegerXmm9
+                0x000000000002102b                MovAlignedDoublesToXmm9
+                0x0000000000021048                MovUAlignedDoublesToXmm9
+                0x0000000000021058                MovAlignedDoublesFromXmm9
+                0x0000000000021075                MovUAlignedDoublesFromXmm9
+                0x0000000000021085                AddDoubleXmm9
+                0x0000000000021095                SubDoubleXmm9
+                0x00000000000210a5                MulDoubleXmm9
+                0x00000000000210b5                DivDoubleXmm9
+                0x00000000000210c5                SqrtDoubleXmm9
+                0x00000000000210d5                MovAlignedVectorsToYmm9
+                0x00000000000210f1                MovUAlignedVectorsToYmm9
+                0x0000000000021100                MovAlignedVectorsFromYmm9
+                0x000000000002111c                MovUAlignedVectorsFromYmm9
+                0x000000000002112b                AddVectorYmm9
+                0x000000000002113a                SubVectorYmm9
+                0x0000000000021149                MulVectorYmm9
+                0x0000000000021158                MovAlignedFloatsToXmm10
+                0x0000000000021174                MovUAlignedFloatsToXmm10
+                0x0000000000021183                MovAlignedFloatsFromXmm10
+                0x000000000002119f                MovUAlignedFloatsFromXmm10
+                0x00000000000211ae                AddFloatXmm10
+                0x00000000000211bd                SubFloatXmm10
+                0x00000000000211cc                MulFloatXmm10
+                0x00000000000211db                DivFloatXmm10
+                0x00000000000211ea                SqrtFloatXmm10
+                0x00000000000211f9                AndFloatXmm10
+                0x0000000000021208                OrFloatXmm10
+                0x0000000000021217                XorFloatXmm10
+                0x0000000000021226                ClearFloatXmm10
+                0x0000000000021235                EqualToFloatXmm10
+                0x0000000000021245                LessThanFloatXmm10
+                0x0000000000021255                NotEqualToFloatXmm10
+                0x0000000000021265                GreaterThanFloatXmm10
+                0x0000000000021275                BroadcastFloatLane0Xmm10
+                0x0000000000021285                InterleaveLowFloatXmm10
+                0x0000000000021294                ConvertFloatToInt32TruncXmm10
+                0x00000000000212a4                MovAlignedIntegersToXmm10
+                0x00000000000212c1                MovUAlignedIntegersToXmm10
+                0x00000000000212d1                MovAlignedIntegersFromXmm10
+                0x00000000000212ee                MovUAlignedIntegersFromXmm10
+                0x00000000000212fe                AddIntegerXmm10
+                0x000000000002130e                SubIntegerXmm10
+                0x000000000002131e                MulIntegerXmm10
+                0x000000000002132f                AndIntegerXmm10
+                0x000000000002133f                OrIntegerXmm10
+                0x000000000002134f                XorIntegerXmm10
+                0x000000000002135f                ClearIntegerXmm10
+                0x000000000002136f                MovAlignedDoublesToXmm10
+                0x000000000002138c                MovUAlignedDoublesToXmm10
+                0x000000000002139c                MovAlignedDoublesFromXmm10
+                0x00000000000213b9                MovUAlignedDoublesFromXmm10
+                0x00000000000213c9                AddDoubleXmm10
+                0x00000000000213d9                SubDoubleXmm10
+                0x00000000000213e9                MulDoubleXmm10
+                0x00000000000213f9                DivDoubleXmm10
+                0x0000000000021409                SqrtDoubleXmm10
+                0x0000000000021419                MovAlignedVectorsToYmm10
+                0x0000000000021435                MovUAlignedVectorsToYmm10
+                0x0000000000021444                MovAlignedVectorsFromYmm10
+                0x0000000000021460                MovUAlignedVectorsFromYmm10
+                0x000000000002146f                AddVectorYmm10
+                0x000000000002147e                SubVectorYmm10
+                0x000000000002148d                MulVectorYmm10
+                0x000000000002149c                MovAlignedFloatsToXmm11
+                0x00000000000214b8                MovUAlignedFloatsToXmm11
+                0x00000000000214c7                MovAlignedFloatsFromXmm11
+                0x00000000000214e3                MovUAlignedFloatsFromXmm11
+                0x00000000000214f2                AddFloatXmm11
+                0x0000000000021501                SubFloatXmm11
+                0x0000000000021510                MulFloatXmm11
+                0x000000000002151f                DivFloatXmm11
+                0x000000000002152e                SqrtFloatXmm11
+                0x000000000002153d                AndFloatXmm11
+                0x000000000002154c                OrFloatXmm11
+                0x000000000002155b                XorFloatXmm11
+                0x000000000002156a                ClearFloatXmm11
+                0x0000000000021579                EqualToFloatXmm11
+                0x0000000000021589                LessThanFloatXmm11
+                0x0000000000021599                NotEqualToFloatXmm11
+                0x00000000000215a9                GreaterThanFloatXmm11
+                0x00000000000215b9                BroadcastFloatLane0Xmm11
+                0x00000000000215c9                InterleaveLowFloatXmm11
+                0x00000000000215d8                ConvertFloatToInt32TruncXmm11
+                0x00000000000215e8                MovAlignedIntegersToXmm11
+                0x0000000000021605                MovUAlignedIntegersToXmm11
+                0x0000000000021615                MovAlignedIntegersFromXmm11
+                0x0000000000021632                MovUAlignedIntegersFromXmm11
+                0x0000000000021642                AddIntegerXmm11
+                0x0000000000021652                SubIntegerXmm11
+                0x0000000000021662                MulIntegerXmm11
+                0x0000000000021673                AndIntegerXmm11
+                0x0000000000021683                OrIntegerXmm11
+                0x0000000000021693                XorIntegerXmm11
+                0x00000000000216a3                ClearIntegerXmm11
+                0x00000000000216b3                MovAlignedDoublesToXmm11
+                0x00000000000216d0                MovUAlignedDoublesToXmm11
+                0x00000000000216e0                MovAlignedDoublesFromXmm11
+                0x00000000000216fd                MovUAlignedDoublesFromXmm11
+                0x000000000002170d                AddDoubleXmm11
+                0x000000000002171d                SubDoubleXmm11
+                0x000000000002172d                MulDoubleXmm11
+                0x000000000002173d                DivDoubleXmm11
+                0x000000000002174d                SqrtDoubleXmm11
+                0x000000000002175d                MovAlignedVectorsToYmm11
+                0x0000000000021779                MovUAlignedVectorsToYmm11
+                0x0000000000021788                MovAlignedVectorsFromYmm11
+                0x00000000000217a4                MovUAlignedVectorsFromYmm11
+                0x00000000000217b3                AddVectorYmm11
+                0x00000000000217c2                SubVectorYmm11
+                0x00000000000217d1                MulVectorYmm11
+                0x00000000000217e0                MovAlignedFloatsToXmm12
+                0x00000000000217fc                MovUAlignedFloatsToXmm12
+                0x000000000002180b                MovAlignedFloatsFromXmm12
+                0x0000000000021827                MovUAlignedFloatsFromXmm12
+                0x0000000000021836                AddFloatXmm12
+                0x0000000000021845                SubFloatXmm12
+                0x0000000000021854                MulFloatXmm12
+                0x0000000000021863                DivFloatXmm12
+                0x0000000000021872                SqrtFloatXmm12
+                0x0000000000021881                AndFloatXmm12
+                0x0000000000021890                OrFloatXmm12
+                0x000000000002189f                XorFloatXmm12
+                0x00000000000218ae                ClearFloatXmm12
+                0x00000000000218bd                EqualToFloatXmm12
+                0x00000000000218cd                LessThanFloatXmm12
+                0x00000000000218dd                NotEqualToFloatXmm12
+                0x00000000000218ed                GreaterThanFloatXmm12
+                0x00000000000218fd                BroadcastFloatLane0Xmm12
+                0x000000000002190d                InterleaveLowFloatXmm12
+                0x000000000002191c                ConvertFloatToInt32TruncXmm12
+                0x000000000002192c                MovAlignedIntegersToXmm12
+                0x0000000000021949                MovUAlignedIntegersToXmm12
+                0x0000000000021959                MovAlignedIntegersFromXmm12
+                0x0000000000021976                MovUAlignedIntegersFromXmm12
+                0x0000000000021986                AddIntegerXmm12
+                0x0000000000021996                SubIntegerXmm12
+                0x00000000000219a6                MulIntegerXmm12
+                0x00000000000219b7                AndIntegerXmm12
+                0x00000000000219c7                OrIntegerXmm12
+                0x00000000000219d7                XorIntegerXmm12
+                0x00000000000219e7                ClearIntegerXmm12
+                0x00000000000219f7                MovAlignedDoublesToXmm12
+                0x0000000000021a14                MovUAlignedDoublesToXmm12
+                0x0000000000021a24                MovAlignedDoublesFromXmm12
+                0x0000000000021a41                MovUAlignedDoublesFromXmm12
+                0x0000000000021a51                AddDoubleXmm12
+                0x0000000000021a61                SubDoubleXmm12
+                0x0000000000021a71                MulDoubleXmm12
+                0x0000000000021a81                DivDoubleXmm12
+                0x0000000000021a91                SqrtDoubleXmm12
+                0x0000000000021aa1                MovAlignedVectorsToYmm12
+                0x0000000000021abd                MovUAlignedVectorsToYmm12
+                0x0000000000021acc                MovAlignedVectorsFromYmm12
+                0x0000000000021ae8                MovUAlignedVectorsFromYmm12
+                0x0000000000021af7                AddVectorYmm12
+                0x0000000000021b06                SubVectorYmm12
+                0x0000000000021b15                MulVectorYmm12
+                0x0000000000021b24                MovAlignedFloatsToXmm13
+                0x0000000000021b40                MovUAlignedFloatsToXmm13
+                0x0000000000021b4f                MovAlignedFloatsFromXmm13
+                0x0000000000021b6b                MovUAlignedFloatsFromXmm13
+                0x0000000000021b7a                AddFloatXmm13
+                0x0000000000021b89                SubFloatXmm13
+                0x0000000000021b98                MulFloatXmm13
+                0x0000000000021ba7                DivFloatXmm13
+                0x0000000000021bb6                SqrtFloatXmm13
+                0x0000000000021bc5                AndFloatXmm13
+                0x0000000000021bd4                OrFloatXmm13
+                0x0000000000021be3                XorFloatXmm13
+                0x0000000000021bf2                ClearFloatXmm13
+                0x0000000000021c01                EqualToFloatXmm13
+                0x0000000000021c11                LessThanFloatXmm13
+                0x0000000000021c21                NotEqualToFloatXmm13
+                0x0000000000021c31                GreaterThanFloatXmm13
+                0x0000000000021c41                BroadcastFloatLane0Xmm13
+                0x0000000000021c51                InterleaveLowFloatXmm13
+                0x0000000000021c60                ConvertFloatToInt32TruncXmm13
+                0x0000000000021c70                MovAlignedIntegersToXmm13
+                0x0000000000021c8d                MovUAlignedIntegersToXmm13
+                0x0000000000021c9d                MovAlignedIntegersFromXmm13
+                0x0000000000021cba                MovUAlignedIntegersFromXmm13
+                0x0000000000021cca                AddIntegerXmm13
+                0x0000000000021cda                SubIntegerXmm13
+                0x0000000000021cea                MulIntegerXmm13
+                0x0000000000021cfb                AndIntegerXmm13
+                0x0000000000021d0b                OrIntegerXmm13
+                0x0000000000021d1b                XorIntegerXmm13
+                0x0000000000021d2b                ClearIntegerXmm13
+                0x0000000000021d3b                MovAlignedDoublesToXmm13
+                0x0000000000021d58                MovUAlignedDoublesToXmm13
+                0x0000000000021d68                MovAlignedDoublesFromXmm13
+                0x0000000000021d85                MovUAlignedDoublesFromXmm13
+                0x0000000000021d95                AddDoubleXmm13
+                0x0000000000021da5                SubDoubleXmm13
+                0x0000000000021db5                MulDoubleXmm13
+                0x0000000000021dc5                DivDoubleXmm13
+                0x0000000000021dd5                SqrtDoubleXmm13
+                0x0000000000021de5                MovAlignedVectorsToYmm13
+                0x0000000000021e01                MovUAlignedVectorsToYmm13
+                0x0000000000021e10                MovAlignedVectorsFromYmm13
+                0x0000000000021e2c                MovUAlignedVectorsFromYmm13
+                0x0000000000021e3b                AddVectorYmm13
+                0x0000000000021e4a                SubVectorYmm13
+                0x0000000000021e59                MulVectorYmm13
+                0x0000000000021e68                MovAlignedFloatsToXmm14
+                0x0000000000021e84                MovUAlignedFloatsToXmm14
+                0x0000000000021e93                MovAlignedFloatsFromXmm14
+                0x0000000000021eaf                MovUAlignedFloatsFromXmm14
+                0x0000000000021ebe                AddFloatXmm14
+                0x0000000000021ecd                SubFloatXmm14
+                0x0000000000021edc                MulFloatXmm14
+                0x0000000000021eeb                DivFloatXmm14
+                0x0000000000021efa                SqrtFloatXmm14
+                0x0000000000021f09                AndFloatXmm14
+                0x0000000000021f18                OrFloatXmm14
+                0x0000000000021f27                XorFloatXmm14
+                0x0000000000021f36                ClearFloatXmm14
+                0x0000000000021f45                EqualToFloatXmm14
+                0x0000000000021f55                LessThanFloatXmm14
+                0x0000000000021f65                NotEqualToFloatXmm14
+                0x0000000000021f75                GreaterThanFloatXmm14
+                0x0000000000021f85                BroadcastFloatLane0Xmm14
+                0x0000000000021f95                InterleaveLowFloatXmm14
+                0x0000000000021fa4                ConvertFloatToInt32TruncXmm14
+                0x0000000000021fb4                MovAlignedIntegersToXmm14
+                0x0000000000021fd1                MovUAlignedIntegersToXmm14
+                0x0000000000021fe1                MovAlignedIntegersFromXmm14
+                0x0000000000021ffe                MovUAlignedIntegersFromXmm14
+                0x000000000002200e                AddIntegerXmm14
+                0x000000000002201e                SubIntegerXmm14
+                0x000000000002202e                MulIntegerXmm14
+                0x000000000002203f                AndIntegerXmm14
+                0x000000000002204f                OrIntegerXmm14
+                0x000000000002205f                XorIntegerXmm14
+                0x000000000002206f                ClearIntegerXmm14
+                0x000000000002207f                MovAlignedDoublesToXmm14
+                0x000000000002209c                MovUAlignedDoublesToXmm14
+                0x00000000000220ac                MovAlignedDoublesFromXmm14
+                0x00000000000220c9                MovUAlignedDoublesFromXmm14
+                0x00000000000220d9                AddDoubleXmm14
+                0x00000000000220e9                SubDoubleXmm14
+                0x00000000000220f9                MulDoubleXmm14
+                0x0000000000022109                DivDoubleXmm14
+                0x0000000000022119                SqrtDoubleXmm14
+                0x0000000000022129                MovAlignedVectorsToYmm14
+                0x0000000000022145                MovUAlignedVectorsToYmm14
+                0x0000000000022154                MovAlignedVectorsFromYmm14
+                0x0000000000022170                MovUAlignedVectorsFromYmm14
+                0x000000000002217f                AddVectorYmm14
+                0x000000000002218e                SubVectorYmm14
+                0x000000000002219d                MulVectorYmm14
+                0x00000000000221ac                MovAlignedFloatsToXmm15
+                0x00000000000221c8                MovUAlignedFloatsToXmm15
+                0x00000000000221d7                MovAlignedFloatsFromXmm15
+                0x00000000000221f3                MovUAlignedFloatsFromXmm15
+                0x0000000000022202                AddFloatXmm15
+                0x0000000000022211                SubFloatXmm15
+                0x0000000000022220                MulFloatXmm15
+                0x000000000002222f                DivFloatXmm15
+                0x000000000002223e                SqrtFloatXmm15
+                0x000000000002224d                AndFloatXmm15
+                0x000000000002225c                OrFloatXmm15
+                0x000000000002226b                XorFloatXmm15
+                0x000000000002227a                ClearFloatXmm15
+                0x0000000000022289                EqualToFloatXmm15
+                0x0000000000022299                LessThanFloatXmm15
+                0x00000000000222a9                NotEqualToFloatXmm15
+                0x00000000000222b9                GreaterThanFloatXmm15
+                0x00000000000222c9                BroadcastFloatLane0Xmm15
+                0x00000000000222d9                InterleaveLowFloatXmm15
+                0x00000000000222e8                ConvertFloatToInt32TruncXmm15
+                0x00000000000222f8                MovAlignedIntegersToXmm15
+                0x0000000000022315                MovUAlignedIntegersToXmm15
+                0x0000000000022325                MovAlignedIntegersFromXmm15
+                0x0000000000022342                MovUAlignedIntegersFromXmm15
+                0x0000000000022352                AddIntegerXmm15
+                0x0000000000022362                SubIntegerXmm15
+                0x0000000000022372                MulIntegerXmm15
+                0x0000000000022383                AndIntegerXmm15
+                0x0000000000022393                OrIntegerXmm15
+                0x00000000000223a3                XorIntegerXmm15
+                0x00000000000223b3                ClearIntegerXmm15
+                0x00000000000223c3                MovAlignedDoublesToXmm15
+                0x00000000000223e0                MovUAlignedDoublesToXmm15
+                0x00000000000223f0                MovAlignedDoublesFromXmm15
+                0x000000000002240d                MovUAlignedDoublesFromXmm15
+                0x000000000002241d                AddDoubleXmm15
+                0x000000000002242d                SubDoubleXmm15
+                0x000000000002243d                MulDoubleXmm15
+                0x000000000002244d                DivDoubleXmm15
+                0x000000000002245d                SqrtDoubleXmm15
+                0x000000000002246d                MovAlignedVectorsToYmm15
+                0x0000000000022489                MovUAlignedVectorsToYmm15
+                0x0000000000022498                MovAlignedVectorsFromYmm15
+                0x00000000000224b4                MovUAlignedVectorsFromYmm15
+                0x00000000000224c3                AddVectorYmm15
+                0x00000000000224d2                SubVectorYmm15
+                0x00000000000224e1                MulVectorYmm15
  *(SORT_BY_NAME(.text$*))
  *(.text.*)
  *(.gnu.linkonce.t.*)
  *(.glue_7t)
  *(.glue_7)
-                0x0000000140001ec0                . = ALIGN (0x8)
+                0x00000000000224f0                . = ALIGN (0x8)
  *(SORT_NONE(.fini))
  *(.gcc_exc)
                 [!provide]                        PROVIDE (etext = .)
  *(.gcc_except_table)
 
-.data           0x0000000140002000     0x2000
-                0x0000000140002000                __data_start__ = .
+.data           0x0000000000023000     0x1000
+                0x0000000000023000                __data_start__ = .
  *(.data)
- .data          0x0000000140002000      0x520 compile/cache/c.kboot.o
-                0x0000000140002200                ASCII
-                0x00000001400024f8                ASCIILength
+ .data          0x0000000000023000        0x0 compile/cache/c.RNG.o
+ .data          0x0000000000023000        0x0 compile/cache/c.GDT.o
+ .data          0x0000000000023000        0x0 compile/cache/c.paging.o
+ .data          0x0000000000023000       0xa2 compile/cache/asm.SSE.o
+ *fill*         0x00000000000230a2        0xe 
+ .data          0x00000000000230b0        0x0 compile/cache/c.SSE.o
+ .data          0x00000000000230b0        0x0 compile/cache/c.memory.o
+ .data          0x00000000000230b0        0x0 compile/cache/c.string.o
+ .data          0x00000000000230b0        0x0 compile/cache/c.palloc.o
+ .data          0x00000000000230b0        0x0 compile/cache/c.palloc(1).o
+ .data          0x00000000000230b0        0x0 compile/cache/c.mmalloc.o
+ .data          0x00000000000230b0       0x10 compile/cache/c.math.o
+                0x00000000000230b0                local_precision
+ .data          0x00000000000230c0      0x800 compile/cache/c.ISR.o
+                0x00000000000230c0                InterruptCallbacks
+ .data          0x00000000000238c0        0x0 compile/cache/c.ACPI.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.APIC.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.IOAPIC.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.LocalAPIC.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.LocalAPICTimer.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.hardware.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.blake2b-ref.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.blake2bp-ref.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.blake2s-ref.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.blake2sp-ref.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.blake2xb-ref.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.blake2xs-ref.o
+ .data          0x00000000000238c0        0x0 compile/cache/c.PCIe.o
  *(.data2)
  *(SORT_BY_NAME(.data$*))
- *(.rdata)
- .rdata         0x0000000140002520      0xac0 compile/cache/c.kboot.o
-                0x0000000140002690                SupportedIODevices
-                0x00000001400026a2                TotalSupportedIODevices
- *(SORT_BY_NAME(.rdata$*))
- .rdata$.refptr.InterruptCallbacks
-                0x0000000140002fe0       0x10 compile/cache/c.kboot.o
-                0x0000000140002fe0                .refptr.InterruptCallbacks
-                0x0000000140002fe0                __fu0_InterruptCallbacks
- .rdata$zzz     0x0000000140002ff0       0x30 compile/cache/c.kboot.o
  *(.jcr)
-                0x0000000140003020                __data_end__ = .
+                0x00000000000238c0                __data_end__ = .
  *(.data_cygwin_nocopy)
 
-IDT             0x0000000140004000     0x2000
- IDT            0x0000000140004000     0x1800 compile/cache/c.kboot.o
-                0x0000000140004000                InterruptTable
-
-.rdata          0x0000000140006000     0x1000
-                0x0000000140006000                . = ALIGN (0x4)
-                0x0000000140006000                __rt_psrelocs_start = .
+.rdata          0x0000000000024000     0x3000
+ *(.rdata)
+ .rdata         0x0000000000024000     0x1780 compile/cache/c.SSE.o
+ .rdata         0x0000000000025780       0x20 compile/cache/c.mmalloc.o
+ .rdata         0x00000000000257a0       0x90 compile/cache/c.math.o
+ *fill*         0x0000000000025830       0x10 
+ .rdata         0x0000000000025840       0xc0 compile/cache/c.ISR.o
+ .rdata         0x0000000000025900       0xe0 compile/cache/c.ACPI.o
+ .rdata         0x00000000000259e0       0xc0 compile/cache/c.APIC.o
+ .rdata         0x0000000000025aa0       0xe0 compile/cache/c.IOAPIC.o
+ .rdata         0x0000000000025b80       0xe0 compile/cache/c.LocalAPIC.o
+ .rdata         0x0000000000025c60       0xc0 compile/cache/c.LocalAPICTimer.o
+ .rdata         0x0000000000025d20       0xe0 compile/cache/c.hardware.o
+ .rdata         0x0000000000025e00      0x120 compile/cache/c.blake2b-ref.o
+ .rdata         0x0000000000025f20       0x10 compile/cache/c.blake2bp-ref.o
+ *fill*         0x0000000000025f30       0x10 
+ .rdata         0x0000000000025f40       0xe0 compile/cache/c.blake2s-ref.o
+ .rdata         0x0000000000026020       0x10 compile/cache/c.blake2sp-ref.o
+ .rdata         0x0000000000026030       0x10 compile/cache/c.blake2xb-ref.o
+ .rdata         0x0000000000026040       0x10 compile/cache/c.blake2xs-ref.o
+ .rdata         0x0000000000026050       0x10 compile/cache/c.PCIe.o
+ *(SORT_BY_NAME(.rdata$*))
+ .rdata$zzz     0x0000000000026060       0x30 compile/cache/c.RNG.o
+ .rdata$zzz     0x0000000000026090       0x30 compile/cache/c.GDT.o
+ .rdata$zzz     0x00000000000260c0       0x30 compile/cache/c.paging.o
+ .rdata$zzz     0x00000000000260f0       0x30 compile/cache/c.SSE.o
+ .rdata$zzz     0x0000000000026120       0x30 compile/cache/c.memory.o
+ .rdata$zzz     0x0000000000026150       0x30 compile/cache/c.string.o
+ .rdata$zzz     0x0000000000026180       0x30 compile/cache/c.palloc.o
+ .rdata$zzz     0x00000000000261b0       0x30 compile/cache/c.palloc(1).o
+ .rdata$zzz     0x00000000000261e0       0x30 compile/cache/c.mmalloc.o
+ .rdata$zzz     0x0000000000026210       0x30 compile/cache/c.math.o
+ .rdata$zzz     0x0000000000026240       0x30 compile/cache/c.ISR.o
+ .rdata$zzz     0x0000000000026270       0x30 compile/cache/c.ACPI.o
+ .rdata$zzz     0x00000000000262a0       0x30 compile/cache/c.APIC.o
+ .rdata$zzz     0x00000000000262d0       0x30 compile/cache/c.IOAPIC.o
+ .rdata$zzz     0x0000000000026300       0x30 compile/cache/c.LocalAPIC.o
+ .rdata$zzz     0x0000000000026330       0x30 compile/cache/c.LocalAPICTimer.o
+ .rdata$zzz     0x0000000000026360       0x30 compile/cache/c.hardware.o
+ .rdata$zzz     0x0000000000026390       0x30 compile/cache/c.blake2b-ref.o
+ .rdata$zzz     0x00000000000263c0       0x30 compile/cache/c.blake2bp-ref.o
+ .rdata$zzz     0x00000000000263f0       0x30 compile/cache/c.blake2s-ref.o
+ .rdata$zzz     0x0000000000026420       0x30 compile/cache/c.blake2sp-ref.o
+ .rdata$zzz     0x0000000000026450       0x30 compile/cache/c.blake2xb-ref.o
+ .rdata$zzz     0x0000000000026480       0x30 compile/cache/c.blake2xs-ref.o
+ .rdata$zzz     0x00000000000264b0       0x30 compile/cache/c.PCIe.o
+                0x00000000000264e0                . = ALIGN (0x4)
+                0x00000000000264e0                __rt_psrelocs_start = .
  *(.rdata_runtime_pseudo_reloc)
-                0x0000000140006000                __rt_psrelocs_end = .
-                0x0000000140006000                . = ALIGN (0x8)
-                0x0000000140006000                __DELAY_IMPORT_DIRECTORY_start__ = .
+                0x00000000000264e0                __rt_psrelocs_end = .
+                0x00000000000264e0                . = ALIGN (0x8)
+                0x00000000000264e0                __DELAY_IMPORT_DIRECTORY_start__ = .
  SORT_BY_NAME(*)(.didat$2)
  SORT_BY_NAME(*)(.didat$3)
-                0x0000000140006000                __DELAY_IMPORT_DIRECTORY_end__ = .
-                0x0000000140006000                . = (. + (__DELAY_IMPORT_DIRECTORY_end__ - __DELAY_IMPORT_DIRECTORY_start__)?0x20:0x0)
-                0x0000000140006000                . = ALIGN (0x8)
+                0x00000000000264e0                __DELAY_IMPORT_DIRECTORY_end__ = .
+                0x00000000000264e0                . = (. + (__DELAY_IMPORT_DIRECTORY_end__ - __DELAY_IMPORT_DIRECTORY_start__)?0x20:0x0)
+                0x00000000000264e0                . = ALIGN (0x8)
  SORT_BY_NAME(*)(.didat$4)
  SORT_BY_NAME(*)(.didat$6)
  SORT_BY_NAME(*)(.didat$7)
-                0x0000000140006000                . = ALIGN (0x8)
-                0x0000000140006000                ___CTOR_LIST__ = .
-                0x0000000140006000                __CTOR_LIST__ = .
-                0x0000000140006000        0x4 LONG 0xffffffffffffffff
-                0x0000000140006004        0x4 LONG 0xffffffffffffffff
+                0x00000000000264e0                . = ALIGN (0x8)
+                0x00000000000264e0                ___CTOR_LIST__ = .
+                0x00000000000264e0                __CTOR_LIST__ = .
+                0x00000000000264e0        0x4 LONG 0xffffffffffffffff
+                0x00000000000264e4        0x4 LONG 0xffffffffffffffff
  *(.ctors)
  *(.ctor)
  *(SORT_BY_NAME(.ctors.*))
-                0x0000000140006008        0x4 LONG 0x0
-                0x000000014000600c        0x4 LONG 0x0
-                0x0000000140006010                ___DTOR_LIST__ = .
-                0x0000000140006010                __DTOR_LIST__ = .
-                0x0000000140006010        0x4 LONG 0xffffffffffffffff
-                0x0000000140006014        0x4 LONG 0xffffffffffffffff
+                0x00000000000264e8        0x4 LONG 0x0
+                0x00000000000264ec        0x4 LONG 0x0
+                0x00000000000264f0                ___DTOR_LIST__ = .
+                0x00000000000264f0                __DTOR_LIST__ = .
+                0x00000000000264f0        0x4 LONG 0xffffffffffffffff
+                0x00000000000264f4        0x4 LONG 0xffffffffffffffff
  *(.dtors)
  *(.dtor)
  *(SORT_BY_NAME(.dtors.*))
-                0x0000000140006018        0x4 LONG 0x0
-                0x000000014000601c        0x4 LONG 0x0
-                0x0000000140006020                ___crt_xc_start__ = .
+                0x00000000000264f8        0x4 LONG 0x0
+                0x00000000000264fc        0x4 LONG 0x0
+                0x0000000000026500                ___crt_xc_start__ = .
  *(SORT_BY_NAME(.CRT$XC*))
-                0x0000000140006020                ___crt_xc_end__ = .
-                0x0000000140006020                ___crt_xi_start__ = .
+                0x0000000000026500                ___crt_xc_end__ = .
+                0x0000000000026500                ___crt_xi_start__ = .
  *(SORT_BY_NAME(.CRT$XI*))
-                0x0000000140006020                ___crt_xi_end__ = .
-                0x0000000140006020                ___crt_xl_start__ = .
+                0x0000000000026500                ___crt_xi_end__ = .
+                0x0000000000026500                ___crt_xl_start__ = .
  *(SORT_BY_NAME(.CRT$XL*))
-                0x0000000140006020                ___crt_xp_start__ = .
+                0x0000000000026500                ___crt_xp_start__ = .
  *(SORT_BY_NAME(.CRT$XP*))
-                0x0000000140006020                ___crt_xp_end__ = .
-                0x0000000140006020                ___crt_xt_start__ = .
+                0x0000000000026500                ___crt_xp_end__ = .
+                0x0000000000026500                ___crt_xt_start__ = .
  *(SORT_BY_NAME(.CRT$XT*))
-                0x0000000140006020                ___crt_xt_end__ = .
-                0x0000000140006020                ___crt_xd_start__ = .
+                0x0000000000026500                ___crt_xt_end__ = .
+                0x0000000000026500                ___crt_xd_start__ = .
  *(SORT_BY_NAME(.CRT$XD*))
-                0x0000000140006020                ___crt_xd_end__ = .
-                0x0000000140006000                ___RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
-                0x0000000140006000                __RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
-                0x0000000140006000                ___RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
-                0x0000000140006000                __RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+                0x0000000000026500                ___crt_xd_end__ = .
+                0x00000000000264e0                ___RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x00000000000264e0                __RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x00000000000264e0                ___RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+                0x00000000000264e0                __RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
 
 .eh_frame
  *(.eh_frame*)
 
-.pdata          0x0000000140007000     0x1000
+.pdata
  *(.pdata*)
- .pdata         0x0000000140007000       0x54 compile/cache/c.kboot.o
 
-.xdata          0x0000000140008000     0x1000
+.xdata
  *(.xdata*)
- .xdata         0x0000000140008000       0x34 compile/cache/c.kboot.o
 
-.bss            0x0000000140009000    0x10020
-                0x0000000140009000                __bss_start__ = .
+.bss            0x0000000000027000     0x2b50
+                0x0000000000027000                __bss_start__ = .
  *(.bss)
- .bss           0x0000000140009000    0x10020 compile/cache/c.kboot.o
+ .bss           0x0000000000027000        0x0 compile/cache/c.RNG.o
+ .bss           0x0000000000027000        0x0 compile/cache/c.GDT.o
+ .bss           0x0000000000027000        0x0 compile/cache/c.paging.o
+ .bss           0x0000000000027000     0x2100 compile/cache/c.SSE.o
+ .bss           0x0000000000029100       0x10 compile/cache/c.memory.o
+ .bss           0x0000000000029110        0x0 compile/cache/c.string.o
+ .bss           0x0000000000029110       0x10 compile/cache/c.palloc.o
+ .bss           0x0000000000029120        0x0 compile/cache/c.palloc(1).o
+ .bss           0x0000000000029120       0x20 compile/cache/c.mmalloc.o
+ .bss           0x0000000000029140      0x9e0 compile/cache/c.math.o
+ .bss           0x0000000000029b20        0x0 compile/cache/c.ISR.o
+ .bss           0x0000000000029b20        0x0 compile/cache/c.ACPI.o
+ .bss           0x0000000000029b20        0x0 compile/cache/c.APIC.o
+ .bss           0x0000000000029b20        0x0 compile/cache/c.IOAPIC.o
+ .bss           0x0000000000029b20        0x0 compile/cache/c.LocalAPIC.o
+ .bss           0x0000000000029b20       0x10 compile/cache/c.LocalAPICTimer.o
+ .bss           0x0000000000029b30       0x10 compile/cache/c.hardware.o
+                0x0000000000029b30                pit_ticks
+ .bss           0x0000000000029b40        0x0 compile/cache/c.blake2b-ref.o
+ .bss           0x0000000000029b40        0x0 compile/cache/c.blake2bp-ref.o
+ .bss           0x0000000000029b40        0x0 compile/cache/c.blake2s-ref.o
+ .bss           0x0000000000029b40        0x0 compile/cache/c.blake2sp-ref.o
+ .bss           0x0000000000029b40        0x0 compile/cache/c.blake2xb-ref.o
+ .bss           0x0000000000029b40        0x0 compile/cache/c.blake2xs-ref.o
+ .bss           0x0000000000029b40       0x10 compile/cache/c.PCIe.o
  *(COMMON)
-                0x0000000140019020                __bss_end__ = .
+                0x0000000000029b50                __bss_end__ = .
 
-.edata
+.edata          0x000000000002a000     0x2000
  *(.edata)
+ .edata         0x000000000002a000     0x11ad dll stuff
 
 /DISCARD/
  *(.debug$S)
@@ -200,151 +1625,47 @@ IDT             0x0000000140004000     0x2000
  *(.gnu.lto_*)
  *(.gnu_object_only)
 
-.idata          0x000000014001a000     0x1000
+.idata          0x000000000002c000     0x1000
  SORT_BY_NAME(*)(.idata$2)
- .idata$2       0x000000014001a000       0x14 kboot_exe_fu000022.o
- .idata$2       0x000000014001a014       0x14 LibCrt_dll_d000009.o
-                0x000000014001a014                _head_LibCrt_dll
- .idata$2       0x000000014001a028       0x14 LibIO_dll_d000006.o
-                0x000000014001a028                _head_LibIO_dll
- .idata$2       0x000000014001a03c       0x14 LibVideo_dll_d000000.o
-                0x000000014001a03c                _head_LibVideo_dll
  SORT_BY_NAME(*)(.idata$3)
-                0x000000014001a050        0x4 LONG 0x0
-                0x000000014001a054        0x4 LONG 0x0
-                0x000000014001a058        0x4 LONG 0x0
-                0x000000014001a05c        0x4 LONG 0x0
-                0x000000014001a060        0x4 LONG 0x0
-                0x000000014001a068                . = ALIGN (0x8)
- *fill*         0x000000014001a064        0x4 
+                0x000000000002c000        0x4 LONG 0x0
+                0x000000000002c004        0x4 LONG 0x0
+                0x000000000002c008        0x4 LONG 0x0
+                0x000000000002c00c        0x4 LONG 0x0
+                0x000000000002c010        0x4 LONG 0x0
+                0x000000000002c018                . = ALIGN (0x8)
+ *fill*         0x000000000002c014        0x4 
  SORT_BY_NAME(*)(.idata$4)
- .idata$4       0x000000014001a068       0x10 kboot_exe_nmth000021.o
-                0x000000014001a068                __nm_thnk_InterruptCallbacks
- .idata$4       0x000000014001a078        0x0 LibCrt_dll_d000009.o
- .idata$4       0x000000014001a078        0x8 LibCrt_dll_d000010.o
- .idata$4       0x000000014001a080        0x8 LibCrt_dll_d000011.o
- .idata$4       0x000000014001a088        0x8 LibCrt_dll_d000012.o
- .idata$4       0x000000014001a090        0x8 LibCrt_dll_d000013.o
- .idata$4       0x000000014001a098        0x8 LibCrt_dll_d000014.o
- .idata$4       0x000000014001a0a0        0x8 LibCrt_dll_d000015.o
- .idata$4       0x000000014001a0a8        0x8 LibCrt_dll_d000016.o
- .idata$4       0x000000014001a0b0        0x8 LibCrt_dll_d000017.o
- .idata$4       0x000000014001a0b8        0x8 LibCrt_dll_d000018.o
- .idata$4       0x000000014001a0c0        0x8 LibCrt_dll_d000019.o
- .idata$4       0x000000014001a0c8        0x8 LibCrt_dll_d000020.o
- .idata$4       0x000000014001a0d0        0x0 LibIO_dll_d000006.o
- .idata$4       0x000000014001a0d0        0x8 LibIO_dll_d000007.o
- .idata$4       0x000000014001a0d8        0x8 LibIO_dll_d000008.o
- .idata$4       0x000000014001a0e0        0x0 LibVideo_dll_d000000.o
- .idata$4       0x000000014001a0e0        0x8 LibVideo_dll_d000001.o
- .idata$4       0x000000014001a0e8        0x8 LibVideo_dll_d000002.o
- .idata$4       0x000000014001a0f0        0x8 LibVideo_dll_d000003.o
- .idata$4       0x000000014001a0f8        0x8 LibVideo_dll_d000004.o
- .idata$4       0x000000014001a100        0x8 LibVideo_dll_d000005.o
-                0x000000014001a108                __IAT_start__ = .
+                0x000000000002c018                __IAT_start__ = .
  SORT_BY_NAME(*)(.idata$5)
- .idata$5       0x000000014001a108        0x0 LibCrt_dll_d000009.o
- .idata$5       0x000000014001a108        0x8 LibCrt_dll_d000010.o
-                0x000000014001a108                __imp_AllocateInterruptVector
- .idata$5       0x000000014001a110        0x8 LibCrt_dll_d000011.o
-                0x000000014001a110                __imp_GetLocalAPICID
- .idata$5       0x000000014001a118        0x8 LibCrt_dll_d000012.o
-                0x000000014001a118                __imp_InitLocalAPIC
- .idata$5       0x000000014001a120        0x8 LibCrt_dll_d000013.o
-                0x000000014001a120                __imp_InitialiseAllocationState
- .idata$5       0x000000014001a128        0x8 LibCrt_dll_d000014.o
-                0x000000014001a128                __imp_InterruptCallbacks
-                0x000000014001a128                __imp_InterruptCallbacks
- .idata$5       0x000000014001a130        0x8 LibCrt_dll_d000015.o
-                0x000000014001a130                __imp_LoadIDTR
- .idata$5       0x000000014001a138        0x8 LibCrt_dll_d000016.o
-                0x000000014001a138                __imp_memcmp
- .idata$5       0x000000014001a140        0x8 LibCrt_dll_d000017.o
-                0x000000014001a140                __imp_memcpy
- .idata$5       0x000000014001a148        0x8 LibCrt_dll_d000018.o
-                0x000000014001a148                __imp_memset
- .idata$5       0x000000014001a150        0x8 LibCrt_dll_d000019.o
-                0x000000014001a150                __imp_strlen
- .idata$5       0x000000014001a158        0x8 LibCrt_dll_d000020.o
- .idata$5       0x000000014001a160        0x0 LibIO_dll_d000006.o
- .idata$5       0x000000014001a160        0x8 LibIO_dll_d000007.o
-                0x000000014001a160                __imp_OpenRawHandle
- .idata$5       0x000000014001a168        0x8 LibIO_dll_d000008.o
- .idata$5       0x000000014001a170        0x0 LibVideo_dll_d000000.o
- .idata$5       0x000000014001a170        0x8 LibVideo_dll_d000001.o
-                0x000000014001a170                __imp_AllocateVideoMemory
- .idata$5       0x000000014001a178        0x8 LibVideo_dll_d000002.o
-                0x000000014001a178                __imp_InitaliseVMA
- .idata$5       0x000000014001a180        0x8 LibVideo_dll_d000003.o
-                0x000000014001a180                __imp_SelectVideoContext
- .idata$5       0x000000014001a188        0x8 LibVideo_dll_d000004.o
-                0x000000014001a188                __imp_VideoPrintf
- .idata$5       0x000000014001a190        0x8 LibVideo_dll_d000005.o
-                0x000000014001a198                __IAT_end__ = .
+                0x000000000002c018                __IAT_end__ = .
  SORT_BY_NAME(*)(.idata$6)
- .idata$6       0x000000014001a198       0x1c LibCrt_dll_d000010.o
- .idata$6       0x000000014001a1b4       0x14 LibCrt_dll_d000011.o
- .idata$6       0x000000014001a1c8       0x10 LibCrt_dll_d000012.o
- .idata$6       0x000000014001a1d8       0x1c LibCrt_dll_d000013.o
- .idata$6       0x000000014001a1f4       0x18 LibCrt_dll_d000014.o
-                0x000000014001a1f4                __nm_InterruptCallbacks
- .idata$6       0x000000014001a20c        0xc LibCrt_dll_d000015.o
- .idata$6       0x000000014001a218        0xc LibCrt_dll_d000016.o
- .idata$6       0x000000014001a224        0xc LibCrt_dll_d000017.o
- .idata$6       0x000000014001a230        0xc LibCrt_dll_d000018.o
- .idata$6       0x000000014001a23c        0xc LibCrt_dll_d000019.o
- .idata$6       0x000000014001a248       0x10 LibIO_dll_d000007.o
- .idata$6       0x000000014001a258       0x18 LibVideo_dll_d000001.o
- .idata$6       0x000000014001a270       0x10 LibVideo_dll_d000002.o
- .idata$6       0x000000014001a280       0x18 LibVideo_dll_d000003.o
- .idata$6       0x000000014001a298       0x10 LibVideo_dll_d000004.o
  SORT_BY_NAME(*)(.idata$7)
- .idata$7       0x000000014001a2a8        0x4 LibCrt_dll_d000010.o
- .idata$7       0x000000014001a2ac        0x4 LibCrt_dll_d000011.o
- .idata$7       0x000000014001a2b0        0x4 LibCrt_dll_d000012.o
- .idata$7       0x000000014001a2b4        0x4 LibCrt_dll_d000013.o
- .idata$7       0x000000014001a2b8        0x4 LibCrt_dll_d000014.o
- .idata$7       0x000000014001a2bc        0x4 LibCrt_dll_d000015.o
- .idata$7       0x000000014001a2c0        0x4 LibCrt_dll_d000016.o
- .idata$7       0x000000014001a2c4        0x4 LibCrt_dll_d000017.o
- .idata$7       0x000000014001a2c8        0x4 LibCrt_dll_d000018.o
- .idata$7       0x000000014001a2cc        0x4 LibCrt_dll_d000019.o
- .idata$7       0x000000014001a2d0        0xc LibCrt_dll_d000020.o
-                0x000000014001a2d0                LibCrt_dll_iname
- .idata$7       0x000000014001a2dc        0x4 LibIO_dll_d000007.o
- .idata$7       0x000000014001a2e0        0xc LibIO_dll_d000008.o
-                0x000000014001a2e0                LibIO_dll_iname
- .idata$7       0x000000014001a2ec        0x4 LibVideo_dll_d000001.o
- .idata$7       0x000000014001a2f0        0x4 LibVideo_dll_d000002.o
- .idata$7       0x000000014001a2f4        0x4 LibVideo_dll_d000003.o
- .idata$7       0x000000014001a2f8        0x4 LibVideo_dll_d000004.o
- .idata$7       0x000000014001a2fc       0x10 LibVideo_dll_d000005.o
-                0x000000014001a2fc                LibVideo_dll_iname
 
 .didat
  SORT_BY_NAME(*)(.didat$5)
 
-.tls            0x000000014001b000        0x0
-                0x000000014001b000                ___tls_start__ = .
+.tls            0x000000000002d000        0x0
+                0x000000000002d000                ___tls_start__ = .
  *(.tls$AAA)
  *(.tls)
  *(.tls$)
  *(SORT_BY_NAME(.tls$*))
  *(.tls$ZZZ)
-                0x000000014001b000                ___tls_end__ = .
+                0x000000000002d000                ___tls_end__ = .
 
-.endjunk        0x000000014001b000        0x0
+.endjunk        0x000000000002d000        0x0
                 [!provide]                        PROVIDE (end = .)
                 [!provide]                        PROVIDE (_end = .)
-                0x000000014001b000                __end__ = .
+                0x000000000002d000                __end__ = .
 
 .rsrc
  *(.rsrc)
  *(.rsrc$*)
 
-.reloc          0x000000014001b000     0x1000
+.reloc          0x000000000002d000     0x1000
  *(.reloc)
- .reloc         0x000000014001b000       0xd0 dll stuff
+ .reloc         0x000000000002d000      0x824 dll stuff
 
 .stab
  *(.stab)
@@ -498,28 +1819,5 @@ IDT             0x0000000140004000     0x2000
 
 .zdebug_gdb_scripts
  *(.zdebug_gdb_scripts)
-OUTPUT(C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe pei-x86-64)
-LOAD LibVideo_dll_d000000.o
-LOAD LibVideo_dll_d000001.o
-LOAD LibVideo_dll_d000002.o
-LOAD LibVideo_dll_d000003.o
-LOAD LibVideo_dll_d000004.o
-LOAD LibVideo_dll_d000005.o
-LOAD LibIO_dll_d000006.o
-LOAD LibIO_dll_d000007.o
-LOAD LibIO_dll_d000008.o
-LOAD LibCrt_dll_d000009.o
-LOAD LibCrt_dll_d000010.o
-LOAD LibCrt_dll_d000011.o
-LOAD LibCrt_dll_d000012.o
-LOAD LibCrt_dll_d000013.o
-LOAD LibCrt_dll_d000014.o
-LOAD LibCrt_dll_d000015.o
-LOAD LibCrt_dll_d000016.o
-LOAD LibCrt_dll_d000017.o
-LOAD LibCrt_dll_d000018.o
-LOAD LibCrt_dll_d000019.o
-LOAD LibCrt_dll_d000020.o
-LOAD kboot_exe_nmth000021.o
-LOAD kboot_exe_fu000022.o
+OUTPUT(C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll pei-x86-64)
 LOAD dll stuff

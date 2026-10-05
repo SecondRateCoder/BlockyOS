@@ -93,6 +93,8 @@ typedef struct{
 	gifLocalColorMap_t			*lcm;
 	gifRasterDataBlock_t		*rdb;
 	gifExtensionBlock_t			*gce; // Graphic Control Extension bound to this frame
+	void *fb;
+	UINT32 fbw, fbh;
 }gifFrame_t;
 
 typedef struct{
@@ -113,7 +115,7 @@ typedef struct{
 	gifRasterDataBlock_t		*rdb;
 }gifDescriptionSpace_t;
 
-gifDescriptionSpace_t *OpenGIF(socket_t *gif);
+gifDescriptionSpace_t *OpenGIF(socket_t *gif, EFI_GRAPHICS_PIXEL_FORMAT PixelFormat);
 UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Width, UINT32 *_Height, EFI_GRAPHICS_PIXEL_FORMAT PixelFormat);
-void BltGIFFrame(const UINT32 *FrameBuffer, UINT32 FrameWidth, UINT32 FrameHeight, UINT32 *DestBuffer, 
-	INT32 DestX, INT32 DestY, UINT32 DestWidth, UINT32 DestHeight, UINT32 DestStride);
+void BltFrame(const UINT32 *Frame, UINT32 FrameWidth, UINT32 FrameHeight, 
+    UINT32 *DestBuffer, INT32 DestX, INT32 DestY, UINT32 DestWidth);

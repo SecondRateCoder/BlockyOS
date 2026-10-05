@@ -70,32 +70,38 @@ EFI_GRAPHICS_OUTPUT_MODE_INFORMATION InitialiseVideoMemory(void **VideoMemory, U
 	EFI_GUID gopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 	EFI_GRAPHICS_OUTPUT_PROTOCOL *gop;
 	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *info;
-	UINTN SizeOfInfo, numModes, nativeMode;
+	UINTN SizeOfInfo, numModes;
 
 	//	Query GOP
 	EFI_STATUS status = uefi_call_wrapper(BS->LocateProtocol, 0, &gopGuid, NULL, (void**)&gop);
 	if(EFI_ERROR(status)){Print(L"Unable to locate GOP");}
 
 	//	Get the current Mode
-	status = uefi_call_wrapper(gop->QueryMode, 0, gop, gop->Mode==NULL?0:gop->Mode->Mode, &SizeOfInfo, &info);
+	status = uefi_call_wrapper(gop->QueryMode, 0, gop, gop->Mode == NULL? 0: gop->Mode->Mode, &SizeOfInfo, &info);
 	// this is needed to get the current video mode
 	if(status == EFI_NOT_STARTED){status = uefi_call_wrapper(gop->SetMode, 0, gop, 0);}
-	if(EFI_ERROR(status)){Print(L"Unable to get native mode");}else{
-		nativeMode = gop->Mode->Mode;		numModes = gop->Mode->MaxMode;}
+	if(EFI_ERROR(status)){Print(L"Unable to get native mode");}else{numModes = gop->Mode->MaxMode;}
 
 	//	Query all available Modes and set the Current Mode to that which is Largest and of the RGB Mode.
 	for(UINT32 i = 0; i < numModes; i++){
 		status = uefi_call_wrapper(gop->QueryMode, 0, gop, i, &SizeOfInfo, &info);
-		// Print(L"\nmode %u width %u height %u format %u%a", (UINT32)i, (UINT32)info->HorizontalResolution, 
-		// 	(UINT32)info->VerticalResolution, (UINT32)info->PixelFormat, (i == nativeMode? "(current)": ""));
-		if((info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) || 
+		if((info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) && 
 			((gop->Mode->Info->HorizontalResolution < info->HorizontalResolution) && (gop->Mode->Info->VerticalResolution < info->VerticalResolution))
 		){status = uefi_call_wrapper(gop->SetMode, 3, gop, i);}
 	}
 
 	*VideoMemory = (void *)gop->Mode->FrameBufferBase;
-	// uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAddress, EfiRuntimeServicesData, 
-	// 	gop->Mode->Info->HorizontalResolution * gop->Mode->Info->VerticalResolution * sizeof(UINT32), VideoMemory);
+	char *Fmt = NULL;
+	switch(gop->Mode->Info->PixelFormat){
+		case PixelRedGreenBlueReserved8BitPerColor:	{Fmt = "R:G:B:Reserved";break;}
+		case PixelBlueGreenRedReserved8BitPerColor:	{Fmt = "B:G:R:Reserved";break;}
+		case PixelBitMask:							{Fmt = "BitMask";		break;}
+		case PixelBltOnly:							{Fmt = "BltOnly";		break;}
+		default:
+		case PixelFormatMax:						{Fmt = "Unknown";		break;}
+	}
+	Print(L"\nwidth %u height %u format %u[%a]", (UINT32)gop->Mode->Info->HorizontalResolution, 
+		(UINT32)gop->Mode->Info->VerticalResolution, (UINT32)gop->Mode->Info->PixelFormat, Fmt);
 	*Width = gop->Mode->Info->HorizontalResolution;
 	*Height = gop->Mode->Info->VerticalResolution;
 	*PixelSize = sizeof(UINT32);

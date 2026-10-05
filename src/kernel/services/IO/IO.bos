@@ -16,8 +16,8 @@
         "EXECUTABLE": [
             {
 				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll", 
-				"CARGS": "-mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -fno-unwind-tables -fno-asynchronous-unwind-tables -mcmodel=small -fno-stack-protector -nostdinc -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/", 
-				"LARGS": "--section-alignment 4096 --file-alignment 4096 -shared -flinker-output=dyn -Bsymbolic --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll.a", 
+				"CARGS": "-fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -fno-unwind-tables -fno-asynchronous-unwind-tables -mcmodel=small -fno-stack-protector -nostdinc -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/", 
+				"LARGS": "--section-alignment 4096 --file-alignment 4096 --image-base 0x0 -shared -flinker-output=dyn -Bsymbolic --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll.a", 
 				"FILES": [
 					"C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c", 
 					"C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll", 

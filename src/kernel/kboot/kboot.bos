@@ -16,8 +16,8 @@
 		"EXECUTABLE": [
 			{
 				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe", 
-				"CARGS": "-mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -I C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/", 
-				"LARGS": "--disable-runtime-pseudo-reloc --section-alignment 4096 --file-alignment 4096 -e kboot_km", 
+				"CARGS": "-mcmodel=small -fPIE -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -I C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/", 
+				"LARGS": "--disable-runtime-pseudo-reloc --section-alignment 4096 --file-alignment 4096 -e kboot_km -pie --image-base 0x0 -Bsymbolic", 
 				"FILES": [
 					"C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c", 
 					"C:/GitHub/BlockyOS/src/kernel/kboot/kboot.asm", 

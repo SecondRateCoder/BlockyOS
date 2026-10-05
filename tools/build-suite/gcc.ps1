@@ -42,9 +42,8 @@ $_LINKARGS = @('-fdiagnostics-color=always', '-fno-diagnostics-show-highlight-co
 $_LINKSKIP = 6
 foreach($arg in $l){[regex]::Matches($arg, $PATTERN) | ForEach-Object{$_LINKARGS += $_.ToString()}}
 if($LogEnabled){
-    $fullPath = [System.IO.Path]::GetFullPath($LogFile)
-    $logDir = [System.IO.Path]::GetDirectoryName($fullPath)
-    $_LINKARGS += @('-Map', (Join-Path $logDir 'alibcrt.map'))
+    $logDir = [System.IO.Path]::GetDirectoryName([System.IO.Path]::GetFullPath($LogFile))
+    $_LINKARGS += @('-Map', (Join-Path $logDir "$([System.IO.Path]::GetFileNameWithoutExtension($LogFile)).map"))
 }
 $_LINKARGS += @('-o', $o)
 

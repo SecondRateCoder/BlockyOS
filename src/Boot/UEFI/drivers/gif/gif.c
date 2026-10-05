@@ -1,6 +1,6 @@
 #include "gif.h"
 
-gifDescriptionSpace_t *OpenGIF(socket_t *gif){
+gifDescriptionSpace_t *OpenGIF(socket_t *gif, EFI_GRAPHICS_PIXEL_FORMAT PixelFormat){
 	socket_ret rt = {0};
 	register UINT64 offset = 0;
 
@@ -128,6 +128,8 @@ gifDescriptionSpace_t *OpenGIF(socket_t *gif){
 			out->frames[out->nFrames].rdb = rdb;
 			out->frames[out->nFrames].gce = activeGCE;
 			out->nFrames++;
+			out->frames[out->nFrames - 1].fb = GetGIFFrame(out, out->nFrames, 
+				&(out->frames[out->nFrames - 1].fbw), &(out->frames[out->nFrames - 1].fbh), PixelFormat);
 
 			//	Reset active GCE for future frames
 			activeGCE = NULL;
@@ -260,40 +262,22 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
     return frameBuffer;
 }
 
-/**
- * BltGIFFrame
- * Bit Block Transfers a decoded GIF frame onto a destination framebuffer.
- *
- * @param FrameBuffer    Pointer to decoded GIF frame pixel array (from GetGIFFrame).
- * @param FrameWidth     Width of the decoded frame in pixels.
- * @param FrameHeight    Height of the decoded frame in pixels.
- * @param DestBuffer     Pointer to target video framebuffer / surface.
- * @param DestX          X offset inside destination buffer to place the frame.
- * @param DestY          Y offset inside destination buffer to place the frame.
- * @param DestWidth      Total width of destination buffer (in pixels).
- * @param DestHeight     Total height of destination buffer (in pixels).
- * @param DestStride     Scanline stride of destination buffer (PixelsPerScanLine).
- */
-void BltGIFFrame(const UINT32 *FrameBuffer, UINT32 FrameWidth, UINT32 FrameHeight, 
-                 UINT32 *DestBuffer, INT32 DestX, INT32 DestY, 
-                 UINT32 DestWidth, UINT32 DestHeight, UINT32 DestStride){
-    if(!FrameBuffer || !DestBuffer || DestStride == 0){return;}
+static inline void PlotPixel_32bpp(void *fb, UINT32 PixelsPerScanLine, UINT32 x, UINT32 y, UINT8 a, UINT8 r, UINT8 g, UINT8 b){
+	UINT32 tmp = ((UINT32)a << 24) + ((UINT32)r << 16) + ((UINT32)g << 8) + (UINT32)b;
+	*((uint32_t*)(fb + (4 * PixelsPerScanLine * y) + (4 * x))) = tmp;
+}
+static inline void PlotPixels_32bpp(void *fb, UINT32 PixelsPerScanLine, UINT32 x, UINT32 y, UINT32 *pixels, UINT32 n){
+	for(UINT32 cc = 0; cc < n; ++cc){
+		PlotPixel_32bpp(fb, PixelsPerScanLine, x + cc, y, (pixels[cc] >> 24) & UINT8_MAX, 
+			(pixels[cc] >> 16) & UINT8_MAX, (pixels[cc] >> 8) & UINT8_MAX, pixels[cc] & UINT8_MAX);
+	}
+}
 
+void BltFrame(const UINT32 *Frame, UINT32 FrameWidth, UINT32 FrameHeight, 
+    UINT32 *DestBuffer, INT32 DestX, INT32 DestY, UINT32 DestWidth
+){
     // Calculate source/destination clipping bounds
-    INT32 startY = (DestY < 0) ? -DestY : 0, 
-		endY   = ((DestY + (INT32)FrameHeight) > (INT32)DestHeight) ? (INT32)DestHeight - DestY : (INT32)FrameHeight;
-
-    INT32 startX = (DestX < 0) ? -DestX : 0, 
-		endX   = ((DestX + (INT32)FrameWidth) > (INT32)DestWidth) ? (INT32)DestWidth - DestX : (INT32)FrameWidth;
-
-    if(startX >= endX || startY >= endY){return;}
-    for(INT32 y = startY; y < endY; ++y){
-        const UINT32 *srcRow = FrameBuffer + (y * FrameWidth);
-        UINT32 *dstRow = DestBuffer + ((DestY + y) * DestStride) + DestX;
-        for(INT32 x = startX; x < endX; ++x){
-            UINT32 pixel = srcRow[x];
-            // Key out fully transparent pixels (Alpha = 0x00)
-            if((pixel & 0xFF000000) != 0){dstRow[x] = pixel;}
-        }
-    }
+	for(INT32 y = 0; y < FrameHeight; ++y){
+		PlotPixels_32bpp(DestBuffer, DestWidth, DestX, DestY + y, 
+			Frame + (y * FrameWidth), __min(FrameWidth, DestWidth));}
 }

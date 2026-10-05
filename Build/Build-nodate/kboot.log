@@ -1,12 +1,122 @@
 Initializing CGCC.MAKE build process...
-Skipping C:\GitHub\BlockyOS\src\kernel\kboot\kboot.c - up to date; source=2026-10-04T14:36:19.2027484Z, stored=10/04/2026 14:36:19
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\kboot\kboot.c. source=2026-10-05T21:31:16.6556923Z, stored=10/05/2026 20:25:38, delta=+12794738.656 sec
+gcc -c C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c -o C:/GitHub/BlockyOS/compile/cache/c.kboot.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -mcmodel=small -fPIE -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -I C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:9,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/struct.h:4,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:7,
+                 from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.h:3,
+                 from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c:1:
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
+   42 | #define NaNf    (__builtin_nanf(""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
+   25 | #define NaNf            (__builtin_nanf (""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
+   50 | #define SNaNf    (__builtin_nansf(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
+   26 | #define SNaNf           (__builtin_nansf (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
+   51 | #define SNaNd    (__builtin_nans(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
+   27 | #define SNaNd           (__builtin_nans (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
+   52 | #define SNaNld   (__builtin_nansl(""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
+   28 | #define SNaNld          (__builtin_nansl (""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:29:9: warning: '__safediv' redefined
+   29 | #define __safediv(A, B) SAFEOP((A), (B), ||, TRUE, !=, 0, &&, /, 1)
+      |         ^~~~~~~~~
+In file included from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64/efibind.h:100,
+                 from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efi.h:48,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:3:
+C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:181:9: note: this is the location of the previous definition
+  181 | #define __safediv(A, B) SAFEOP((A), (B), ||, true, !=, 0, &&, /, 1)
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:43:9: warning: '__max' redefined
+   43 | #define __max(a, b) ((a) < (b)? (b): (a))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:24:9: note: this is the location of the previous definition
+   24 | #define __max(a, b)                     ((b) > (a)? (b): (a))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:44:9: warning: 'abs' redefined
+   44 | #define abs(n) (((INTN)(n)) < 0? -(n): (n))
+      |         ^~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:22:9: note: this is the location of the previous definition
+   22 | #define abs absf
+      |         ^~~
+In file included from C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/struct.h:7:
+C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/enum.h:5:9: warning: 'flagcheck' redefined
+    5 | #define flagcheck(n, f)                 (((n) & (f)) == (f))
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:53:9: note: this is the location of the previous definition
+   53 | #define flagcheck(v, f) (((v) & (f)) == (f))
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/enum.h:6:9: warning: 'flagset' redefined
+    6 | #define flagset(n, f)                   ((n) |= (f))
+      |         ^~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:54:9: note: this is the location of the previous definition
+   54 | #define flagset(v, f)   ((v) |= (f))
+      |         ^~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:87:1: warning: 'naked' attribute only applies to functions [-Wattributes]
+   87 | typedef void __sysvabi __naked (*kernelmain)(__bootinfo * __restrict__ bootin);
+      | ^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/APIC.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.h:9:
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
+      | ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
+      | ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
+      | ^~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.h:12:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:33:1: warning: 'naked' attribute only applies to functions [-Wattributes]
+   33 | typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
+      | ^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:15,
+                 from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.h:27:
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:121:1: warning: 'packed' attribute ignored [-Wattributes]
+  121 | typedef uint128_t NVMeAdminCommandStruct(DirectiveRecieve, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:132:1: warning: 'packed' attribute ignored [-Wattributes]
+  132 | typedef uint128_t NVMeAdminCommandStruct(DirectiveSend, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:143:1: warning: 'packed' attribute ignored [-Wattributes]
+  143 | typedef uint128_t NVMeAdminCommandStruct(GetFeatures, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:200:1: warning: 'packed' attribute ignored [-Wattributes]
+  200 | typedef uint128_t NVMeAdminCommandStruct(GetLogPage, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:292:1: warning: 'packed' attribute ignored [-Wattributes]
+  292 | typedef uint32_t NVMeLogStruct(ChangedNamespaceList); // 4096 bytes
+      | ^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_ATAPI.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:14:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h:17:20: warning: inline function 'SleepS' declared but never defined
+   17 | LibAPI inline void SleepS(uint32_t seconds);
+      |                    ^~~~~~
+Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\kboot\kboot.c
 Skipping C:\GitHub\BlockyOS\src\kernel\kboot\kboot.asm - up to date; source=2026-10-03T23:05:51.8721198Z, stored=10/03/2026 23:05:51
-Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-05T01:35:29.6568091Z, stored=10/05/2026 01:35:29
-Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll. source=2026-10-05T01:35:39.5983990Z, stored=none, delta=n/a sec
+Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-05T21:31:23.9472003Z, stored=10/05/2026 21:31:23
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll. source=2026-10-05T21:31:33.9162821Z, stored=10/05/2026 21:27:48, delta=+12791025.916 sec
 Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll
-Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll. source=2026-10-05T01:35:43.5094345Z, stored=none, delta=n/a sec
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll. source=2026-10-05T21:31:38.1561187Z, stored=10/05/2026 21:27:52, delta=+12791026.156 sec
 Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll
-gcc compile/cache/c.kboot.o compile/cache/asm.kboot.o Build/Build-nodate/root-part/LibCrt.dll Build/Build-nodate/root-part/services/LibIO.dll Build/Build-nodate/root-part/services/LibVideo.dll -Wl,-nostdlib -Wl,--disable-runtime-pseudo-reloc -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,-e,kboot_km -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\alibcrt.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe
+gcc compile/cache/c.kboot.o compile/cache/asm.kboot.o Build/Build-nodate/root-part/LibCrt.dll Build/Build-nodate/root-part/services/LibIO.dll Build/Build-nodate/root-part/services/LibVideo.dll -Wl,-nostdlib -Wl,--disable-runtime-pseudo-reloc -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,-e,kboot_km -Wl,-pie -Wl,--image-base,0x0 -Wl,-Bsymbolic -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\kboot.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe
 Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe
 
 
@@ -18,14 +128,14 @@ Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/k
 [SHELL OUT]:	>> 
 [SHELL OUT]:	[C:\GitHub\BlockyOS\tools\filesystem\frat.c:196]  >>  Mounting FS Root: [C:/GitHub/BlockyOS/Build/Build-nodate/disk.img]
 [SHELL OUT]:	Verifying Disk GPT
-[SHELL OUT]:	[Parent:00007ff6fdb0d8ff] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 0    ConfBlockSize: 512    Starting Disk Env ID: 
+[SHELL OUT]:	[Parent:00007ff7e70ad8ff] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 0    ConfBlockSize: 512    Starting Disk Env ID: 
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0d91a] >> Reading [92 bytes(s)->1 block(s)] from LBA[1(512)-2(1024)]
+[SHELL OUT]:	[Parent:00007ff7e70ad91a] >> Reading [92 bytes(s)->1 block(s)] from LBA[1(512)-2(1024)]
 [SHELL OUT]:	GPT Dump:
 [SHELL OUT]:	    Sig: "EFI PART"
 [SHELL OUT]:	    Rev: 65536
 [SHELL OUT]:	    Header-Size: 92
-[SHELL OUT]:	    Header Checksum: 605002916
+[SHELL OUT]:	    Header Checksum: 4220209413
 [SHELL OUT]:	    localLBA: 1
 [SHELL OUT]:	    altLBA: 2230273
 [SHELL OUT]:	    firstUsable: 2048
@@ -37,16 +147,16 @@ Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/k
 [SHELL OUT]:	    Partition-Table Checksum: 896708427
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
 [SHELL OUT]:	GPT Exists? true
-[SHELL OUT]:	[Parent:00007ff6fdb0eed9] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 0    ConfBlockSize: 512    Starting Disk Env ID: 
+[SHELL OUT]:	[Parent:00007ff7e70aeed9] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 0    ConfBlockSize: 512    Starting Disk Env ID: 
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0eefa] >> Reading [92 bytes(s)->1 block(s)] from LBA[1(512)-2(1024)]
+[SHELL OUT]:	[Parent:00007ff7e70aeefa] >> Reading [92 bytes(s)->1 block(s)] from LBA[1(512)-2(1024)]
 [SHELL OUT]:	[C:\GitHub\BlockyOS\tools\filesystem\frat.c:137]  >>  Querying Part Table
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0e73d] >> Reading [256 bytes(s)->1 block(s)] from LBA[2(1024)-3(1536)]
+[SHELL OUT]:	[Parent:00007ff7e70ae73d] >> Reading [256 bytes(s)->1 block(s)] from LBA[2(1024)-3(1536)]
 [SHELL OUT]:	[C:\GitHub\BlockyOS\tools\filesystem\frat.c:145]  >>  GPT-Entry: BOOT{2048:133119 -> 131071}
 [SHELL OUT]:	[C:\GitHub\BlockyOS\tools\filesystem\frat.c:159]  >>  Querying FS at 2048
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0ebe1] >> Reading [60 bytes(s)->1 block(s)] from LBA[2048(1048576)-2049(1049088)]
+[SHELL OUT]:	[Parent:00007ff7e70aebe1] >> Reading [60 bytes(s)->1 block(s)] from LBA[2048(1048576)-2049(1049088)]
 [SHELL OUT]:	FS-Root Blob:
 [SHELL OUT]:	    Version: [0:131072]
 [SHELL OUT]:	    Sig: 
@@ -56,7 +166,7 @@ Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/k
 [SHELL OUT]:	[C:\GitHub\BlockyOS\tools\filesystem\frat.c:145]  >>  GPT-Entry: ROOT{133120:2230271 -> 2097151}
 [SHELL OUT]:	[C:\GitHub\BlockyOS\tools\filesystem\frat.c:159]  >>  Querying FS at 133120
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0ebe1] >> Reading [60 bytes(s)->1 block(s)] from LBA[133120(68157440)-133121(68157952)]
+[SHELL OUT]:	[Parent:00007ff7e70aebe1] >> Reading [60 bytes(s)->1 block(s)] from LBA[133120(68157440)-133121(68157952)]
 [SHELL OUT]:	FS-Root Blob:
 [SHELL OUT]:	    Version: [0:1]
 [SHELL OUT]:	    Sig: FRAT_FILESYSTEM
@@ -71,7 +181,7 @@ Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/k
 [SHELL OUT]:		Configured Log-Size: 576
 [SHELL OUT]:	[C:\GitHub\BlockyOS\tools\filesystem\frat.c:210]  >>  Found Formatted Partition: 133120:2230271 -> 2097151
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0f05b] >> Reading [60 bytes(s)->1 block(s)] from LBA[133120(68157440)-133121(68157952)]
+[SHELL OUT]:	[Parent:00007ff7e70af05b] >> Reading [60 bytes(s)->1 block(s)] from LBA[133120(68157440)-133121(68157952)]
 [SHELL OUT]:	[C:\GitHub\BlockyOS\tools\filesystem\frat.c:223]  >>  Root: 133120:2230271 -> 2097151 LBAs
 [SHELL OUT]:		Version-Code: [0:1]
 [SHELL OUT]:		Configured Block-Size: 2048
@@ -79,46 +189,46 @@ Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/k
 [SHELL OUT]:		Configured # of Log-Sectors: 32
 [SHELL OUT]:		Configured Log-Size: 576
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0f2a8] >> Reading [65536 bytes(s)->128 block(s)] from LBA[133121(68159488)-133249(68421632)]
+[SHELL OUT]:	[Parent:00007ff7e70af2a8] >> Reading [65536 bytes(s)->128 block(s)] from LBA[133121(68159488)-133249(68421632)]
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0f354] >> Reading [20480 bytes(s)->40 block(s)] from LBA[202752(210763776)-202792(210845696)]
+[SHELL OUT]:	[Parent:00007ff7e70af354] >> Reading [20480 bytes(s)->40 block(s)] from LBA[202752(210763776)-202792(210845696)]
 [SHELL OUT]:	    Verifying FS Root Items #items: 1024
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0f5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225280(256901120)-225284(256909312)]
+[SHELL OUT]:	[Parent:00007ff7e70af5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225280(256901120)-225284(256909312)]
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0f5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225281(256903168)-225285(256911360)]
+[SHELL OUT]:	[Parent:00007ff7e70af5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225281(256903168)-225285(256911360)]
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0f5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225404(257155072)-225408(257163264)]
+[SHELL OUT]:	[Parent:00007ff7e70af5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225404(257155072)-225408(257163264)]
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0f5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225443(257234944)-225447(257243136)]
+[SHELL OUT]:	[Parent:00007ff7e70af5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225439(257226752)-225443(257234944)]
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0f5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225465(257280000)-225469(257288192)]
+[SHELL OUT]:	[Parent:00007ff7e70af5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225457(257263616)-225461(257271808)]
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb0f5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225488(257327104)-225492(257335296)]
+[SHELL OUT]:	[Parent:00007ff7e70af5c7] >> Reading [512 bytes(s)->4 block(s)] from LBA[225484(257318912)-225488(257327104)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	[Parent:00007ff6fdb11825] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	[Parent:00007ff7e70b1825] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb1184e] >> Writing [60 bytes(s)->4 block(s)] to LBA[133120(68157440)-133124(68165632)]
+[SHELL OUT]:	[Parent:00007ff7e70b184e] >> Writing [60 bytes(s)->4 block(s)] to LBA[133120(68157440)-133124(68165632)]
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11896] >> Writing [20480 bytes(s)->40 block(s)] to LBA[202752(210763776)-202792(210845696)]
+[SHELL OUT]:	[Parent:00007ff7e70b1896] >> Writing [20480 bytes(s)->40 block(s)] to LBA[202752(210763776)-202792(210845696)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
 [SHELL OUT]:	[0]: ""
 [SHELL]	create -la fc -p SYSD/ -n kboot.exe
 [SHELL OUT]:	
 [SHELL OUT]:	>> 
 [SHELL OUT]:	>> 
-[SHELL OUT]:	00000152be595f1b:fc	00000152be595f21:SYSD/	00000152be595f2a:kboot.exe	
+[SHELL OUT]:	000001d45fe65f1b:fc	000001d45fe65f21:SYSD/	000001d45fe65f2a:kboot.exe	
 [SHELL OUT]:	[	SYSD/kboot.exe]
 [SHELL OUT]:	Mounting File [SYSD/kboot.exe] with "fc"
 [SHELL OUT]:	Creating File at: ./SYSD/kboot.exe
 [SHELL OUT]:	Hash: [4397709807136810278:123480111967653]
 [SHELL OUT]:	Hash: [4397709807136810278:123480111967653]
 [SHELL OUT]:	Un-Mounting File [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11825] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	[Parent:00007ff7e70b1825] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb1184e] >> Writing [60 bytes(s)->4 block(s)] to LBA[133120(68157440)-133124(68165632)]
+[SHELL OUT]:	[Parent:00007ff7e70b184e] >> Writing [60 bytes(s)->4 block(s)] to LBA[133120(68157440)-133124(68165632)]
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11896] >> Writing [20480 bytes(s)->40 block(s)] to LBA[202752(210763776)-202792(210845696)]
+[SHELL OUT]:	[Parent:00007ff7e70b1896] >> Writing [20480 bytes(s)->40 block(s)] to LBA[202752(210763776)-202792(210845696)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
 [SHELL OUT]:	[0]: ""
 [SHELL]	FSFRAT.OPEN
@@ -134,149 +244,159 @@ Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/k
 [SHELL OUT]:	
 [SHELL OUT]:	>> 
 [SHELL OUT]:	>> 
-[SHELL OUT]:	[Parent:00007ff6fdb11e11] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
-[SHELL OUT]:	[Parent:00007ff6fdb11d4e] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	[Parent:00007ff7e70b1e11] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	[Parent:00007ff7e70b1d4e] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Reading File Info
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11dbd] >> Reading [512 bytes(s)->4 block(s)] from LBA[225465(257280000)-225469(257288192)]
+[SHELL OUT]:	[Parent:00007ff7e70b1dbd] >> Reading [512 bytes(s)->4 block(s)] from LBA[225457(257263616)-225461(257271808)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11f0b] >> Writing [512 bytes(s)->4 block(s)] to LBA[225465(257280000)-225469(257288192)]
+[SHELL OUT]:	[Parent:00007ff7e70b1f0b] >> Writing [512 bytes(s)->4 block(s)] to LBA[225457(257263616)-225461(257271808)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Root is 00000152be599080
-[SHELL OUT]:	Writing File Block at 225466, Item: 1.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Root is 000001d45fe69080
+[SHELL OUT]:	Writing File Block at 225458, Item: 1.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225466(257282048)-225470(257290240)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225458(257265664)-225462(257273856)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225467, Item: 2.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225459, Item: 2.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225467(257284096)-225471(257292288)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225459(257267712)-225463(257275904)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225468, Item: 3.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225460, Item: 3.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225468(257286144)-225472(257294336)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225460(257269760)-225464(257277952)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225469, Item: 4.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225461, Item: 4.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225469(257288192)-225473(257296384)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225461(257271808)-225465(257280000)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225470, Item: 5.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225462, Item: 5.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225470(257290240)-225474(257298432)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225462(257273856)-225466(257282048)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225471, Item: 6.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225463, Item: 6.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225471(257292288)-225475(257300480)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225463(257275904)-225467(257284096)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225472, Item: 7.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225464, Item: 7.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225472(257294336)-225476(257302528)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225464(257277952)-225468(257286144)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225473, Item: 8.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225465, Item: 8.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225473(257296384)-225477(257304576)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225465(257280000)-225469(257288192)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225474, Item: 9.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225466, Item: 9.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225474(257298432)-225478(257306624)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225466(257282048)-225470(257290240)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225475, Item: 10.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225467, Item: 10.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225475(257300480)-225479(257308672)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225467(257284096)-225471(257292288)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225476, Item: 11.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225468, Item: 11.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225476(257302528)-225480(257310720)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225468(257286144)-225472(257294336)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225477, Item: 12.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225469, Item: 12.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225477(257304576)-225481(257312768)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225469(257288192)-225473(257296384)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225478, Item: 13.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225470, Item: 13.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225478(257306624)-225482(257314816)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225470(257290240)-225474(257298432)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225479, Item: 14.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225471, Item: 14.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225479(257308672)-225483(257316864)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225471(257292288)-225475(257300480)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225480, Item: 15.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225472, Item: 15.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225480(257310720)-225484(257318912)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225472(257294336)-225476(257302528)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225481, Item: 16.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225473, Item: 16.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225481(257312768)-225485(257320960)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225473(257296384)-225477(257304576)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225482, Item: 17.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225474, Item: 17.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225482(257314816)-225486(257323008)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225474(257298432)-225478(257306624)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225483, Item: 18.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225475, Item: 18.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225483(257316864)-225487(257325056)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225475(257300480)-225479(257308672)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225484, Item: 19.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225476, Item: 19.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225484(257318912)-225488(257327104)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225476(257302528)-225480(257310720)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225485, Item: 20.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225477, Item: 20.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225485(257320960)-225489(257329152)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225477(257304576)-225481(257312768)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225486, Item: 21.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225478, Item: 21.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225486(257323008)-225490(257331200)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225478(257306624)-225482(257314816)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225487, Item: 22.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225479, Item: 22.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225487(257325056)-225491(257333248)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225479(257308672)-225483(257316864)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225500, Item: 23.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225480, Item: 23.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225500(257351680)-225504(257359872)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225480(257310720)-225484(257318912)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225501, Item: 24.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225481, Item: 24.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225501(257353728)-225505(257361920)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225481(257312768)-225485(257320960)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225502, Item: 25.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225482, Item: 25.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225502(257355776)-225506(257363968)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225482(257314816)-225486(257323008)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Reading File Block at 225503, Item: 26.    Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb10fb9] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225483, Item: 26.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing Bytes
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225483(257316864)-225487(257325056)]
+[SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
+[SHELL OUT]:	Writing File Block at 225498, Item: 27.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing Bytes
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225498(257347584)-225502(257355776)]
+[SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
+[SHELL OUT]:	Reading File Block at 225499, Item: 28.    Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b0fb9] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Reading Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb10fdd] >> Reading [2048 bytes(s)->4 block(s)] from LBA[225503(257357824)-225507(257366016)]
+[SHELL OUT]:	[Parent:00007ff7e70b0fdd] >> Reading [2048 bytes(s)->4 block(s)] from LBA[225499(257349632)-225503(257357824)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
-[SHELL OUT]:	Writing File Block at 225503, Item: 26.	Root: [4397709807136810278:123480111967653]
-[SHELL OUT]:	[Parent:00007ff6fdb11456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
+[SHELL OUT]:	Writing File Block at 225499, Item: 28.	Root: [4397709807136810278:123480111967653]
+[SHELL OUT]:	[Parent:00007ff7e70b1456] >>  C:/GitHub/BlockyOS/Build/Build-nodate/disk.img  Base: 133120    ConfBlockSize: 2048    Starting Disk Env ID: 
 [SHELL OUT]:	Writing Bytes
-[SHELL OUT]:	[Parent:00007ff6fdb11482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225503(257357824)-225507(257366016)]
+[SHELL OUT]:	[Parent:00007ff7e70b1482] >> Writing [2048 bytes(s)->4 block(s)] to LBA[225499(257349632)-225503(257357824)]
 [SHELL OUT]:	Closing Disk Interface >> {C:/GitHub/BlockyOS/Build/Build-nodate/disk.img}
 [SHELL OUT]:	[0]: ""

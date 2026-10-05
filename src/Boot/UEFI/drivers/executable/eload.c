@@ -79,8 +79,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 	Root->NDependencies++;
 	Root->Dependencies[Root->NDependencies - 1] = __calloc(1, sizeof(LoadedPeExecutable));		
 	*(Root->Dependencies[Root->NDependencies - 1]) = (LoadedPeExecutable){
-		.Dependencies = NULL, .Name = __strdup(fname), .NDependencies = 0, 
-		.NSections = 0, .Sections = NULL, .This = Exe, .Base = ImageBase, 
+		.Dependencies = NULL, .Name = __strdup(fname), .NDependencies = 0, .NSections = 0, .Sections = NULL, .This = Exe, .Base = ImageBase, 
 		.EntryPoint = ImageBase + (Exe->Fmt.Opt.Pe32->mMagic == Pe32? Exe->Fmt.Opt.Pe32->mAddressOfEntryPoint: Exe->Fmt.Opt.Pe32Plus->mAddressOfEntryPoint)
 	};
 	//	Load all relevant Code/Data Sections.
@@ -165,8 +164,8 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 					if(OrdinalImport){DEBUGPRINT(L"\nLoaded Import #%llu", ImportSym);}
 					else{DEBUGPRINT(L"\nLoaded Import \"%a\"", ImportName);}
 					if(Exe->Fmt.Opt.Pe32->mMagic == Pe32){
-						IAT32[ImportCounter] = (UINT32)(ImageBase + Address);
-					}else{IAT64[ImportCounter] = (UINT64)(ImageBase + Address);}
+						IAT32[ImportCounter] = (UINT32)(Import->Base + Address);
+					}else{IAT64[ImportCounter] = (UINT64)(Import->Base + Address);}
 				}
 			}
 		}
@@ -187,26 +186,24 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 	}
 	EFI_MEMORY_ATTRIBUTE_PROTOCOL *MemAttrProtocol = NULL;
 	EFI_GUID MemAttrGUID = {0xf4560cf6, 0x40ec, 0x4b4a, 0xa1, 0x92, 0xbf, 0x1d, 0x57, 0xd0, 0xb1, 0x89};
-	EFI_STATUS MemAttrStatus = uefi_call_wrapper(gBS->LocateProtocol, 0, &MemAttrGUID, NULL, (VOID **)&MemAttrProtocol);
-	if(!EFI_ERROR(MemAttrStatus)){
+	EFI_STATUS Status = uefi_call_wrapper(gBS->LocateProtocol, 0, &MemAttrGUID, NULL, (VOID **)&MemAttrProtocol);
+	if(!EFI_ERROR(Status)){
 		for(UINT32 cc = 0; cc < Exe->Fmt.Header->mNumberOfSections; ++cc){
-			PeImageSectionHeader *section = Exe->Fmt.SectionTable + cc;
 			UINT64 Attributes = 0;
-			if(!strncmpa(section->mName, PeCodeSection, 8)){Attributes = EFI_MEMORY_RO;}
-			else if(!strncmpa(section->mName, PeRDefDataSection, 8)){Attributes = EFI_MEMORY_RO | EFI_MEMORY_XP;}
+			if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeCodeSection, 8)){Attributes = EFI_MEMORY_RO;}
+			else if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeRDefDataSection, 8)){Attributes = EFI_MEMORY_RO | EFI_MEMORY_XP;}
 			if(Attributes){
-				UINT64 Offset = __roundup(section->mVirtualAddress, EFI_PAGE_SIZE);
-				UINT64 SectionSize = __roundup(section->mVirtualSize, EFI_PAGE_SIZE);
-				MemAttrStatus = uefi_call_wrapper(MemAttrProtocol->SetMemoryAttributes, 0,
-					MemAttrProtocol, ImageBase + Offset, SectionSize, Attributes);
-				if(EFI_ERROR(MemAttrStatus)){
-					DEBUGPRINT(L"\nUnable to update %a Memory Permissions: %r", section->mName, MemAttrStatus);
-				}
-			}
+				Status = uefi_call_wrapper(MemAttrProtocol->SetMemoryAttributes, 0, MemAttrProtocol, 
+					ImageBase + __roundup(Exe->Fmt.SectionTable[cc].mVirtualAddress, EFI_PAGE_SIZE), 
+					__roundup(Exe->Fmt.SectionTable[cc].mVirtualSize, EFI_PAGE_SIZE), Attributes);
+				if(EFI_ERROR(Status)){
+					DEBUGPRINT(L"\nUnable to update %a Memory Permissions: %r", Exe->Fmt.SectionTable[cc].mName, Status);
+				}else{DEBUGPRINT(L"\nUpdated %a Memory Permissions", Exe->Fmt.SectionTable[cc].mName);}
+			}else{DEBUGPRINT(L"\nNo Memory Permissions to Update for %a", Exe->Fmt.SectionTable[cc].mName);}
 		}
 	}else{DEBUGPRINT(L"\nUnable to find MemorySetAttribute Protocol");}
 	socketfcall(this, close, 0);
-	DEBUGPRINT(L"\n[%a]:\t[%p:%p]\t%llu\t%llu\n", (UINT64)Root->Dependencies[Root->NDependencies - 1]->Name, (UINT64)Root->Dependencies[Root->NDependencies - 1]->Base, 
+	DEBUGPRINT(L"\nBinary [%a]:  [%p:%p]  %llu  %llu\n", (UINT64)Root->Dependencies[Root->NDependencies - 1]->Name, (UINT64)Root->Dependencies[Root->NDependencies - 1]->Base, 
 		(UINT64)Root->Dependencies[Root->NDependencies - 1]->EntryPoint, (UINT64)Root->Dependencies[Root->NDependencies - 1]->NDependencies, 
 		(UINT64)Root->Dependencies[Root->NDependencies - 1]->NSections);
 	return Root->Dependencies[Root->NDependencies - 1];

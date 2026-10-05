@@ -5,6 +5,7 @@ global kboot_km
 
 section .text
 ;	rax kboot_f(rdi(bootin))
+;				bootin = {STACKADDR, STACKSIZE, ...}
 kboot_km:
 	;	We need to Initialise the Pointer etc.
 	lea rax, qword [rdi]

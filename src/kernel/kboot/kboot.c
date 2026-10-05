@@ -79,48 +79,50 @@ void InitialiseIDT(void *ACPI){
 }
 
 ISRCallbackDefinition(GenericIO){ISRCallbackReturn;}
-
-void __sysvabi __main(__bootinfo * __restrict__ bootin){
-	// while(true){;}
-	//* Set Up Interrupt Descriptor Table (IDT) & GDT
-	InitialiseGDT();
-
-	void *ACPIBase = NULL;
-	for(uint32_t cc = 0; cc < bootin->devices.CTableLength; ++cc){
-		if(memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_TABLE_GUID}, sizeof(EFI_GUID)) || 
-			memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_20_TABLE_GUID}, sizeof(EFI_GUID))
-		){ACPIBase = bootin->devices.CTable[cc].VendorTable;			break;}
+volatile bool _f = false;
+rawenv re;
+void __sysvabi __naked __main(__bootinfo * __restrict__ bootin){
+	if(_f){
+		//* Set Up Interrupt Descriptor Table (IDT) & GDT
+		InitialiseGDT();
+	
+		static void *ACPIBase = NULL;
+		for(uint32_t cc = 0; cc < bootin->devices.CTableLength; ++cc){
+			if(memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_TABLE_GUID}, sizeof(EFI_GUID)) || 
+				memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_20_TABLE_GUID}, sizeof(EFI_GUID))
+			){ACPIBase = bootin->devices.CTable[cc].VendorTable;			break;}
+		}
+	
+		//	We need to Initialise the 
+		//  Initialise Interrupt Table
+		InitialiseIDT(ACPIBase);
+		
+		InitialiseAllocationState(bootin->memory.MemoryDescriptors, 
+			bootin->memory.MemoryDescriptorBufferSize / bootin->memory.MemoryDescriptorStructSize, bootin->memory.TotalMemorySize);
+		
+		InitaliseVMA(bootin->Video.videomemory, ACPIBase, 
+			bootin->Video.PixelSize, bootin->Video.PixelWidth, bootin->Video.PixelHeight);
+		uint32_t W = bootin->Video.PixelWidth * bootin->Video.PixelSize, 
+				H = bootin->Video.PixelHeight * bootin->Video.PixelSize;
+		void *vm = AllocateVideoMemory(0, 0, &W, &H);
+		SelectVideoContext(vm, (void **)ASCII, ASCIILength);
+		
+		static bool de[32] = {0};	memset(de, true, sizeof(de));
+		uint32_t APIC = GetLocalAPICID();
+		GenericMassStorageDeviceConfig cfg = {
+			.acpibase = ACPIBase, .AHCI = {.DeviceEnable = de, .NVectors = 1, .Out = {0}, .LocalAPICs = &APIC}, 
+			.ATAPI = {.Channel = 0, .Drive = 0, .IOAPIC = 0, .Out = {0}}, .N = 0, 
+			.NVMe = {.Out = {0}}, .Priviledge = 0x00
+		};
+		InitMutex(Mtx);
+		static uint8_t IV;
+		AllocateInterruptVector(&IV);
+		
+		re = OpenRawHandle(&cfg, GetPCIstruct(MassStorage_SATA_AHCI), IV, 512, 0x00, Mtx);
 	}
 
-	//	We need to Initialise the 
-	//  Initialise Interrupt Table
-	InitialiseIDT(ACPIBase);
-	
-	InitialiseAllocationState(bootin->memory.MemoryDescriptors, 
-		bootin->memory.MemoryDescriptorBufferSize / bootin->memory.MemoryDescriptorStructSize, bootin->memory.TotalMemorySize);
-	
-	InitaliseVMA(bootin->Video.videomemory, ACPIBase, 
-		bootin->Video.PixelSize, bootin->Video.PixelWidth, bootin->Video.PixelHeight);
-	uint32_t W = bootin->Video.PixelWidth * bootin->Video.PixelSize, 
-			H = bootin->Video.PixelHeight * bootin->Video.PixelSize;
-	void *vm = AllocateVideoMemory(0, 0, &W, &H);
-	SelectVideoContext(vm, (void **)ASCII, ASCIILength);
-	
-	bool de[32] = {0};	memset(de, true, sizeof(de));
-	uint32_t APIC = GetLocalAPICID();
-	GenericMassStorageDeviceConfig cfg = {
-		.acpibase = ACPIBase, .AHCI = {.DeviceEnable = de, .NVectors = 1, .Out = {0}, .LocalAPICs = &APIC}, 
-		.ATAPI = {.Channel = 0, .Drive = 0, .IOAPIC = 0, .Out = {0}}, .N = 0, 
-		.NVMe = {.Out = {0}}, .Priviledge = 0x00
-	};
-	InitMutex(Mtx);
-	uint8_t IV;
-	AllocateInterruptVector(&IV);
-	
-	rawenv re = OpenRawHandle(&cfg, GetPCIstruct(MassStorage_SATA_AHCI), IV, 512, 0x00, Mtx);
-
-	while(true){VideoPrintf(PixelFC(0.5, 0.5, 0.5, 0.5), "Hi");}
-
+	while(true){;}
+	return;
 	//* Take Over the Page Tables(Virtual Memory)
 	//* Initialize a Stack
 	//* Enable Hardware Interrupts(STI)
