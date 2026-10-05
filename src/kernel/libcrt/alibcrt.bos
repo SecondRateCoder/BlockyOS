@@ -3,7 +3,7 @@
 #CACHE:ENABLED
 
 {
-	"LOG": "C:/GitHub/BlockyOS/src/kernel/libcrt/alibcrt.log", 
+	"LOG": "C:/GitHub/BlockyOS/Build/Build-nodate/alibcrt.log", 
 	"SCRIPT.VERSION": 999, 
 	"FS.IMAGE": "C:/GitHub/BlockyOS/Build/Build-nodate/disk.img", 
 	"FS.FORMAT": {
@@ -15,10 +15,11 @@
 	"INPUT": {
 		"EXECUTABLE": [
 			{
-				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.dll", 
-				"CARGS": "-mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc", 
-				"LARGS": "-shared -Bsymbolic -flinker-output=dyn --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.dll.a", 
+				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll", 
+				"CARGS": "-mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables ", 
+				"LARGS": " --section-alignment 4096 --file-alignment 4096 -shared -Bsymbolic -flinker-output=dyn --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll.a", 
 				"FILES": [
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.asm", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/RNG/RNG.asm", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/RNG/RNG.c", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/GDT/GDT.asm", 
@@ -58,6 +59,6 @@
 	}
 }
 
-FSFRAT.MAKE -p "SYSD/" -n "libcrt.dll" -la "fc"
-FSFRAT.OPEN -p "SYSD/libcrt.dll" -a "LCRT" -la "f"
-FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.dll" -ia "%LCRT%" -p 0 -n 0
+FSFRAT.MAKE -p "SYSD/" -n "LibCrt.dll" -la "fc"
+FSFRAT.OPEN -p "SYSD/LibCrt.dll" -a "LCRT" -la "f"
+FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll" -ia "%LCRT%" -p 0 -n 0

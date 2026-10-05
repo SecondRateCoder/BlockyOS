@@ -4,10 +4,10 @@ extern __main
 global kboot_km
 
 section .text
-;	rax kboot_f(rdi(bootin), rsi(This), rdx(N))
+;	rax kboot_f(rdi(bootin))
 kboot_km:
 	;	We need to Initialise the Pointer etc.
 	lea rax, qword [rdi]
+	add eax, dword [rdi + 8]
 	mov rsp, rax
-	add esp, dword [rdi + 8]
 	jmp __main

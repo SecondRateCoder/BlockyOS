@@ -40,6 +40,7 @@ $BOCHSRC = Join-Path $Build '.bochsrc'
 $BOCHSLOG = Join-Path $Build 'bochs.log'
 $debuglog = Join-Path $Build 'emudebug.log'
 $debuggerlog = Join-Path $Build 'debugger.log'
+# $EFIDebugFile = Join-Path $Objdir 'debug.efi'
 if(-not (Test-Path $debuggerlog)){New-Item $debuggerlog -ItemType File -Force}
 
 
@@ -54,14 +55,15 @@ $ovmfcode = Join-Path $firmwarefolder "OVMF$(if($imagetype -notmatch "default"){
 $ovmfvars = Join-Path $firmwarefolder 'OVMF_VARS.fd'
 # if($enablevarsbackup){
 #     Copy-Item -Path (Join-Path (Get-Location) "compile/toolchain/uefi/vars-backup/$(if($imagetype -eq 'debug'){'DEBUG'}else{'RELEASE'})x64_OVMF_VARS.fd") -Destination $ovmfvars}
-$ovmfshell = Join-Path $firmwarefolder 'SHELL.efi'
-$gdbRemote = '1234'
+# $ovmfshell = Join-Path $firmwarefolder 'SHELL.efi'
+# $gdbRemote = '1234'
 
 $args_qemu = @(
 	'-vga', 'std', 
-	'-cpu', 'qemu64', 
-	'-m', '2048',
-	# '-accel', "$(if($IsLinux){'kvm'}elseif($IsMacOS){'hvf'}elseif($IsWindows){'whpx'}else{'tcg'})",
+	'-cpu', 'qemu64,pmu=off', 
+	'-m', '4096',
+	'-d', 'int,cpu_reset', '-no-reboot', '-no-shutdown', 
+	'-accel', "$(if($IsLinux){'kvm'}elseif($IsMacOS){'hvf'}elseif($IsWindows){'whpx'}else{'tcg'})",
 	'-machine', 'q35',
 	'-smp', '2',
 	'-net', 'none',
@@ -75,7 +77,7 @@ $args_qemu = @(
 	'-display', 'sdl', '-vga', 'cirrus'#, '-full-screen'
 )
 if($enablevars){$args_qemu += '-drive', "if=pflash,format=raw,file=$($ovmfvars)"}
-if($imagetype -eq 'debug'){$args_qemu += '-gdb', "tcp::$($gdbRemote)", '-S'}
+# if($imagetype -eq 'debug'){$args_qemu += '-s', '-S'}
 $BOCHSFILE = "
 cpu: model=corei7_ivy_bridge_3770k, ips=10000000, count=2, reset_on_triple_fault=1
 boot: disk
@@ -105,30 +107,26 @@ ata0: enabled=1, ioaddr1=0x1F0, ioaddr2=0x3F0, irq=14
 ata0-master: type=disk, path=`"$($Image)`", mode=flat, status=inserted, translation=lba
 "
 
-$gdbCommandFile = Join-Path $Build 'gdb-command.log'
-$gdbCommandContent = "
-set architecture i386:x86-64
-set pagination off
-set confirm off
+# $gdbCommandFile = Join-Path $Build 'gdb-command.log'
+# $gdbCommandContent = "
+# target remote localhost:1234
 
-file $($ovmfcode -replace "\\",'/')
-target remote :$($gdbRemote)
+# #	Set the watchpoint on the 64-bit memory location
+# watch *(unsigned long long*)0x10000
 
-set auto-connect-native-target off
+# #	Apply the condition to the watchpoint (`$bpnum targets the watchpoint just created)
+# condition `$bpnum *(unsigned long long*)0x10000 == 0xDEADBEEF
 
-define hook-disconnect
-	quit
-end
+# continue
 
-define hook-stop
-	if ! target_info exists remote_desc
-		quit
-	end
-end
+# # Execution breaks when 0x10000 is updated with 0xDEADBEEF
+# set `$base = *(unsigned long long*)0x10008
 
-break efi_main
-continue
-"
+# # Note: Use forward slashes in GDB paths to prevent backslash escaping issues
+# add-symbol-file $EFIDebugFile -o `$base
+
+# si
+# "
 
 function UEFI-Populate{
 	param(
@@ -351,7 +349,7 @@ if($InstallOS){
 		return 1
 	}
 	Log-Write -color Yellow "Running install.bos in current directory."
-	$ShellErr = (& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
+	(& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
 	# if($ShellErr -ne 0){
 	# 	Log-Write -color Red "install.bos execution failed during InstallOS. Aborting."
 	# 	return 1
@@ -365,21 +363,14 @@ if($run){
 	Log-Write -color Yellow -Msg "Command:  $($QEMU) $($args_qemu -join ' ') "
 	$QEMUOUT = ""
 	$env:OVMF_DEBUG = 'all'
-	if($imagetype -eq 'debug'){
-		$qemuProcess = Start-Process -FilePath $QEMU -ArgumentList $args_qemu -PassThru
-		New-Item $gdbCommandFile -ItemType File -Force
-		Add-Content $gdbCommandFile $gdbCommandContent
-		Log-Write "gdb -x $($gdbCommandFile) --directory=$(Join-Path (Get-Location) '\src\')"
-		try{
-			$GDBOUT = (& gdb '-x' ($gdbCommandFile.Replace('\\','/')) '--directory' ((Join-Path (Get-Location) '\src\')).Replace('\\','/')) 2>&1
-			Log-Write "$($GDBOUT)"
-		}finally{
-			# Kill QEMU if still running when GDB exits
-			if($qemuProcess -and -not $qemuProcess.HasExited){
-				Stop-Process -Id $qemuProcess.Id -Force -ErrorAction SilentlyContinue
-			}
-		}
-	}else{$QEMUOUT = & $QEMU @args_qemu 2>&1}
+	# if($imagetype -eq 'debug'){
+	# 	$qemuProcess = Start-Process -FilePath $QEMU -ArgumentList $args_qemu -PassThru
+	# 	New-Item $gdbCommandFile -ItemType File -Force -Value $gdbCommandContent
+	# 	# Add-Content $gdbCommandFile 
+	# 	Log-Write "gdb -x $($gdbCommandFile)"
+	# 	$gdbProcess = Start-Process -FilePath gdb -ArgumentList @('-x', $gdbCommandFile.Replace('\\','/')) -PassThru
+	# }else{$QEMUOUT = & $QEMU @args_qemu 2>&1}
+	$QEMUOUT = & $QEMU @args_qemu 2>&1
 	Log-Write "$($QEMUOUT -join "`n")"
 }elseif($runbochs){
 	$env:Path += $Build

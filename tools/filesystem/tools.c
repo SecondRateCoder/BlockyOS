@@ -24,16 +24,18 @@ void *memdup(void *mem, uint64_t s){
 
 uint64_t *__getfcode(char *s_){
 	static uint64_t hash[2];
+	memset(hash, 0, sizeof(hash));
 	char *s = strdup(s_);
-	for(uint32_t cc = 0; cc < strlen(s_); ++cc){
-		if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}
-	}
+	for(uint32_t cc = 0; cc < strlen(s_); ++cc){if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}}
 	blake2b_state hashstate;
 	blake2b_init(&hashstate, sizeof(uint64_t) * 2);
 	blake2b_update(&hashstate, s, strlen(s));
 	blake2b_final(&hashstate, &hash, sizeof(uint64_t) * 2);
-	hash[1] &= (UINT64_MAX & ~(UINT16_MAX << 48));
+	hash[1] &= (UINT64_MAX & ~(0xFFFFULL << 48));
 	free(s);
+#ifdef _DEBUG
+	dualprintf(fs_logf, stdout, "\nHash: [%llu:%llu]", hash[0], hash[1]);
+#endif
 	return hash;
 }
 

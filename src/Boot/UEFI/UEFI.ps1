@@ -26,6 +26,7 @@ $OFILES = @()
 $UEFIINTERMEDIATESRC = (Join-Path -Path $Objdir "blob_1.so")
 $UEFIINTERMEDIATEFINAL = (Join-Path -Path $Objdir "blob_2.so")
 $UEFIBINARYBLOB = (Join-Path -Path $Objdir "blob.efi")
+$UEFIDebuggingBLOB = (Join-Path -Path $Objdir "debug.efi")
 $EMUUEFIBINARYDIR = (Join-Path -Path $EMUOUT "/EFI/BOOT/")
 $EMUUEFIBINARYBLOB = (Join-Path -Path $EMUUEFIBINARYDIR "/BOOTX64.EFI")
 $OBJCOPY = 'objcopy'
@@ -42,7 +43,7 @@ $CARGS = @(
 	'-I', "$($EFIPARENT)include\efi\$(if($ARCHITECTURE -eq 'x86_64'){'x86_64'}else{'ia32'})\", 
 	'-fno-stack-protector', '-fno-stack-check', '-std=c99', 
 	'-fdiagnostics-color=always', '-fshort-wchar', 
-	'-ffreestanding', '-fPIC', '-O0',
+	'-ffreestanding', '-fPIC', '-O0', 
 	'-maccumulate-outgoing-args', '-fno-omit-frame-pointer', 
 	"-m$(if($ARCHITECTURE -eq 'x86_64'){'64'}else{'32'})",
 	'-D', "$(if($ARCHITECTURE -eq 'x86_64'){'__x86_64__', '-mno-red-zone'}else{'__ia32__', '-D', 'EFI32'})", 
@@ -81,6 +82,7 @@ $OBJCOPYARGS = @(
     '-O', "pei-$(if($ARCHITECTURE -eq 'x86_64'){'x86-64'}else{'i386'})", 
 	'--subsystem=10', $UEFIINTERMEDIATEFINAL, $UEFIBINARYBLOB
 )
+$OBJCOPYARGS2 = @('--only-keep-debug', $UEFIINTERMEDIATEFINAL, $UEFIDebuggingBLOB)
 
 function Get-TimestampCache{
 	param(
@@ -278,6 +280,8 @@ if(Test-Path $UEFIINTERMEDIATEFINAL){
 	}
 	Log-Write "$($OBJCOPY) $($OBJCOPYARGS -join ' ')" -color Blue
     $OBJCOPYOUT = (& $OBJCOPY $OBJCOPYARGS)
+	Log-Write "$($OBJCOPY) $($OBJCOPYARGS2 -join ' ')" -color Blue
+    $OBJCOPYOUT += @("`n`n", (& $OBJCOPY $OBJCOPYARGS2))
     Log-Write "$($OBJCOPYOUT -join "`n")"
 }
 if(Test-Path $UEFIBINARYBLOB){

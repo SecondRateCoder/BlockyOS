@@ -107,7 +107,7 @@
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}\\compile\\intermid.ps1",
-            "args": ["-run", "qemu", "-imagetype", "default"],
+            "args": ["-run", "qemu", "-imagetype", "debug"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -120,7 +120,7 @@
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}\\compile\\intermid.ps1",
-            "args": ["-run", "bochs", "-imagetype", "default"],
+            "args": ["-run", "bochs", "-imagetype", "debug"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",

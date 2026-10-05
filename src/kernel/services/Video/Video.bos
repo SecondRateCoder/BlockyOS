@@ -3,7 +3,7 @@
 #CACHE:ENABLED
 
 {
-	"LOG": "C:/GitHub/BlockyOS/src/kernel/services/Video/Video.log", 
+	"LOG": "C:/GitHub/BlockyOS/Build/Build-nodate/Video.log", 
 	"SCRIPT.VERSION": 999, 
 	"FS.IMAGE": "C:/GitHub/BlockyOS/Build/Build-nodate/disk.img", 
 	"FS.FORMAT": {
@@ -15,12 +15,12 @@
 	"INPUT": {
         "EXECUTABLE": [
             {
-				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.dll", 
-				"CARGS": "-mcmodel=small -fno-stack-protector -nostdinc -fno-pie -fno-pic -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/", 
-				"LARGS": "-shared -flinker-output=dyn -Bsymbolic --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.dll.a", 
+				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll", 
+				"CARGS": "-mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -fno-unwind-tables -fno-asynchronous-unwind-tables -mcmodel=small -fno-stack-protector -nostdinc -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/", 
+				"LARGS": " --section-alignment 4096 --file-alignment 4096 -shared -flinker-output=dyn -Bsymbolic --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll.a", 
 				"FILES": [
 					"C:/GitHub/BlockyOS/src/kernel/services/Video/Video.c", 
-					"C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.dll", 
+					"C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll", 
 					"C:/GitHub/BlockyOS/src/kernel/services/Video/Video.def"
 				]
 			}
@@ -28,6 +28,6 @@
     }
 }
 
-FSFRAT.MAKE -p "SYSD/" -n "Video.dll" -la "fc"
-FSFRAT.OPEN -p "SYSD/Video.dll" -a "VIDEO" -la "f"
-FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/Video.dll" -ia "%VIDEO%" -p 0 -n 0
+FSFRAT.MAKE -p "SYSD/" -n "LibVideo.dll" -la "fc"
+FSFRAT.OPEN -p "SYSD/LibVideo.dll" -a "VIDEO" -la "f"
+FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll" -ia "%VIDEO%" -p 0 -n 0

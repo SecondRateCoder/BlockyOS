@@ -3,7 +3,7 @@
 #CACHE:ENABLED
 
 {
-	"LOG": "C:/GitHub/BlockyOS/src/kernel/services/IO/IO.log", 
+	"LOG": "C:/GitHub/BlockyOS/Build/Build-nodate/IO.log", 
 	"SCRIPT.VERSION": 999, 
 	"FS.IMAGE": "C:/GitHub/BlockyOS/Build/Build-nodate/disk.img", 
 	"FS.FORMAT": {
@@ -15,12 +15,12 @@
 	"INPUT": {
         "EXECUTABLE": [
             {
-				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/IO.dll", 
-				"CARGS": "-mcmodel=small -fno-stack-protector -nostdinc -fno-pie -fno-pic -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/", 
-				"LARGS": "-shared -flinker-output=dyn -Bsymbolic --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/IO.dll.a", 
+				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll", 
+				"CARGS": "-mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -fno-unwind-tables -fno-asynchronous-unwind-tables -mcmodel=small -fno-stack-protector -nostdinc -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/", 
+				"LARGS": "--section-alignment 4096 --file-alignment 4096 -shared -flinker-output=dyn -Bsymbolic --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll.a", 
 				"FILES": [
 					"C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c", 
-					"C:/GitHub/BlockyOS/Build/Build-nodate/root-part/libcrt.dll", 
+					"C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll", 
 					"C:/GitHub/BlockyOS/src/kernel/services/IO/IO.def"
 				]
 			}
@@ -28,6 +28,6 @@
     }
 }
 
-FSFRAT.MAKE -p "SYSD/" -n "IO.dll" -la "fc"
-FSFRAT.OPEN -p "SYSD/IO.dll" -a "IO" -la "f"
-FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/IO.dll" -ia "%IO%" -p 0 -n 0
+FSFRAT.MAKE -p "SYSD/" -n "LibIO.dll" -la "fc"
+FSFRAT.OPEN -p "SYSD/LibIO.dll" -a "IO" -la "f"
+FSFRAT.WRITE -pp "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll" -ia "%IO%" -p 0 -n 0

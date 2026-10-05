@@ -21,7 +21,7 @@ port_e9_hack: enabled=1, all_rings=1
 log: C:\GitHub\BlockyOS\Build\Build-nodate\bochs.log
 iodebug: all_rings=1
 
-romimage: file=C:\GitHub\BlockyOS\compile\toolchain\uefi\default\OVMF.fd
+romimage: file=C:\GitHub\BlockyOS\compile\toolchain\uefi\debug\OVMF_CODE.fd
 vgaromimage: file=C:\msys64\mingw64\share\bochs\VGABIOS-lgpl-latest-cirrus.bin
 ata0: enabled=1, ioaddr1=0x1F0, ioaddr2=0x3F0, irq=14
 ata0-master: type=disk, path="C:\GitHub\BlockyOS\Build\Build-nodate\disk.img", mode=flat, status=inserted, translation=lba

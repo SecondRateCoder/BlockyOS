@@ -27,7 +27,7 @@ $PATTERN = '"[^"]*"|''[^'']*''|\{[^{}]*\}|\[[^\[\]]*\]|\([^\(\)]*\)|\S+'
 
 $_COMPILEARGS = @('-nostdlib', '-O0', 
     '--std=c99', '-ffreestanding', '-m64', '-mno-red-zone', 
-    '-fno-stack-protector', '-fno-builtin', '-funsigned-bitfields', 
+    '-fno-stack-protector', '-fno-builtin', '-funsigned-bitfields', '-fvisibility=default', 
     '-funsigned-char', '-fsso-struct=little-endian', '-fno-leading-underscore', 
     '-fdiagnostics-color=always', '-fdiagnostics-urls=always', 
     '-fno-diagnostics-show-highlight-colors', '-fomit-frame-pointer', 

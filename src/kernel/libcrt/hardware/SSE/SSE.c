@@ -18,6 +18,41 @@ bool Op##TypePlural(xmmRegister reg, void *ptr){													\
 	return dispatchTable[reg.Register](ptr);														\
 }
 
+// Macro for Standard Math/Logic/Comparison Operations taking (xmmRegister, void*)
+#define RegisterOpFunction(Op, TypeSingular, RegLetter)						\
+bool Op##TypeSingular##RegLetter(xmmRegister reg, void *ptr){				\
+	static const SIMDFuncPtr dispatchTable[16] = {							\
+		Op##TypeSingular##RegLetter##0,  Op##TypeSingular##RegLetter##1,	\
+		Op##TypeSingular##RegLetter##2,  Op##TypeSingular##RegLetter##3,	\
+		Op##TypeSingular##RegLetter##4,  Op##TypeSingular##RegLetter##5,	\
+		Op##TypeSingular##RegLetter##6,  Op##TypeSingular##RegLetter##7,	\
+		Op##TypeSingular##RegLetter##8,  Op##TypeSingular##RegLetter##9,	\
+		Op##TypeSingular##RegLetter##10, Op##TypeSingular##RegLetter##11,	\
+		Op##TypeSingular##RegLetter##12, Op##TypeSingular##RegLetter##13,	\
+		Op##TypeSingular##RegLetter##14, Op##TypeSingular##RegLetter##15	\
+	};																		\
+	if(reg.Register >= 16){return false;}									\
+	return dispatchTable[reg.Register](ptr);								\
+}
+
+// Macro for Operations without pointer arguments
+#define RegisterVoidOpFunction(Op, TypeSingular, RegLetter)					\
+bool Op##TypeSingular##RegLetter(xmmRegister reg){							\
+	typedef bool __sysvabi(*SIMDVoidFuncPtr)(void);							\
+	static const SIMDVoidFuncPtr dispatchTable[16] = {						\
+		Op##TypeSingular##RegLetter##0,  Op##TypeSingular##RegLetter##1,	\
+		Op##TypeSingular##RegLetter##2,  Op##TypeSingular##RegLetter##3,	\
+		Op##TypeSingular##RegLetter##4,  Op##TypeSingular##RegLetter##5,	\
+		Op##TypeSingular##RegLetter##6,  Op##TypeSingular##RegLetter##7,	\
+		Op##TypeSingular##RegLetter##8,  Op##TypeSingular##RegLetter##9,	\
+		Op##TypeSingular##RegLetter##10, Op##TypeSingular##RegLetter##11,	\
+		Op##TypeSingular##RegLetter##12, Op##TypeSingular##RegLetter##13,	\
+		Op##TypeSingular##RegLetter##14, Op##TypeSingular##RegLetter##15	\
+	};																		\
+	if(reg.Register >= 16){return false;}									\
+	return dispatchTable[reg.Register]();									\
+}
+
 // Instantiate Move Suites
 RegisterSuiteFunction(AlignedFloats,   Store, To,   X)
 RegisterSuiteFunction(AlignedFloats,   Load,  From, X)
@@ -38,6 +73,45 @@ RegisterSuiteFunction(AlignedVectors,  Store, To,   Y)
 RegisterSuiteFunction(AlignedVectors,  Load,  From, Y)
 RegisterSuiteFunction(UAlignedVectors, Store, To,   Y)
 RegisterSuiteFunction(UAlignedVectors, Load,  From, Y)
+
+// Single-Precision Float Math / Operations (XMM)
+RegisterOpFunction(Add, Float, Xmm)
+RegisterOpFunction(Sub, Float, Xmm)
+RegisterOpFunction(Mul, Float, Xmm)
+RegisterOpFunction(Div, Float, Xmm)
+RegisterOpFunction(Sqrt, Float, Xmm)
+RegisterOpFunction(And, Float, Xmm)
+RegisterOpFunction(Or, Float, Xmm)
+RegisterOpFunction(Xor, Float, Xmm)
+RegisterVoidOpFunction(Clear, Float, Xmm)
+RegisterOpFunction(EqualTo, Float, Xmm)
+RegisterOpFunction(LessThan, Float, Xmm)
+RegisterOpFunction(NotEqualTo, Float, Xmm)
+RegisterOpFunction(GreaterThan, Float, Xmm)
+RegisterVoidOpFunction(BroadcastFloatLane0, , Xmm)
+RegisterOpFunction(InterleaveLow, Float, Xmm)
+RegisterOpFunction(ConvertFloatToInt32Trunc, , Xmm)
+
+// Packed Integer Math / Logic Operations (XMM)
+RegisterOpFunction(Add, Integer, Xmm)
+RegisterOpFunction(Sub, Integer, Xmm)
+RegisterOpFunction(Mul, Integer, Xmm)
+RegisterOpFunction(And, Integer, Xmm)
+RegisterOpFunction(Or, Integer, Xmm)
+RegisterOpFunction(Xor, Integer, Xmm)
+RegisterVoidOpFunction(Clear, Integer, Xmm)
+
+// Double-Precision Float Math Operations (XMM)
+RegisterOpFunction(Add, Double, Xmm)
+RegisterOpFunction(Sub, Double, Xmm)
+RegisterOpFunction(Mul, Double, Xmm)
+RegisterOpFunction(Div, Double, Xmm)
+RegisterOpFunction(Sqrt, Double, Xmm)
+
+// 256-Bit Vector Math Operations (YMM)
+RegisterOpFunction(Add, Vector, Ymm)
+RegisterOpFunction(Sub, Vector, Ymm)
+RegisterOpFunction(Mul, Vector, Ymm)
 
 
 bool AllocateSSERegister(xmmRegister *out){

@@ -44,7 +44,7 @@ enumdef(logoperation, uint16_t){
 };
 
 typedef struct fslogitem{
-	uint64_t sourcefcode		: 48;
+	uint64_t sourcefcode	: 48;
 	logoperation logop;
 	uint64_t destfcode		: 48;
 }__attribute__((packed)) fslogitem;
@@ -56,7 +56,6 @@ typedef struct fsblock{
 	// UINT32 logalias;
 	uint32_t index;
 }__attribute__((packed)) fsblock;
-unsigned _ = (2560 / 20) * 2048;
 
 /// @brief This is the expanded block of FileInfo
 typedef struct meta_fsblock{

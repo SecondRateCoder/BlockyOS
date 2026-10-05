@@ -5,7 +5,7 @@
 #include "Boot/UEFI/drivers/.disk/raw/raw.h"
 #include "Boot/UEFI/tools/tools.h"
 
-#define FCODEHASHMASK	(UINT64_MAX & ~(UINT16_MAX << 48))
+#define FCODEHASHMASK	(UINT64_MAX & ~(0xFFFFULL << 48))
 
 #define FRATSIG "FRAT_FILESYSTEM"
 #define FRATSIG_LEN (sizeof(FRATSIG) - 1)
@@ -52,9 +52,9 @@ typedef struct fslogitem{
 }__attribute__((packed)) fslogitem;
 
 typedef struct fsblock{
-	uint64_t fcodelow;
-	uint64_t fcodehigh		: 48;
-	uint64_t attributes		: 16;
+	UINT64 fcodelow;
+	UINT64 fcodehigh		: 48;
+	UINT64 attributes		: 16;
 	// UINT32 logalias;
 	UINT32 index;
 }__attribute__((packed)) fsblock;

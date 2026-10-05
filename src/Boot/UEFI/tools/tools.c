@@ -35,27 +35,16 @@ BOOLEAN isascii(char c){return c <= 0x7F;}
 
 UINT64 *__getfcode(char *s_){
     static UINT64 hash[2];
+	__memset(hash, 0, sizeof(hash));
 	char *s = __strdup(s_);
-	for(UINT32 cc = 0; cc < __strlen(s_); ++cc){
-		if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}
-	}
+	for(UINT32 cc = 0; cc < __strlen(s_); ++cc){if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}}
+	DEBUGPRINT(L"\nGenerating Hash");
 	blake2b_state hashstate;
-// #ifdef _DEBUG
-//     Print(L"\nInitialising Blake2 Enviroment");
-// #endif
 	blake2b_init(&hashstate, sizeof(UINT64) * 2);
-// #ifdef _DEBUG
-//     Print(L"\nUpdating Blake2 Enviroment");
-// #endif
     blake2b_update(&hashstate, s, __strlen(s));
-// #ifdef _DEBUG
-//     Print(L"\nFinalising Blake2 Enviroment");
-// #endif
 	blake2b_final(&hashstate, &hash, sizeof(UINT64) * 2);
-// #ifdef _DEBUG
-//     Print(L"\nFinalised Blake2 Enviroment");
-// #endif
-	hash[1] &= UINT64_MAX & ~(UINT16_MAX << 48);
+    hash[1] &= (UINT64_MAX ^ (0xFFFFULL << 48));
+    DEBUGPRINT(L"\nHash:\t[%llu:%llu]", hash[0], hash[1]);
     __free(s);
 	return hash;
 }
@@ -246,6 +235,7 @@ void *__realloc_(void *memory, UINT64 currSize, UINT64 nSize){
 
 void  *__calloc_(UINT64 nLen, UINT64 nSize){
     DEBUGPRINT(L"\nAllocating %llu item(s) of %llu bytes", nLen, nSize);
+	if(!nLen || !nSize){return NULL;}
 #ifndef __CUSTMEM_FUNC__
     return AllocateZeroPool(nSize * nLen);
 #else
@@ -258,6 +248,7 @@ void  *__calloc_(UINT64 nLen, UINT64 nSize){
 
 void __memset(void *dst, UINT8 val, UINT64 len){
     DEBUGPRINT(L"\nSetting %llu bytes to %u", len, val);
+	if(!len){return;}
 #ifndef __CUSTMEM_FUNC__
     SetMem(dst, val, len);
 #else
@@ -267,6 +258,7 @@ void __memset(void *dst, UINT8 val, UINT64 len){
 
 void __safecopy(void * __restrict__ dst, void * __restrict__ src, UINT64 len){
     DEBUGPRINT(L"\nPerforming Safe-Copy");
+	if(!len){return;}
     void *dup = __memdup(src, len);
     __memcpy(dst, dup, len);
     __free(dup);
@@ -275,6 +267,7 @@ void __safecopy(void * __restrict__ dst, void * __restrict__ src, UINT64 len){
 
 void __memcpy(void * __restrict__ dst, void * __restrict__ src, UINT64 len){
     DEBUGPRINT(L"\nCopying %llu bytes", len);
+	if(!len){return;}
 #ifndef __CUSTMEM_FUNC__
     CopyMem(dst, src, len);
 #else
@@ -377,10 +370,8 @@ void *sysbase(EFI_HANDLE Image){
 	if(Image){
 		EFI_LOADED_IMAGE *Protocol;
 		EFI_GUID LoadedImageGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
-		EFI_STATUS status = uefi_call_wrapper(
-			gBS->HandleProtocol, 0, 
-			Image, &LoadedImageGuid, (void **)&Protocol
-		);
+		EFI_STATUS status = uefi_call_wrapper(gBS->HandleProtocol, 
+			0, Image, &LoadedImageGuid, (void **)&Protocol);
 		if(!EFI_ERROR(status)){out = Protocol->ImageBase;}
         DEBUGPRINT(L"\n Image Base: %p",  Protocol->ImageBase);
 	}

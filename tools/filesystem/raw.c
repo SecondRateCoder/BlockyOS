@@ -80,7 +80,7 @@ void writeblocks(rawenv re, void *data, LBA pos, uint64_t bytes){
 	uint64_t nBlocks = __safediv((bytes + blockBytes - 1), blockBytes) * re->CalcBlock;
 	void *buf = calloc(nBlocks, re->RealBlock);
 #ifdef _DEBUG
-	printf("\nWriting Bytes\n[Parent:%p] >> Wrtiting [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
+	printf("\nWriting Bytes\n[Parent:%p] >> Writing [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
 		__builtin_return_address(0), bytes, nBlocks, pos, 
 		(re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), pos + nBlocks, 
 		(re->Partition * re->RealBlock) + (((pos + nBlocks) - re->Partition) * re->RealBlock * re->CalcBlock));

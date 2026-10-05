@@ -30,7 +30,6 @@
 
 #define GUIDPRINT16 L"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"
 #define GUIDPRINT "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"
-CHAR16 *_GUIDtoSTR(EFI_GUID guid);
 void prGUID(EFI_GUID guid);
 
 #define ARRSIZE(ARR) (sizeof(ARR) / sizeof(ARR[0]))
@@ -101,13 +100,8 @@ typedef struct {
 #define __efiStepRight(node, memory) (node = (!__efiIsFirst(node)? *((node)->local__.parent)->local__.parent->local__.children[memory++]))
 #define __efiStepLeft(node, memory) (node = (!__efiIsFirst(node)? *((node)->local__.parent)->local__.parent->local__.children[memory--]))
 
-__efiDevNode **loadDNodes(UINT32 *nNodes);
-EFI_DEVICE_PATH *getDevPath(EFI_DEVICE_PATH *dPath, UINT32 dType, UINT32 sType);
-void DebugDevicePath(EFI_DEVICE_PATH *ROOT);
-CHAR16 *DescribeDeviceNode(EFI_DEVICE_PATH *Node);
-__efiDevNode *BuildDeviceTree(EFI_DEVICE_PATH *Path);
 static CHAR16 *EfiMemoryTypeToStr(UINT32 type);
-EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINT32 *mapSize, UINT32 *mapKey, UINT32 *descSize, UINT32 *descVersion);
+EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSize, UINT32 *descVersion);
 
 enumdef(UINT32, strtokflags){
 	strtok__ForceSameBorderingDelims = 0x1,

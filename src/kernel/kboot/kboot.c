@@ -80,7 +80,8 @@ void InitialiseIDT(void *ACPI){
 
 ISRCallbackDefinition(GenericIO){ISRCallbackReturn;}
 
-void __sysvabi __main(__bootinfo * __restrict__ bootin, ExecutableSection *This, uint32_t N){
+void __sysvabi __main(__bootinfo * __restrict__ bootin){
+	// while(true){;}
 	//* Set Up Interrupt Descriptor Table (IDT) & GDT
 	InitialiseGDT();
 
@@ -95,7 +96,8 @@ void __sysvabi __main(__bootinfo * __restrict__ bootin, ExecutableSection *This,
 	//  Initialise Interrupt Table
 	InitialiseIDT(ACPIBase);
 	
-	InitialiseAllocationState(bootin->memory.MemoryDescriptors, bootin->memory.NMemoryDescriptors, bootin->memory.TotalMemorySize);
+	InitialiseAllocationState(bootin->memory.MemoryDescriptors, 
+		bootin->memory.MemoryDescriptorBufferSize / bootin->memory.MemoryDescriptorStructSize, bootin->memory.TotalMemorySize);
 	
 	InitaliseVMA(bootin->Video.videomemory, ACPIBase, 
 		bootin->Video.PixelSize, bootin->Video.PixelWidth, bootin->Video.PixelHeight);
@@ -103,8 +105,6 @@ void __sysvabi __main(__bootinfo * __restrict__ bootin, ExecutableSection *This,
 			H = bootin->Video.PixelHeight * bootin->Video.PixelSize;
 	void *vm = AllocateVideoMemory(0, 0, &W, &H);
 	SelectVideoContext(vm, (void **)ASCII, ASCIILength);
-
-	VideoPrintf(PixelFC(0.5, 0.5, 0.5, 0.5), "Hi");
 	
 	bool de[32] = {0};	memset(de, true, sizeof(de));
 	uint32_t APIC = GetLocalAPICID();
@@ -116,7 +116,10 @@ void __sysvabi __main(__bootinfo * __restrict__ bootin, ExecutableSection *This,
 	InitMutex(Mtx);
 	uint8_t IV;
 	AllocateInterruptVector(&IV);
+	
 	rawenv re = OpenRawHandle(&cfg, GetPCIstruct(MassStorage_SATA_AHCI), IV, 512, 0x00, Mtx);
+
+	while(true){VideoPrintf(PixelFC(0.5, 0.5, 0.5, 0.5), "Hi");}
 
 	//* Take Over the Page Tables(Virtual Memory)
 	//* Initialize a Stack

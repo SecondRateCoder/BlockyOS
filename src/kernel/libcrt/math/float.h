@@ -94,3 +94,29 @@ typedef struct { uint64_t low; uint64_t high; } float128_t; // Storage fallback
 #define isinf       isinfd
 
 #define copysign(a, f)  ((f) > 0? (a): -(a))
+
+float extern __sysvabi __addsf3(float, float);
+float extern __sysvabi __subsf3(float, float);
+float extern __sysvabi __mulsf3(float, float);
+float extern __sysvabi __divsf3(float, float);
+bool extern __sysvabi __eqsf2(float, float);
+bool extern __sysvabi __gtsf2(float, float);
+bool extern __sysvabi __ltsf2(float, float);
+bool extern __sysvabi __lesf2(float, float);
+
+double extern __sysvabi __addsd3(double, double);
+double extern __sysvabi __subsd3(double, double);
+double extern __sysvabi __mulsd3(double, double);
+double extern __sysvabi __divsd3(double, double);
+bool extern __sysvabi __eqsd2(double, double);
+bool extern __sysvabi __gtsd2(double, double);
+bool extern __sysvabi __gedf2(double, double);
+bool extern __sysvabi __ltsd2(double, double);
+bool extern __sysvabi __lesd2(double, double);
+
+float extern __sysvabi __floatsisf(int32_t);
+float extern __sysvabi __floatunsisf(uint32_t);
+double extern __sysvabi __floatsidf(uint32_t);
+double extern __sysvabi __floatundidf(uint64_t);
+uint32_t extern __sysvabi __fixsfsi(float);
+float extern __sysvabi __truncdfsf2(double);

@@ -1,0 +1,10 @@
+LIBRARY LibIO
+EXPORTS
+	AllocateMassStorageQueue
+	FreeMassStorageQueue
+	MassStorageRead
+	MassStorageWrite
+	OpenRawHandle
+	WriteRawHandleBlocks
+	WriteRawHandleBytes
+	ReadRawHandleBlocks

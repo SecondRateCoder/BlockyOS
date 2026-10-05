@@ -1,0 +1,117 @@
+[0]
+        Command: help
+        Alias: ,h
+        Flags:
+                {-h     :       string  :       The Command to be scanned, Use ".." to Print all Info}
+        Desc: Print this Info...
+[1]
+        Command: e.sym
+        Alias: ,s
+        Flags:
+                {-%     :       string  :       The Symbol Alias}
+                {-n     :       qword   :       The Number of Bytes to write}
+                {-d     :       long-data       :       The Symbol Data}
+        Desc: Symbol Info, referenced as %<SYMBOLNAME>%
+[2]
+        Command: symdump
+        Alias: ,sd
+        Flags:
+                {-%     :       string  :       The Symbol Alias}
+                {-P     :       string  :       The Output File on the Parent FileSystem}
+        Desc: Dump a Symbol
+[3]
+        Command: symprint
+        Alias: ,sp
+        Flags:
+                {-n     :       string  :       The Name of the Symbol to print, a value of ".." prints all Symbols.}
+        Desc: Print a Symbol(If it is a String)
+[4]
+        Command: e.disk
+        Alias: ,u
+        Flags:
+                {-pp    :       string  :       The Real File Path on Parent Disk}
+                {-pt    :       string  :       <OPTIONAL> The Name of the Partition to be formatted when Mounting fails}
+                {-bs    :       dword   :       <OPTIONAL> The Configured Block Size of the Partition to be formatted when Mounting fails}
+                {-lb    :       dword   :       <OPTIONAL> The Configured #Log Sectors of the Partition to be formatted when Mounting fails}
+                {-v     :       string  :       <OPTIONAL> The Version code of the Partition to be formatted when Mounting fails.       <In the Format"<VERMAJOR>:<VERMINOR>"}
+        Desc: Mount the Disk
+[5]
+        Command: e.mount
+        Alias: ,m
+        Flags:
+        Desc: The Mounted Disk FrAT FS, this has no Function and is non-callable
+[6]
+        Command: e.flush
+        Alias: ,fu
+        Flags:
+        Desc: Flush all Configuration Data
+[7]
+        Command: create
+        Alias: ,cr
+        Flags:
+                {-la    :       string  :       The Create-Args to use for creating a FileSystem Item}
+                {-p     :       string  :       The Path to the Item}
+                {-n     :       string  :       The Name of the Item}
+        Desc: Create a FileSystem Item...
+[8]
+        Command: delete
+        Alias: ,d
+        Flags:
+                {-a     :       string  :       The Path of the item to deleted}
+        Desc: Delete a FileSystem Item...
+[9]
+        Command: open
+        Alias: ,o
+        Flags:
+                {-la    :       string  :       The Create-Args to use for creating a FileSystem Item}
+                {-p     :       string  :       The Path of the item to be opened}
+                {-a     :       string  :       The Alias of the Handle}
+        Desc: Open an Item
+[10]
+        Command: close
+        Alias: ,cl
+        Flags:
+                {-a     :       string  :       The Alias of the Handle}
+        Desc: Open an Item
+[11]
+        Command: read
+        Alias: ,r
+        Flags:
+                {-oa    :       string  :       The Output Alias}
+                {-ia    :       string  :       The Alias of the Item to read from}
+                {-p     :       qword   :       The Byte Position to read from}
+                {-n     :       qword   :       The #Bytes to read}
+        Desc: Read an Item from one Alias to another
+[12]
+        Command: write
+        Alias: ,w
+        Flags:
+                {-oa    :       string  :       The Input Alias}
+                {-ia    :       string  :       The Alias of the Item to Write to}
+                {-p     :       qword   :       The Byte Position to read from}
+                {-n     :       qword   :       The #Bytes to read}
+        Desc: Write an Item from one Alias to another
+[13]
+        Command: fread
+        Alias: ,fr
+        Flags:
+                {-pp    :       string  :       The Path on the Parent Disk's Filesystem to write to}
+                {-ia    :       string  :       The Alias of the Item to read from}
+                {-p     :       qword   :       The Byte Position to read from}
+                {-n     :       qword   :       The #Bytes to read <a Value of 0 means "Read full file">}
+        Desc: Read an Item to the Parent Filesystem from a FrAT Filesystem Item
+[14]
+        Command: fwrite
+        Alias: ,fw
+        Flags:
+                {-pp    :       string  :       The Path on the Parent Disk's Filesystem to read from}
+                {-ia    :       string  :       The Alias of the Item to write to}
+                {-p     :       qword   :       The Byte Position to read from}
+                {-n     :       qword   :       The #Bytes to read <a Value of 0 means "Read full file">}
+        Desc: Write an Item from the Parent Filesystem to a FrAT Filesystem Item
+[15]
+        Command: exit
+        Alias: ,e
+        Flags:
+        Desc: Exit the Program
+[0]: ""

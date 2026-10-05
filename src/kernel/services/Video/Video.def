@@ -1,0 +1,9 @@
+LIBRARY LibVideo
+EXPORTS
+	InitaliseVMA
+	AllocateVideoMemory
+	PreflushVideoMemory
+	FreeVideoMemory
+	VMAIState
+	VideoPrintf
+	SelectVideoContext

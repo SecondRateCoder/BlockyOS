@@ -1,191 +1,48 @@
 #include "standard.h"
 #include "tools/tools.h"
 
-__efiDevNode *ProcessNode(EFI_DEVICE_PATH *Node, __efiDevNode *Parent){
-		DEBUGPRINT(L"\nLoading Node");
-	__efiDevNode *New = AllocatePool(sizeof(__efiDevNode));
-	if(Parent){
-		Parent->local__.children = ReallocatePool(
-			(sizeof(__efiDevNode) * Parent->local__.nChildren),
-			(sizeof(__efiDevNode) * (Parent->local__.nChildren + 1)),
-			Parent->local__.children
-		);
-		Parent->local__.children[Parent->local__.nChildren] = New;
-		Parent->local__.nChildren++;
-	}
-	*New = (__efiDevNode){
-		.local = Node,
-		.local__ = {
-			.children = NULL,
-			.nChildren = 0,
-			.parent = Parent
-		},
-		.protocolData = {0},
-		.nodeName = DescribeDeviceNode(Node)
-	};
-	CopyMem(New->protocolData, ((void *)Node) +  sizeof(EFI_DEVICE_PATH), DevicePathNodeLength(Node) - sizeof(EFI_DEVICE_PATH));
-	DEBUGPRINT(L"    ??    [%s]", New->nodeName);
-	return New;
-}
+EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSize, UINT32 *descVersion){
+    DEBUGPRINT(L"\nGetting the Memory Map");
+    EFI_STATUS status;
+    EFI_MEMORY_DESCRIPTOR *map = NULL;
+    *mapSize = 0;
 
-__efiDevNode *BuildDeviceTree(EFI_DEVICE_PATH *Path){
-	__efiDevNode *Root = NULL;
-	__efiDevNode *Parent = NULL;
-	EFI_DEVICE_PATH *Node = Path;
-	while(!IsDevicePathEnd(Node)){
-		if(DevicePathNodeLength(Node) == 0){
-			Print(L"\n[WARNING] Zero-length device path node, aborting walk");
-			break;
-		}
-		__efiDevNode *Current = ProcessNode(Node, Parent);
-		if(!Root){Root = Current;}
-		Parent = Current;
-		Node = NextDevicePathNode(Node);
-	}
-	return Root;
-}
+    //	First call: Pass argument count 5 and NULL for buffer to query required size
+    status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, NULL, mapKey, descSize, descVersion);
 
-void DebugDevicePath(EFI_DEVICE_PATH *ROOT){
-	Print(L"\n    [  ");
-	while(!IsDevicePathEnd(ROOT)){
-		CHAR16 *C16 = DescribeDeviceNode(ROOT);
-		Print(L"%s  ", C16);
-		__free(C16);
-		ROOT = NextDevicePathNode(ROOT);
-	}
-	Print(L"  ]");
-}
+    //	Add padding to handle descriptor splits caused by AllocatePool
+    *mapSize += 8 * (*descSize);
 
-CHAR16 *DescribeDeviceNode(EFI_DEVICE_PATH *Node){
-	static UINT8 bufLEN = 128;
-	CHAR16 *Buffer = AllocatePool(bufLEN);
-	ZeroMem(Buffer, bufLEN);
-	switch(Node->Type){
-		case ACPI_DEVICE_PATH: {
-			ACPI_HID_DEVICE_PATH *Acpi = (ACPI_HID_DEVICE_PATH*)Node;
-			UnicodeSPrint(Buffer, bufLEN, L"ACPI(HID=%08x    UID=%08x)", Acpi->HID, Acpi->UID);
-			break;
-		} case HARDWARE_DEVICE_PATH: {
-			switch (Node->SubType) {
-				case HW_PCI_DP: {
-					PCI_DEVICE_PATH *Pci = (PCI_DEVICE_PATH*)Node;
-					UnicodeSPrint(Buffer, bufLEN, L"PCI(%d,%d)", Pci->Device, Pci->Function);
-					break;
-				} case HW_MEMMAP_DP: {
-					MEMMAP_DEVICE_PATH *Mm = (MEMMAP_DEVICE_PATH*)Node;
-					UnicodeSPrint(Buffer, bufLEN, L"MemMap(%lx-%lx)", Mm->StartingAddress, Mm->EndingAddress);
-					break;
-				} default: {StrnCpy(Buffer, L"Hardware(Unknown)", 17);}
-			}
-			break;
-		} case MESSAGING_DEVICE_PATH: {
-			switch(Node->SubType){
-				case MSG_USB_DP: {
-					USB_DEVICE_PATH *Usb = (USB_DEVICE_PATH*)Node;
-					UnicodeSPrint(Buffer, bufLEN, L"USB(Port %d)", Usb->Port);
-					break;
-				} case MSG_SATA_DP: {
-					SATA_DEVICE_PATH *Sata = (SATA_DEVICE_PATH*)Node;
-					UnicodeSPrint(Buffer, bufLEN, L"SATA(Port %d    PM %d    Lun %d)",
-								Sata->HBAPortNumber, Sata->PortMultiplierPortNumber, Sata->Lun);
-					break;
-				} case MSG_SCSI_DP: {
-					SCSI_DEVICE_PATH *Scsi = (SCSI_DEVICE_PATH*)Node;
-					UnicodeSPrint(Buffer, bufLEN, L"SCSI(Pun %d    Lun %d)", Scsi->Pun, Scsi->Lun);
-					break;
-				} default: {StrnCpy(Buffer, L"Messaging(Unknown)", 18);}
-			}
-			break;
-		} case MEDIA_DEVICE_PATH: {
-			switch(Node->SubType){
-				case MEDIA_FILEPATH_DP: {
-					FILEPATH_DEVICE_PATH *Fp = (FILEPATH_DEVICE_PATH*)Node;
-					UnicodeSPrint(Buffer, bufLEN, L"FilePath(%s)", Fp->PathName);
-					break;
-				} case MEDIA_HARDDRIVE_DP: {
-					HARDDRIVE_DEVICE_PATH *Hd = (HARDDRIVE_DEVICE_PATH*)Node;
-					UnicodeSPrint(Buffer, bufLEN, L"HD(Part %d    Start %lx    End %lx)",
-								Hd->PartitionNumber, Hd->PartitionStart, Hd->PartitionSize);
-					break;
-				} default: {StrnCpy(Buffer, L"Media(Unknown)", 14);}
-			}
-			break;
-		} default:{StrnCpy(Buffer, L"Unknown(Unknown)", 16);}
-	}
-	return Buffer;
-}
+    //	Allocate memory pool
+    status = uefi_call_wrapper(gBS->AllocatePool, 0, EfiLoaderData, *mapSize, (void **)&map);
+    if(EFI_ERROR(status)){
+        DEBUGPRINT(L"\n%s Error", EfiStatusToString(status));
+        return NULL;
+    }
 
-EFI_DEVICE_PATH *getDevPath(EFI_DEVICE_PATH *dPath, UINT32 dType, UINT32 sType){
-	EFI_DEVICE_PATH *dPath__ = dPath;
-	while(!IsDevicePathEnd(dPath__)){
-		if(((dPath__->Type & dType) == dPath__->Type) && ((dPath__->SubType & sType) == dPath__->SubType)){return dPath__;}
-		dPath__ = NextDevicePathNode(dPath__);
-	}
-	return NULL;
-}
+    //	Fetch memory map
+    status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, map, mapKey, descSize, descVersion);
+    if(EFI_ERROR(status)){
+        DEBUGPRINT(L"\n%s Error", EfiStatusToString(status));
+        uefi_call_wrapper(gBS->FreePool, 1, map);
+        return NULL;
+    }
 
-// __efiDevNode **loadDNodes(UINT32 *nNodes){
-// 	EFI_GUID dPathGUID = EFI_DEVICE_PATH_PROTOCOL_GUID;
-// 	EFI_HANDLE *handles = NULL;		UINTN nHandles = 0;
-// 	__efiDevNode **dnodes = NULL;	(*nNodes) = 0;
-// 	DEBUGPRINT(L"\nLoading Device Tree");
-// 	if(!EFI_ERROR(uefi_call_wrapper(gBS->LocateHandleBuffer, 0, AllHandles, NULL, NULL, &nHandles, &handles))){
-// 		dnodes = AllocatePool(sizeof(__efiDevNode *) * nHandles);
-// 		EFI_STATUS status;
-// 		DEBUGPRINT(L"\n");
-// 		for(UINTN cc = 0; cc < nHandles; ++cc){
-// 			EFI_DEVICE_PATH *dPath = NULL;
-// 			status = uefi_call_wrapper(gBS->HandleProtocol, 0, handles[cc], &dPathGUID, (void **)&dPath);
-// 			if(!EFI_ERROR(status)){
-// 				// DebugDevicePath(dPath);
-// 				dnodes[*nNodes] = BuildDeviceTree(dPath);
-// 				if(dnodes[*nNodes]){
-// 					Print(L"Call #%llu    \"%s\"\n", cc, dnodes[*nNodes]->nodeName);
-// 					(*nNodes)++;
-// 				}else{DEBUGPRINT(L"Call Error #%llu    ", cc);}
-// 			}else{DEBUGPRINT(L"Call Error #%u: %llu    ", cc, status & ~((UINTN)0xF000000000000000));}
-// 		}
-// 	}else{DEBUGPRINT(L"\nError Getting Handles");}
-// 	__free(handles);
-// 	dnodes = ReallocatePool(sizeof(__efiDevNode *) * nHandles, sizeof(__efiDevNode *) * (*nNodes), dnodes);
-// 	DEBUGPRINT(L"\nReturning Expanded Node Tree");
-// 	return dnodes;
-// }
+    UINTN numItems = *mapSize / *descSize;
+    DEBUGPRINT(L"\n=== UEFI Memory Map (%llu entries) ===", numItems);
+    DEBUGPRINT(L"\nMap Size: %llu, Descriptor Size: %llu, Map Key: %llu,\tVersion: %u", *mapSize, *descSize, *mapKey, numItems, *descVersion);
 
-EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINT32 *mapSize, UINT32 *mapKey, UINT32 *descSize, UINT32 *descVersion){
-	DEBUGPRINT(L"\nGetting the Memory Map");
-	EFI_STATUS status;
-	EFI_MEMORY_DESCRIPTOR *map = NULL;
-	*mapSize = 0;
-
-	// First call: get required size
-	status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, map, mapKey, descSize, descVersion);
-	if(status != EFI_BUFFER_TOO_SMALL){return NULL;}
-	
-	// Allocate extra space (UEFI spec recommends padding)
-	*mapSize += 2 * (*descSize);
-	status = uefi_call_wrapper(gBS->AllocatePool, 0, EfiLoaderData, *mapSize, (void **)&map);
-	if(EFI_ERROR(status)){return NULL;}
-
-	// Second call: actual memory map
-	status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, map, mapKey, descSize, descVersion);
-	if(EFI_ERROR(status)){
-		gBS->FreePool(map);
-		return NULL;
-	}
-	DEBUGPRINT(L"=== UEFI Memory Map (%u entries) ===\n", __safediv(*mapSize, *descSize));
-	DEBUGPRINT(L"Descriptor Size: %llu, #n Items: %llu  Version: %u\n\n", *mapSize, __safediv(*mapSize, *descSize), *descVersion);
-	for(UINTN cc = 0; cc < __safediv(*mapSize, *descSize); ++cc){
-		DEBUGPRINT(
-			L"[%llu] %s:%u  Start: 0x%lx  Pages: %llu  Size: %llu KB\n",
-			cc,
-			EfiMemoryTypeToStr(map[cc].Type),map[cc].Type,
-			map[cc].PhysicalStart,
-			map[cc].NumberOfPages,
-			map[cc].NumberOfPages * 4
-		);
-	}
-	return map;
+    //	Stride using byte pointer and descSize to prevent alignment drift
+    UINT8 *mapBytePtr = (UINT8 *)map;
+    for(UINTN cc = 0; cc < numItems; ++cc){
+        EFI_MEMORY_DESCRIPTOR *desc = (EFI_MEMORY_DESCRIPTOR *)(mapBytePtr + (cc * (*descSize)));
+        DEBUGPRINT(L"\n[%llu] %s:%u  Start: 0x%p  Pages: %llu  Size: %llu KB",
+            cc, EfiMemoryTypeToStr(desc->Type), desc->Type, desc->PhysicalStart, 
+			desc->NumberOfPages, desc->NumberOfPages * 4
+        );
+    }
+    status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, map, mapKey, descSize, descVersion);
+    return map;
 }
 
 static CHAR16 *EfiMemoryTypeToStr(UINT32 type){
@@ -209,71 +66,69 @@ static CHAR16 *EfiMemoryTypeToStr(UINT32 type){
 	}
 }
 
-EFI_GRAPHICS_OUTPUT_MODE_INFORMATION InitialiseVideoMemory(UINT64 *VideoMemory, UINT64 *PixelSize, UINT64 *Width, UINT64 *Height){
+EFI_GRAPHICS_OUTPUT_MODE_INFORMATION InitialiseVideoMemory(void **VideoMemory, UINT64 *PixelSize, UINT64 *Width, UINT64 *Height){
 	EFI_GUID gopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 	EFI_GRAPHICS_OUTPUT_PROTOCOL *gop;
 	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *info;
 	UINTN SizeOfInfo, numModes, nativeMode;
 
 	//	Query GOP
-	EFI_STATUS status = uefi_call_wrapper(BS->LocateProtocol, 3, &gopGuid, NULL, (void**)&gop);
+	EFI_STATUS status = uefi_call_wrapper(BS->LocateProtocol, 0, &gopGuid, NULL, (void**)&gop);
 	if(EFI_ERROR(status)){Print(L"Unable to locate GOP");}
 
 	//	Get the current Mode
-	status = uefi_call_wrapper(gop->QueryMode, 4, gop, gop->Mode==NULL?0:gop->Mode->Mode, &SizeOfInfo, &info);
+	status = uefi_call_wrapper(gop->QueryMode, 0, gop, gop->Mode==NULL?0:gop->Mode->Mode, &SizeOfInfo, &info);
 	// this is needed to get the current video mode
-	if(status == EFI_NOT_STARTED){status = uefi_call_wrapper(gop->SetMode, 2, gop, 0);}
+	if(status == EFI_NOT_STARTED){status = uefi_call_wrapper(gop->SetMode, 0, gop, 0);}
 	if(EFI_ERROR(status)){Print(L"Unable to get native mode");}else{
 		nativeMode = gop->Mode->Mode;		numModes = gop->Mode->MaxMode;}
 
 	//	Query all available Modes and set the Current Mode to that which is Largest and of the RGB Mode.
 	for(UINT32 i = 0; i < numModes; i++){
-		status = uefi_call_wrapper(gop->QueryMode, 4, gop, i, &SizeOfInfo, &info);
-		Print(L"\nmode %03u width %u height %u format %u%s",
-			(UINT32)i, (UINT32)info->HorizontalResolution, 
-			(UINT32)info->VerticalResolution, (UINT32)info->PixelFormat, 
-			(i == nativeMode? "(current)": "")
-		);
-		if(
-			((gop->Mode->Info->PixelFormat != PixelRedGreenBlueReserved8BitPerColor) && info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) || 
-			//	We get the Larget FB
+		status = uefi_call_wrapper(gop->QueryMode, 0, gop, i, &SizeOfInfo, &info);
+		// Print(L"\nmode %u width %u height %u format %u%a", (UINT32)i, (UINT32)info->HorizontalResolution, 
+		// 	(UINT32)info->VerticalResolution, (UINT32)info->PixelFormat, (i == nativeMode? "(current)": ""));
+		if((info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) || 
 			((gop->Mode->Info->HorizontalResolution < info->HorizontalResolution) && (gop->Mode->Info->VerticalResolution < info->VerticalResolution))
 		){status = uefi_call_wrapper(gop->SetMode, 3, gop, i);}
 	}
 
-	*VideoMemory = gop->Mode->FrameBufferBase;
+	*VideoMemory = (void *)gop->Mode->FrameBufferBase;
+	// uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAddress, EfiRuntimeServicesData, 
+	// 	gop->Mode->Info->HorizontalResolution * gop->Mode->Info->VerticalResolution * sizeof(UINT32), VideoMemory);
 	*Width = gop->Mode->Info->HorizontalResolution;
 	*Height = gop->Mode->Info->VerticalResolution;
 	*PixelSize = sizeof(UINT32);
 
-	return *info;
+	return *(gop->Mode->Info);
 }
 
-__bootinfo *gatherbootinfo(){
+__bootinfo *gatherbootinfo(EFI_HANDLE Image){
 	__bootinfo *out = __calloc(1, sizeof(__bootinfo));
 	StrnCpy(out->bootentry.BootEntryName, BOOTOPTION16, __min(sizeof(BOOTOPTION16) / sizeof(CHAR16), sizeof(out->bootentry.BootEntryName)));
 
-	//	We need to initialise some Video Memory
-
 	*out = (__bootinfo){
-		.devices = {
+		.Stack = {
+			.Stack = __calloc_(16, EFI_PAGE_SIZE * EFI_PAGE_SIZE), .StackSize = 64 * EFI_PAGE_SIZE * EFI_PAGE_SIZE
+		}, .devices = {
 			.devices = NULL, // loadDNodes(&out->devices.nnodes), .CTableLength = ST->NumberOfTableEntries, 
 			.CTable = __memdup(ST->ConfigurationTable, sizeof(EFI_CONFIGURATION_TABLE) * ST->NumberOfTableEntries)
-		}, 
-		.memory = {
-			.MemoryDescriptors = GetMemoryMap(&out->memory.MemoryDescriptorStructSize, &out->memory.MemocryDescriptorMapKey, 
-				&out->memory.MemoryDescriptorStructSize, &out->memory.MDescriptorsVersion), 
-			.NMemoryDescriptors = __safediv(out->memory.MemoryDescriptorStructSize, out->memory.MemoryDescriptorStructSize), 
-			.TotalMemorySize = 0
-		}, 
+		}, .memory = {0}, .Video = {0}, 
 		.bootentry.BootEntryCode = CreateBootEntry(&rootDesc.guid, &rootDesc.uGuid, (CHAR16 *)out->bootentry.BootEntryName), 
-		.Video = {.CurrentVideoMode = {0x00}, .PixelHeight = 0x00, .PixelSize = 0x00, .PixelWidth = 0x00, .videomemory = NULL}
 	};
-	out->Video.CurrentVideoMode = InitialiseVideoMemory(out->Video.videomemory, &(out->Video.PixelSize), &(out->Video.PixelWidth), &out->Video.PixelHeight);
-	for(UINTN cc = 0 ; cc < out->memory.NMemoryDescriptors; ++cc){
-		if(out->memory.MemoryDescriptors[cc].PhysicalStart > out->memory.TotalMemorySize){
-			out->memory.TotalMemorySize = out->memory.MemoryDescriptors[cc].PhysicalStart + (out->memory.MemoryDescriptors[cc].NumberOfPages * EFI_PAGE_SIZE);
-		}
+	out->Video.CurrentVideoMode = InitialiseVideoMemory(&(out->Video.videomemory), &(out->Video.PixelSize), &(out->Video.PixelWidth), &(out->Video.PixelHeight));
+	DEBUGPRINT(L"\nVideo Memory: %p\tPixel Size: %llu\tWidth: %llu\tHeight: %llu", out->Video.videomemory, out->Video.PixelSize, out->Video.PixelWidth, out->Video.PixelHeight);
+	out->memory.MemoryDescriptors = GetMemoryMap(&(out->memory.MemoryDescriptorBufferSize), &(out->memory.MemoryDescriptorMapKey), 
+		&(out->memory.MemoryDescriptorStructSize), &(out->memory.MDescriptorsVersion));
+	DEBUGPRINT(L"\n\n\n");
+	
+	EFI_STATUS St = uefi_call_wrapper(gBS->ExitBootServices, 2, Image, out->memory.MemoryDescriptorMapKey);
+	if(EFI_ERROR(St)){DEBUGPRINT(L"\nFailed to exit Boot Services.\t[%a:%llu]", EfiStatusToString(St), (UINT64)St);}
+
+	for(UINTN cc = 0 ; cc < (out->memory.MemoryDescriptorBufferSize / out->memory.MemoryDescriptorStructSize); ++cc){
+		EFI_MEMORY_DESCRIPTOR *emd = (void *)out->memory.MemoryDescriptors + (cc * out->memory.MemoryDescriptorStructSize);
+		if(emd->PhysicalStart > out->memory.TotalMemorySize){
+			out->memory.TotalMemorySize = emd->PhysicalStart + (emd->NumberOfPages * EFI_PAGE_SIZE);}
 	}
 	return out;
 }
@@ -296,10 +151,7 @@ UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarN
 		ExistingSize = 0;
 		Existing = NULL;
 
-		Status = uefi_call_wrapper(
-			RT->GetVariable, 0, BootVar, BootGuid,
-			NULL, &ExistingSize, NULL
-		);
+		Status = uefi_call_wrapper(RT->GetVariable, 0, BootVar, BootGuid, NULL, &ExistingSize, NULL);
 
 		if(Status == EFI_BUFFER_TOO_SMALL){
 			// Entry exists → return "already exists"
@@ -312,10 +164,7 @@ UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarN
 	for(BootIndex = 0; BootIndex < 0xFFFF; BootIndex++){
 		SPrint(BootVar, sizeof(BootVar), L"Boot%04X", BootIndex);
 		ExistingSize = 0;
-		Status = uefi_call_wrapper(
-			RT->GetVariable, 0, BootVar, BootGuid,
-			NULL, &ExistingSize, NULL
-		);
+		Status = uefi_call_wrapper(RT->GetVariable, 0, BootVar, BootGuid, NULL, &ExistingSize, NULL);
 		if(Status == EFI_NOT_FOUND){break;}
 	}
 	if(BootIndex >= 0xFFFF){return 0;}
@@ -355,12 +204,42 @@ UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarN
 	__memcpy(Ptr, &DevPath, FilePathLen);
 
 	// Write Boot#### variable
-	Status = uefi_call_wrapper(
-		RT->SetVariable, 0, BootVar, BootGuid,
+	Status = uefi_call_wrapper(RT->SetVariable, 0, BootVar, BootGuid,
 		EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 		TotalSize, Buffer
 	);
 	FreePool(Buffer);
 	if(EFI_ERROR(Status)){return 0;}
 	return 2;
+}
+
+const char *EfiStatusToString(EFI_STATUS Status){
+    switch (Status) {
+        case EFI_SUCCESS:				return "EFI_SUCCESS";
+        case EFI_LOAD_ERROR:			return "EFI_LOAD_ERROR";
+        case EFI_INVALID_PARAMETER:		return "EFI_INVALID_PARAMETER";
+        case EFI_UNSUPPORTED:			return "EFI_UNSUPPORTED";
+        case EFI_BAD_BUFFER_SIZE:		return "EFI_BAD_BUFFER_SIZE";
+        case EFI_BUFFER_TOO_SMALL:		return "EFI_BUFFER_TOO_SMALL";
+        case EFI_NOT_READY:				return "EFI_NOT_READY";
+        case EFI_DEVICE_ERROR:			return "EFI_DEVICE_ERROR";
+        case EFI_WRITE_PROTECTED:		return "EFI_WRITE_PROTECTED";
+        case EFI_OUT_OF_RESOURCES:		return "EFI_OUT_OF_RESOURCES";
+        case EFI_VOLUME_CORRUPTED:		return "EFI_VOLUME_CORRUPTED";
+        case EFI_VOLUME_FULL:			return "EFI_VOLUME_FULL";
+        case EFI_NO_MEDIA:				return "EFI_NO_MEDIA";
+        case EFI_MEDIA_CHANGED:			return "EFI_MEDIA_CHANGED";
+        case EFI_NOT_FOUND:				return "EFI_NOT_FOUND";
+        case EFI_ACCESS_DENIED:			return "EFI_ACCESS_DENIED";
+        case EFI_NO_RESPONSE:			return "EFI_NO_RESPONSE";
+        case EFI_NO_MAPPING:			return "EFI_NO_MAPPING";
+        case EFI_TIMEOUT:				return "EFI_TIMEOUT";
+        case EFI_NOT_STARTED:			return "EFI_NOT_STARTED";
+        case EFI_ALREADY_STARTED:		return "EFI_ALREADY_STARTED";
+        case EFI_ABORTED:				return "EFI_ABORTED";
+        case EFI_SECURITY_VIOLATION:	return "EFI_SECURITY_VIOLATION";
+        case EFI_CRC_ERROR:				return "EFI_CRC_ERROR";
+        case EFI_END_OF_FILE:			return "EFI_END_OF_FILE";
+        default:						return (EFI_ERROR(Status)) ? "EFI_UNKNOWN_ERROR" : "EFI_UNKNOWN_WARNING";
+    }
 }

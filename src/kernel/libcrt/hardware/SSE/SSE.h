@@ -87,6 +87,8 @@ DECLARE_REGISTER_BLOCK(28) DECLARE_REGISTER_BLOCK(29) DECLARE_REGISTER_BLOCK(30)
 typedef bool __sysvabi(*SIMDFuncPtr)(void *ptr);
 
 #define RegisterSuiteFunction(TypePlural, Op, Direction, RegLetter)		bool Op##TypePlural(xmmRegister reg, void *ptr);
+#define RegisterVoidOpFunction(Op, TypeSingular, RegLetter)				bool Op##TypeSingular##RegLetter(xmmRegister reg);
+#define RegisterOpFunction(Op, TypeSingular, RegLetter)					bool Op##TypeSingular##RegLetter(xmmRegister reg, void *ptr);
 
 // Instantiate Move Suites
 RegisterSuiteFunction(AlignedFloats,   Store, To,   X)
@@ -108,6 +110,46 @@ RegisterSuiteFunction(AlignedVectors,  Store, To,   Y)
 RegisterSuiteFunction(AlignedVectors,  Load,  From, Y)
 RegisterSuiteFunction(UAlignedVectors, Store, To,   Y)
 RegisterSuiteFunction(UAlignedVectors, Load,  From, Y)
+
+
+// Single-Precision Float Math / Operations (XMM)
+RegisterOpFunction(Add, Float, Xmm)
+RegisterOpFunction(Sub, Float, Xmm)
+RegisterOpFunction(Mul, Float, Xmm)
+RegisterOpFunction(Div, Float, Xmm)
+RegisterOpFunction(Sqrt, Float, Xmm)
+RegisterOpFunction(And, Float, Xmm)
+RegisterOpFunction(Or, Float, Xmm)
+RegisterOpFunction(Xor, Float, Xmm)
+RegisterVoidOpFunction(Clear, Float, Xmm)
+RegisterOpFunction(EqualTo, Float, Xmm)
+RegisterOpFunction(LessThan, Float, Xmm)
+RegisterOpFunction(NotEqualTo, Float, Xmm)
+RegisterOpFunction(GreaterThan, Float, Xmm)
+RegisterVoidOpFunction(BroadcastFloatLane0, , Xmm)
+RegisterOpFunction(InterleaveLow, Float, Xmm)
+RegisterOpFunction(ConvertFloatToInt32Trunc, , Xmm)
+
+// Packed Integer Math / Logic Operations (XMM)
+RegisterOpFunction(Add, Integer, Xmm)
+RegisterOpFunction(Sub, Integer, Xmm)
+RegisterOpFunction(Mul, Integer, Xmm)
+RegisterOpFunction(And, Integer, Xmm)
+RegisterOpFunction(Or, Integer, Xmm)
+RegisterOpFunction(Xor, Integer, Xmm)
+RegisterVoidOpFunction(Clear, Integer, Xmm)
+
+// Double-Precision Float Math Operations (XMM)
+RegisterOpFunction(Add, Double, Xmm)
+RegisterOpFunction(Sub, Double, Xmm)
+RegisterOpFunction(Mul, Double, Xmm)
+RegisterOpFunction(Div, Double, Xmm)
+RegisterOpFunction(Sqrt, Double, Xmm)
+
+// 256-Bit Vector Math Operations (YMM)
+RegisterOpFunction(Add, Vector, Ymm)
+RegisterOpFunction(Sub, Vector, Ymm)
+RegisterOpFunction(Mul, Vector, Ymm)
 
 LibAPI extern bool __sysvabi testSSE(void);
 LibAPI extern uint64_t __sysvabi testSSEExtensions(void);

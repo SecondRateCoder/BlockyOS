@@ -1,4 +1,4 @@
-LIBRARY libcrt
+LIBRARY LibCrt
 EXPORTS
     __inb
     __inw

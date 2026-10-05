@@ -28,7 +28,7 @@ socket_ret socketfuncprefix __fhandle_sckinfo(struct socket_t *socket, UINT64 nA
 						.errout = __noerr, .nData = sizeof(metadata.fsig)
 					};
 				} case 3: {
-                    uint64_t temp = strlena(metadata.name);
+                    UINT64 temp = strlena(metadata.name);
 					return (socket_ret){.data = __memdup(metadata.name, temp), .errout = __noerr, .nData = temp};
 				} case 4: {
 					return (socket_ret){
@@ -51,11 +51,9 @@ socket_ret socketfuncprefix __fhandle_sckinfo(struct socket_t *socket, UINT64 nA
 						.errout = __noerr, .nData = sizeof(metadata.writedate)
 					};
 				} case 8: {
-					if(!uh->dir){
-						uint64_t len = __fsize(uh->fhandle_);
-						return (socket_ret){.data = __memdup(&len, sizeof(len)), .errout = __noerr, .nData = sizeof(len)};
-					}
-					return (socket_ret){.data = NULL, .nData = 0x0, .errout = __noimpl_socketfunc};
+					UINT64 len = 0;
+					if(!uh->dir){len = __fsize(uh->fhandle_);}else{len = __dsize(uh->dhandle_);}
+					return (socket_ret){.data = __memdup(&len, sizeof(len)), .errout = __noerr, .nData = sizeof(len)};
 				} default: {return (socket_ret){.data = NULL, .nData = 0, .errout = __noexist};}
 			}
 		} case 1: {
@@ -113,29 +111,24 @@ socket_ret socketfuncprefix __fhandle_sckinfo(struct socket_t *socket, UINT64 nA
 					.errout = __noerr, .nData = sizeof(uh->dhandle_->dirarray)
 				};
 			}
-		} case 6: {
-			if(uh->dir){
-				uint64_t size = __fsize(uh->fhandle_);
-				return (socket_ret){
-					.data = __memdup(&size, sizeof(size)), 
-					.errout = __noerr, .nData = sizeof(size)
-				};
-			}
 		} default: {return (socket_ret){.data = NULL, .nData = 0, .errout = __noexist};}
 	}
+	return (socket_ret){.data = NULL, .nData = 0, .errout = __noexist};
 }
 socket_ret socketfuncprefix __fhandle_sckwrite(socket_t * socket, UINT64 nArgBytes, void *data, UINT64 posBYTES, UINT64 nBYTES, ...){
 	DEBUGPRINT(L"\nSocket Write");
 	unhandle *uh = (unhandle *)socket->persistent;
 	if(!uh->dir){
 		_fseek(uh->fhandle_, posBYTES);
-		UINT64 writes = _fwrite(uh->fhandle_, nBYTES, data);
-		DEBUGPRINT(L"\nFinished Socket Write");
-		return (socket_ret){
-			.data = ((writes == nBYTES) ? data: NULL),
-			.nData = writes,
-			.errout = ((writes == nBYTES)? __noerr: __undeferr)
-		};
+		UINT64 wstamp = nBYTES;
+		if((nBYTES = _fwrite(uh->fhandle_, nBYTES, data)) == wstamp){
+			DEBUGPRINT(L"\nFinished Socket Write");
+			return (socket_ret){
+				.data = ((nBYTES == nBYTES) ? data: NULL),
+				.nData = wstamp - nBYTES,
+				.errout = ((nBYTES == nBYTES)? __noerr: __undeferr)
+			};
+		}
 	}
 	DEBUGPRINT(L"\nFailed Socket Write");
 	return socketret__noimpl;
@@ -175,7 +168,6 @@ socket_ret socketfuncprefix __fhandle_sckOPENchild(socket_t * socket, UINT64 nAR
 			dirhandle *dh = ((unhandle *)socket->persistent)->dhandle_;
 			char *path = __strdup(dh->path);
 			char *loadargs = va_arg(args, char *);
-			va_end(args);
 			path = __realloc(path, __strlen(path), __strlen(path) + __strlen(childPATH) + 1);
 			__memcpy(path + __strlen(path), childPATH, __strlen(childPATH) + 1);
 			fsblock *fb = __ffind(((unhandle *)socket->persistent)->dhandle_->root, path);
@@ -189,7 +181,7 @@ socket_ret socketfuncprefix __fhandle_sckOPENchild(socket_t * socket, UINT64 nAR
 			// Open Socket
 			socket_t *socket = __calloc(1, sizeof(socket_t));
 			*socket = (socket_t){
-                .persistent = getptr(uh),
+                .persistent = uh,
 				.close = (socketCLOSE)getptr(__fhandle_sckclose),
 				.open = (socketOPENchild)getptr(__fhandle_sckOPENchild),
                 .read = (socketREAD)getptr(__fhandle_sckread),
@@ -200,6 +192,7 @@ socket_ret socketfuncprefix __fhandle_sckOPENchild(socket_t * socket, UINT64 nAR
 					.write = (socketWRITEraw)getptr(__fhandle_sckwrite)
 				},
 			};
+			va_end(args);
 			DEBUGPRINT(L"\nFinished Socket Child Open");
 			return (socket_ret){
 				.errout = __noerr,
@@ -216,8 +209,9 @@ socket_ret socketfuncprefix __froot_sckwrite(socket_t * socket, UINT64 nArgBytes
 socket_ret socketfuncprefix __froot_sckclose(socket_t * socket, UINT64 nARGbytes, ...){
 	DEBUGPRINT(L"\nSocket Close");
 	conf_fsroot *root = (conf_fsroot *)socket->persistent;
-	__free(root->root);
 	__free(root->clusterbuffer.clusterMap);
+	__free(root->logblocks.logBlock);
+	__free(root->root);
 	__free(root);
 	__free(socket);
 	return (socket_ret){
@@ -232,29 +226,36 @@ socket_ret socketfuncprefix __froot_sckOPENchild(socket_t * socket, UINT64 nARGb
 		char *path = va_arg(args, char *);
 		char *loadargs = va_arg(args, char *);
 		DEBUGPRINT(L"\n\nPath: %p:%a\nLoad-Args: %p:%a", path, path, loadargs, loadargs);
-		va_end(args);
-		unhandle *uh = __calloc(1, sizeof(unhandle));
-		*uh = (unhandle){
-			.dir = flagcheck((__ffind((conf_fsroot *)socket->persistent, path))->attributes, __fsdirectory),
-			.__notype = flagcheck((__ffind((conf_fsroot *)socket->persistent, path))->attributes, __fsdirectory)? 
-				(void *)floadhdir((conf_fsroot *)socket->persistent, path, loadargs):
+		fsblock *tmp = __ffind((conf_fsroot *)socket->persistent, path);
+		if(tmp){
+			unhandle *uh = __calloc(1, sizeof(unhandle));
+			*uh = (unhandle){
+				.dir = flagcheck(tmp->attributes, __fsdirectory),
+				.__notype = flagcheck(tmp->attributes, __fsdirectory)? 
+					(void *)floadhdir((conf_fsroot *)socket->persistent, path, loadargs):
 					(void *)floadh((conf_fsroot *)socket->persistent, path, loadargs)
-		};
-		// Open Socket
-		socket_t *socket = __calloc(1, sizeof(socket_t));
-		*socket = (socket_t){
-			.open = (socketOPENchild)getptr(__fhandle_sckOPENchild),
-			.close = (socketCLOSE)getptr(__fhandle_sckclose),
-			.persistent = uh,
-			.info = (socketINFO)getptr(__fhandle_sckinfo), 
-			.read = (socketREAD)getptr(__fhandle_sckread),
-			.write = (socketWRITE)getptr(__fhandle_sckwrite),
-			.raw = {
+			};
+			// Open Socket
+			socket_t *socket = __calloc(1, sizeof(socket_t));
+			*socket = (socket_t){
+				.persistent = uh,
+				.open = (socketOPENchild)getptr(__fhandle_sckOPENchild),
+				.close = (socketCLOSE)getptr(__fhandle_sckclose),
+				.info = (socketINFO)getptr(__fhandle_sckinfo), 
 				.read = (socketREAD)getptr(__fhandle_sckread),
-				.write = (socketWRITE)getptr(__fhandle_sckwrite)
-			}
-		};
-		return (socket_ret){__noerr, sizeof(socket_t), socket};
+				.write = (socketWRITE)getptr(__fhandle_sckwrite),
+				.raw = {
+					.read = (socketREAD)getptr(__fhandle_sckread),
+					.write = (socketWRITE)getptr(__fhandle_sckwrite)
+				}
+			};
+			va_end(args);
+			return (socket_ret){__noerr, sizeof(socket_t), socket};
+		}else{
+			va_end(args);
+			DEBUGPRINT(L"\nFailed to open Socket, File does not exist");
+			return (socket_ret){__noexist, 0, NULL};
+		}
 	}
 	return (socket_ret){__incompatible_arg, 0, NULL};
 }
@@ -324,6 +325,24 @@ socket_ret socketfuncprefix __froot_sckinfo(struct socket_t *socket, UINT64 nArg
 					};
 				} default: {return (socket_ret){.data = NULL, .nData = 0, .errout = __noexist};}
 			}
+		} case 7: {
+			DEBUGPRINT(L"\nPrinting Cluster Table\n");
+			for(UINT64 cc = 0; cc < root->clusterbuffer.nClusterItems; ++cc){
+				if(root->clusterbuffer.clusterMap[cc].fcodehigh && root->clusterbuffer.clusterMap[cc].fcodelow){
+					if(cc){DEBUGPRINT(L", ");}
+					//	17326495997843702475:275180975602787
+					DEBUGPRINT(
+						L"[%llu]: {"
+						"\n\t.fcode:\t[%llu:%llu]"
+						"\n\t.attributes:\t%llu"
+						"\n\t.index:\t%llu"
+						"\n}", cc, root->clusterbuffer.clusterMap[cc].fcodelow, 
+						root->clusterbuffer.clusterMap[cc].fcodehigh, 
+						root->clusterbuffer.clusterMap[cc].attributes, root->clusterbuffer.clusterMap[cc].index
+					);
+				}
+			}
+			return socketret_noerr_empty;
 		} default: {return (socket_ret){.data = NULL, .nData = 0, .errout = __noexist};}
 	}
 }

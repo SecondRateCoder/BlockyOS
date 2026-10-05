@@ -123,7 +123,7 @@ void TextCopyF(char *stream, uint64_t *size, const char **f, va_list ls){
 
     static const char sample[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     uint32_t counter = 0;
-	char *format = *f;
+	const char *format = *f;
     
     //	Reserve 1 byte at the end for the null terminator (size - 1)
     for(uint32_t cc = 0; format[cc] != '\0' && counter < ((*size) - 1); ++cc){

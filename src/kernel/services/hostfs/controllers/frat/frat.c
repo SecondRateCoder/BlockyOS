@@ -3,11 +3,15 @@
 
 uint64_t *getfcode(char *path){
 	static uint64_t hash[2];
+	char *canonicalPath = strdup(path);
+	if(!canonicalPath){return NULL;}
+	for(uint64_t i = 0; i < strlen(canonicalPath); ++i){if(canonicalPath[i] == '\\'){canonicalPath[i] = '/';}}
 	blake2b_state state;
 	blake2b_init(&state, sizeof(hash));
-	blake2b_update(&state, path, strlen(path));
+	blake2b_update(&state, canonicalPath, strlen(canonicalPath));
 	blake2b_final(&state, hash, sizeof(hash));
 	hash[1] &= FCODEHASHMASK;
+	free(canonicalPath);
 	return hash;
 }
 
@@ -387,10 +391,7 @@ fsblock *__ffindhi(conf_fsroot *root, uint64_t hash[2], uint64_t index){
 
 fsblock *__ffindi(conf_fsroot *root, char *path, uint64_t index){return __ffindhi(root, getfcode(path), index);}
 
-fsblock *__ffind(conf_fsroot *root, char *path){
-	uint64_t hash = getfcode(path);
-	return __ffindh(root, hash);
-}
+fsblock *__ffind(conf_fsroot *root, char *path){return __ffindi(root, path, 0);}
 
 void *__fread1(rawenv re, conf_fsroot *root, fsblock *fb, uint64_t *index){
 	LBA loc = 0x00;
@@ -488,7 +489,7 @@ void __fdirrefresh(rawenv re, dirhandle *handle){
 			// Read off the Block 
 			handle->dirarray = mrealloc(handle->dirarray, re->CalcBlocks * (blockprogress + 1));
 			void *temp = ReadRawHandleBlocks(re, getloc(handle->root, fb), ReBlocks(re, handle->root->root->confBlockSize));
-			memcpy(handle->dirarray + (re->CalcBlocks * blockprogress), temp, re->CalcBlocks);
+			memcpy((void *)handle->dirarray + (re->CalcBlocks * blockprogress), temp, re->CalcBlocks);
 			mfree(temp);
 			for(uint64_t cc = 0x00; cc < __safediv(re->CalcBlocks, sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = true;	break;}}
 			blockprogress++;
@@ -511,7 +512,6 @@ fhandle *floadh(rawenv re, conf_fsroot *root, char *path, char *args){
 	fhandle *out = mcalloc(1, sizeof(fhandle));
 	fsblock *fb = __ffind(root, path);
 	if(!fb){return NULL;}
-	fhandle *out = mcalloc(1, sizeof(fhandle));
 	*out = (fhandle){
 		.file = fb,
 		.root = root,
@@ -558,13 +558,12 @@ void __fupdatetstamp(rawenv re, conf_fsroot *root, fsblock *file, bool wt){
 }
 
 uint64_t __fsize(fhandle *fh){
-	uint64_t size = 0x00;
-	for(uint64_t cc = 0x00; cc < fh->root->clusterbuffer.nClusterItems; ++cc){
-		size += (
-			!flagcheck((fh->root->clusterbuffer.clusterMap + cc)->attributes, __fsmetadatacluster) &&
-			(fh->root->clusterbuffer.clusterMap[cc].fcodelow == fh->file->fcodelow && fh->root->clusterbuffer.clusterMap[cc].fcodehigh == fh->file->fcodehigh) 
-			? fh->root->root->confBlockSize: 0x00
-		);
+	UINT64 size = 0x00;
+	UINT32 cc = 0;
+	fsblock *tmp = NULL;
+	while((tmp = __ffindhi(fh->root, (UINT64[2]){fh->file->fcodelow, fh->file->fcodehigh}, cc))){
+		if(!flagcheck(tmp->attributes, __fsmetadatacluster)){size += fh->root->root->confBlockSize;}
+		cc++;
 	}
 	return size;
 }
@@ -579,15 +578,22 @@ uint64_t __dsize(dirhandle *dh){
 meta_fsblock *_dreadinfo(rawenv re, dirhandle *handle){return __freadinfo(re, handle->root, handle->file);}
 meta_fsblock *_freadinfo(rawenv re, fhandle *handle){return __freadinfo(re, handle->root, handle->file);}
 
-
 void _fseeko(fhandle *handle, int64_t progress){
 	if(!handle){return;}
-	if(progress < 0){handle->progress = __min(handle->progress - (uint64_t)progress, handle->root->root->confBlockSize);}
-	else{handle->progress += (uint64_t)progress;}
+	if(progress < 0){
+		uint64_t minProgress = handle->root->root->confBlockSize;
+		uint64_t distance = (uint64_t)(-(progress + 1)) + 1;
+		if(handle->progress <= minProgress || distance >= handle->progress - minProgress){
+			handle->progress = minProgress;
+		}else{handle->progress -= distance;}
+	}else if((uint64_t)progress > UINT64_MAX - handle->progress){
+		handle->progress = UINT64_MAX;
+	}else{handle->progress += (uint64_t)progress;}
 }
 void _fseek(fhandle *handle, uint64_t progress){
-	if(progress > INT64_MAX){_fseeko(handle, INT64_MAX);}
-	_fseeko(handle, progress - INT64_MAX);
+	if(!handle){return;}
+	uint64_t minProgress = handle->root->root->confBlockSize;
+	handle->progress = progress > UINT64_MAX - minProgress ? UINT64_MAX : minProgress + progress;
 }
 
 uint64_t _fwrite(rawenv re, fhandle *handle, uint64_t nbytes, const void *data){
@@ -713,28 +719,26 @@ unhandle *__fdirlist(rawenv re, dirhandle *dir, uint64_t *index){
 	if(__safediv(((*index) * sizeof(diritem)), dir->root->root->confBlockSize) < dir->loadedblocks){
 		diritem *ditem = dir->dirarray + (*index);
 		(*index)++;
-		fsblock *fb = __ffindh(dir->root, (uint64_t[2]){dir->file->fcodelow, dir->file->fcodehigh});
-		if(fb){
-			if(fb->fcodehigh == ditem->f.fcodehigh && fb->fcodelow == ditem->f.fcodelow && fb->fcodelow && fb->fcodehigh){
-				meta_fsblock *finfo = __freadinfo(re, dir->root, fb);
-				char *temp = strdup(dir->path);
-				temp = mrealloc(temp, strlen(temp) + strlen(finfo->name) + 2);
-				memcpy(temp + strlen(dir->path) + (*finfo->name != '/'), finfo->name, strlen(finfo->name) + 1);
-				temp[strlen(dir->path)] = FRATPATHSEP;
-				mfree(finfo);
-				unhandle *out = mcalloc(1, sizeof(unhandle));
-				if((out->dir = flagcheck(fb->attributes, __fsdirectory))){
-					out->dhandle_ = floadhdir(re, dir->root, temp, "");
-				}else{out->fhandle_ = floadh(re, dir->root, temp, "f");}
-				mfree(temp);
-				return out;
-			}else{
-				// Remove Entry
-				ditem->f.fcodehigh = 0x00;
-				ditem->f.fcodelow = 0x00;
-				return NULL;
-			}
-		}else{}// Repair The Entry
+		fsblock *fb = __ffindh(dir->root, (uint64_t[2]){ditem->f.fcodelow, ditem->f.fcodehigh});
+		if((fb && (fb->fcodelow && fb->fcodehigh))){
+			meta_fsblock *finfo = __freadinfo(re, dir->root, fb);
+			char *temp = strdup(dir->path);
+			temp = mrealloc(temp, strlen(temp) + strlen(finfo->name) + 2);
+			memcpy(temp + strlen(dir->path) + (*finfo->name != '/'), finfo->name, strlen(finfo->name) + 1);
+			temp[strlen(dir->path)] = FRATPATHSEP;
+			mfree(finfo);
+			unhandle *out = mcalloc(1, sizeof(unhandle));
+			if((out->dir = flagcheck(fb->attributes, __fsdirectory))){
+				out->dhandle_ = floadhdir(re, dir->root, temp, "");
+			}else{out->fhandle_ = floadh(re, dir->root, temp, "f");}
+			mfree(temp);
+			return out;
+		}else{
+			// Remove Entry
+			ditem->f.fcodehigh = 0x00;
+			ditem->f.fcodelow = 0x00;
+			return NULL;
+		}
 	}
 	return NULL;
 }

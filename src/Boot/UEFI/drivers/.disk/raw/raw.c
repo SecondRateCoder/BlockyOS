@@ -5,11 +5,8 @@ EFI_HANDLE FindDiskHandleByGUID(EFI_GUID TargetGUID, EFI_GUID AltGUID){
 	EFI_HANDLE *handles = NULL;
 	UINT64 nHandles = 0;
 	EFI_GUID BlkIoGuid = EFI_BLOCK_IO_PROTOCOL_GUID, DskIoGuid = EFI_DISK_IO_PROTOCOL_GUID;
-	status = uefi_call_wrapper(
-		gBS->LocateHandleBuffer, 5,
-		ByProtocol, &BlkIoGuid,
-		NULL, &nHandles, &handles
-	);
+	status = uefi_call_wrapper(gBS->LocateHandleBuffer, 5,
+		ByProtocol, &BlkIoGuid, NULL, &nHandles, &handles);
 	DEBUGPRINT(L"\nnHandles:	%llu", nHandles);
 	if(EFI_ERROR(status)){return NULL;}
 	for(UINT64 i = 0; i < nHandles; i++){
@@ -18,18 +15,13 @@ EFI_HANDLE FindDiskHandleByGUID(EFI_GUID TargetGUID, EFI_GUID AltGUID){
 		EFI_STATUS status = uefi_call_wrapper(gBS->HandleProtocol, 0, handles[i], &BlkIoGuid, (void**)&blk);
 		status |= uefi_call_wrapper(gBS->HandleProtocol, 0, handles[i], &DskIoGuid,  (void**)&dsk);
 		if(EFI_ERROR(status) || !blk || !dsk || !blk->Media || !blk->Media->MediaPresent){continue;}
-		DEBUGPRINT(
-			L"\nHandle %u: BlockSize=%u,    LastBlock=%u,    LogicalPartition? = %a,    MediaId=%u,    Status=%llu", 
-			i, blk->Media->BlockSize, blk->Media->LastBlock, blk->Media->LogicalPartition? "TRUE": "FALSE", blk->Media->MediaId, (status & ~0xF000000000000000)
-		);
+		DEBUGPRINT(L"\nHandle %u: BlockSize=%u,    LastBlock=%u,    LogicalPartition? = %a,    MediaId=%u,    Status=%llu", 
+			i, blk->Media->BlockSize, blk->Media->LastBlock, blk->Media->LogicalPartition? "TRUE": "FALSE", blk->Media->MediaId, (status & ~0xF000000000000000));
 		if(blk->Media->LogicalPartition){continue;}
 		UINT64 blockSize = blk->Media->BlockSize;
 		miniGPT *hdr = __calloc(blockSize, 1);
-		status = uefi_call_wrapper(
-			dsk->ReadDisk, 0, 
-			dsk, blk->Media->MediaId,
-			blockSize * 1, blockSize, hdr
-		);
+		status = uefi_call_wrapper(dsk->ReadDisk, 0, dsk, 
+			blk->Media->MediaId, blockSize * 1, blockSize, hdr);
 		if(EFI_ERROR(status) || (__memcmp(hdr->sig, GPTsig, 8) != 0)){
 			DEBUGPRINT(L"\nInvalid Sig");
 			__free(hdr);
@@ -38,12 +30,8 @@ EFI_HANDLE FindDiskHandleByGUID(EFI_GUID TargetGUID, EFI_GUID AltGUID){
 		DEBUGDO{DEBUGPRINT(L"\n    Disk-GUID={");prGUID(hdr->dGUID);Print(L"}");}
 		UINT64 entriesSize = hdr->nPartEntries * hdr->partEntrySize;
 		GPTentry *entries = __calloc(entriesSize, 1);
-		status = uefi_call_wrapper(
-			dsk->ReadDisk, 0, 
-			dsk, blk->Media->MediaId,
-			hdr->partEntryLoc * blockSize,
-			entriesSize, entries
-		);
+		status = uefi_call_wrapper(dsk->ReadDisk, 0, dsk, blk->Media->MediaId,
+			hdr->partEntryLoc * blockSize, entriesSize, entries);
 		if(EFI_ERROR(status)){
 			__free(entries);
 			__free(hdr);
@@ -130,21 +118,25 @@ void *readblocks(rawenv re, LBA pos, UINT64 bytes){
 		DEBUGPRINT(L"\nDisk Interface does not exist");
 		return NULL;
 	}
+	if(pos < re->Partition){
+		DEBUGPRINT(L"\nInvalid Read Position %llu", pos);
+		return NULL;
+	}
 
     UINT64 blockBytes = re->RealBlock * re->CalcBlock;
 	UINT64 nBlocks    = __safediv((bytes + blockBytes - 1), blockBytes) * re->CalcBlock;
     UINT64 allocSize  = nBlocks * re->RealBlock;
-	DEBUGPRINT(L"\nReading Bytes\n[Parent:%p] >> Reading [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
-		__builtin_return_address(0), bytes, nBlocks, pos, (re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), 
-		pos + nBlocks, (re->Partition * re->RealBlock) + (((pos  +nBlocks) - re->Partition) * re->RealBlock * re->CalcBlock));
-    void *data = __calloc(1, allocSize);
+	DEBUGPRINT(L"\nReading Bytes\t[Parent:%p] >> Reading [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
+		__builtin_return_address(0), bytes, nBlocks, pos, (re->Partition * re->RealBlock) + ((pos - re->Partition) * re->ConfBlock), 
+		pos + nBlocks, (re->Partition * re->RealBlock) + (((pos  +nBlocks) - re->Partition) * re->ConfBlock));
+    if(!allocSize){return NULL;}
+	void *data = __calloc(1, allocSize);
     if(!data){return NULL;}
 
-	LBA lba = re->isPart ? pos - re->Partition : pos;
-	EFI_STATUS status = uefi_call_wrapper(
-        re->Blk->ReadBlocks, 0, re->Blk, re->Blk->Media->MediaId,
-		lba, allocSize, data
-    );
+	LBA partitionOffset = (pos - re->Partition) * re->CalcBlock;
+	LBA lba = re->isPart ? partitionOffset : re->Partition + partitionOffset;
+	EFI_STATUS status = uefi_call_wrapper(re->Blk->ReadBlocks, 0, 
+		re->Blk, re->Blk->Media->MediaId, lba, allocSize, data);
 	DEBUGPRINT(L"    Read %a:%u:%r", (EFI_ERROR(status)? "ERROR": "..."), status & ~0x8000000000000000, status);
     if(EFI_ERROR(status)){
         __free(data);
@@ -154,20 +146,21 @@ void *readblocks(rawenv re, LBA pos, UINT64 bytes){
 }
 void writeblocks(rawenv re, void *data, LBA pos, UINT64 bytes){
 	if(!re || !data){DEBUGPRINT(L"\nDisk Interface does not exist"); return;}
+	if(pos < re->Partition){DEBUGPRINT(L"\nInvalid Write Position %llu", pos); return;}
 	EFI_STATUS status;
 	UINT64 blockBytes = re->RealBlock * re->CalcBlock;
 	UINT64 nBlocks = __safediv((bytes + blockBytes - 1), blockBytes) * re->CalcBlock;
+	if(!nBlocks){return;}
 	void *buf = __calloc(nBlocks, re->RealBlock);
-	DEBUGPRINT(L"\nWriting Bytes\n[Parent:%p] >> Writing [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
-		__builtin_return_address(0), bytes, nBlocks, pos, (re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), 
-		pos + nBlocks, (re->Partition * re->RealBlock) + (((pos  +nBlocks) - re->Partition) * re->RealBlock * re->CalcBlock));
+	DEBUGPRINT(L"\nWriting Bytes\t[Parent:%p] >> Writing [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
+		__builtin_return_address(0), bytes, nBlocks, pos, (re->Partition * re->ConfBlock) + ((pos - re->Partition) * re->ConfBlock), 
+		pos + nBlocks, (re->Partition * re->ConfBlock) + (((pos  +nBlocks) - re->Partition) * re->ConfBlock));
 	if(buf){
 		__memcpy(buf, data, bytes);
-		LBA lba = re->isPart ? pos - re->Partition : pos;
-		status = uefi_call_wrapper(
-			re->Blk->WriteBlocks, 0, re->Blk, re->Blk->Media->MediaId, 
-			lba, nBlocks * re->RealBlock, buf
-		);
+		LBA partitionOffset = (pos - re->Partition) * re->CalcBlock;
+		LBA lba = re->isPart ? partitionOffset : re->Partition + partitionOffset;
+		status = uefi_call_wrapper(re->Blk->WriteBlocks, 0, re->Blk, 
+			re->Blk->Media->MediaId, lba, nBlocks * re->RealBlock, buf);
 		__free(buf);
 	}else{DEBUGPRINT(L"    Failed to allocate Write-Buffer"); return;}
     DEBUGPRINT(L"    Write %a:%u:%r", (EFI_ERROR(status)? "ERROR": "..."), status & ~0x8000000000000000, status);
@@ -185,7 +178,7 @@ void writebytes(rawenv re, void *data, UINT64 bytepos, UINT64 nbytes){
 }
 
 void *readbytes(rawenv re, LBA pos, UINT16 offset, UINT64 nbytes){
-    DEBUGPRINT(L"\n[Parent:%p] >> Writing [%u bytes(s)] to LBA[%llu:%u-%llu]",
+    DEBUGPRINT(L"\n[Parent:%p] >> Reading [%u bytes(s)] to LBA[%llu:%u-%llu]",
           __builtin_return_address(0), nbytes, __safediv(pos * re->CalcBlock, re->ConfBlock), offset, __safediv((pos + nbytes) * re->CalcBlock, re->ConfBlock));
 	void *rdata = readblocks(re, __safediv((pos + __safediv(offset, re->ConfBlock)) * re->CalcBlock, re->ConfBlock), nbytes);
 	__safecopy(rdata, rdata + __safediv(offset, re->ConfBlock) + (offset % re->ConfBlock), nbytes);
