@@ -116,7 +116,7 @@ __bootinfo *gatherbootinfo(EFI_HANDLE Image){
 	*out = (__bootinfo){
 		.Stack = {
 			.Stack = NULL, 
-			.StackSize = 64 * EFI_PAGE_SIZE * EFI_PAGE_SIZE
+			.StackSize = EFI_PAGE_SIZE * EFI_PAGE_SIZE
 		}, .devices = {
 			.devices = NULL, // loadDNodes(&out->devices.nnodes), .CTableLength = ST->NumberOfTableEntries, 
 			.CTable = __memdup(ST->ConfigurationTable, sizeof(EFI_CONFIGURATION_TABLE) * ST->NumberOfTableEntries)
