@@ -1,47 +1,48 @@
+#include "src/Boot/UEFI/tools/tools.h"
 #include "frat.h"
 
 BOOLEAN checkdisk(EFI_GUID GUID, EFI_GUID altGUID){
-	DEBUGPRINT(L"\nVerifying Disk GPT");
+	// DEBUGPRINT(L"\nVerifying Disk GPT");
 	bool out = false;
 	rawenv re = startup(GUID, altGUID, 0x00, __FS_DEFAULTBLOCKSIZE);
 	uint8_t *block = readblocks(re, GPT_LBA, sizeof(miniGPT));
 	miniGPT *gpt = (miniGPT *)block;
 	DEBUGDO{
-		DEBUGPRINT(
-			L"\nGPT Dump:"
-			L"\n    Sig: \"%a\""
-			L"\n    Rev: %u"
-			L"\n    Header-Size: %u"
-			L"\n    Header Checksum: %u"
-			L"\n    localLBA: %llu"
-			L"\n    altLBA: %llu"
-			L"\n    firstUsable: %llu"
-			L"\n    lastUsable: %llu"
-			L"\n    Disk-GUID: ",
-			gpt->sig, gpt->rev, gpt->hSize, gpt->hChecksum,
-			gpt->localLBA, gpt->alternateLBA, gpt->fUsable, gpt->lUsable
-		);
-		prGUID(gpt->dGUID);
-		DEBUGPRINT(
-			L"\n    Partition-Table: %llu"
-			L"\n    # of Partition-Entries: %u"
-			L"\n    Partition-Entry Size: %u"
-			L"\n    Partition-Table Checksum: %u",
-			gpt->partEntryLoc, gpt->nPartEntries, gpt->partEntrySize,
-			gpt->partArrayChecksum
-		);
+		// DEBUGPRINT(
+		// 	L"\nGPT Dump:"
+		// 	L"\n    Sig: \"%a\""
+		// 	L"\n    Rev: %u"
+		// 	L"\n    Header-Size: %u"
+		// 	L"\n    Header Checksum: %u"
+		// 	L"\n    localLBA: %llu"
+		// 	L"\n    altLBA: %llu"
+		// 	L"\n    firstUsable: %llu"
+		// 	L"\n    lastUsable: %llu"
+		// 	L"\n    Disk-GUID: ",
+		// 	gpt->sig, gpt->rev, gpt->hSize, gpt->hChecksum,
+		// 	gpt->localLBA, gpt->alternateLBA, gpt->fUsable, gpt->lUsable
+		// );
+		// prGUID(gpt->dGUID);
+		// DEBUGPRINT(
+		// 	L"\n    Partition-Table: %llu"
+		// 	L"\n    # of Partition-Entries: %u"
+		// 	L"\n    Partition-Entry Size: %u"
+		// 	L"\n    Partition-Table Checksum: %u",
+		// 	gpt->partEntryLoc, gpt->nPartEntries, gpt->partEntrySize,
+		// 	gpt->partArrayChecksum
+		// );
 	}
 	if(!__memcmp(gpt->sig, "EFI PART", 8)){out = TRUE;}else{out = FALSE;}
 	__free(block);
 	dispose(re);
-	DEBUGPRINT(L"\nGPT Exists? %a", ((out == true)? "TRUE": "FALSE"));
+	// DEBUGPRINT(L"\nGPT Exists? %a", ((out == true)? "TRUE": "FALSE"));
 	return out;
 }
 
 partdim loadpart(EFI_GUID GUID, EFI_GUID altGUID, GPTeNSTR name){
 	char gptname[GPTeNAMELEN + 1];	ZeroMem(gptname, GPTeNAMELEN + 1);
 	for(UINT8 cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
-		DEBUGPRINT(L"\n[%s:%u]  >>  Loading Partition:    %a", (L"" __FILE__), __LINE__, gptname);
+		// DEBUGPRINT(L"\n[%s:%u]  >>  Loading Partition:    %a", (L"" __FILE__), __LINE__, gptname);
 	if(checkdisk(GUID, altGUID)){
 		rawenv re = startup(GUID, altGUID, 0x00, __FS_DEFAULTBLOCKSIZE);
 		miniGPT *gpt = (miniGPT *)readblocks(re, GPT_LBA, sizeof(miniGPT));
@@ -52,14 +53,14 @@ partdim loadpart(EFI_GUID GUID, EFI_GUID altGUID, GPTeNSTR name){
 				partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
 				__free(gpt);
 				__free(ge);
-				DEBUGPRINT(L"\n[%s:%u]  >>  Found Partition: %llu:%llu", (L"" __FILE__), __LINE__, out.base, out.high);
+				// DEBUGPRINT(L"\n[%s:%u]  >>  Found Partition: %llu:%llu", (L"" __FILE__), __LINE__, out.base, out.high);
 				return out;
 			}
 		}
 		__free(gpt);
 		__free(ge);
 	}
-	DEBUGPRINT(L"\n[%s:%u]  >>  Found No Partition named: %a", (L"" __FILE__), __LINE__, gptname);
+	// DEBUGPRINT(L"\n[%s:%u]  >>  Found No Partition named: %a", (L"" __FILE__), __LINE__, gptname);
 	return (partdim){0x00, 0x00};
 }
 
@@ -72,26 +73,24 @@ void formatpart(
 	DEBUGDO{
 		char gptname[GPTeNAMELEN + 1];	ZeroMem(gptname, GPTeNAMELEN + 1);
 		for(UINT8 cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
-		DEBUGPRINT(L"\n[%s:%u]  >>  Formatting Partition:    %a", (L"" __FILE__), __LINE__, gptname);
+		// DEBUGPRINT(L"\n[%s:%u]  >>  Formatting Partition:    %a", (L"" __FILE__), __LINE__, gptname);
 	}
 	partdim part = loadpart(GUID, altGUID, name);
 	if(!part.high){return;}
 	rawenv re = startup(GUID, altGUID, part.base, confBlockSize);
-	DEBUGDO{
-		DEBUGPRINT(
-			L"\n[%s:%u]  >>  Format Target: %llu:%llu -> %llu LBAs"
-			L"\n    Version-Code: [%u:%u]"
-			L"\n    Configured Block-Size: %u"
-			L"\n    Configured Cluster-Size: %u"
-			L"\n    Configured # of Log-Sectors: %u"
-			L"\n    Configured Log-Size: %u",
-			((L"" __FILE__)), __LINE__, 
-			part.base, part.high, part.high - part.base, 
-			verMAJOR, verMINOR, confBlockSize, 
-			CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize), 
-			confLogSectors, confLogSectors * sizeof(fslogitem)
-		);
-	}
+	DEBUGPRINT(
+		L"\n[%s:%u]  >>  Format Target: %llu:%llu -> %llu LBAs"
+		L"\n    Version-Code: [%u:%u]"
+		L"\n    Configured Block-Size: %u"
+		L"\n    Configured Cluster-Size: %u"
+		L"\n    Configured # of Log-Sectors: %u"
+		L"\n    Configured Log-Size: %u",
+		((L"" __FILE__)), __LINE__, 
+		part.base, part.high, part.high - part.base, 
+		verMAJOR, verMINOR, confBlockSize, 
+		CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize), 
+		confLogSectors, confLogSectors * sizeof(fslogitem)
+	);
 
 	// Root-Block
 	void *block = __calloc(confLogSectors, confBlockSize);
@@ -103,7 +102,7 @@ void formatpart(
 		.confClusterSize = CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize),
 		.verCode = MAKEVERSION(verMAJOR, verMINOR), .extension = {
 			.ExtensionEnabled = false, .ExtensionTable = UINT64_MAX, 
-			.MinimumExtensionSupport = UINT64_MAX, .TotalExtensions = UINT64_MIN
+			.MinimumExtensionSupport = UINT32_MAX, .TotalExtensions = UINT64_MIN
 		}
 	};
 	// Write FSROOT
@@ -122,17 +121,17 @@ void formatpart(
 		CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize) * confBlockSize);
 	__free(block);
 	dispose(re);
-	DEBUGPRINT(L"\n[%s:%u]  >>  Formatted Partition", (L"" __FILE__), __LINE__);
+	// DEBUGPRINT(L"\n[%s:%u]  >>  Formatted Partition", (L"" __FILE__), __LINE__);
 }
 
 partdim queryparttablefs(miniGPT *gpt, rawenv re){
-	DEBUGPRINT(L"\n[%s:%u]  >>  Querying Part Table", (L"" __FILE__), __LINE__);
+	// DEBUGPRINT(L"\n[%s:%u]  >>  Querying Part Table", (L"" __FILE__), __LINE__);
 	// Query all Partitions for the FileSystem.
 	GPTentry *ge = (GPTentry *)readblocks(re, gpt->partEntryLoc, gpt->nPartEntries * sizeof(GPTentry));
 	for(UINT32 i = 0x00; i < gpt->nPartEntries; i++){
 		char gptname[GPTeNAMELEN + 1];	ZeroMem(gptname, GPTeNAMELEN + 1);
 		for(UINT8 cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (ge[i].name[cc] & 0xFF);}
-		DEBUGPRINT(L"\n[%s:%u]  >>  GPT-Entry: %a{%llu:%llu -> %llu}", (L"" __FILE__), __LINE__, gptname, ge[i].sLBA, ge[i].eLBA, ge[i].eLBA - ge[i].sLBA);
+		// DEBUGPRINT(L"\n[%s:%u]  >>  GPT-Entry: %a{%llu:%llu -> %llu}", (L"" __FILE__), __LINE__, gptname, ge[i].sLBA, ge[i].eLBA, ge[i].eLBA - ge[i].sLBA);
 		if(queryfs(re, ge[i].sLBA)){
 			partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
 			__free(ge);
@@ -144,21 +143,21 @@ partdim queryparttablefs(miniGPT *gpt, rawenv re){
 }
 
 BOOLEAN queryfs(rawenv re, LBA partbase){
-	DEBUGPRINT(L"\n[%s:%u]  >>  Querying FS at %llu", (L"" __FILE__), __LINE__, partbase);
+	// DEBUGPRINT(L"\n[%s:%u]  >>  Querying FS at %llu", (L"" __FILE__), __LINE__, partbase);
 	// Check that a FileSystem exists at the bytebase.
 	BOOLEAN out = 0x00;
 	fsroot *fr = (fsroot *)readblocks(re, partbase + FRATROOTOFFSET, sizeof(fsroot));
-	DEBUGPRINT(
-		L"\nFS-Root Blob:"
-		L"\n    Version: [%u:%u]"
-		L"\n    Sig: %.16a"
-		L"\n    Configured Log Sectors: %u"
-		L"\n    Configured Block Size: %u"
-		L"\n    Configured Cluster-Map Size: %u",
-		fr->verCode[0x00], fr->verCode[1], 
-		fr->signature, fr->confLogSectors, 
-		fr->confBlockSize, fr->confClusterSize
-	);
+	// DEBUGPRINT(
+	// 	L"\nFS-Root Blob:"
+	// 	L"\n    Version: [%u:%u]"
+	// 	L"\n    Sig: %.16a"
+	// 	L"\n    Configured Log Sectors: %u"
+	// 	L"\n    Configured Block Size: %u"
+	// 	L"\n    Configured Cluster-Map Size: %u",
+	// 	fr->verCode[0x00], fr->verCode[1], 
+	// 	fr->signature, fr->confLogSectors, 
+	// 	fr->confBlockSize, fr->confClusterSize
+	// );
 	if(!__memcmp(fr->signature, FRATSIG, sizeof(FRATSIG))){
 		DEBUGPRINT(
 			L"\n[%s:%u]  >>  FS Found at [%llu]:"
@@ -177,7 +176,7 @@ BOOLEAN queryfs(rawenv re, LBA partbase){
 }
 
 conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
-	DEBUGDO{DEBUGPRINT(L"\n[%s:%u]  >>  Mounting FS Root: [", (L"" __FILE__), __LINE__);	prGUID(GUID);	Print(L"]    [");	prGUID(altGUID);	Print(L"]");}
+	// DEBUGDO{DEBUGPRINT(L"\n[%s:%u]  >>  Mounting FS Root: [", (L"" __FILE__), __LINE__);	prGUID(GUID);	Print(L"]    [");	prGUID(altGUID);	Print(L"]");}
 	partdim partition;
 	if(checkdisk(GUID, altGUID)){
 		// Get the LBA Info for a Partition
@@ -191,18 +190,6 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 		re->Partition = partition.base;
 		fsroot *fsroot_ = (fsroot *)readblocks(re, partition.base + FRATROOTOFFSET, sizeof(fsroot));
 		setblocksize(re, fsroot_->confBlockSize);
-		DEBUGPRINT(
-			L"\n[%s:%u]  >>  Root: %llu:%llu -> %llu LBAs"
-			L"\n	Version-Code: [%u:%u]"
-			L"\n	Configured Block-Size: %u"
-			L"\n	Configured Cluster-Size: %u"
-			L"\n	Configured # of Log-Sectors: %u"
-			L"\n	Configured Log-Size: %u", 
-			(L"" __FILE__),__LINE__, partition.base, partition.high, partition.high - partition.base, 
-			fsroot_->verCode[0x00], fsroot_->verCode[1], 
-			fsroot_->confBlockSize, fsroot_->confClusterSize,
-			fsroot_->confLogSectors, fsroot_->confLogSectors * sizeof(fslogitem)
-		);
 		conf_fsroot *largeroot = __calloc(1, sizeof(conf_fsroot));
 		*largeroot = (conf_fsroot){
 			.loc = partition.base,
@@ -222,31 +209,6 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 			.GUID = GUID,
 			.altGUID = altGUID
 		};
-		// DEBUGDO{
-		// 	BUFDEFPRINT(largeroot->clusterbuffer.clusterMap, fsroot_->confClusterSize, cc);
-		// 	Print(L"\n    Verifying FS Root Items #items: %llu", (UINT64)__safediv(fsroot_->confClusterSize, sizeof(fsblock)));
-		// 	DisableVerbose(re);
-		// }
-		for(UINT64 i = 0x00; i < __safediv(fsroot_->confClusterSize, sizeof(fsblock)); ++i){
-			// Read and verify ROOTS
-			fsblock *f = largeroot->clusterbuffer.clusterMap + i;
-			if(f->fcodelow && f->fcodehigh){
-				if(flagcheck(f->attributes, __fsmetadatacluster) && f->fcodelow && f->fcodehigh){
-					meta_fsblock *temp = readblocks(re, getloc(largeroot, f), sizeof(meta_fsblock));
-					if(__memcmp(temp->fsig, FRATBLOCKSIG, 8)){
-						DEBUGPRINT(
-							L"\n[%s:%u]  >>  ERROR!    Corrupted FileSystem Root Block    ERASING ENTRY!!"
-							L"\n    [%llu:%llu]:%u:%u", 
-							(L"" __FILE__), __LINE__, f->fcodelow, f->fcodehigh, f->attributes, f->index
-						);
-						__memset(temp, 0x00, 512);
-						f->fcodelow = 0x00;	f->fcodehigh = 0x00;
-						writeblocks(re, temp, getloc(largeroot, f), sizeof(meta_fsblock));
-					}
-					__free(temp);
-				}
-			}
-		}
 		dispose(re);
 		return largeroot;
 	}
@@ -313,7 +275,7 @@ void __fcreate(conf_fsroot *root, char *path, char *flags){
 }
 
 fsblock *__faddr(conf_fsroot *root, fsblock *family){
-	DEBUGPRINT(L"\nAdding FS Table Entry: [%llu:%llu], Type: %a", family->fcodelow, family->fcodehigh, (flagcheck(family->attributes, __fsdirectory)? "DIRECTORY": "FILE"));
+	// DEBUGPRINT(L"\nAdding FS Table Entry: [%llu:%llu], Type: %a", family->fcodelow, family->fcodehigh, (flagcheck(family->attributes, __fsdirectory)? "DIRECTORY": "FILE"));
 	fsblock *fb = allocatecluster(root);
 	if(fb){
 		fb->index = 0x00;
@@ -328,7 +290,7 @@ fsblock *__faddr(conf_fsroot *root, fsblock *family){
 		void *bl0 = __calloc(1, root->root->confBlockSize);
 		__memset(bl0, 0x00, root->root->confBlockSize);
 		LBA loc = getloc(root, fb);
-		DEBUGPRINT(L"\n\tWriting 0x00-Block: %llu", loc);
+		// DEBUGPRINT(L"\n\tWriting 0x00-Block: %llu", loc);
 		rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
 		writeblocks(re, bl0, loc, root->root->confBlockSize);
 		__free(bl0);
@@ -401,7 +363,7 @@ void *__fread1(conf_fsroot *root, fsblock *fb, UINT64 *index){
 		}
 		loc = getloc(root, fb_);
 	}else{loc = getloc(root, fb);}
-	DEBUGPRINT(L"\nReading File Block at %llu, Item: %llu.    Root: [%llu:%llu]", loc, (*index), fb->fcodelow, fb->fcodehigh);
+	// DEBUGPRINT(L"\nReading File Block at %llu, Item: %llu.    Root: [%llu:%llu]", loc, (*index), fb->fcodelow, fb->fcodehigh);
 	rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
 	void *out = readblocks(re, loc, root->root->confBlockSize);
 	dispose(re);
@@ -436,7 +398,7 @@ void __fpush1(conf_fsroot *root, fsblock *fb, UINT64 *i, void *buffer){
 		}else{loc = getloc(root, fb);}
 		
 	}
-	DEBUGPRINT(L"\nWriting File Block at %llu, Item: %llu.\tRoot: [%llu:%llu]", loc, i, fb->fcodelow, fb->fcodehigh);
+	// DEBUGPRINT(L"\nWriting File Block at %llu, Item: %llu.\tRoot: [%llu:%llu]", loc, i, fb->fcodelow, fb->fcodehigh);
 	rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
 	writeblocks(re, buffer, loc, root->root->confBlockSize);
 	dispose(re);
@@ -451,8 +413,8 @@ dirhandle *floadhdir(conf_fsroot *root, char *path, char *args){
 		.file = __ffind(root, path),
 		.dirarray = NULL
 	};
-	DEBUGPRINT(L"\nOpening File %a[%llu:%llu]", path, out->file->fcodelow, out->file->fcodehigh);
-	if(!out->file && strcheck(args, 'fc')){
+	DEBUGPRINT(L"\nOpening Directory %a[%llu:%llu]", path, out->file->fcodelow, out->file->fcodehigh);
+	if(!out->file && strcheck(args, 'c')){
 		__fcreate(root, path, args);
 		out->file = __ffind(root, path);
 		if(!out->file){return NULL;}
@@ -556,7 +518,7 @@ void fuloadh(fhandle *handle){
 meta_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 	LBA loc = getloc(root, fb);
 	rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
-	DEBUGPRINT(L"\nReading File Info");
+	// DEBUGPRINT(L"\nReading File Info");
 	void *out = readblocks(re, loc, sizeof(meta_fsblock));
 	dispose(re);
 	return out;
@@ -574,7 +536,7 @@ void __fupdatetstamp(conf_fsroot *root, fsblock *file, BOOLEAN wt){
 		}
 		finfo->accesstime = (time.Hour * 3600) + (time.Minute * 60) + time.Second;
 		finfo->accessdate = time.Day;
-		DEBUGPRINT(L"\nWriting Time Stamp");
+		// DEBUGPRINT(L"\nWriting Time Stamp");
 		writeblocks(re, finfo, loc, sizeof(meta_fsblock));
 	}
 	dispose(re);
@@ -588,14 +550,13 @@ UINT64 __fsize(fhandle *fh){
 		if(!flagcheck(tmp->attributes, __fsmetadatacluster)){size += fh->root->root->confBlockSize;}
 		cc++;
 	}
-	DEBUGPRINT(L"\nFile Size %llu", size);
+	// DEBUGPRINT(L"\nFile Size %llu", size);
 	return size;
 }
 UINT64 __dsize(dirhandle *dh){
 	UINT64 size = 0x00;
 	for(UINT64 cc = 0x00; cc < __safediv((dh->loadedblocks * dh->root->root->confBlockSize), sizeof(diritem)); ++cc){
-		size += (((dh->dirarray + cc)->local) ? dh->root->root->confBlockSize: 0x00);
-	}
+		size += (((dh->dirarray + cc)->local) ? dh->root->root->confBlockSize: 0x00);}
 	DEBUGPRINT(L"\nDirectory Size %llu", size);
 	return size;
 }
@@ -623,9 +584,9 @@ void _fseek(fhandle *handle, UINT64 progress){
 
 UINT64 _fwrite(fhandle *handle, UINT64 nbytes, const void *data){
     if(!handle || !data || !nbytes){
-		DEBUGPRINT(L"\nIncompatible Arguments\t[%llu:%llu:%llu]", handle, nbytes, data);
+		// DEBUGPRINT(L"\nIncompatible Arguments\t[%llu:%llu:%llu]", handle, nbytes, data);
 		return nbytes;
-	}else{DEBUGPRINT(L"\nWriting %p of %llu bytes", data, nbytes);}
+	}else{/*DEBUGPRINT(L"\nWriting %p of %llu bytes", data, nbytes);*/}
     UINT64 blkSize = handle->root->root->confBlockSize, 
 			pos = handle->progress, 
 			left = nbytes, 
@@ -643,24 +604,24 @@ UINT64 _fwrite(fhandle *handle, UINT64 nbytes, const void *data){
 				blk = __calloc(1, blkSize);
 				if(!blk){break;}
 			}
-			__safecopy(blk + blkOffset, data + written, chunk);
+			__safecopy(blk + blkOffset, (void *)data + written, chunk);
 			__fpush1(handle->root, handle->file, &blkIndex, blk);
 			__free(blk);
-		}else{__fpush1(handle->root, handle->file, &blkIndex, data + written);}
+		}else{__fpush1(handle->root, handle->file, &blkIndex, (void *)data + written);}
         written += chunk;
         pos += chunk;
         left -= chunk;
-		DEBUGPRINT(L"\nWriting Block");
+		// DEBUGPRINT(L"\nWriting Block");
     }
     handle->progress = pos;
     return (nbytes - left);
 }
 UINT64 _fread(fhandle *h, UINT64 nbytes, void **dataout){
 	if(((h->progress - h->root->root->confBlockSize) + nbytes) > __fsize(h)){
-		DEBUGPRINT(L"\nIncompatible Arguments\t[%llu:%llu:%llu]\n\t\t[%llu:%llu]", 
-			h, nbytes, dataout, (UINT64)((h->progress - h->root->root->confBlockSize) + nbytes), __fsize(h));
+		// DEBUGPRINT(L"\nIncompatible Arguments\t[%llu:%llu:%llu]\n\t\t[%llu:%llu]", 
+			// h, nbytes, dataout, (UINT64)((h->progress - h->root->root->confBlockSize) + nbytes), __fsize(h));
 		return nbytes;
-	}else{DEBUGPRINT(L"\nReading %llu bytes to %p", nbytes, dataout);}
+	}else{/*DEBUGPRINT(L"\nReading %llu bytes to %p", nbytes, dataout);*/}
     UINT32 bsize = h->root->root->confBlockSize;
     UINT64 progress = h->progress, 
 			remaining = nbytes, 
@@ -684,7 +645,7 @@ UINT64 _fread(fhandle *h, UINT64 nbytes, void **dataout){
         written  += chunk;
         progress += chunk;
         remaining -= chunk;
-		DEBUGPRINT(L"\nReading Block");
+		// DEBUGPRINT(L"\nReading Block");
     }
     h->progress = progress;
     *dataout = out;

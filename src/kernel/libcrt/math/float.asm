@@ -1,4 +1,5 @@
 bits 64
+DEFAULT REL
 
 section .text
 
@@ -409,7 +410,8 @@ __adddf3:
     and rax, 0x7FF       ; Re-load Exp A
 
     add r8, r9           ; Add mantissas
-    test r8, 0x0020000000000000
+	mov rcx, 0x0020000000000000
+    test r8, rcx
     jz .df_add_no_overflow
     shr r8, 1
     inc rax
@@ -465,7 +467,8 @@ __adddf3:
 
     sub r8, r9           ; Subtract mantissas
 .df_sub_norm_loop:
-    test r8, 0x0010000000000000
+	mov rcx, 0x0010000000000000
+    test r8, rcx
     jnz .df_sub_norm_done
     shl r8, 1
     dec rax
@@ -508,10 +511,12 @@ __muldf3:
     mov r8, rdi
     mov r12, 0x000FFFFFFFFFFFFF
     and r8, r12
-    or r8, 0x0010000000000000
+	mov rcx, 0x0010000000000000
+    or r8, rcx
     mov r9, rsi
     and r9, r12
-    or r9, 0x0010000000000000
+	mov rcx, 0x0010000000000000
+    or r9, rcx
 
     mov rax, r8
     mul r9               ; RDX:RAX = R8 * R9
@@ -561,10 +566,11 @@ __divdf3:
     mov r8, rdi
     mov r12, 0x000FFFFFFFFFFFFF
     and r8, r12
-    or r8, 0x0010000000000000
+	mov rcx, 0x0010000000000000
+    or r8, rcx
     mov r9, rsi
     and r9, r12
-    or r9, 0x0010000000000000
+    or r9, rcx
 
     cmp r8, r9
     jae .df_div_no_shift

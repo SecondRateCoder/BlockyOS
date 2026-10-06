@@ -1,4 +1,6 @@
 bits 64
+DEFAULT REL
+
 section .text
 
 %define CR4Level5PagingBit		(1 << 12)

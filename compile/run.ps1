@@ -350,10 +350,6 @@ if($InstallOS){
 	}
 	Log-Write -color Yellow "Running install.bos in current directory."
 	(& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
-	# if($ShellErr -ne 0){
-	# 	Log-Write -color Red "install.bos execution failed during InstallOS. Aborting."
-	# 	return 1
-	# }
 }
 
 # Optimise by Using ShortCut
@@ -375,7 +371,7 @@ if($run){
 }elseif($runbochs){
 	$env:Path += $Build
 	Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $Build "\bx_enh_dbg.ini")
-	Log-Write -Msg "$($BOCHS) -f $($BOCHSRC) -q -dbglog $($debuggerlog);`n`n $(Get-Content $BOCHSRC)" -color Blue
-	& $BOCHS '-f' $BOCHSRC '-q' '-dbglog' $($debuggerlog)
+	Log-Write -Msg "$($BOCHS) -f $($BOCHSRC) -q -dbglog $($debuggerlog);`n`n `"$((Get-Content $BOCHSRC) -join "`n")`"" -color Blue
+	& $BOCHS '-f' $BOCHSRC '-q' '-dbg_gui' '-dbglog' $($debuggerlog)
 	Copy-Item -Path (Join-Path $Build "\bx_enh_dbg.ini") -Destination (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini")
 }

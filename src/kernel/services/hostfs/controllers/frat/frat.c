@@ -215,32 +215,6 @@ conf_fsroot *fmount(rawenv re, GUID _GUID, GUID altGUID){
 					partition.base + (CLUSTERMAPOFFSET(fsroot_->confLogSectors) * fsroot_->confBlockSize), ReBlocks(re, fsroot_->confClusterSize))
 			}, 
 		};
-		// DEBUGDO{
-		// 	BUFDEFPRINT(largeroot->clusterbuffer.clusterMap, fsroot_->confClusterSize, cc);
-		// 	Print(L"\n    Verifying FS Root Items #items: %llu", (uint64_t)__safediv(fsroot_->confClusterSize, sizeof(fsblock)));
-		// 	DisableVerbose(re);
-		// }
-		for(uint64_t i = 0x00; i < __safediv(fsroot_->confClusterSize, sizeof(fsblock)); ++i){
-			// Read and verify ROOTS
-			fsblock *f = largeroot->clusterbuffer.clusterMap + i;
-			if(f->fcodelow && f->fcodehigh){
-				if(flagcheck(f->attributes, __fsmetadatacluster) && f->fcodelow && f->fcodehigh){
-					meta_fsblock *temp = ReadRawHandleBlocks(re, getloc(largeroot, f), ReBlocks(re, sizeof(meta_fsblock)));
-					if(memcmp(temp->fsig, FRATBLOCKSIG, 8)){
-						// DEBUGPRINT(
-						// 	L"\n[%s:%u]  >>  ERROR!    Corrupted FileSystem Root Block    ERASING ENTRY!!"
-						// 	L"\n    %llu:%u:%u", 
-						// 	(L"" __FILE__), __LINE__, f->fcode, f->attributes, f->index
-						// );
-						memset(temp, 0x00, 512);
-						f->fcodelow = 0x00;	f->fcodehigh = 0x00;
-						WriteRawHandleBlocks(re, getloc(largeroot, f), ReBlocks(re, sizeof(meta_fsblock)), temp);
-					}
-					mfree(temp);
-				}
-			}
-		}
-		
 		return largeroot;
 	}
 	return NULL;

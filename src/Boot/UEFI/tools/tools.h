@@ -154,23 +154,20 @@ void __memcpy(void * __restrict__ dst, void * __restrict__ src, UINT64 len);
 UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len);
 
 #ifdef _DEBUG
-#define __free(buffer)  \
-	Print(L"\n[%s:%u]   Freeing Buffer    %p", (L"" __FILE__), __LINE__, buffer);   \
-	FreePool(buffer);
+#define __free(buffer)  FreePool(buffer);
 #else
-#define __free(buffer)  \
-	FreePool(buffer);
+#define __free(buffer)  FreePool(buffer);
 #endif
 
 #ifdef _DEBUG
-#define __calloc(nlen, nsize)		__calloc_(nlen, nsize);				Print(L"\n[%s:%u]", (L"" __FILE__), __LINE__);
+#define __calloc(nlen, nsize)		__calloc_(nlen, nsize);				//	Print(L"\n[%s:%u]", (L"" __FILE__), __LINE__);
 #else
 #define __calloc(nlen, nsize)		__calloc_(nlen, nsize);
 #endif
 void  *__calloc_(UINT64 nLen, UINT64 nSize);
 
 #ifdef _DEBUG
-#define __realloc(mem, nlen, nsize) __realloc_(mem, nlen, nsize);	Print(L"    [%s:%u]", (L"" __FILE__), __LINE__);
+#define __realloc(mem, nlen, nsize) __realloc_(mem, nlen, nsize);	//	Print(L"    [%s:%u]", (L"" __FILE__), __LINE__);
 #else
 #define __realloc(mem, nlen, nsize)	__realloc_(mem, nlen, nsize);
 #endif

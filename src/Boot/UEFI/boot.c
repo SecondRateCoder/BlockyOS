@@ -27,27 +27,24 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 
 	// Initialise GNU-EFI
 	libinit(Image, Table);
-
+	
 	// Open FrAT Socket
 	socket_ret rt = socketopen(0, sizeof(UINT32) + (sizeof(EFI_GUID) * 2), (UINT32)0, rootDesc.guid, rootDesc.uGuid);
-	if(!rt.data){
-		DEBUGPRINT(L"\nError opening Disk: socket driver returned no result");
-		Exit(EFI_ABORTED, 0, NULL);
-	}
 	socket_ret diskrt = *((socket_ret *)(rt.data));
-	__free(rt.data);
 	if(socketreterr(diskrt, sizeof(socket_t))){
-		DEBUGPRINT(L"\nError opening Disk [%llu:%llu:%llu]", (UINT64)diskrt.errout, (UINT64)diskrt.nData, (UINT64)diskrt.data);
+		DEBUGPRINT(L"\nError opening Disk [%llu:%llu:%p\t:\t%llu:%llu:%p]", 
+			(UINT64)rt.errout, (UINT64)rt.nData, (UINT64)rt.data, (UINT64)diskrt.errout, (UINT64)diskrt.nData, (UINT64)diskrt.data);
 		Exit(EFI_ABORTED, 0, NULL);
 	}
-
+	__free(rt.data);
+	
 	socket_t *disk = diskrt.data;
-
+	
 	rt = socketfcall(disk, open, "SYSD/icon.gif", "f");
 	socket_t *gif = rt.data;
 
 	EFI_GUID gopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
-	UINTN SizeOfInfo, numModes;
+	UINTN SizeOfInfo;
 	EFI_GRAPHICS_OUTPUT_PROTOCOL *gop;
 	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *info;
 	EFI_STATUS status = uefi_call_wrapper(BS->LocateProtocol, 0, &gopGuid, NULL, (void**)&gop);
@@ -61,9 +58,10 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	if(!KBOOT){DEBUGPRINT(L"\nError Loading Executable");		Exit(EFI_ABORTED, 0, NULL);}
 	
 	__bootinfo *bootout = gatherbootinfo(Image);
+	// bochs_breakpoint();
 
-	TestVideo(GIF, bootout->Video.videomemory, bootout->Video.CurrentVideoMode.PixelFormat, 
-		255, 0, 0, bootout->Video.CurrentVideoMode.PixelsPerScanLine);
+	// TestVideo(GIF, bootout->Video.videomemory, bootout->Video.CurrentVideoMode.PixelFormat, 
+	// 	255, 0, 0, bootout->Video.CurrentVideoMode.PixelsPerScanLine);
 
 	kernelmain KernelBoot = (kernelmain)KBOOT->EntryPoint;
 	KernelBoot(bootout);

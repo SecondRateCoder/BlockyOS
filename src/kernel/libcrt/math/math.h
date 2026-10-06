@@ -25,7 +25,7 @@ typedef union ldzi{
 #define __clamp(a, b, n)	((n) > (a)? ((n) < (b)? (n): (b)): (a))
 #define __set(a, f)			((a) &= (f))
 #define __uset(a, f)		((a) &= ~(f))
-#define __check(a, f)		((a) & (f) == (f))
+#define __check(a, f)		(((a) & (f)) == (f))
 #define __roundupt(a, i)	((((a) + ((i) - 1)) / (i)) * (i))
 #define __rounddownt(a, i)	((((a) - (i)) + 1 / (i)) * (i))
 #define __roundup(a, i)		((((volatile __typeof(a))(a) + ((volatile __typeof(a))(i) - 1)) / (volatile __typeof(a))(i)) * (volatile __typeof(a))(i))

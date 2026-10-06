@@ -1,4 +1,6 @@
 bits 64
+DEFAULT REL
+
 extern InterruptCallbacks
 
 ; For interrupts w/o a CPU error code

@@ -1,4 +1,5 @@
 bits 64
+DEFAULT REL
 
 %define SIMDReqSize	512
 %define true		1

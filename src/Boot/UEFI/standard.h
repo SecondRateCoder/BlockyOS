@@ -88,3 +88,6 @@ typedef void __sysvabi __naked (*kernelmain)(__bootinfo * __restrict__ bootin);
 __bootinfo *gatherbootinfo(EFI_HANDLE Image);
 UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarName);
 const char *EfiStatusToString(EFI_STATUS Status);
+
+#define bochs_breakpoint	__bochs_breakpoint
+extern __sysvabi void __bochs_breakpoint(void);

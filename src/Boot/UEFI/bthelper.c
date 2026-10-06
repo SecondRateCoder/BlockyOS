@@ -115,20 +115,25 @@ __bootinfo *gatherbootinfo(EFI_HANDLE Image){
 
 	*out = (__bootinfo){
 		.Stack = {
-			.Stack = __calloc_(16, EFI_PAGE_SIZE * EFI_PAGE_SIZE), .StackSize = 64 * EFI_PAGE_SIZE * EFI_PAGE_SIZE
+			.Stack = NULL, 
+			.StackSize = 64 * EFI_PAGE_SIZE * EFI_PAGE_SIZE
 		}, .devices = {
 			.devices = NULL, // loadDNodes(&out->devices.nnodes), .CTableLength = ST->NumberOfTableEntries, 
 			.CTable = __memdup(ST->ConfigurationTable, sizeof(EFI_CONFIGURATION_TABLE) * ST->NumberOfTableEntries)
 		}, .memory = {0}, .Video = {0}, 
-		.bootentry.BootEntryCode = CreateBootEntry(&rootDesc.guid, &rootDesc.uGuid, (CHAR16 *)out->bootentry.BootEntryName), 
+		//	Temporary disable in order to Speed up Bochs.
+		.bootentry.BootEntryCode = 0//	CreateBootEntry(&rootDesc.guid, &rootDesc.uGuid, (CHAR16 *)out->bootentry.BootEntryName), 
 	};
 	out->Video.CurrentVideoMode = InitialiseVideoMemory(&(out->Video.videomemory), &(out->Video.PixelSize), &(out->Video.PixelWidth), &(out->Video.PixelHeight));
 	DEBUGPRINT(L"\nVideo Memory: %p\tPixel Size: %llu\tWidth: %llu\tHeight: %llu", out->Video.videomemory, out->Video.PixelSize, out->Video.PixelWidth, out->Video.PixelHeight);
 	out->memory.MemoryDescriptors = GetMemoryMap(&(out->memory.MemoryDescriptorBufferSize), &(out->memory.MemoryDescriptorMapKey), 
 		&(out->memory.MemoryDescriptorStructSize), &(out->memory.MDescriptorsVersion));
 	DEBUGPRINT(L"\n\n\n");
+
+	EFI_STATUS St = uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, 
+		EfiRuntimeServicesData, out->Stack.StackSize / EFI_PAGE_SIZE, &(out->Stack.Stack));
 	
-	EFI_STATUS St = uefi_call_wrapper(gBS->ExitBootServices, 2, Image, out->memory.MemoryDescriptorMapKey);
+	St = uefi_call_wrapper(gBS->ExitBootServices, 2, Image, out->memory.MemoryDescriptorMapKey);
 	if(EFI_ERROR(St)){DEBUGPRINT(L"\nFailed to exit Boot Services.\t[%a:%llu]", EfiStatusToString(St), (UINT64)St);}
 
 	for(UINTN cc = 0 ; cc < (out->memory.MemoryDescriptorBufferSize / out->memory.MemoryDescriptorStructSize); ++cc){

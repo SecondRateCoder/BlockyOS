@@ -19,11 +19,7 @@ $GCC = Join-Path (Get-Location) 'src/Boot/UEFI/gcc.ps1'
 $EFIPARENT = Join-Path (Get-Location) "compile\toolchain\gnu-efi-build\$($ARCHITECTURE)\"
 $BUILDDIR = Join-Path (Get-Location) "Build\Build-$($PREFIX)\"
 $OBJDIR = Join-Path $BUILDDIR 'objs/'
-$MAPFILESRC = Join-Path $BUILDDIR 'uefi-src-map.log'
-$MAPFILEFINAL = Join-Path $BUILDDIR 'uefi-final-map.log'
 $LOGFILE = Join-Path $BUILDDIR 'uefi.log'
-$OFILES = @()
-$UEFIINTERMEDIATESRC = (Join-Path -Path $Objdir "blob_1.so")
 $UEFIINTERMEDIATEFINAL = (Join-Path -Path $Objdir "blob_2.so")
 $UEFIBINARYBLOB = (Join-Path -Path $Objdir "blob.efi")
 $UEFIDebuggingBLOB = (Join-Path -Path $Objdir "debug.efi")
@@ -37,164 +33,33 @@ if(-not (Test-Path $TEMPCACHE)){New-Item $TEMPCACHE -ItemType Directory -Force}
 if(-not (Test-Path $TEMPJSON)){New-Item $TEMPJSON -ItemType File -Force}
 
 $CARGS = @(
-	'-I', $TEMPCACHE,
-	'-I', "$(Get-Location)/src/", '-I', "$(Get-Location)/", '-I', "$($EFIPARENT)\include\efi\", 
+	'-I', $TEMPCACHE, '-I', "$(Get-Location)/src/", '-I', "$(Get-Location)/", '-I', "$($EFIPARENT)\include\efi\", 
 	'-I', (Join-Path (Get-Location) "compile\toolchain\prebuild\include\"), '-I',"$($EFIPARENT)include\efi\legacy\",
 	'-I', "$($EFIPARENT)include\efi\$(if($ARCHITECTURE -eq 'x86_64'){'x86_64'}else{'ia32'})\", 
-	'-fno-stack-protector', '-fno-stack-check', '-std=c99', 
-	'-fdiagnostics-color=always', '-fshort-wchar', 
-	'-ffreestanding', '-fPIC', '-O0', 
-	'-maccumulate-outgoing-args', '-fno-omit-frame-pointer', 
+	'-fshort-wchar', '-fPIE', '-fPIC', '-maccumulate-outgoing-args', '-fno-omit-frame-pointer', 
 	"-m$(if($ARCHITECTURE -eq 'x86_64'){'64'}else{'32'})",
 	'-D', "$(if($ARCHITECTURE -eq 'x86_64'){'__x86_64__', '-mno-red-zone'}else{'__ia32__', '-D', 'EFI32'})", 
-	'-D', '_DEBUG', 
-	'-D', '__CUSTMEM_FUNC__', '-D', 'NATIVE_LITTLE_ENDIAN'
+	'-D', '_DEBUG', '-D', '__CUSTMEM_FUNC__', '-D', 'NATIVE_LITTLE_ENDIAN'
 )
-if($ENABLEDEBUGGABLE){$CARGS += '-D', 'EFI_DEBUG', '-g', '-Og'}
+if($ENABLEDEBUGGABLE){$CARGS += '-D', 'EFI_DEBUG', '-g'}
 if($ENABLENTEMULATOR){$CARGS += '-D', 'EFI_NT_EMULATOR'}
 # if($ARCHITECTURE -eq 'x86_64'){$CARGS += '-D', '__x86_64__'}
 # elseif($ARCHITECTURE -eq 'x86'){$CARGS += '-D', 'EFI32', '-D', '__ia32__'}
 
-
-$LARGSU = @(
-	'-nostdlib',
-	'-shared', '-Bsymbolic', 
-	'-Wl,--emit-relocs', '-Wl,--relocatable',
-	"-Wl,-Map,$($MAPFILESRC)", 
-	'-nostartfiles', '-nodefaultlibs'
-)
 $LARGSL = @(
-	'-shared', '-Bsymbolic', 
-	"-Wl,-T,$($EFIPARENT)lib/elf_$($ARCHITECTURE)_efi.lds", 
-	"-Wl,-Map,$($MAPFILEFINAL)", 
-	'-nostartfiles', '-nodefaultlibs',
+	'-shared', '-Bsymbolic', '-znocombreloc', '-z', 'noexecstack', 
+	'-T', "$($EFIPARENT)lib/elf_$($ARCHITECTURE)_efi.lds", 
 	"$($EFIPARENT)lib/crt0-efi-$($ARCHITECTURE).o", 
-	'-L', "$($EFIPARENT)/lib/", 
-	'-l', 'efi', '-l', 'gnuefi'
+	'-L', "$($EFIPARENT)/lib/", '-l', 'efi', '-l', 'gnuefi'
 )
 $OBJCOPYARGS = @(
-	'-j', '.text',
-    '-j', '.data', '-j', '.sdata', '-j', '.rodata',
-    '-j', '.dynamic', '-j', '.dynsym',
-    '-j', '.rel', '-j', '.rel.*',
-    '-j', '.rela', '-j', '.rela.*',
-    '-j', '.reloc',
-    '-O', "pei-$(if($ARCHITECTURE -eq 'x86_64'){'x86-64'}else{'i386'})", 
+	'-j', '.text', '-j', '.data', '-j', '.bss', '-j', '.rdata', '-j', '.rodata', 
+	'-j', '.sbss', '-j', '.sdata', '-j', '.srdata', '-j', '.dynamic', '-j', '.dynsym', 
+    '-j', '.rel', '-j', '.rel.*', '-j', '.rela', '-j', '.rela.*', , '-j', '.idata', 
+    '-j', '.reloc', '-O', "efi-app-$(if($ARCHITECTURE -eq 'x86_64'){'x86-64'}else{'i386'})", 
 	'--subsystem=10', $UEFIINTERMEDIATEFINAL, $UEFIBINARYBLOB
 )
 $OBJCOPYARGS2 = @('--only-keep-debug', $UEFIINTERMEDIATEFINAL, $UEFIDebuggingBLOB)
-
-function Get-TimestampCache{
-	param(
-		[Parameter(Mandatory)]
-		[string]$JsonPath
-	)
-
-	if(-not (Test-Path $JsonPath)){
-		New-Item -Path $JsonPath -ItemType File -Force | Out-Null
-		Set-Content -Path $JsonPath -Value '{}' -NoNewline
-	}
-
-	$raw = Get-Content -Path $JsonPath -Raw
-	if([string]::IsNullOrWhiteSpace($raw)){
-		$raw = '{}'
-		Set-Content -Path $JsonPath -Value $raw -NoNewline
-	}
-
-	try{return $raw | ConvertFrom-Json -AsHashTable
-	}catch{return @{}}
-}
-
-function Save-TimestampCache{
-	param(
-		[Parameter(Mandatory)]
-		[string]$JsonPath,
-		[Parameter(Mandatory)]
-		$Data
-	)
-	$Data | ConvertTo-Json -Depth 4 | Set-Content -Path $JsonPath
-}
-
-function Test-JsonTimestampIsOutdated{
-	param(
-		[Parameter(Mandatory)]
-		[string]$JsonPath,
-		[Parameter(Mandatory)]
-		[string]$FilePath
-	)
-
-	if(-not(Test-Path $FilePath)){throw "Target file not found: $FilePath"}
-
-	$json = Get-TimestampCache -JsonPath $JsonPath
-	$fullPath = (Get-Item $FilePath).FullName
-
-	$storedTimestamp = if($json.ContainsKey($fullPath)){$json[$fullPath]}else{$null}
-	if(-not $storedTimestamp){return $true}
-
-	$storedTime = $null
-	try{
-		if($storedTimestamp.GetType() -eq [datetime]){
-			$storedTime = $storedTimestamp
-		}else{$storedTime = [DateTime]::Parse($storedTimestamp).ToUniversalTime()}
-	}catch{return $true}
-
-	$actualTime = (Get-Item $FilePath).LastWriteTime.ToUniversalTime()
-	if($actualTime -gt $storedTime.ToUniversalTime()){return $true}
-
-	return $false
-}
-
-function Get-JsonTimestampInfo {
-	param(
-		[Parameter(Mandatory)]
-		[string]$JsonPath,
-		[Parameter(Mandatory)]
-		[string]$FilePath
-	)
-
-	if(-not (Test-Path $FilePath)) { throw "Target file not found: $FilePath" }
-
-	$json = Get-TimestampCache -JsonPath $JsonPath
-	$fullPath = (Get-Item $FilePath).FullName
-	$storedTimestamp = if ($json.ContainsKey($fullPath)) { $json[$fullPath] } else { $null }
-	$storedTime = $null
-	if($storedTimestamp){
-		try{ $storedTime = [DateTime]::Parse($storedTimestamp).ToUniversalTime() } catch { $storedTime = $null }
-	}
-	$actualTime = (Get-Item $FilePath).LastWriteTimeUtc
-
-	return [PSCustomObject]@{
-		FilePath = $fullPath
-		StoredTimestamp = $storedTimestamp
-		StoredTime = $storedTime
-		ActualTime = $actualTime
-		Delta = if($storedTime){ $actualTime - $storedTime } else { $null }
-	}
-}
-
-function Format-TimestampDiff {
-	param(
-		[Nullable[TimeSpan]]$Delta
-	)
-
-	if(-not $Delta){ return 'n/a' }
-	return "{0:+0.000;-0.000;0.000}" -f $Delta.TotalSeconds
-}
-
-function Update-JsonTimestamp{
-	param(
-		[Parameter(Mandatory)]
-		[string]$JsonPath,
-		[Parameter(Mandatory)]
-		[string]$FilePath
-	)
-	if(-not (Test-Path $FilePath)) { throw "Target file not found: $FilePath" }
-
-	$json = Get-TimestampCache -JsonPath $JsonPath
-	$fullPath = (Get-Item $FilePath).FullName
-	$json[$fullPath] = (Get-Item $FilePath).LastWriteTimeUtc.ToString('o')
-	Save-TimestampCache -JsonPath $JsonPath -Data $json
-}
 
 function Log-Write{
 	param(
@@ -234,45 +99,16 @@ function Ensure-PosixUefiRuntime {
 
 (Ensure-PosixUefiRuntime)
 
-# # Update timestamps for header files
-# Get-ChildItem -Path @((Join-Path (Get-Location) "src/Boot/UEFI"), "$($EFIPARENT)/") -Include @("*.h", "*.asm") -Recurse -File | ForEach-Object{
-# 	$f = $_
-# 	if(Test-JsonTimestampIsOutdated -JsonPath $TEMPJSON -FilePath $f.FullName){
-# 		$tsInfo = Get-JsonTimestampInfo -JsonPath $TEMPJSON -FilePath $f.FullName
-# 		Update-JsonTimestamp -JsonPath $TEMPJSON -FilePath $f.FullName
-# 		Log-Write -Msg "Updated timestamp for header file: $($f.FullName); source=$($tsInfo.ActualTime.ToString('o')), stored=$($tsInfo.StoredTimestamp ?? 'none'), delta=$(Format-TimestampDiff -Delta $tsInfo.Delta) sec" -color Yellow
-# 	}
-# }
-
 # Compile all UEFI .c files
-Get-ChildItem -Path @((Join-Path (Get-Location) "src/Boot/UEFI/")) -Include @("*.c", "*.s") -Recurse -File | ForEach-Object{
-	$f = $_
-	$o = Join-Path $Objdir "UEFI.c.$($_.BaseName).o"
-	$tsInfo = Get-JsonTimestampInfo -JsonPath $TEMPJSON -FilePath $f.FullName
-	if(Test-JsonTimestampIsOutdated -JsonPath $TEMPJSON -FilePath $f.FullName){
-		Log-Write -Msg "Stale source detected for $($f.FullName). source=$($tsInfo.ActualTime.ToString('o')), stored=$($tsInfo.StoredTimestamp ?? 'none'), delta=$(Format-TimestampDiff -Delta $tsInfo.Delta) sec" -color Yellow
-		Log-Write -Msg "$($GCC) -c $($_.FullName) -o $($o) $($CARGS -join ' ')" -color Blue
-		$GCCOUT = & $GCC -_ARGS @('-c', "$($_.FullName)", $CARGS, '-o', $o)
-		Log-Write -Msg ($GCCOUT -join "`n")
-		if(-not (Test-Path $o)){
-			Log-Write "Failure In Compiling $($f.FullName)  :  $($o)" -color Red
-			exit 1
-		}
-		Log-Write -Msg "Compiled and updated timestamp for $($f.FullName)" -color Green
-		Update-JsonTimestamp -JsonPath $TEMPJSON -FilePath $f.FullName
-		Copy-Item -Path $o -Destination (Join-Path $TEMPCACHE "UEFI.c.$($_.BaseName).o")
-	}else{
-		Log-Write -Msg "Skipping $($f.FullName) - up to date; source=$($tsInfo.ActualTime.ToString('o')), stored=$($tsInfo.StoredTimestamp)" -color Green
-		Copy-Item -Path (Join-Path $TEMPCACHE "UEFI.c.$($_.BaseName).o") -Destination $o
-	}
-	$OFILES += $o
-}
+$SourceFiles = @()
+Get-ChildItem -Path @((Join-Path (Get-Location) "src/Boot/UEFI/")) -Include @("*.c", "*.s", "*.asm") -Recurse -File | ForEach-Object{$SourceFiles += $_.FullName}
 
-Log-Write "gcc $($LARGSU -join ' ') $($OFILES -join ' ') -o $($UEFIINTERMEDIATESRC)" -color Blue
-$LDOUT = & $GCC -_ARGS @($LARGSU, $OFILES, '-o', $UEFIINTERMEDIATESRC)
-Log-Write "gcc $($UEFIINTERMEDIATESRC) $($LARGSL -join ' ') -o $($UEFIINTERMEDIATEFINAL)" -color Blue
-$LDOUT = & $GCC -_ARGS @($UEFIINTERMEDIATESRC, $LARGSL, '-o', $UEFIINTERMEDIATEFINAL)
-Log-Write "$($LDOUT -join "`n")"
+(& 'tools\build-suite\gcc.ps1' -CacheEnabled -LogEnabled -f $SourceFiles -o $UEFIINTERMEDIATEFINAL -Prefix 'UEFI' -Toolchain 'elf' -c $CARGS -l $LARGSl -CACHEDIR $TEMPCACHE -LogFile $LOGFILE)
+# Log-Write "gcc $($LARGSU -join ' ') $($OFILES -join ' ') -o $($UEFIINTERMEDIATESRC)" -color Blue
+# $LDOUT = & $GCC -_ARGS @($LARGSU, $OFILES, '-o', $UEFIINTERMEDIATESRC)
+# Log-Write "gcc $($UEFIINTERMEDIATESRC) $($LARGSL -join ' ') -o $($UEFIINTERMEDIATEFINAL)" -color Blue
+# $LDOUT = & $GCC -_ARGS @($UEFIINTERMEDIATESRC, $LARGSL, '-o', $UEFIINTERMEDIATEFINAL)
+# Log-Write "$($LDOUT -join "`n")"
 if(Test-Path $UEFIINTERMEDIATEFINAL){
 	try{Log-Write "$(& $OBJCOPY '-V')"}catch{
 		Log-Write -Msg "Objcopy not found: $OBJCOPY" -color Red

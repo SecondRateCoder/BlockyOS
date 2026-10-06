@@ -54,10 +54,10 @@ void *readblocks(rawenv re, LBA pos, uint64_t bytes){
 	uint64_t nBlocks    = __safediv((bytes + blockBytes - 1), blockBytes) * re->CalcBlock;
     uint64_t allocSize  = nBlocks * re->RealBlock;
 #ifdef _DEBUG
-	printf("\nReading Bytes\n[Parent:%p] >> Reading [%u bytes(s)->%u block(s)] from LBA[%llu(%llu)-%llu(%llu)]",
-		__builtin_return_address(0), bytes, nBlocks, pos, 
-		(re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), pos + nBlocks, 
-		(re->Partition * re->RealBlock) + (((pos + nBlocks) - re->Partition) * re->RealBlock * re->CalcBlock));
+	// printf("\nReading Bytes\n[Parent:%p] >> Reading [%u bytes(s)->%u block(s)] from LBA[%llu(%llu)-%llu(%llu)]",
+	// 	__builtin_return_address(0), bytes, nBlocks, pos, 
+	// 	(re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), pos + nBlocks, 
+	// 	(re->Partition * re->RealBlock) + (((pos + nBlocks) - re->Partition) * re->RealBlock * re->CalcBlock));
 #endif
     void *data = calloc(1, allocSize);
     if(!data){return NULL;}
@@ -80,10 +80,10 @@ void writeblocks(rawenv re, void *data, LBA pos, uint64_t bytes){
 	uint64_t nBlocks = __safediv((bytes + blockBytes - 1), blockBytes) * re->CalcBlock;
 	void *buf = calloc(nBlocks, re->RealBlock);
 #ifdef _DEBUG
-	printf("\nWriting Bytes\n[Parent:%p] >> Writing [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
-		__builtin_return_address(0), bytes, nBlocks, pos, 
-		(re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), pos + nBlocks, 
-		(re->Partition * re->RealBlock) + (((pos + nBlocks) - re->Partition) * re->RealBlock * re->CalcBlock));
+	// printf("\nWriting Bytes\n[Parent:%p] >> Writing [%u bytes(s)->%u block(s)] to LBA[%llu(%llu)-%llu(%llu)]",
+	// 	__builtin_return_address(0), bytes, nBlocks, pos, 
+	// 	(re->Partition * re->RealBlock) + ((pos - re->Partition) * re->RealBlock * re->CalcBlock), pos + nBlocks, 
+	// 	(re->Partition * re->RealBlock) + (((pos + nBlocks) - re->Partition) * re->RealBlock * re->CalcBlock));
 #endif
 	if(buf){
 		memcpy(buf, data, bytes);
@@ -100,8 +100,8 @@ void writeblocks(rawenv re, void *data, LBA pos, uint64_t bytes){
 
 void writebytes(rawenv re, void *data, uint64_t bytepos, uint64_t nbytes){
 #ifdef _DEBUG
-    printf("\n[Parent:%p] >> Writing [%u bytes(s)] to LBA[%llu-%llu]",
-          __builtin_return_address(0), nbytes, __safediv(bytepos * re->CalcBlock, re->ConfBlock), __safediv((bytepos + nbytes) * re->CalcBlock, re->ConfBlock));
+    // printf("\n[Parent:%p] >> Writing [%u bytes(s)] to LBA[%llu-%llu]",
+    //       __builtin_return_address(0), nbytes, __safediv(bytepos * re->CalcBlock, re->ConfBlock), __safediv((bytepos + nbytes) * re->CalcBlock, re->ConfBlock));
 #endif
 	void *rdata = readblocks(re, __safediv(bytepos * re->CalcBlock, re->ConfBlock), nbytes);
 	uint64_t byteoffset = (bytepos * re->CalcBlock) % re->ConfBlock;
@@ -111,8 +111,8 @@ void writebytes(rawenv re, void *data, uint64_t bytepos, uint64_t nbytes){
 
 void *readbytes(rawenv re, LBA pos, uint16_t offset, uint64_t nbytes){
 #ifdef _DEBUG
-    printf("\n[Parent:%p] >> Writing [%u bytes(s)] to LBA[%llu:%u-%llu]",
-          __builtin_return_address(0), nbytes, __safediv(pos * re->CalcBlock, re->ConfBlock), offset, __safediv((pos + nbytes) * re->CalcBlock, re->ConfBlock));
+    // printf("\n[Parent:%p] >> Writing [%u bytes(s)] to LBA[%llu:%u-%llu]",
+    //       __builtin_return_address(0), nbytes, __safediv(pos * re->CalcBlock, re->ConfBlock), offset, __safediv((pos + nbytes) * re->CalcBlock, re->ConfBlock));
 #endif
 	void *rdata = readblocks(re, __safediv((pos + __safediv(offset, re->ConfBlock)) * re->CalcBlock, re->ConfBlock), nbytes);
 	memcpy(rdata, rdata + __safediv(offset, re->ConfBlock) + (offset % re->ConfBlock), nbytes);

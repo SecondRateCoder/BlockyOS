@@ -38,7 +38,7 @@ UINT64 *__getfcode(char *s_){
 	__memset(hash, 0, sizeof(hash));
 	char *s = __strdup(s_);
 	for(UINT32 cc = 0; cc < __strlen(s_); ++cc){if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}}
-	DEBUGPRINT(L"\nGenerating Hash");
+	// DEBUGPRINT(L"\nGenerating Hash");
 	blake2b_state hashstate;
 	blake2b_init(&hashstate, sizeof(UINT64) * 2);
     blake2b_update(&hashstate, s, __strlen(s));
@@ -217,7 +217,7 @@ BOOLEAN __pattmatch(const char *pattern, const char *str){
 }
 
 void *__realloc_(void *memory, UINT64 currSize, UINT64 nSize){
-    DEBUGPRINT(L"\nRe-Allocating %llu bytes to %llu bytes", currSize, nSize);
+    // DEBUGPRINT(L"\nRe-Allocating %llu bytes to %llu bytes", currSize, nSize);
 #ifndef __CUSTMEM_FUNC__
     return ReallocatePool(currSize, nSize, memory);
 #else
@@ -234,20 +234,20 @@ void *__realloc_(void *memory, UINT64 currSize, UINT64 nSize){
 }
 
 void  *__calloc_(UINT64 nLen, UINT64 nSize){
-    DEBUGPRINT(L"\nAllocating %llu item(s) of %llu bytes", nLen, nSize);
+    // DEBUGPRINT(L"\nAllocating %llu item(s) of %llu bytes", nLen, nSize);
 	if(!nLen || !nSize){return NULL;}
 #ifndef __CUSTMEM_FUNC__
     return AllocateZeroPool(nSize * nLen);
 #else
     void *out = AllocatePool(nLen * nSize);
-    DEBUGPRINT(L"    Out Buffer: %p", out);
+    // DEBUGPRINT(L"    Out Buffer: %p", out);
     if(out){__memset(out, 0, nSize * nLen);}
     return out;
 #endif
 }
 
 void __memset(void *dst, UINT8 val, UINT64 len){
-    DEBUGPRINT(L"\nSetting %llu bytes to %u", len, val);
+    // DEBUGPRINT(L"\nSetting %llu bytes to %u", len, val);
 	if(!len){return;}
 #ifndef __CUSTMEM_FUNC__
     SetMem(dst, val, len);
@@ -257,7 +257,7 @@ void __memset(void *dst, UINT8 val, UINT64 len){
 }
 
 void __safecopy(void * __restrict__ dst, void * __restrict__ src, UINT64 len){
-    DEBUGPRINT(L"\nPerforming Safe-Copy");
+    // DEBUGPRINT(L"\nPerforming Safe-Copy");
 	if(!len){return;}
     void *dup = __memdup(src, len);
     __memcpy(dst, dup, len);
@@ -266,7 +266,7 @@ void __safecopy(void * __restrict__ dst, void * __restrict__ src, UINT64 len){
 }
 
 void __memcpy(void * __restrict__ dst, void * __restrict__ src, UINT64 len){
-    DEBUGPRINT(L"\nCopying %llu bytes", len);
+    // DEBUGPRINT(L"\nCopying %llu bytes", len);
 	if(!len){return;}
 #ifndef __CUSTMEM_FUNC__
     CopyMem(dst, src, len);
@@ -298,7 +298,7 @@ UINT64 __strspn(const char *s, const char *reject){
 }
 
 UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len){
-    DEBUGPRINT(L"\nComparing %llu bytes", len);
+    // DEBUGPRINT(L"\nComparing %llu bytes", len);
 #ifndef __CUSTMEM_FUNC__
     return CompareMem(a, b, len);
 #else
@@ -309,11 +309,11 @@ UINT64 __memcmp(void * __restrict__ a, void * __restrict__ b, UINT64 len){
         len--;
     }
     #endif
-    DEBUGPRINT(L"\nmemcmp Return %a", len ? "FALSE": "TRUE");
+    // DEBUGPRINT(L"\nmemcmp Return %a", len ? "FALSE": "TRUE");
     return len;   // 0 == equal, non‑zero == different
 }
 EFI_STATUS getDriveMediaID(EFI_HANDLE Image, UINT32 *MediaID){
-    DEBUGPRINT(L"\nGetting Drive Media ID");
+    // DEBUGPRINT(L"\nGetting Drive Media ID");
     EFI_STATUS Status;
     EFI_LOADED_IMAGE *LoadedImage = NULL;
     EFI_GUID LoadedImageProtocolGuid = LOADED_IMAGE_PROTOCOL;
@@ -378,7 +378,8 @@ void *sysbase(EFI_HANDLE Image){
 	return out;
 }
 
-void *getptr(void *ptr){return (void *)((UINT64)(sysbase(NULL)) + (UINT64)ptr);}
+extern UINT8 ImageBase;
+void *getptr(void *ptr){return (void *)(((UINT64)(sysbase(NULL)) + (UINT64)ptr) - (UINT64)&ImageBase );}
 
 // #include <stdio.h>
 
@@ -389,9 +390,7 @@ double __strtod(const char *str, char **end){
     if(*str == '-'){
         sign = -1;
         str++;
-    }else if(*str == '+'){
-        str++;
-    }
+    }else if(*str == '+'){str++;}
     while(*str != '\0'){
         if(*str == '.'){
             in_fraction = 1;

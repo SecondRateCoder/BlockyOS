@@ -14,7 +14,7 @@
 //      EfiConventionalMemory
 
 IDTTable64 __linkersection(IDT) InterruptTable;
-static GDTSystemSegmentDescriptor64 GDTTable[(GDTTableDefaultLength / 2)] = {0};
+GDTSystemSegmentDescriptor64 GDTTable[(GDTTableDefaultLength / 2)] = {0};
 
 void InitialiseGDT(){
 	// uint64_t codeLimit = (((uint64_t)&CODELIMIT - (uint64_t)&CODEBASE) >> 12) - 1;
@@ -66,7 +66,7 @@ void InitialiseGDT(){
 }
 
 void InitialiseIDT(void *ACPI){
-	static IDTR64 temp = {.Base = (uint64_t)InterruptTable, .Limit = sizeof(InterruptTable) - 1};
+	IDTR64 temp = {.Base = (uint64_t)InterruptTable, .Limit = sizeof(InterruptTable) - 1};
 	for(uint32_t cc = 0; cc < IDTLength; ++cc){
 		InterruptTable[cc] = (IDTEntry64){
 			.DescriptorPriviledgeLevel = 0x0, .GateType = IDT64InterruptGateType, 
@@ -81,12 +81,12 @@ void InitialiseIDT(void *ACPI){
 ISRCallbackDefinition(GenericIO){ISRCallbackReturn;}
 volatile bool _f = false;
 rawenv re;
-void __sysvabi __naked __main(__bootinfo * __restrict__ bootin){
+void __sysvabi __main(__bootinfo * __restrict__ bootin){
 	if(_f){
 		//* Set Up Interrupt Descriptor Table (IDT) & GDT
 		InitialiseGDT();
 	
-		static void *ACPIBase = NULL;
+		void *ACPIBase = NULL;
 		for(uint32_t cc = 0; cc < bootin->devices.CTableLength; ++cc){
 			if(memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_TABLE_GUID}, sizeof(EFI_GUID)) || 
 				memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_20_TABLE_GUID}, sizeof(EFI_GUID))
@@ -107,7 +107,7 @@ void __sysvabi __naked __main(__bootinfo * __restrict__ bootin){
 		void *vm = AllocateVideoMemory(0, 0, &W, &H);
 		SelectVideoContext(vm, (void **)ASCII, ASCIILength);
 		
-		static bool de[32] = {0};	memset(de, true, sizeof(de));
+		bool de[32] = {0};	memset(de, true, sizeof(de));
 		uint32_t APIC = GetLocalAPICID();
 		GenericMassStorageDeviceConfig cfg = {
 			.acpibase = ACPIBase, .AHCI = {.DeviceEnable = de, .NVectors = 1, .Out = {0}, .LocalAPICs = &APIC}, 
@@ -115,7 +115,7 @@ void __sysvabi __naked __main(__bootinfo * __restrict__ bootin){
 			.NVMe = {.Out = {0}}, .Priviledge = 0x00
 		};
 		InitMutex(Mtx);
-		static uint8_t IV;
+		uint8_t IV;
 		AllocateInterruptVector(&IV);
 		
 		re = OpenRawHandle(&cfg, GetPCIstruct(MassStorage_SATA_AHCI), IV, 512, 0x00, Mtx);

@@ -1,4 +1,6 @@
 bits 64
+DEFAULT REL
+
 section .text
 ;	https://wiki.osdev.org/Random_Number_Generator
 extern mt_rng

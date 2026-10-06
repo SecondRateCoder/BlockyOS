@@ -27,3 +27,6 @@
 #include "kernel/services/IO/service.h"
 
 extern KernalMainDef(kboot);
+
+#define bochs_breakpoint	__bochs_breakpoint
+extern __sysvabi void __bochs_breakpoint(void);

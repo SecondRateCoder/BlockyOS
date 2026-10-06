@@ -13,19 +13,14 @@ socket_ret socketopen(UINT32 driver, UINT64 nARGbytes, ...){
 			case 0: {
 				socket_ret tmp = __froot_sckopen(device, nARGbytes - sizeof(UINT32), &args);
 				data = __memdup(&tmp, sizeof(socket_ret));
+				va_end(args);
 				break;
 			} default: {
 				va_end(args);
 				return (socket_ret){0};
 			}
 		}
-		socket_ret out = {
-			.errout = __noerr,
-			.data = data,
-			.nData = sizeof(socket_ret)
-		};
-		if(out.data){out.errout = __noerr;}else{out.errout = __incompatible_arg;		out.nData = 0;}
-		return out;
+		return (socket_ret){.errout = data? __noerr: __incompatible_arg, .data = data, .nData = (data? sizeof(socket_ret): 0)};
 	}
 	va_end(args);
 	return socketret__noimpl;

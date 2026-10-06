@@ -9,28 +9,28 @@ bool checkdisk(char *path){
 	uint8_t *block = readblocks(re, GPT_LBA, sizeof(miniGPT));
 	miniGPT *gpt = (miniGPT *)block;
 #ifdef _DEBUG
-	dualprintf(fs_logf, stdout, 
-		"\nGPT Dump:"
-		"\n    Sig: \"%s\""
-		"\n    Rev: %u"
-		"\n    Header-Size: %u"
-		"\n    Header Checksum: %u"
-		"\n    localLBA: %llu"
-		"\n    altLBA: %llu"
-		"\n    firstUsable: %llu"
-		"\n    lastUsable: %llu"
-		"\n    Disk-GUID: ",
-		gpt->sig, gpt->rev, gpt->hSize, gpt->hChecksum,
-		gpt->localLBA, gpt->alternateLBA, gpt->fUsable, gpt->lUsable
-	);
-	dualprintf(fs_logf, stdout, 
-		"\n    Partition-Table: %llu"
-		"\n    # of Partition-Entries: %u"
-		"\n    Partition-Entry Size: %u"
-		"\n    Partition-Table Checksum: %u",
-		gpt->partEntryLoc, gpt->nPartEntries, gpt->partEntrySize,
-		gpt->partArrayChecksum
-	);
+	// dualprintf(fs_logf, stdout, 
+	// 	"\nGPT Dump:"
+	// 	"\n    Sig: \"%s\""
+	// 	"\n    Rev: %u"
+	// 	"\n    Header-Size: %u"
+	// 	"\n    Header Checksum: %u"
+	// 	"\n    localLBA: %llu"
+	// 	"\n    altLBA: %llu"
+	// 	"\n    firstUsable: %llu"
+	// 	"\n    lastUsable: %llu"
+	// 	"\n    Disk-GUID: ",
+	// 	gpt->sig, gpt->rev, gpt->hSize, gpt->hChecksum,
+	// 	gpt->localLBA, gpt->alternateLBA, gpt->fUsable, gpt->lUsable
+	// );
+	// dualprintf(fs_logf, stdout, 
+	// 	"\n    Partition-Table: %llu"
+	// 	"\n    # of Partition-Entries: %u"
+	// 	"\n    Partition-Entry Size: %u"
+	// 	"\n    Partition-Table Checksum: %u",
+	// 	gpt->partEntryLoc, gpt->nPartEntries, gpt->partEntrySize,
+	// 	gpt->partArrayChecksum
+	// );
 #endif
 	if(!memcmp(gpt->sig, "EFI PART", 8)){out = true;}else{out = false;}
 	free(block);
@@ -161,17 +161,17 @@ bool queryfs(rawenv re, LBA partbase){
 	// Check that a FileSystem exists at the bytebase.
 	bool out = 0x00;
 	fsroot *fr = (fsroot *)readblocks(re, partbase + FRATROOTOFFSET, sizeof(fsroot));
-	dualprintf(fs_logf, stdout, 
-		"\nFS-Root Blob:"
-		"\n    Version: [%u:%u]"
-		"\n    Sig: %.16s"
-		"\n    Configured Log Sectors: %u"
-		"\n    Configured Block Size: %u"
-		"\n    Configured Cluster-Map Size: %u",
-		fr->verCode[0x00], fr->verCode[1], 
-		fr->signature, fr->confLogSectors, 
-		fr->confBlockSize, fr->confClusterSize
-	);
+	// dualprintf(fs_logf, stdout, 
+	// 	"\nFS-Root Blob:"
+	// 	"\n    Version: [%u:%u]"
+	// 	"\n    Sig: %.16s"
+	// 	"\n    Configured Log Sectors: %u"
+	// 	"\n    Configured Block Size: %u"
+	// 	"\n    Configured Cluster-Map Size: %u",
+	// 	fr->verCode[0x00], fr->verCode[1], 
+	// 	fr->signature, fr->confLogSectors, 
+	// 	fr->confBlockSize, fr->confClusterSize
+	// );
 	if(!memcmp(fr->signature, FRATSIG, sizeof(FRATSIG))){
 #ifdef _DEBUG
 		dualprintf(fs_logf, stdout, 
@@ -213,18 +213,18 @@ conf_fsroot *fmount(char *path){
 		// Generate the fsroot
 		fsroot *fsroot_ = (fsroot *)readblocks(re, PART.base + FRATROOTOFFSET, sizeof(fsroot));
 #ifdef _DEBUG
-		dualprintf(fs_logf, stdout, 
-			"\n[%s:%u]  >>  Root: %llu:%llu -> %llu LBAs"
-			"\n	Version-Code: [%u:%u]"
-			"\n	Configured Block-Size: %u"
-			"\n	Configured Cluster-Size: %u"
-			"\n	Configured # of Log-Sectors: %u"
-			"\n	Configured Log-Size: %u", 
-			__FILE__,__LINE__, PART.base, PART.high, PART.high - PART.base, 
-			fsroot_->verCode[0x00], fsroot_->verCode[1], 
-			fsroot_->confBlockSize, fsroot_->confClusterSize,
-			fsroot_->confLogSectors, fsroot_->confLogSectors * sizeof(fslogitem)
-		);
+		// dualprintf(fs_logf, stdout, 
+		// 	"\n[%s:%u]  >>  Root: %llu:%llu -> %llu LBAs"
+		// 	"\n	Version-Code: [%u:%u]"
+		// 	"\n	Configured Block-Size: %u"
+		// 	"\n	Configured Cluster-Size: %u"
+		// 	"\n	Configured # of Log-Sectors: %u"
+		// 	"\n	Configured Log-Size: %u", 
+		// 	__FILE__,__LINE__, PART.base, PART.high, PART.high - PART.base, 
+		// 	fsroot_->verCode[0x00], fsroot_->verCode[1], 
+		// 	fsroot_->confBlockSize, fsroot_->confClusterSize,
+		// 	fsroot_->confLogSectors, fsroot_->confLogSectors * sizeof(fslogitem)
+		// );
 #endif
 		setblocksize(re, fsroot_->confBlockSize);
 		conf_fsroot *largeroot = calloc(1, sizeof(conf_fsroot));
@@ -251,30 +251,7 @@ conf_fsroot *fmount(char *path){
 		dualprintf(fs_logf, stdout, "\n    Verifying FS Root Items #items: %llu", (uint64_t)(fsroot_->confClusterSize / sizeof(fsblock)));
 		EnableVerbose(re);
 #endif
-		for(uint64_t i = 0x00; i < largeroot->clusterbuffer.nClusterItems; ++i){
-			// Read and verify ROOTS
-			fsblock *f = largeroot->clusterbuffer.clusterMap + i;
-			if(f->fcodehigh && f->fcodelow){
-				if(flagcheck(f->attributes, __fsmetadatacluster) && f->fcodehigh && f->fcodelow){
-					meta_fsblock *temp = readblocks(re, getloc(largeroot, f), sizeof(meta_fsblock));
-					if(temp && memcmp(temp->fsig, FRATBLOCKSIG, 8)){
-#ifdef _DEBUG
-						dualprintf(fs_logf, stdout, 
-							"\n[%s:%u]  >>  ERROR!    Corrupted FileSystem Root Block    ERASING ENTRY!!"
-							"\n    [%llu:%llu]:%u:%u", 
-							__FILE__, __LINE__, f->fcodelow, f->fcodehigh, f->attributes, f->index
-						);
-#endif
-						memset(temp, 0x00, 512);
-						*f = (fsblock){0};
-						writeblocks(re, temp, getloc(largeroot, f), sizeof(meta_fsblock));
-					}
-					free(temp);
-				}
-			}
-		}
 		dispose(re);
-		fuloadroot(largeroot);
 		return largeroot;
 	}
 	return NULL;
@@ -454,7 +431,7 @@ void *__fread1(conf_fsroot *root, fsblock *fb, uint64_t *index){
 		loc = getloc(root, fb_);
 	}else{loc = getloc(root, fb);}
 #ifdef _DEBUG
-	dualprintf(fs_logf, stdout, "\nReading File Block at %llu, Item: %llu.    Root: [%llu:%llu]", loc, *index, fb->fcodelow, fb->fcodehigh);
+	// dualprintf(fs_logf, stdout, "\nReading File Block at %llu, Item: %llu.    Root: [%llu:%llu]", loc, *index, fb->fcodelow, fb->fcodehigh);
 #endif
 	rawenv re = startup(root->path, root->loc, root->root->confBlockSize);
 	void *out = readblocks(re, loc, root->root->confBlockSize);
@@ -504,7 +481,7 @@ void __fpush1(conf_fsroot *root, fsblock *fb, uint64_t *i, void *buffer){
 		
 	}
 #ifdef _DEBUG
-	dualprintf(fs_logf, stdout, "\nWriting File Block at %llu, Item: %llu.\tRoot: [%llu:%llu]", loc, *i, fb->fcodelow, fb->fcodehigh);
+	// dualprintf(fs_logf, stdout, "\nWriting File Block at %llu, Item: %llu.\tRoot: [%llu:%llu]", loc, *i, fb->fcodelow, fb->fcodehigh);
 #endif
 	rawenv re = startup(root->path, root->loc, root->root->confBlockSize);
 	writeblocks(re, buffer, loc, root->root->confBlockSize);

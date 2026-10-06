@@ -1,5 +1,5 @@
 
-[277:    :9:    :1:    :22:    :31:    :41]
+[279:    :9:    :3:    :0:    :31:    :16]
 >> 
 e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0 
 [C:\GitHub\BlockyOS\tools\filesystem\frat.c:196]  >>  Mounting FS Root: [C:/GitHub/BlockyOS/Build/Build-nodate/disk.img]
@@ -55,7 +55,7 @@ FS-Root Blob:
 
 >> 
 create -la fc -p SYSD/ -n kboot.exe 
-000001d45fe65f1b:fc	000001d45fe65f21:SYSD/	000001d45fe65f2a:kboot.exe	
+00000192da4174cb:fc	00000192da4174d1:SYSD/	00000192da4174da:kboot.exe	
 [	SYSD/kboot.exe]
 Mounting File [SYSD/kboot.exe] with "fc"
 Creating File at: ./SYSD/kboot.exe
@@ -75,7 +75,7 @@ Hash: [4397709807136810278:123480111967653]
 >> 
 fwrite -pp C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe -ia %KBOOT% -p 0 -n 0 
 Reading File Info
-Root is 000001d45fe69080
+Root is 00000192da417380
 Writing File Block at 225458, Item: 1.	Root: [4397709807136810278:123480111967653]
 Writing File Block at 225459, Item: 2.	Root: [4397709807136810278:123480111967653]
 Writing File Block at 225460, Item: 3.	Root: [4397709807136810278:123480111967653]
@@ -101,10 +101,8 @@ Writing File Block at 225479, Item: 22.	Root: [4397709807136810278:1234801119676
 Writing File Block at 225480, Item: 23.	Root: [4397709807136810278:123480111967653]
 Writing File Block at 225481, Item: 24.	Root: [4397709807136810278:123480111967653]
 Writing File Block at 225482, Item: 25.	Root: [4397709807136810278:123480111967653]
+Reading File Block at 225483, Item: 26.    Root: [4397709807136810278:123480111967653]
 Writing File Block at 225483, Item: 26.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225498, Item: 27.	Root: [4397709807136810278:123480111967653]
-Reading File Block at 225499, Item: 28.    Root: [4397709807136810278:123480111967653]
-Writing File Block at 225499, Item: 28.	Root: [4397709807136810278:123480111967653]
 [0]: ""
 >> 
 

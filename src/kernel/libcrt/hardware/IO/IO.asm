@@ -1,4 +1,6 @@
 bits 64
+DEFAULT REL
+
 section .text
 
 global __outb

@@ -8,31 +8,34 @@ param(
 	# Target & Compiler Arguments
 	[Parameter(Mandatory = $true)][string[]]$f = @(), 
 	[Parameter(Mandatory = $true)][string]$o, 
+	[Parameter(Mandatory = $false)][string]$Prefix = "elf",
+	[Parameter(Mandatory = $false)][string]$Toolchain = "",
 	[Parameter(Mandatory = $false)][string[]]$c = @(), 
 	[Parameter(Mandatory = $false)][string[]]$l = @(), 
 	[Parameter(Mandatory = $false)][string]$CACHEDIR = (Join-Path (Get-Location) 'compile/cache'), 
 	[Parameter(Mandatory = $false)][string]$LogFile = (Join-Path (Get-Location) 'compile/compile.log')
 )
 $envOLDPATH = $env:PATH
-$ROOT = @(
-    (Join-Path (Get-Location) "compile/toolchain/prebuild/x86_64-elf/bin/"),
-    (Join-Path (Get-Location) "compile/toolchain/prebuild/x86_64-elf/x86_64-elf/bin/")
-)
-$env:PATH = "$($ROOT -join ';');$($env:PATH)"
-$env:COMPILER_PATH = $ROOT[0]
 $GCC = 'gcc'
 $NASM = 'nasm'
+if($Toolchain -eq "elf"){
+	$ROOT = @(
+		(Join-Path (Get-Location) "compile/toolchain/prebuild/x86_64-elf/bin/"),
+		(Join-Path (Get-Location) "compile/toolchain/prebuild/x86_64-elf/x86_64-elf/bin/")
+	)
+	$env:PATH = "$($ROOT -join ';');$($env:PATH)"
+	$env:COMPILER_PATH = $ROOT[0]
+	$GCC = 'x86_64-elf-gcc'
+}
 
 $PATTERN = '"[^"]*"|''[^'']*''|\{[^{}]*\}|\[[^\[\]]*\]|\([^\(\)]*\)|\S+'
 
-$_COMPILEARGS = @('-nostdlib', '-O0', 
-    '--std=c99', '-ffreestanding', '-m64', '-mno-red-zone', 
+$_COMPILEARGS = @(
+	'-nostdlib', '-O0', '--std=c99', '-ffreestanding', '-m64', '-mno-red-zone', '-fno-stack-check', 
     '-fno-stack-protector', '-fno-builtin', '-funsigned-bitfields', '-fvisibility=default', 
     '-funsigned-char', '-fsso-struct=little-endian', '-fno-leading-underscore', 
-    '-fdiagnostics-color=always', '-fdiagnostics-urls=always', 
-    '-fno-diagnostics-show-highlight-colors', '-fomit-frame-pointer', 
-    '-foptimize-crc', '-foptimize-strlen', '-finline-atomics', 
-    '-fno-inline'
+    '-fdiagnostics-color=always', '-fdiagnostics-urls=always', '-fno-diagnostics-show-highlight-colors', 
+	'-fomit-frame-pointer', '-foptimize-crc', '-foptimize-strlen', '-finline-atomics', '-fno-inline'
 )
 if($DebugEnabled){$_COMPILEARGS += '-g'}
 foreach($arg in $c){[regex]::Matches($arg, $PATTERN) | ForEach-Object{$_COMPILEARGS += $_.ToString()}}
@@ -184,7 +187,7 @@ if($CacheEnabled){
 	foreach($srcPath in $f){
 		$srcItem = Get-Item $srcPath
 		$objPath = $(if(($srcItem.Extension -match 'asm') -or ($srcItem.Extension -match 'c')){
-			(Join-Path $CACHEDIR "$($srcItem.Extension -replace '\.','').$($srcItem.BaseName).o")}else{$srcPath}) -replace '\\','/'
+			(Join-Path $CACHEDIR "$($Prefix).$($srcItem.Extension -replace '\.','').$($srcItem.BaseName).o")}else{$srcPath}) -replace '\\','/'
 		$cc = 0
 		while($objectFiles -contains $objPath){
 			$cc++
@@ -210,13 +213,13 @@ if($CacheEnabled){
 								if(($cc + 1) -lt $_COMPILEARGS.Count){$cc++;	$nasmCMD += @('-D', $_COMPILEARGS[$cc] -replace '\\', '/')}
 								break
 							} 
-							'^-m64$'					{$nasmCMD += @('-f', 'win64');						break} 
-							'^-m32$'					{$nasmCMD += @('-f', 'obj');						break} 
-							'^-O([0-3sgfast]|\w+)?$'	{$nasmCMD += $_COMPILEARGS[$cc] -replace '\\', '/';	break}
+							'^-m64$'					{$nasmCMD += @('-f', $(if($Toolchain -eq "elf"){'elf64'}else{'win64'}));break}
+							'^-m32$'					{$nasmCMD += @('-f', 'obj');											break}
+							'^-O([0-3sgfast]|\w+)?$'	{$nasmCMD += $_COMPILEARGS[$cc] -replace '\\', '/';						break}
 						}
 					}
 					#	Default to 64-bit Obj format. 
-					if($nasmCMD -notcontains 'win64' -and $nasmCMD -notcontains 'obj'){$nasmCMD += @('-f', 'win64')}
+					if($nasmCMD -notcontains 'win64' -and $nasmCMD -notcontains 'obj'){$nasmCMD += @('-f', $(if($Toolchain -eq "elf"){'elf64'}else{'win64'}))}
 					$nasmCMD += @(($srcPath -replace '\\', '/'), '-o', ($objPath -replace '\\', '/'))
 					LogWrite "$NASM $($nasmCMD -join ' ')" Yellow
 					
@@ -247,11 +250,6 @@ if($CacheEnabled){
 	$linkCmd = @() + $objectFiles + $LINKARGS
 	LogWrite "$GCC $($linkCmd -join ' ')" Yellow
 	$linkOut = (& $GCC @linkCmd 2>&1)
-	# if($LINKARGS -contains "-Wl,-shared"){
-	# 	$file = "$o.a"
-	# 	$linkOut += @('ranlib $file') + (& 'ranlib' $file)
-	# 	$linkOut += @("ar rcs $file $($objectFiles -join ' ')") + (& 'ar' 'rcs' $file @objectFiles)
-	# }
 	if($linkOut){LogWrite ($linkOut -join "`n")}
 }else{
 	# Direct compilation without caching

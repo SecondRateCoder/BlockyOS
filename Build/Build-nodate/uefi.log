@@ -1,5 +1,6 @@
-Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c - up to date; source=2026-10-03T12:59:30.9501080Z, stored=10/03/2026 12:59:30
-Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c - up to date; source=2026-10-03T19:36:41.5645357Z, stored=10/03/2026 19:36:41
+Initializing CGCC.MAKE build process...
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c - up to date; source=2026-10-06T22:32:31.5020039Z, stored=10/06/2026 22:32:31
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c - up to date; source=2026-10-06T18:48:33.4504962Z, stored=10/06/2026 18:48:33
 Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2b-ref.c - up to date; source=2026-08-09T22:40:41.3627225Z, stored=08/09/2026 22:40:41
 Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2bp-ref.c - up to date; source=2026-08-09T22:40:41.3627225Z, stored=08/09/2026 22:40:41
 Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2s-ref.c - up to date; source=2026-08-09T22:40:41.3627225Z, stored=08/09/2026 22:40:41
@@ -11,17 +12,96 @@ Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\executable\pe.c - up to date; 
 Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\gif\gif.c - up to date; source=2026-10-05T16:49:43.6192230Z, stored=10/05/2026 16:49:43
 Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\json\legacy.minijson.c - up to date; source=2026-07-06T20:48:01.5491363Z, stored=07/06/2026 20:48:01
 Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\json\minijson.c - up to date; source=2026-08-30T18:21:21.7088154Z, stored=08/30/2026 18:21:21
-Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\socket.c - up to date; source=2026-10-02T00:31:09.1907185Z, stored=10/02/2026 00:31:09
-Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c - up to date; source=2026-10-03T16:56:22.1333881Z, stored=10/03/2026 16:56:22
-Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c - up to date; source=2026-10-03T19:37:43.6396617Z, stored=10/03/2026 19:37:43
-Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\boot.c - up to date; source=2026-10-05T16:48:31.3074347Z, stored=10/05/2026 16:48:31
-Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\bthelper.c - up to date; source=2026-10-05T16:42:53.6003362Z, stored=10/05/2026 16:42:53
-gcc -nostdlib -shared -Bsymbolic -Wl,--emit-relocs -Wl,--relocatable -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\uefi-src-map.log -nostartfiles -nodefaultlibs C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.frat.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.raw.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2b-ref.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2bp-ref.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2s-ref.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2sp-ref.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xb-ref.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.blake2xs-ref.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.eload.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.pe.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.gif.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.legacy.minijson.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.minijson.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.socket.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.sockets.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.tools.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.boot.o C:\GitHub\BlockyOS\Build\Build-nodate\objs\UEFI.c.bthelper.o -o C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so
-gcc C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so -shared -Bsymbolic -Wl,-T,C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/elf_x86_64_efi.lds -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\uefi-final-map.log -nostartfiles -nodefaultlibs C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o -L C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/ -l efi -l gnuefi -o C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so
-C:/GitHub/BlockyOS/compile/toolchain/prebuild/x86_64-elf/bin/../lib/gcc/x86_64-elf/15.2.0/../../../../x86_64-elf/bin/ld.exe: warning: C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_1.so: missing .note.GNU-stack section implies executable stack
-C:/GitHub/BlockyOS/compile/toolchain/prebuild/x86_64-elf/bin/../lib/gcc/x86_64-elf/15.2.0/../../../../x86_64-elf/bin/ld.exe: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\socket.c - up to date; source=2026-10-06T22:05:21.0139023Z, stored=10/06/2026 22:05:21
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c - up to date; source=2026-10-06T22:30:09.6626227Z, stored=10/06/2026 22:30:09
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c - up to date; source=2026-10-06T21:09:12.0695484Z, stored=10/06/2026 21:09:12
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\boot.asm - up to date; source=2026-10-06T20:23:32.2943146Z, stored=10/06/2026 20:23:32
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\boot.c - up to date; source=2026-10-06T23:24:26.0455082Z, stored=10/06/2026 23:24:26
+Stale source detected for C:\GitHub\BlockyOS\src\Boot\UEFI\bthelper.c. source=2026-10-06T23:27:41.7635353Z, stored=10/06/2026 22:40:42, delta=+10201619.764 sec
+x86_64-elf-gcc -c C:/GitHub/BlockyOS/src/Boot/UEFI/bthelper.c -o C:/GitHub/BlockyOS/compile/cache/UEFI.c.bthelper.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -I C:/GitHub/BlockyOS/compile/cache/ -I C:/GitHub/BlockyOS/src/ -I C:/GitHub/BlockyOS/ -I C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64//include/efi/ -I C:/GitHub/BlockyOS/compile/toolchain/prebuild/include/ -I C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/legacy/ -I C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64/ -fshort-wchar -fPIE -fPIC -maccumulate-outgoing-args -fno-omit-frame-pointer -m64 -D __x86_64__ -mno-red-zone -D _DEBUG -D __CUSTMEM_FUNC__ -D NATIVE_LITTLE_ENDIAN -D EFI_DEBUG -g
+In file included from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64/efibind.h:100,
+                 from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efi.h:48,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:3,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/bthelper.c:1:
+C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:117:11: warning: 'DLLExport' redefined
+  117 |   #define DLLExport __attribute__((visibility("default")))
+      |           ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:94:9: note: this is the location of the previous definition
+   94 | #define DLLExport                               __declspec(dllexport)
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:118:11: warning: 'DLLImport' redefined
+  118 |   #define DLLImport
+      |           ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:95:9: note: this is the location of the previous definition
+   95 | #define DLLImport                               __declspec(dllimport)
+      |         ^~~~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:9,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/struct.h:4,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:7:
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
+   42 | #define NaNf    (__builtin_nanf(""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
+   25 | #define NaNf            (__builtin_nanf (""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
+   50 | #define SNaNf    (__builtin_nansf(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
+   26 | #define SNaNf           (__builtin_nansf (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
+   51 | #define SNaNd    (__builtin_nans(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
+   27 | #define SNaNd           (__builtin_nans (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
+   52 | #define SNaNld   (__builtin_nansl(""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
+   28 | #define SNaNld          (__builtin_nansl (""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:29:9: warning: '__safediv' redefined
+   29 | #define __safediv(A, B) SAFEOP((A), (B), ||, TRUE, !=, 0, &&, /, 1)
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:181:9: note: this is the location of the previous definition
+  181 | #define __safediv(A, B) SAFEOP((A), (B), ||, true, !=, 0, &&, /, 1)
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:43:9: warning: '__max' redefined
+   43 | #define __max(a, b) ((a) < (b)? (b): (a))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:24:9: note: this is the location of the previous definition
+   24 | #define __max(a, b)                     ((b) > (a)? (b): (a))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:44:9: warning: 'abs' redefined
+   44 | #define abs(n) (((INTN)(n)) < 0? -(n): (n))
+      |         ^~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:22:9: note: this is the location of the previous definition
+   22 | #define abs absf
+      |         ^~~
+In file included from C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/struct.h:7:
+C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/enum.h:5:9: warning: 'flagcheck' redefined
+    5 | #define flagcheck(n, f)                 (((n) & (f)) == (f))
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:53:9: note: this is the location of the previous definition
+   53 | #define flagcheck(v, f) (((v) & (f)) == (f))
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/enum.h:6:9: warning: 'flagset' redefined
+    6 | #define flagset(n, f)                   ((n) |= (f))
+      |         ^~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:54:9: note: this is the location of the previous definition
+   54 | #define flagset(v, f)   ((v) |= (f))
+      |         ^~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:87:1: warning: 'naked' attribute only applies to functions [-Wattributes]
+   87 | typedef void __sysvabi __naked (*kernelmain)(__bootinfo * __restrict__ bootin);
+      | ^~~~~~~
+Compiled and updated timestamp for C:\GitHub\BlockyOS\src\Boot\UEFI\bthelper.c
+x86_64-elf-gcc compile/cache/UEFI.c.frat.o compile/cache/UEFI.c.raw.o compile/cache/UEFI.c.blake2b-ref.o compile/cache/UEFI.c.blake2bp-ref.o compile/cache/UEFI.c.blake2s-ref.o compile/cache/UEFI.c.blake2sp-ref.o compile/cache/UEFI.c.blake2xb-ref.o compile/cache/UEFI.c.blake2xs-ref.o compile/cache/UEFI.c.eload.o compile/cache/UEFI.c.pe.o compile/cache/UEFI.c.gif.o compile/cache/UEFI.c.legacy.minijson.o compile/cache/UEFI.c.minijson.o compile/cache/UEFI.c.socket.o compile/cache/UEFI.c.sockets.o compile/cache/UEFI.c.tools.o compile/cache/UEFI.asm.boot.o compile/cache/UEFI.c.boot.o compile/cache/UEFI.c.bthelper.o -Wl,-nostdlib -Wl,-shared -Wl,-Bsymbolic -Wl,-znocombreloc -Wl,-z,noexecstack -Wl,-T,C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/elf_x86_64_efi.lds,C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o -Wl,-L,C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/ -Wl,-l,efi -Wl,-l,gnuefi -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\uefi.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so
+Build finished successfully -> C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so
 GNU objcopy (GNU Binutils) 2.46 Copyright (C) 2026 Free Software Foundation, Inc. This program is free software; you may redistribute it under the terms of the GNU General Public License version 3 or (at your option) any later version. This program has absolutely no warranty.
-objcopy -j .text -j .data -j .sdata -j .rodata -j .dynamic -j .dynsym -j .rel -j .rel.* -j .rela -j .rela.* -j .reloc -O pei-x86-64 --subsystem=10 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob.efi
+objcopy -j .text -j .data -j .bss -j .rdata -j .rodata -j .sbss -j .sdata -j .srdata -j .dynamic -j .dynsym -j .rel -j .rel.* -j .rela -j .rela.* System.Object[] .idata -j .reloc -O efi-app-x86-64 --subsystem=10 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob.efi
 objcopy --only-keep-debug C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so C:\GitHub\BlockyOS\Build\Build-nodate\objs\debug.efi
 
 
