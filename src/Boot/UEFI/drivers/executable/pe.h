@@ -2,8 +2,7 @@
 
 #include "struct.h"
 
-#define PeDumpVolume			32
-#define PeDumpVolumeLine		8
+#define PeDumpVolumeLine		32
 
 #define PeCodeSection			(char[8]){".text"}
 #define PeDefDataSection		(char[8]){".data"}

@@ -16,9 +16,10 @@
 		"EXECUTABLE": [
 			{
 				"OUTPUT": "C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll", 
-				"CARGS": "-fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables ", 
+				"CARGS": "-fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables", 
 				"LARGS": "--image-base 0x0 --section-alignment 4096 --file-alignment 4096 -shared -Bsymbolic -flinker-output=dyn --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll.a", 
 				"FILES": [
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/std.asm", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.asm", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/RNG/RNG.asm", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/RNG/RNG.c", 

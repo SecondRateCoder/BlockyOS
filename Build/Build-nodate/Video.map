@@ -1,0 +1,484 @@
+
+Discarded input sections
+
+ .reloc         0x0000000000000000        0x0 dll stuff
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000000000                __image_base__ = 0x0
+                0x0000000000000000                __dll__ = 0x0
+                0x0000000000000000                __ImageBase = 0x0
+                0x0000000000001000                __section_alignment__ = 0x1000
+                0x0000000000001000                __file_alignment__ = 0x1000
+                0x0000000000000004                __major_os_version__ = 0x4
+                0x0000000000000000                __minor_os_version__ = 0x0
+                0x0000000000000000                __major_image_version__ = 0x0
+                0x0000000000000000                __minor_image_version__ = 0x0
+                0x0000000000000005                __major_subsystem_version__ = 0x5
+                0x0000000000000002                __minor_subsystem_version__ = 0x2
+                0x0000000000000003                __subsystem__ = 0x3
+                0x0000000000200000                __size_of_stack_reserve__ = 0x200000
+                0x0000000000001000                __size_of_stack_commit__ = 0x1000
+                0x0000000000100000                __size_of_heap_reserve__ = 0x100000
+                0x0000000000001000                __size_of_heap_commit__ = 0x1000
+                0x0000000000000000                __loader_flags__ = 0x0
+                0x0000000000000160                __dll_characteristics__ = 0x160
+LOAD compile/cache/elf.c.Video.o
+LOAD Build/Build-nodate/root-part/LibCrt.dll
+LOAD src/kernel/services/Video/Video.def
+                0x00000000000002a0                . = SIZEOF_HEADERS
+                0x0000000000001000                . = ALIGN (__section_alignment__)
+
+.text           0x0000000000001000     0x2000
+ *(SORT_NONE(.init))
+ *(.text)
+ .text          0x0000000000001000     0x1510 compile/cache/elf.c.Video.o
+                0x0000000000001000                VMAMemoryPoll
+                0x00000000000011c2                InitialiseVideoMemoryAllocator
+                0x0000000000001331                RequestVideoMemory
+                0x000000000000156a                FlushVideoMemory
+                0x0000000000001644                ReleaseVideoMemory
+                0x00000000000017b2                PrintGlyph
+                0x00000000000018eb                PrintTextByGlyph
+                0x0000000000001a99                TextCopyF
+                0x00000000000020c4                VMAIState
+                0x000000000000212b                InitaliseVMA
+                0x00000000000021b3                SelectVideoContext
+                0x00000000000022f5                VideoPrintf
+                0x00000000000023f1                AllocateVideoMemory
+                0x000000000000245d                FreeVideoMemory
+                0x00000000000024af                PreflushVideoMemory
+ .text          0x0000000000002510        0x8 LibCrt_dll_d000001.o
+                0x0000000000002510                AddTimerEvent
+ .text          0x0000000000002518        0x8 LibCrt_dll_d000002.o
+                0x0000000000002518                AllocateIST
+ .text          0x0000000000002520        0x8 LibCrt_dll_d000003.o
+                0x0000000000002520                AllocateInterruptVector
+ .text          0x0000000000002528        0x8 LibCrt_dll_d000004.o
+                0x0000000000002528                DisableLocalAPIC
+ .text          0x0000000000002530        0x8 LibCrt_dll_d000005.o
+                0x0000000000002530                EnableLocalAPIC
+ .text          0x0000000000002538        0x8 LibCrt_dll_d000006.o
+                0x0000000000002538                GetLocalAPICBase
+ .text          0x0000000000002540        0x8 LibCrt_dll_d000007.o
+                0x0000000000002540                MapPhysical
+ .text          0x0000000000002548        0x8 LibCrt_dll_d000008.o
+                0x0000000000002548                RepointVirtualAddress
+ .text          0x0000000000002550        0x8 LibCrt_dll_d000009.o
+                0x0000000000002550                SafeAllocatePages
+ .text          0x0000000000002558        0x8 LibCrt_dll_d000010.o
+                0x0000000000002558                mcalloc
+ .text          0x0000000000002560        0x8 LibCrt_dll_d000011.o
+                0x0000000000002560                memcpy
+ .text          0x0000000000002568        0x8 LibCrt_dll_d000012.o
+                0x0000000000002568                mfree
+ .text          0x0000000000002570        0x8 LibCrt_dll_d000013.o
+                0x0000000000002570                mrealloc
+ .text          0x0000000000002578        0x8 LibCrt_dll_d000014.o
+                0x0000000000002578                strlen
+ *(SORT_BY_NAME(.text$*))
+ *(.text.*)
+ *(.gnu.linkonce.t.*)
+ *(.glue_7t)
+ *(.glue_7)
+                0x0000000000002580                . = ALIGN (0x8)
+ *(SORT_NONE(.fini))
+ *(.gcc_exc)
+                [!provide]                        PROVIDE (etext = .)
+ *(.gcc_except_table)
+
+.data           0x0000000000003000     0x1000
+                0x0000000000003000                __data_start__ = .
+ *(.data)
+ .data          0x0000000000003000      0x200 compile/cache/elf.c.Video.o
+ *(.data2)
+ *(SORT_BY_NAME(.data$*))
+ *(.jcr)
+                0x0000000000003200                __data_end__ = .
+ *(.data_cygwin_nocopy)
+
+.rdata          0x0000000000004000     0x1000
+ *(.rdata)
+ .rdata         0x0000000000004000      0x120 compile/cache/elf.c.Video.o
+ *(SORT_BY_NAME(.rdata$*))
+ .rdata$zzz     0x0000000000004120       0x30 compile/cache/elf.c.Video.o
+                0x0000000000004150                . = ALIGN (0x4)
+                0x0000000000004150                __rt_psrelocs_start = .
+ *(.rdata_runtime_pseudo_reloc)
+                0x0000000000004150                __rt_psrelocs_end = .
+                0x0000000000004150                . = ALIGN (0x8)
+                0x0000000000004150                __DELAY_IMPORT_DIRECTORY_start__ = .
+ SORT_BY_NAME(*)(.didat$2)
+ SORT_BY_NAME(*)(.didat$3)
+                0x0000000000004150                __DELAY_IMPORT_DIRECTORY_end__ = .
+                0x0000000000004150                . = (. + (__DELAY_IMPORT_DIRECTORY_end__ - __DELAY_IMPORT_DIRECTORY_start__)?0x20:0x0)
+                0x0000000000004150                . = ALIGN (0x8)
+ SORT_BY_NAME(*)(.didat$4)
+ SORT_BY_NAME(*)(.didat$6)
+ SORT_BY_NAME(*)(.didat$7)
+                0x0000000000004150                . = ALIGN (0x8)
+                0x0000000000004150                ___CTOR_LIST__ = .
+                0x0000000000004150                __CTOR_LIST__ = .
+                0x0000000000004150        0x4 LONG 0xffffffffffffffff
+                0x0000000000004154        0x4 LONG 0xffffffffffffffff
+ *(.ctors)
+ *(.ctor)
+ *(SORT_BY_NAME(.ctors.*))
+                0x0000000000004158        0x4 LONG 0x0
+                0x000000000000415c        0x4 LONG 0x0
+                0x0000000000004160                ___DTOR_LIST__ = .
+                0x0000000000004160                __DTOR_LIST__ = .
+                0x0000000000004160        0x4 LONG 0xffffffffffffffff
+                0x0000000000004164        0x4 LONG 0xffffffffffffffff
+ *(.dtors)
+ *(.dtor)
+ *(SORT_BY_NAME(.dtors.*))
+                0x0000000000004168        0x4 LONG 0x0
+                0x000000000000416c        0x4 LONG 0x0
+                0x0000000000004170                ___crt_xc_start__ = .
+ *(SORT_BY_NAME(.CRT$XC*))
+                0x0000000000004170                ___crt_xc_end__ = .
+                0x0000000000004170                ___crt_xi_start__ = .
+ *(SORT_BY_NAME(.CRT$XI*))
+                0x0000000000004170                ___crt_xi_end__ = .
+                0x0000000000004170                ___crt_xl_start__ = .
+ *(SORT_BY_NAME(.CRT$XL*))
+                0x0000000000004170                ___crt_xp_start__ = .
+ *(SORT_BY_NAME(.CRT$XP*))
+                0x0000000000004170                ___crt_xp_end__ = .
+                0x0000000000004170                ___crt_xt_start__ = .
+ *(SORT_BY_NAME(.CRT$XT*))
+                0x0000000000004170                ___crt_xt_end__ = .
+                0x0000000000004170                ___crt_xd_start__ = .
+ *(SORT_BY_NAME(.CRT$XD*))
+                0x0000000000004170                ___crt_xd_end__ = .
+                0x0000000000004150                ___RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x0000000000004150                __RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x0000000000004150                ___RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+                0x0000000000004150                __RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+
+.eh_frame
+ *(.eh_frame*)
+
+.pdata
+ *(.pdata*)
+
+.xdata
+ *(.xdata*)
+
+.bss            0x0000000000005000     0x1080
+                0x0000000000005000                __bss_start__ = .
+ *(.bss)
+ .bss           0x0000000000005000     0x1080 compile/cache/elf.c.Video.o
+                0x0000000000005000                gcontext
+                0x0000000000005008                ngcontext
+ *(COMMON)
+                0x0000000000006080                __bss_end__ = .
+
+.edata          0x0000000000007000     0x1000
+ *(.edata)
+ .edata         0x0000000000007000       0xe9 dll stuff
+
+/DISCARD/
+ *(.debug$S)
+ *(.debug$T)
+ *(.debug$F)
+ *(.drectve)
+ *(.note.GNU-stack)
+ *(.gnu.lto_*)
+ *(.gnu_object_only)
+
+.idata          0x0000000000008000     0x1000
+ SORT_BY_NAME(*)(.idata$2)
+ .idata$2       0x0000000000008000       0x14 LibCrt_dll_d000000.o
+                0x0000000000008000                _head_LibCrt_dll
+ SORT_BY_NAME(*)(.idata$3)
+                0x0000000000008014        0x4 LONG 0x0
+                0x0000000000008018        0x4 LONG 0x0
+                0x000000000000801c        0x4 LONG 0x0
+                0x0000000000008020        0x4 LONG 0x0
+                0x0000000000008024        0x4 LONG 0x0
+                0x0000000000008028                . = ALIGN (0x8)
+ SORT_BY_NAME(*)(.idata$4)
+ .idata$4       0x0000000000008028        0x0 LibCrt_dll_d000000.o
+ .idata$4       0x0000000000008028        0x8 LibCrt_dll_d000001.o
+ .idata$4       0x0000000000008030        0x8 LibCrt_dll_d000002.o
+ .idata$4       0x0000000000008038        0x8 LibCrt_dll_d000003.o
+ .idata$4       0x0000000000008040        0x8 LibCrt_dll_d000004.o
+ .idata$4       0x0000000000008048        0x8 LibCrt_dll_d000005.o
+ .idata$4       0x0000000000008050        0x8 LibCrt_dll_d000006.o
+ .idata$4       0x0000000000008058        0x8 LibCrt_dll_d000007.o
+ .idata$4       0x0000000000008060        0x8 LibCrt_dll_d000008.o
+ .idata$4       0x0000000000008068        0x8 LibCrt_dll_d000009.o
+ .idata$4       0x0000000000008070        0x8 LibCrt_dll_d000010.o
+ .idata$4       0x0000000000008078        0x8 LibCrt_dll_d000011.o
+ .idata$4       0x0000000000008080        0x8 LibCrt_dll_d000012.o
+ .idata$4       0x0000000000008088        0x8 LibCrt_dll_d000013.o
+ .idata$4       0x0000000000008090        0x8 LibCrt_dll_d000014.o
+ .idata$4       0x0000000000008098        0x8 LibCrt_dll_d000015.o
+                0x00000000000080a0                __IAT_start__ = .
+ SORT_BY_NAME(*)(.idata$5)
+ .idata$5       0x00000000000080a0        0x0 LibCrt_dll_d000000.o
+ .idata$5       0x00000000000080a0        0x8 LibCrt_dll_d000001.o
+                0x00000000000080a0                __imp_AddTimerEvent
+ .idata$5       0x00000000000080a8        0x8 LibCrt_dll_d000002.o
+                0x00000000000080a8                __imp_AllocateIST
+ .idata$5       0x00000000000080b0        0x8 LibCrt_dll_d000003.o
+                0x00000000000080b0                __imp_AllocateInterruptVector
+ .idata$5       0x00000000000080b8        0x8 LibCrt_dll_d000004.o
+                0x00000000000080b8                __imp_DisableLocalAPIC
+ .idata$5       0x00000000000080c0        0x8 LibCrt_dll_d000005.o
+                0x00000000000080c0                __imp_EnableLocalAPIC
+ .idata$5       0x00000000000080c8        0x8 LibCrt_dll_d000006.o
+                0x00000000000080c8                __imp_GetLocalAPICBase
+ .idata$5       0x00000000000080d0        0x8 LibCrt_dll_d000007.o
+                0x00000000000080d0                __imp_MapPhysical
+ .idata$5       0x00000000000080d8        0x8 LibCrt_dll_d000008.o
+                0x00000000000080d8                __imp_RepointVirtualAddress
+ .idata$5       0x00000000000080e0        0x8 LibCrt_dll_d000009.o
+                0x00000000000080e0                __imp_SafeAllocatePages
+ .idata$5       0x00000000000080e8        0x8 LibCrt_dll_d000010.o
+                0x00000000000080e8                __imp_mcalloc
+ .idata$5       0x00000000000080f0        0x8 LibCrt_dll_d000011.o
+                0x00000000000080f0                __imp_memcpy
+ .idata$5       0x00000000000080f8        0x8 LibCrt_dll_d000012.o
+                0x00000000000080f8                __imp_mfree
+ .idata$5       0x0000000000008100        0x8 LibCrt_dll_d000013.o
+                0x0000000000008100                __imp_mrealloc
+ .idata$5       0x0000000000008108        0x8 LibCrt_dll_d000014.o
+                0x0000000000008108                __imp_strlen
+ .idata$5       0x0000000000008110        0x8 LibCrt_dll_d000015.o
+                0x0000000000008118                __IAT_end__ = .
+ SORT_BY_NAME(*)(.idata$6)
+ .idata$6       0x0000000000008118       0x10 LibCrt_dll_d000001.o
+ .idata$6       0x0000000000008128       0x10 LibCrt_dll_d000002.o
+ .idata$6       0x0000000000008138       0x1c LibCrt_dll_d000003.o
+ .idata$6       0x0000000000008154       0x14 LibCrt_dll_d000004.o
+ .idata$6       0x0000000000008168       0x14 LibCrt_dll_d000005.o
+ .idata$6       0x000000000000817c       0x14 LibCrt_dll_d000006.o
+ .idata$6       0x0000000000008190       0x10 LibCrt_dll_d000007.o
+ .idata$6       0x00000000000081a0       0x18 LibCrt_dll_d000008.o
+ .idata$6       0x00000000000081b8       0x14 LibCrt_dll_d000009.o
+ .idata$6       0x00000000000081cc        0xc LibCrt_dll_d000010.o
+ .idata$6       0x00000000000081d8        0xc LibCrt_dll_d000011.o
+ .idata$6       0x00000000000081e4        0x8 LibCrt_dll_d000012.o
+ .idata$6       0x00000000000081ec        0xc LibCrt_dll_d000013.o
+ .idata$6       0x00000000000081f8        0xc LibCrt_dll_d000014.o
+ SORT_BY_NAME(*)(.idata$7)
+ .idata$7       0x0000000000008204        0x4 LibCrt_dll_d000001.o
+ .idata$7       0x0000000000008208        0x4 LibCrt_dll_d000002.o
+ .idata$7       0x000000000000820c        0x4 LibCrt_dll_d000003.o
+ .idata$7       0x0000000000008210        0x4 LibCrt_dll_d000004.o
+ .idata$7       0x0000000000008214        0x4 LibCrt_dll_d000005.o
+ .idata$7       0x0000000000008218        0x4 LibCrt_dll_d000006.o
+ .idata$7       0x000000000000821c        0x4 LibCrt_dll_d000007.o
+ .idata$7       0x0000000000008220        0x4 LibCrt_dll_d000008.o
+ .idata$7       0x0000000000008224        0x4 LibCrt_dll_d000009.o
+ .idata$7       0x0000000000008228        0x4 LibCrt_dll_d000010.o
+ .idata$7       0x000000000000822c        0x4 LibCrt_dll_d000011.o
+ .idata$7       0x0000000000008230        0x4 LibCrt_dll_d000012.o
+ .idata$7       0x0000000000008234        0x4 LibCrt_dll_d000013.o
+ .idata$7       0x0000000000008238        0x4 LibCrt_dll_d000014.o
+ .idata$7       0x000000000000823c        0xc LibCrt_dll_d000015.o
+                0x000000000000823c                LibCrt_dll_iname
+
+.didat
+ SORT_BY_NAME(*)(.didat$5)
+
+.tls            0x0000000000009000        0x0
+                0x0000000000009000                ___tls_start__ = .
+ *(.tls$AAA)
+ *(.tls)
+ *(.tls$)
+ *(SORT_BY_NAME(.tls$*))
+ *(.tls$ZZZ)
+                0x0000000000009000                ___tls_end__ = .
+
+.endjunk        0x0000000000009000        0x0
+                [!provide]                        PROVIDE (end = .)
+                [!provide]                        PROVIDE (_end = .)
+                0x0000000000009000                __end__ = .
+
+.rsrc
+ *(.rsrc)
+ *(.rsrc$*)
+
+.reloc          0x0000000000009000        0x0
+ *(.reloc)
+ .reloc         0x0000000000009000        0x0 dll stuff
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.zdebug_aranges
+ *(.zdebug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.zdebug_pubnames
+ *(.zdebug_pubnames)
+
+.debug_info
+ *(.debug_info .gnu.linkonce.wi.*)
+
+.zdebug_info
+ *(.zdebug_info .zdebug.gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.zdebug_abbrev
+ *(.zdebug_abbrev)
+
+.debug_line
+ *(.debug_line)
+
+.zdebug_line
+ *(.zdebug_line)
+
+.debug_frame
+ *(.debug_frame*)
+
+.zdebug_frame
+ *(.zdebug_frame*)
+
+.debug_str
+ *(.debug_str)
+
+.zdebug_str
+ *(.zdebug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.zdebug_loc
+ *(.zdebug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.zdebug_macinfo
+ *(.zdebug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.zdebug_weaknames
+ *(.zdebug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.zdebug_funcnames
+ *(.zdebug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.zdebug_typenames
+ *(.zdebug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.zdebug_varnames
+ *(.zdebug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.zdebug_pubtypes
+ *(.zdebug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.zdebug_ranges
+ *(.zdebug_ranges)
+
+.debug_types
+ *(.debug_types .gnu.linkonce.wt.*)
+
+.zdebug_types
+ *(.zdebug_types .gnu.linkonce.wt.*)
+
+.debug_addr
+ *(.debug_addr)
+
+.zdebug_addr
+ *(.zdebug_addr)
+
+.debug_line_str
+ *(.debug_line_str)
+
+.zdebug_line_str
+ *(.zdebug_line_str)
+
+.debug_loclists
+ *(.debug_loclists)
+
+.zdebug_loclists
+ *(.zdebug_loclists)
+
+.debug_macro
+ *(.debug_macro)
+
+.zdebug_macro
+ *(.zdebug_macro)
+
+.debug_names
+ *(.debug_names)
+
+.zdebug_names
+ *(.zdebug_names)
+
+.debug_rnglists
+ *(.debug_rnglists)
+
+.zdebug_rnglists
+ *(.zdebug_rnglists)
+
+.debug_str_offsets
+ *(.debug_str_offsets)
+
+.zdebug_str_offsets
+ *(.zdebug_str_offsets)
+
+.debug_sup
+ *(.debug_sup)
+
+.debug_gdb_scripts
+ *(.debug_gdb_scripts)
+
+.zdebug_gdb_scripts
+ *(.zdebug_gdb_scripts)
+OUTPUT(C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll pei-x86-64)
+LOAD LibCrt_dll_d000000.o
+LOAD LibCrt_dll_d000001.o
+LOAD LibCrt_dll_d000002.o
+LOAD LibCrt_dll_d000003.o
+LOAD LibCrt_dll_d000004.o
+LOAD LibCrt_dll_d000005.o
+LOAD LibCrt_dll_d000006.o
+LOAD LibCrt_dll_d000007.o
+LOAD LibCrt_dll_d000008.o
+LOAD LibCrt_dll_d000009.o
+LOAD LibCrt_dll_d000010.o
+LOAD LibCrt_dll_d000011.o
+LOAD LibCrt_dll_d000012.o
+LOAD LibCrt_dll_d000013.o
+LOAD LibCrt_dll_d000014.o
+LOAD LibCrt_dll_d000015.o
+LOAD dll stuff

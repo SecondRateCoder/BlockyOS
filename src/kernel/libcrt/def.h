@@ -268,6 +268,7 @@ enumdef(unsigned long, CPUIDFeatures){
 #define va_arg(v,l)		__builtin_va_arg(v,l)
 #define va_copy(d,s)	__builtin_va_copy(d,s)
 
+extern void __bochs(void);
 
 typedef struct{
 	unsigned long long	Breakpoint0Detected				: 1;

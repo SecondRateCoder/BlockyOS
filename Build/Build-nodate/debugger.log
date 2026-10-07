@@ -5,50 +5,21 @@ Next at t=0
 (1) [0x0000fffffff0] f000:fff0 (unk. ctxt): mov eax, cr0              ; 0f20c0
 c
 (0) Magic breakpoint
-Next at t=1357157054
-(0) [0x00003f720ea3] 0038:000000003f720ea3 (unk. ctxt): ret                       ; c3
+Next at t=1374339204
+(0) [0x00003f6f2003] 0038:000000003f6f2003 (unk. ctxt): ret                       ; c3
 (1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-Next at t=1357157054
-(0) [0x00003f720ea9] 0038:000000003f720ea9 (unk. ctxt): lea rax, ds:[rdi]         ; 488d07
+Next at t=1374339204
+(0) [0x00003f720ea5] 0038:000000003f720ea5 (unk. ctxt): mov rax, qword ptr ds:[rdi] ; 488b07
 (1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-Next at t=1357157054
-(0) [0x00003f720eac] 0038:000000003f720eac (unk. ctxt): sub dword ptr ds:[rdi+8], 0x00000010 ; 816f0810000000
+Next at t=1374339204
+(0) [0x00003f720ea8] 0038:000000003f720ea8 (unk. ctxt): add eax, dword ptr ds:[rdi+8] ; 034708
 (1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-Next at t=1357157054
-(0) [0x00003f720eb3] 0038:000000003f720eb3 (unk. ctxt): add eax, dword ptr ds:[rdi+8] ; 034708
+Next at t=1374339204
+(0) [0x00003f720eab] 0038:000000003f720eab (unk. ctxt): mov rsp, rax              ; 4889c4
 (1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-Next at t=1357157054
-(0) [0x00003f720eb6] 0038:000000003f720eb6 (unk. ctxt): mov rsp, rax              ; 4889c4
+Next at t=1374339204
+(0) [0x00003f720eae] 0038:000000003f720eae (unk. ctxt): jmp .-1005  (0x3f720ac6)  ; e913fcffff
 (1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-Next at t=1357157054
-(0) [0x00003f720eb9] 0038:000000003f720eb9 (unk. ctxt): jmp .-1016  (0x3f720ac6)  ; e908fcffff
-(1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-bx_dbg_read_linear: physical memory read error (phy=0x00007e0d0e88, lin=0x000000007e0d0e88)
-Next at t=1357157054
+Next at t=1374339204
 (0) [0x00003f720ac6] 0038:000000003f720ac6 (unk. ctxt): sub rsp, 0x0000000000000128 ; 4881ec28010000
 (1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-bx_dbg_read_linear: physical memory read error (phy=0x00007e0d0e88, lin=0x000000007e0d0e88)
-Next at t=1357157054
-(0) [0x00003f720acd] 0038:000000003f720acd (unk. ctxt): mov qword ptr ss:[rsp+72], rdi ; 48897c2448
-(1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-bx_dbg_read_linear: physical memory read error (phy=0x00007e0d0d60, lin=0x000000007e0d0d60)
-Next at t=1357157054
-(0) [0x00003f720ad2] 0038:000000003f720ad2 (unk. ctxt): movzx eax, byte ptr ds:[rip+91431] ; 0fb60527650100
-(1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-bx_dbg_read_linear: physical memory read error (phy=0x00007e0d0d60, lin=0x000000007e0d0d60)
-Next at t=1357157054
-(0) [0x00003f720ad9] 0038:000000003f720ad9 (unk. ctxt): test al, al               ; 84c0
-(1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-bx_dbg_read_linear: physical memory read error (phy=0x00007e0d0d60, lin=0x000000007e0d0d60)
-Next at t=1357157054
-(0) [0x00003f720adb] 0038:000000003f720adb (unk. ctxt): jz .+950  (0x3f720e97)    ; 0f84b6030000
-(1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-bx_dbg_read_linear: physical memory read error (phy=0x00007e0d0d60, lin=0x000000007e0d0d60)
-Next at t=1357157054
-(0) [0x00003f720ae1] 0038:000000003f720ae1 (unk. ctxt): call .-468  (0x3f720912)  ; e82cfeffff
-(1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-bx_dbg_read_linear: physical memory read error (phy=0x00007e0d0d60, lin=0x000000007e0d0d60)
-Next at t=1357157054
-(0) [0x00003f720912] 0038:000000003f720912 (unk. ctxt): nop                       ; 90
-(1) [0x00003f96b030] 0038:000000003f96b030 (unk. ctxt): jmp .-25  (0x3f96b019)    ; ebe7 (halted)
-bx_dbg_read_linear: physical memory read error (phy=0x00007e0d0d58, lin=0x000000007e0d0d58)

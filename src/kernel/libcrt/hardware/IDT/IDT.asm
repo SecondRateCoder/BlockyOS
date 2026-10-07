@@ -1,5 +1,5 @@
 bits 64
-DEFAULT REL
+default rel
 
 section .text
 

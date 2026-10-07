@@ -51,10 +51,10 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	status = uefi_call_wrapper(gop->QueryMode, 0, gop, (gop->Mode == NULL? 0: gop->Mode->Mode), &SizeOfInfo, &info);
 	if(status == EFI_NOT_STARTED){status = uefi_call_wrapper(gop->SetMode, 0, gop, 0);}
 
-	gifDescriptionSpace_t *GIF = OpenGIF(gif, gop->Mode->Info->PixelFormat);
-	socketfcall(gif, close, 0);
+	// gifDescriptionSpace_t *GIF = OpenGIF(gif, gop->Mode->Info->PixelFormat);
+	// socketfcall(gif, close, 0);
 
-	LoadedPeExecutable *KBOOT = LoadExecutable(disk, false, 200, "SYSD/kboot.exe");
+	LoadedPeExecutable *KBOOT = LoadExecutable(disk, FALSE, 32, "SYSD/kboot.exe");
 	if(!KBOOT){DEBUGPRINT(L"\nError Loading Executable");		Exit(EFI_ABORTED, 0, NULL);}
 	
 	__bootinfo *bootout = gatherbootinfo(Image);

@@ -1,14 +1,14 @@
 
-[279:    :9:    :3:    :0:    :31:    :16]
+[279:    :9:    :3:    :23:    :50:    :39]
 >> 
-e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0 
+e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 1024 -lb 10 -v 1:0 
 [C:\GitHub\BlockyOS\tools\filesystem\frat.c:196]  >>  Mounting FS Root: [C:/GitHub/BlockyOS/Build/Build-nodate/disk.img]
 Verifying Disk GPT
 GPT Dump:
     Sig: "EFI PART"
     Rev: 65536
     Header-Size: 92
-    Header Checksum: 4220209413
+    Header Checksum: 4131345650
     localLBA: 1
     altLBA: 2230273
     firstUsable: 2048
@@ -33,79 +33,74 @@ FS-Root Blob:
 FS-Root Blob:
     Version: [0:1]
     Sig: FRAT_FILESYSTEM
-    Configured Log Sectors: 32
-    Configured Block Size: 2048
-    Configured Cluster-Map Size: 20480
+    Configured Log Sectors: 10
+    Configured Block Size: 1024
+    Configured Cluster-Map Size: 40960
 [C:\GitHub\BlockyOS\tools\filesystem\frat.c:184]  >>  FS Found at [133120]:
 	Version-Code: [0:1]
-	Configured Block-Size: 2048
-	Configured Cluster-Size: 20480
-	Configured # of Log-Sectors: 32
-	Configured Log-Size: 576
+	Configured Block-Size: 1024
+	Configured Cluster-Size: 40960
+	Configured # of Log-Sectors: 10
+	Configured Log-Size: 180
 [C:\GitHub\BlockyOS\tools\filesystem\frat.c:210]  >>  Found Formatted Partition: 133120:2230271 -> 2097151
 [C:\GitHub\BlockyOS\tools\filesystem\frat.c:223]  >>  Root: 133120:2230271 -> 2097151 LBAs
 	Version-Code: [0:1]
-	Configured Block-Size: 2048
-	Configured Cluster-Size: 20480
-	Configured # of Log-Sectors: 32
-	Configured Log-Size: 576
-    Verifying FS Root Items #items: 1024
+	Configured Block-Size: 1024
+	Configured Cluster-Size: 40960
+	Configured # of Log-Sectors: 10
+	Configured Log-Size: 180
+    Verifying FS Root Items #items: 2048
 [0]: ""
 >> 
 
 >> 
-create -la fc -p SYSD/ -n kboot.exe 
-00000192da4174cb:fc	00000192da4174d1:SYSD/	00000192da4174da:kboot.exe	
-[	SYSD/kboot.exe]
-Mounting File [SYSD/kboot.exe] with "fc"
-Creating File at: ./SYSD/kboot.exe
-Hash: [4397709807136810278:123480111967653]
-Hash: [4397709807136810278:123480111967653]
-Un-Mounting File [4397709807136810278:123480111967653]
+create -la fc -p SYSD/ -n icon.gif 
+000001cf286c5e5b:fc	000001cf286c5e61:SYSD/	000001cf286c5e6a:icon.gif	
+[	SYSD/icon.gif]
+Mounting File [SYSD/icon.gif] with "fc"
+Creating File at: ./SYSD/icon.gif
+Hash: [8827722889414338333:110380533765322]
+Hash: [8827722889414338333:110380533765322]
+Un-Mounting File [8827722889414338333:110380533765322]
 [0]: ""
 >> 
 
 >> 
-open -p SYSD/kboot.exe -a KBOOT -la f 
-Mounting File [SYSD/kboot.exe] with "f"
-Hash: [4397709807136810278:123480111967653]
+open -p SYSD/icon.gif -a ICON -la f 
+Mounting File [SYSD/icon.gif] with "f"
+Hash: [8827722889414338333:110380533765322]
 [0]: ""
 >> 
 
 >> 
-fwrite -pp C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe -ia %KBOOT% -p 0 -n 0 
+fwrite -pp C:/GitHub/BlockyOS/compile/Loading_icon.gif -ia %ICON% -p 0 -n 0 
 Reading File Info
-Root is 00000192da417380
-Writing File Block at 225458, Item: 1.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225459, Item: 2.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225460, Item: 3.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225461, Item: 4.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225462, Item: 5.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225463, Item: 6.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225464, Item: 7.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225465, Item: 8.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225466, Item: 9.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225467, Item: 10.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225468, Item: 11.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225469, Item: 12.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225470, Item: 13.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225471, Item: 14.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225472, Item: 15.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225473, Item: 16.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225474, Item: 17.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225475, Item: 18.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225476, Item: 19.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225477, Item: 20.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225478, Item: 21.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225479, Item: 22.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225480, Item: 23.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225481, Item: 24.	Root: [4397709807136810278:123480111967653]
-Writing File Block at 225482, Item: 25.	Root: [4397709807136810278:123480111967653]
-Reading File Block at 225483, Item: 26.    Root: [4397709807136810278:123480111967653]
-Writing File Block at 225483, Item: 26.	Root: [4397709807136810278:123480111967653]
+Root is 000001cf286c8fe0
+Writing File Block at 187395, Item: 1.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187396, Item: 2.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187397, Item: 3.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187398, Item: 4.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187399, Item: 5.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187400, Item: 6.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187401, Item: 7.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187402, Item: 8.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187403, Item: 9.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187404, Item: 10.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187405, Item: 11.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187406, Item: 12.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187407, Item: 13.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187408, Item: 14.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187409, Item: 15.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187410, Item: 16.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187411, Item: 17.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187412, Item: 18.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187413, Item: 19.	Root: [8827722889414338333:110380533765322]
+Writing File Block at 187414, Item: 20.	Root: [8827722889414338333:110380533765322]
+Reading File Block at 187415, Item: 21.    Root: [8827722889414338333:110380533765322]
+Writing File Block at 187415, Item: 21.	Root: [8827722889414338333:110380533765322]
 [0]: ""
 >> 
 
 >> 
 exit
-Un-Mounting File [4397709807136810278:123480111967653]
+Un-Mounting File [8827722889414338333:110380533765322]

@@ -32,15 +32,6 @@ EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSi
     DEBUGPRINT(L"\n=== UEFI Memory Map (%llu entries) ===", numItems);
     DEBUGPRINT(L"\nMap Size: %llu, Descriptor Size: %llu, Map Key: %llu,\tVersion: %u", *mapSize, *descSize, *mapKey, numItems, *descVersion);
 
-    //	Stride using byte pointer and descSize to prevent alignment drift
-    UINT8 *mapBytePtr = (UINT8 *)map;
-    for(UINTN cc = 0; cc < numItems; ++cc){
-        EFI_MEMORY_DESCRIPTOR *desc = (EFI_MEMORY_DESCRIPTOR *)(mapBytePtr + (cc * (*descSize)));
-        DEBUGPRINT(L"\n[%llu] %s:%u  Start: 0x%p  Pages: %llu  Size: %llu KB",
-            cc, EfiMemoryTypeToStr(desc->Type), desc->Type, desc->PhysicalStart, 
-			desc->NumberOfPages, desc->NumberOfPages * 4
-        );
-    }
     status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, map, mapKey, descSize, descVersion);
     return map;
 }
@@ -87,7 +78,7 @@ EFI_GRAPHICS_OUTPUT_MODE_INFORMATION InitialiseVideoMemory(void **VideoMemory, U
 		status = uefi_call_wrapper(gop->QueryMode, 0, gop, i, &SizeOfInfo, &info);
 		if((info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) && 
 			((gop->Mode->Info->HorizontalResolution < info->HorizontalResolution) && (gop->Mode->Info->VerticalResolution < info->VerticalResolution))
-		){status = uefi_call_wrapper(gop->SetMode, 3, gop, i);}
+		){status = uefi_call_wrapper(gop->SetMode, 0, gop, i);}
 	}
 
 	*VideoMemory = (void *)gop->Mode->FrameBufferBase;
@@ -126,13 +117,14 @@ __bootinfo *gatherbootinfo(EFI_HANDLE Image){
 	};
 	out->Video.CurrentVideoMode = InitialiseVideoMemory(&(out->Video.videomemory), &(out->Video.PixelSize), &(out->Video.PixelWidth), &(out->Video.PixelHeight));
 	DEBUGPRINT(L"\nVideo Memory: %p\tPixel Size: %llu\tWidth: %llu\tHeight: %llu", out->Video.videomemory, out->Video.PixelSize, out->Video.PixelWidth, out->Video.PixelHeight);
+	
+	EFI_STATUS St = uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, 
+		EfiRuntimeServicesData, out->Stack.StackSize / EFI_PAGE_SIZE, &(out->Stack.Stack));
+
 	out->memory.MemoryDescriptors = GetMemoryMap(&(out->memory.MemoryDescriptorBufferSize), &(out->memory.MemoryDescriptorMapKey), 
 		&(out->memory.MemoryDescriptorStructSize), &(out->memory.MDescriptorsVersion));
 	DEBUGPRINT(L"\n\n\n");
-
-	EFI_STATUS St = uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, 
-		EfiRuntimeServicesData, out->Stack.StackSize / EFI_PAGE_SIZE, &(out->Stack.Stack));
-	
+		
 	St = uefi_call_wrapper(gBS->ExitBootServices, 2, Image, out->memory.MemoryDescriptorMapKey);
 	if(EFI_ERROR(St)){DEBUGPRINT(L"\nFailed to exit Boot Services.\t[%a:%llu]", EfiStatusToString(St), (UINT64)St);}
 

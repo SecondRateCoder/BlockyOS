@@ -28,5 +28,7 @@
 
 extern KernalMainDef(kboot);
 
-#define bochs_breakpoint	__bochs_breakpoint
-extern __sysvabi void __bochs_breakpoint(void);
+#ifdef bochs_breakpoint
+	#undef bochs_breakpoint
+#endif
+#define bochs_breakpoint	__bochs

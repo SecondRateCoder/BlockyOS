@@ -90,4 +90,4 @@ UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarN
 const char *EfiStatusToString(EFI_STATUS Status);
 
 #define bochs_breakpoint	__bochs_breakpoint
-extern __sysvabi void __bochs_breakpoint(void);
+extern void __bochs_breakpoint(void);

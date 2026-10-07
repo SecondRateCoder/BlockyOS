@@ -197,3 +197,4 @@ EXPORTS
 	__floatundidf
 	__fixsfsi
 	__truncdfsf2
+	__bochs

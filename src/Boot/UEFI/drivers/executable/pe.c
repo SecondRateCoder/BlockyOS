@@ -549,7 +549,7 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 					Pe32MIPSExceptionDataEntry *Table = (Pe32MIPSExceptionDataEntry *)Data;
 					N = This->mSizeOfRawData / sizeof(Pe32MIPSExceptionDataEntry);
 					Print(L"\n      {\n        .N\t%llu\n        MachineType\t%a", N, PeMachineTypeToString(EXE->Fmt.Header->mMachine));
-					for(UINT64 cc_ = 0; cc_ < __min(N, DataMax); ++cc_){
+					for(UINT64 cc_ = 0; cc_ < __min(N, PeDumpVolumeLine); ++cc_){
 						Print(L"\n        [%llu]: {"
 							"\n          .VirtualAddress\t%llu"
 							"\n          .VirtualEnd\t%llu"
@@ -574,7 +574,7 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 					PeARMExceptionDataEntry *Table = (PeARMExceptionDataEntry *)Data;
 					N = This->mSizeOfRawData / sizeof(PeARMExceptionDataEntry);
 					Print(L"\n      {\n        .N\t%llu\n        MachineType\t%a", N, PeMachineTypeToString(EXE->Fmt.Header->mMachine));
-					for(UINT64 cc_ = 0; cc_ < __min(N, DataMax); ++cc_){
+					for(UINT64 cc_ = 0; cc_ < __min(N, PeDumpVolumeLine); ++cc_){
 						Print(L"\n        [%llu]  (32-Bit? %a\tHasHandler? %a): {"
 							"\n          .VirtualAddress\t%llu"
 							"\n          .PrologLength\t%llu"
@@ -594,7 +594,7 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 					Pe32PlusExceptionDataEntry *Table = (Pe32PlusExceptionDataEntry *)Data;
 					N = This->mSizeOfRawData / sizeof(Pe32PlusExceptionDataEntry);
 					Print(L"\n      {\n        .N\t%llu\n        MachineType\t%a", N, PeMachineTypeToString(EXE->Fmt.Header->mMachine));
-					for(UINT64 cc_ = 0; cc_ < __min(N, DataMax); ++cc_){
+					for(UINT64 cc_ = 0; cc_ < __min(N, PeDumpVolumeLine); ++cc_){
 						Print(L"\n        [%llu]: {"
 							"\n          .AddressRVA\t%llu"
 							"\n          .EndRVA\t%llu"

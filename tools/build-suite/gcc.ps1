@@ -43,12 +43,12 @@ foreach($arg in $c){[regex]::Matches($arg, $PATTERN) | ForEach-Object{$_COMPILEA
 $_LINKARGS = @('-fdiagnostics-color=always', '-fno-diagnostics-show-highlight-colors', 
 	'-nostartfiles', '-nodefaultlibs', '-fno-asynchronous-unwind-tables', '-fno-unwind-tables', '-nostdlib')
 $_LINKSKIP = 6
+$logDir = [System.IO.Path]::GetDirectoryName([System.IO.Path]::GetFullPath($LogFile))
 foreach($arg in $l){[regex]::Matches($arg, $PATTERN) | ForEach-Object{$_LINKARGS += $_.ToString()}}
-if($LogEnabled){
-    $logDir = [System.IO.Path]::GetDirectoryName([System.IO.Path]::GetFullPath($LogFile))
-    $_LINKARGS += @('-Map', (Join-Path $logDir "$([System.IO.Path]::GetFileNameWithoutExtension($LogFile)).map"))
-}
+if($LogEnabled){$_LINKARGS += @('-Map', (Join-Path $logDir "$([System.IO.Path]::GetFileNameWithoutExtension($LogFile)).map"))}
 $_LINKARGS += @('-o', $o)
+
+$DmpFile = Join-Path $logDir "$([System.IO.Path]::GetFileNameWithoutExtension($LogFile)).dmp.log"
 
 function Get-TimestampCache {
 	param([Parameter(Mandatory = $true)][string]$JsonPath)
@@ -276,7 +276,11 @@ if($CacheEnabled){
 }
 
 if($LASTEXITCODE -ne 0){LogWrite "Build failed with exit code $LASTEXITCODE" Red
-}else{LogWrite "Build finished successfully -> $o" Green}
+}else{
+	LogWrite "Build finished successfully -> $o" Green
+	$Dmp = (& 'objdump' '-d' $o) 2>&1
+	(New-Item $DmpFile -ItemType File -Force -Value ($Dmp -join "`n"))
+}
 $env:COMPILER_PATH = $null
 $env:PATH = $envOLDPATH
 exit $LASTEXITCODE

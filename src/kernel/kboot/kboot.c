@@ -13,56 +13,34 @@
 //      EfiBootServicesCode, EfiBootServicesData, 
 //      EfiConventionalMemory
 
-IDTTable64 __linkersection(IDT) InterruptTable;
+IDTTable64 InterruptTable;
 GDTSystemSegmentDescriptor64 GDTTable[(GDTTableDefaultLength / 2)] = {0};
 
 void InitialiseGDT(){
-	// uint64_t codeLimit = (((uint64_t)&CODELIMIT - (uint64_t)&CODEBASE) >> 12) - 1;
-	// uint64_t dataLimit = (((uint64_t)&DATALIMIT - (uint64_t)&DATABASE) >> 12) - 1;
-	// GDTR64 R = {.Base = (uint64_t)(void *)GDTTable, .Limit = sizeof(GDTTable)};
-	// //*	Kernel Code Segment.
-	// ((GDTDescriptor *)GDTTable)[1] = (GDTDescriptor){
-	// 	.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
-	// 	.LimitHigh = codeLimit >> 16, .LimitLow = codeLimit, 
-	// 	.BaseHigh = ((uint64_t)&CODEBASE) >> 24, .BaseLow = ((uint64_t)&CODEBASE), 
+	//*	Kernel Code Segment.
+	UINT32 N = 0;
+	//	Relying on UEFI 1:1 Mapping rn.
+	GDTR64 Tmp = {.Base = GDTTable, .Limit = UINT16_MAX};
+	((GDTDescriptor *)GDTTable)[0] = (GDTDescriptor){0};
+	((GDTDescriptor *)GDTTable)[1] = (GDTDescriptor){
+		.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
+		.LimitHigh = 0x00, .LimitLow = 0x00, .BaseHigh = 0x00, .BaseLow = 0x00, 
 		
-	// 	.ABPresent = true, .ABPriviledgeLevel = 0x00, 
-	// 	.ABReadWritableBit = false, .ABSystemSegmentBit = false, 
-	// 	.ABAccessedBit = false, .ABExecutableBit = true, .ABDirectionBit = true, 
-	// };
-	// //*	Kernel Data Segment.
-	// ((GDTDescriptor *)GDTTable)[2] = (GDTDescriptor){
-	// 	.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
-	// 	.LimitHigh = dataLimit >> 16, .LimitLow = dataLimit, 
-	// 	.BaseHigh = ((uint64_t)&DATABASE) >> 24, .BaseLow = ((uint64_t)&DATABASE), 
+		.ABPresent = true, .ABPriviledgeLevel = 0x00, 
+		.ABReadWritableBit = false, .ABSystemSegmentBit = false, 
+		.ABAccessedBit = false, .ABExecutableBit = true, .ABDirectionBit = true, 
+	};
+	//*	Kernel Data Segment.
+	((GDTDescriptor *)GDTTable)[2] = (GDTDescriptor){
+		.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
+		.LimitHigh = 0x00, .LimitLow = 0x00, .BaseHigh = 0x00, .BaseLow = 0x00, 
 		
-	// 	.ABPresent = true, .ABPriviledgeLevel = 0x00, 
-	// 	.ABReadWritableBit = true, .ABSystemSegmentBit = false, 
-	// 	.ABAccessedBit = false, .ABExecutableBit = false, .ABDirectionBit = false, 
-	// };
-	// //*	User Code Segment.
-	// ((GDTDescriptor *)GDTTable)[3] = (GDTDescriptor){
-	// 	.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
-	// 	.LimitHigh = codeLimit >> 16, .LimitLow = codeLimit, 
-	// 	.BaseHigh = ((uint64_t)&CODEBASE) >> 24, .BaseLow = ((uint64_t)&CODEBASE), 
-		
-	// 	.ABPresent = true, .ABPriviledgeLevel = 0x03, 
-	// 	.ABReadWritableBit = false, .ABSystemSegmentBit = false, 
-	// 	.ABAccessedBit = false, .ABExecutableBit = true, .ABDirectionBit = true, 
-	// };
-	// //*	User Data Segment.
-	// ((GDTDescriptor *)GDTTable)[4] = (GDTDescriptor){
-	// 	.F32BitModeBit = false, .FGranularity = true, .FLongModeBit = true, 
-	// 	.LimitHigh = dataLimit >> 16, .LimitLow = dataLimit, 
-	// 	.BaseHigh = ((uint64_t)&DATABASE) >> 24, .BaseLow = (uint64_t)&DATABASE, 
-		
-	// 	.ABPresent = true, .ABPriviledgeLevel = 0x03, 
-	// 	.ABReadWritableBit = true, .ABSystemSegmentBit = false, 
-	// 	.ABAccessedBit = false, .ABExecutableBit = false, .ABDirectionBit = false, 
-	// };
-	// //	All TSS's can be dynamically allocated later.
+		.ABPresent = true, .ABPriviledgeLevel = 0x00, 
+		.ABReadWritableBit = true, .ABSystemSegmentBit = false, 
+		.ABAccessedBit = false, .ABExecutableBit = false, .ABDirectionBit = false, 
+	};
 
-	// LoadGDTR(&R);
+	LoadGDTR(&Tmp);
 }
 
 void InitialiseIDT(void *ACPI){
@@ -81,15 +59,15 @@ void InitialiseIDT(void *ACPI){
 ISRCallbackDefinition(GenericIO){ISRCallbackReturn;}
 volatile bool _f = false;
 rawenv re;
-void __sysvabi __main(__bootinfo * __restrict__ bootin){
+void __sysvabi __main(__bootinfo *__restrict__ bootin){
 	if(_f){
 		//* Set Up Interrupt Descriptor Table (IDT) & GDT
 		InitialiseGDT();
 	
 		void *ACPIBase = NULL;
 		for(uint32_t cc = 0; cc < bootin->devices.CTableLength; ++cc){
-			if(memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_TABLE_GUID}, sizeof(EFI_GUID)) || 
-				memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_20_TABLE_GUID}, sizeof(EFI_GUID))
+			if(!memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_TABLE_GUID}, sizeof(EFI_GUID)) || 
+				!memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_20_TABLE_GUID}, sizeof(EFI_GUID))
 			){ACPIBase = bootin->devices.CTable[cc].VendorTable;			break;}
 		}
 	

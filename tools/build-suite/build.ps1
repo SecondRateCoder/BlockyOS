@@ -476,7 +476,7 @@ function Tokenize-Lines{
 				if($rest -match '^\s+'){ $cursor += $matches[0].Length; continue }
 				
 				# #	Handle comments.
-				# if(($lineText[$cursor] -eq '#') -and -not ($rest -match '^"([^"\\]*(\\.[^"\\]*)*)"')){break}
+				if(($lineText[$cursor] -eq '#') -and -not ($rest -match '^"([^"\\]*(\\.[^"\\]*)*)"')){break}
 
 				# List literal @( ... ) capture balanced parentheses
 				if($rest -match '^@\('){

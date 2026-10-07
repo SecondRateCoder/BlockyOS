@@ -52,7 +52,6 @@ dkms.conf
 *.img
 /compile/toolchain/prebuild/**
 /gnu-efi/**
-/edk2/**
 
 !/compile/toolchain/gnu-efi-build/**/*.o
 !/compile/toolchain/gnu-efi-build/**/*.a
