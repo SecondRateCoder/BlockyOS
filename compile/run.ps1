@@ -71,7 +71,7 @@ $args_qemu = @(
 	'-L', $firmwarefolder,
 	'-drive', "if=pflash,format=raw,readonly=on,file=$($ovmfcode)",
 	'-drive', "unit=0,file=$($Image),format=raw,if=none,id=maindrive", '-device', 'virtio-blk-pci,drive=maindrive',
-	'-debugcon', "file:$($debuggerlog)", '-global', 'isa-debugcon.iobase=0x402',
+	# '-debugcon', "file:$($debuggerlog)", '-global', 'isa-debugcon.iobase=0x402',
 	# '-info', 'mem',
 	'-usb', '-usbdevice', 'keyboard', '-usbdevice', 'mouse',
 	'-display', 'sdl', '-vga', 'cirrus'#, '-full-screen'
@@ -349,7 +349,7 @@ if($InstallOS){
 		return 1
 	}
 	Log-Write -color Yellow "Running install.bos in current directory."
-	(& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
+	# (& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
 }
 
 # Optimise by Using ShortCut

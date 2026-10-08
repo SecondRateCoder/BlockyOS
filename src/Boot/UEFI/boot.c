@@ -6,12 +6,12 @@
 #include "drivers/.disk/fs/frat.h"
 #include "drivers/gif/gif.h"
 
-void TestVideo(gifDescriptionSpace_t *GIF, void *FB, EFI_GRAPHICS_PIXEL_FORMAT PixelFormat, UINT32 N, UINT32 x, UINT32 y, UINT32 w){
-	if(GIF && GIF->nFrames > 0 && FB && N){
-		UINT32 *Frame = NULL, Width = 0, Height = 0;
-		while(N-- && (Frame = GIF->frames[N % GIF->nFrames].fb)){BltFrame(Frame, Width, Height, FB, x, y, w);}
-	}
-}
+// void TestVideo(gifDescriptionSpace_t *GIF, void *FB, EFI_GRAPHICS_PIXEL_FORMAT PixelFormat, UINT32 N, UINT32 x, UINT32 y, UINT32 w){
+// 	if(GIF && GIF->nFrames > 0 && FB && N){
+// 		UINT32 *Frame = NULL, Width = 0, Height = 0;
+// 		while(N-- && (Frame = GIF->frames[N % GIF->nFrames].fb)){BltFrame(Frame, Width, Height, FB, x, y, w);}
+// 	}
+// }
 
 void libinit(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	DEBUGPRINT(L"\nIntitialising GNU-EFI");
@@ -40,9 +40,12 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	
 	socket_t *disk = diskrt.data;
 	
-	rt = socketfcall(disk, open, "SYSD/icon.gif", "f");
-	socket_t *gif = rt.data;
-
+	
+	
+	
+	LoadedPeExecutable *KBOOT = LoadExecutable(disk, FALSE, 32, "SYSD/kboot.exe");
+	if(!KBOOT){DEBUGPRINT(L"\nError Loading Executable");		Exit(EFI_ABORTED, 0, NULL);}
+	
 	EFI_GUID gopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 	UINTN SizeOfInfo;
 	EFI_GRAPHICS_OUTPUT_PROTOCOL *gop;
@@ -50,18 +53,17 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	EFI_STATUS status = uefi_call_wrapper(BS->LocateProtocol, 0, &gopGuid, NULL, (void**)&gop);
 	status = uefi_call_wrapper(gop->QueryMode, 0, gop, (gop->Mode == NULL? 0: gop->Mode->Mode), &SizeOfInfo, &info);
 	if(status == EFI_NOT_STARTED){status = uefi_call_wrapper(gop->SetMode, 0, gop, 0);}
-
-	// gifDescriptionSpace_t *GIF = OpenGIF(gif, gop->Mode->Info->PixelFormat);
-	// socketfcall(gif, close, 0);
-
-	LoadedPeExecutable *KBOOT = LoadExecutable(disk, FALSE, 32, "SYSD/kboot.exe");
-	if(!KBOOT){DEBUGPRINT(L"\nError Loading Executable");		Exit(EFI_ABORTED, 0, NULL);}
+	rt = socketfcall(disk, open, "SYSD/icon.gif", "f");
+	socket_t *gif = rt.data;
+	gifDescriptionSpace_t *GIF = OpenGIF(gif, gop->Mode->Info->PixelFormat);
+	DEBUGPRINT(L"\nPrinting GIF");
 	
+	GifShow(GIF, gop);
+	socketfcall(gif, close, 0);
+
 	__bootinfo *bootout = gatherbootinfo(Image);
 	// bochs_breakpoint();
-
-	// TestVideo(GIF, bootout->Video.videomemory, bootout->Video.CurrentVideoMode.PixelFormat, 
-	// 	255, 0, 0, bootout->Video.CurrentVideoMode.PixelsPerScanLine);
+	
 
 	kernelmain KernelBoot = (kernelmain)KBOOT->EntryPoint;
 	KernelBoot(bootout);

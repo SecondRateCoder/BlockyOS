@@ -101,7 +101,9 @@ function Ensure-PosixUefiRuntime {
 
 # Compile all UEFI .c files
 $SourceFiles = @()
+
 Get-ChildItem -Path @((Join-Path (Get-Location) "src/Boot/UEFI/")) -Include @("*.c", "*.s", "*.asm") -Recurse -File | ForEach-Object{$SourceFiles += $_.FullName}
+
 
 (& 'tools\build-suite\gcc.ps1' -CacheEnabled -LogEnabled -f $SourceFiles -o $UEFIINTERMEDIATEFINAL -Prefix 'UEFI' -Toolchain 'elf' -c $CARGS -l $LARGSl -CACHEDIR $TEMPCACHE -LogFile $LOGFILE)
 # Log-Write "gcc $($LARGSU -join ' ') $($OFILES -join ' ') -o $($UEFIINTERMEDIATESRC)" -color Blue

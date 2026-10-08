@@ -53,6 +53,9 @@ gifDescriptionSpace_t *OpenGIF(socket_t *gif, EFI_GRAPHICS_PIXEL_FORMAT PixelFor
 			gifExtensionBlock_t *hdrBlock = (gifExtensionBlock_t *)rt.data;
 			UINT64 totalExtSize = sizeof(gifExtensionBlock_t) + hdrBlock->DataLength;
 			offset += sizeof(gifExtensionBlock_t) + hdrBlock->DataLength;
+            
+			// FIXED: Free the initial read block to prevent memory leak
+			__free(rt.data); 
 
 			//	Read sub-blocks until length 0 byte
 			while(true){
@@ -128,7 +131,9 @@ gifDescriptionSpace_t *OpenGIF(socket_t *gif, EFI_GRAPHICS_PIXEL_FORMAT PixelFor
 			out->frames[out->nFrames].rdb = rdb;
 			out->frames[out->nFrames].gce = activeGCE;
 			out->nFrames++;
-			out->frames[out->nFrames - 1].fb = GetGIFFrame(out, out->nFrames, 
+
+			// FIXED: Pass (out->nFrames - 1) as the current FrameIndex
+			out->frames[out->nFrames - 1].fb = GetGIFFrame(out, out->nFrames - 1, 
 				&(out->frames[out->nFrames - 1].fbw), &(out->frames[out->nFrames - 1].fbh), PixelFormat);
 
 			//	Reset active GCE for future frames
@@ -166,42 +171,123 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
 
     UINT32 totalPixels = width * height;
 
-    // Extract contiguous LZW byte stream from sub-blocks
-    UINT8 *lzwStream = (UINT8 *)__calloc(1, totalPixels * 2);
+    // // Extract contiguous LZW byte stream from sub-blocks
+    // UINT8 *lzwStream = (UINT8 *)__calloc(1, totalPixels * 2);
+    // UINT32 lzwSize = 0;
+    
+    // // Points to sub-blocks immediately following InitialCodeSize
+    // UINT8 *ptr = (UINT8 *)frame->rdb + sizeof(UINT8); 
+    // while(*ptr != 0){
+    //     UINT8 blockLen = *ptr++;
+    //     for(UINT8 i = 0; i < blockLen; i++){ lzwStream[lzwSize++] = *ptr++; }
+    // }
+
+    // // Initialize LZW Decoder state
+    // UINT8 initCodeSize = frame->rdb->InitialCodeSize;
+    // UINT32 clearCode = 1 << initCodeSize, 
+    //        eoiCode = clearCode + 1, 
+    //        codeSize = initCodeSize + 1, 
+    //        maxCode = 1 << codeSize, 
+    //        availableCode = eoiCode + 1;
+
+    // UINT16 prefix[4096] = {0};
+    // UINT8 suffix[4096] = {0}, 
+    //       pixelStack[4097] = {0};
+    // UINT32 stackPtr = 0;
+    // for(UINT32 i = 0; i < clearCode; i++){suffix[i] = (UINT8)i;}
+    // UINT32 oldCode = 0xFFFF, 
+    //        firstChar = 0, 
+    //        bitPos = 0, 
+    //        pixelIdx = 0;
+    // UINT8 *indices = (UINT8 *)__calloc(totalPixels, sizeof(UINT8));
+    // // Decode LZW stream to color-index array
+    // while(pixelIdx < totalPixels && (bitPos / 8) < lzwSize){
+    //     UINT32 byteIdx = bitPos / 8, 
+    //            bitOff = bitPos % 8, 
+    //            code = ((UINT32)lzwStream[byteIdx] | ((UINT32)lzwStream[byteIdx + 1] << 8) | ((UINT32)lzwStream[byteIdx + 2] << 16)) >> bitOff;
+    //     code &= (1 << codeSize) - 1;
+    //     bitPos += codeSize;
+    //     if(code == clearCode){
+    //         codeSize = initCodeSize + 1;
+    //         maxCode = 1 << codeSize;
+    //         availableCode = eoiCode + 1;
+    //         oldCode = 0xFFFF;
+    //         continue;
+    //     }
+    //     if(code == eoiCode){break;}
+    //     UINT32 inCode = code;
+    //     if(code >= availableCode){
+    //         pixelStack[stackPtr++] = (UINT8)firstChar;
+    //         code = oldCode;
+    //     }
+    //     while(code >= clearCode){
+    //         pixelStack[stackPtr++] = suffix[code];
+    //         code = prefix[code];
+    //     }
+    //     firstChar = suffix[code];
+    //     pixelStack[stackPtr++] = (UINT8)firstChar;
+    //     if(availableCode < 4096){
+    //         prefix[availableCode] = (UINT16)oldCode;
+    //         suffix[availableCode] = (UINT8)firstChar;
+    //         availableCode++;
+    //         if((availableCode >= maxCode) && (codeSize < 12)){
+    //             codeSize++;
+    //             maxCode = 1 << codeSize;
+    //         }
+    //     }
+    //     oldCode = inCode;
+    //     while(stackPtr > 0){ if(pixelIdx < totalPixels){ indices[pixelIdx++] = pixelStack[--stackPtr]; }else{ stackPtr--; } }
+    // }
+    // __free(lzwStream);
+
+	//	Safely extract all sub-blocks into a continuous LZW byte array
+    UINT32 maxLzwBytes = totalPixels * 2;
+    UINT8 *lzwStream = (UINT8 *)__calloc(1, maxLzwBytes);
     UINT32 lzwSize = 0;
     
-    // Points to sub-blocks immediately following InitialCodeSize
-    UINT8 *ptr = (UINT8 *)frame->rdb + sizeof(UINT8); 
-    while(*ptr != 0){
-        UINT8 blockLen = *ptr++;
-        for(UINT8 i = 0; i < blockLen; i++){ lzwStream[lzwSize++] = *ptr++; }
+    // ptr points to InitialCodeSize, data blocks start right after it
+    UINT8 *ptr = (UINT8 *)frame->rdb, 
+			initCodeSize = *ptr++;
+    
+    while(*ptr != 0 && lzwSize < maxLzwBytes){
+        UINT8 blockSize = *ptr++;
+        for(UINT32 i = 0; i < blockSize && lzwSize < maxLzwBytes; i++){lzwStream[lzwSize++] = *ptr++;}
     }
 
-    // Initialize LZW Decoder state
-    UINT8 initCodeSize = frame->rdb->InitialCodeSize;
+    //	Initialize LZW Decoder state
     UINT32 clearCode = 1 << initCodeSize, 
-           eoiCode = clearCode + 1, 
-           codeSize = initCodeSize + 1, 
-           maxCode = 1 << codeSize, 
-           availableCode = eoiCode + 1;
-
-    UINT16 prefix[4096] = {0};
-    UINT8 suffix[4096] = {0}, 
-          pixelStack[4097] = {0};
+			eoiCode = clearCode + 1, 
+			codeSize = initCodeSize + 1, 
+			maxCode = 1 << codeSize, 
+			availableCode = eoiCode + 1;
+    UINT16 prefix[4096];
+    UINT8 suffix[4096];
+    UINT8 pixelStack[4097];
     UINT32 stackPtr = 0;
-    for(UINT32 i = 0; i < clearCode; i++){suffix[i] = (UINT8)i;}
+
+    for(UINT32 i = 0; i < clearCode; i++){
+        prefix[i] = 0;
+        suffix[i] = (UINT8)i;
+    }
+
     UINT32 oldCode = 0xFFFF, 
-           firstChar = 0, 
-           bitPos = 0, 
-           pixelIdx = 0;
+			firstChar = 0, 
+			bitPos = 0, 
+			pixelIdx = 0;
+    
     UINT8 *indices = (UINT8 *)__calloc(totalPixels, sizeof(UINT8));
-    // Decode LZW stream to color-index array
-    while(pixelIdx < totalPixels && (bitPos / 8) < lzwSize){
-        UINT32 byteIdx = bitPos / 8, 
-               bitOff = bitPos % 8, 
-               code = ((UINT32)lzwStream[byteIdx] | ((UINT32)lzwStream[byteIdx + 1] << 8) | ((UINT32)lzwStream[byteIdx + 2] << 16)) >> bitOff;
-        code &= (1 << codeSize) - 1;
+
+    //	Robust Bit-Stream Decoder Loop
+    while(pixelIdx < totalPixels){
+        // Read 32 bits safely from the stream based on current bit position
+        UINT32 byteOffset = bitPos / 8;
+        if(byteOffset + 3 >= lzwSize){break;} // Prevent out-of-bounds read
+
+        UINT32 codeBits = *((UINT32*)(lzwStream + byteOffset)), 
+				code = (codeBits >> (bitPos % 8)) & ((1 << codeSize) - 1);
+        
         bitPos += codeSize;
+
         if(code == clearCode){
             codeSize = initCodeSize + 1;
             maxCode = 1 << codeSize;
@@ -210,29 +296,35 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
             continue;
         }
         if(code == eoiCode){break;}
+
         UINT32 inCode = code;
         if(code >= availableCode){
             pixelStack[stackPtr++] = (UINT8)firstChar;
             code = oldCode;
         }
-        while(code >= clearCode){
+        while(code >= clearCode && code < 4096){
             pixelStack[stackPtr++] = suffix[code];
             code = prefix[code];
         }
-        firstChar = suffix[code];
-        pixelStack[stackPtr++] = (UINT8)firstChar;
-        if(availableCode < 4096){
+        if(code < 4096){
+            firstChar = suffix[code];
+            pixelStack[stackPtr++] = (UINT8)firstChar;
+        }
+        if(availableCode < 4096 && oldCode != 0xFFFF){
             prefix[availableCode] = (UINT16)oldCode;
             suffix[availableCode] = (UINT8)firstChar;
             availableCode++;
-            if((availableCode >= maxCode) && (codeSize < 12)){
+            if(availableCode >= maxCode && codeSize < 12){
                 codeSize++;
                 maxCode = 1 << codeSize;
             }
         }
         oldCode = inCode;
-        while(stackPtr > 0){ if(pixelIdx < totalPixels){ indices[pixelIdx++] = pixelStack[--stackPtr]; }else{ stackPtr--; } }
+
+        // Pop stack into pixel index array
+        while(stackPtr > 0 && pixelIdx < totalPixels){indices[pixelIdx++] = pixelStack[--stackPtr];}
     }
+    
     __free(lzwStream);
 
     // Check for transparent color in frame's Graphic Control Extension
@@ -249,13 +341,12 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
         UINT8 idx = indices[i];
         if(transparentIdx >= 0 && idx == (UINT8)transparentIdx){frameBuffer[i] = 0x00000000;}//	Transparent (Alpha = 0)
 		else if(palette){
-            UINT8 r = palette[idx].Red, 
-                  g = palette[idx].Green, 
-                  b = palette[idx].Blue;
-
+            UINT8 r = palette[idx].Red, g = palette[idx].Green, b = palette[idx].Blue;
             if(PixelFormat == PixelRedGreenBlueReserved8BitPerColor){
-                frameBuffer[i] = (0xFF000000) | (b << 16) | (g << 8) | r;}//	Memory Order: [R, G, B, Reserved]
-			else{frameBuffer[i] = (0xFF000000) | (r << 16) | (g << 8) | b;}//	Default / PixelBlueGreenRedReserved8BitPerColor: [B, G, R, Reserved]
+				//	Memory Order: [R, G, B, Reserved]
+                frameBuffer[i] = (0xFF000000) | (b << 16) | (g << 8) | r;}
+			//	Default / PixelBlueGreenRedReserved8BitPerColor: [B, G, R, Reserved]
+			else{frameBuffer[i] = (0xFF000000) | (r << 16) | (g << 8) | b;}
         }
     }
     __free(indices);
@@ -264,9 +355,10 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
 
 static inline void PlotPixel_32bpp(void *fb, UINT32 PixelsPerScanLine, UINT32 x, UINT32 y, UINT8 a, UINT8 r, UINT8 g, UINT8 b){
 	UINT32 tmp = ((UINT32)a << 24) + ((UINT32)r << 16) + ((UINT32)g << 8) + (UINT32)b;
-	*((uint32_t*)(fb + (4 * PixelsPerScanLine * y) + (4 * x))) = tmp;
+    // FIXED: Explicitly cast void pointer to UINT8* for standard compliant arithmetic bounds
+	*((uint32_t*)((UINT8*)fb + (4 * PixelsPerScanLine * y) + (4 * x))) = tmp;
 }
-static inline void PlotPixels_32bpp(void *fb, UINT32 PixelsPerScanLine, UINT32 x, UINT32 y, UINT32 *pixels, UINT32 n){
+static inline void PlotPixels_32bpp(void *fb, UINT32 PixelsPerScanLine, UINT32 x, UINT32 y, const UINT32 *pixels, UINT32 n){
 	for(UINT32 cc = 0; cc < n; ++cc){
 		PlotPixel_32bpp(fb, PixelsPerScanLine, x + cc, y, (pixels[cc] >> 24) & UINT8_MAX, 
 			(pixels[cc] >> 16) & UINT8_MAX, (pixels[cc] >> 8) & UINT8_MAX, pixels[cc] & UINT8_MAX);

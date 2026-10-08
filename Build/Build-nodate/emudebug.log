@@ -5,33 +5,186 @@ Validating existing disk image: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
 GPT is healthy. Skipping GPT rebuild.
 InstallOS requested: formatting disk with FS.ps1.
 Running install.bos in current directory.
-bochs -f C:\GitHub\BlockyOS\Build\Build-nodate\.bochsrc -q -dbglog C:\GitHub\BlockyOS\Build\Build-nodate\debugger.log;
+Command:  qemu-system-x86_64 -vga std -cpu qemu64,pmu=off -m 4096 -d int,cpu_reset -D C:\GitHub\BlockyOS\Build\Build-nodate\debugger.log -no-reboot -no-shutdown -machine q35 -smp 2 -net none -serial stdio -L C:\GitHub\BlockyOS\compile\toolchain\uefi\debug -drive if=pflash,format=raw,readonly=on,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\debug\OVMF_CODE.fd -drive unit=0,file=C:\GitHub\BlockyOS\Build\Build-nodate\disk.img,format=raw,if=none,id=maindrive -device virtio-blk-pci,drive=maindrive -usb -usbdevice keyboard -usbdevice mouse -display sdl -vga cirrus -drive if=pflash,format=raw,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\debug\OVMF_VARS.fd 
+[2J[001;001H[=3h[2J[001;001H[2J[001;001H[8;031;100t[2J[001;001H[2J[001;001H[8;056;240t[2J[001;001HBdsDxe: loading Boot0002 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
+BdsDxe: starting Boot0002 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
 
- "
-cpu: model=corei7_ivy_bridge_3770k, ips=10000000, count=2, reset_on_triple_fault=1
-boot: disk
-memory: guest=1024, host=1024
-config_interface: win32config
-display_library: sdl
+Intitialising GNU-EFI
+ Image Base: 0x7DE38000
+Post GNU-EFI Init
+Opening Socket    Driver: 0  nARGS: 36
+[C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/.disk/fs/frat.c:169]  >>  FS Found at [133120]:
+	Version-Code: [0:1]
+	Configured Block-Size: 1024
+	Configured Cluster-Size: 40960
+	Configured # of Log-Sectors: 10
+	Configured Log-Size: 140
+[C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/.disk/fs/frat.c:188]  >>  Found Formatted Partition: 133120:2230271 -> 2097151
+Hash:	[4397709807136810278:123480111967653]
+Mounting File [SYSD/kboot.exe] with "f"
+Hash:	[4397709807136810278:123480111967653]
+Opening File SYSD/kboot.exe[4397709807136810278:123480111967653]
+Opened Binary File SYSD/kboot.exe
+Allocated Executable SYSD/kboot.exe at Address 0x7F51D000
+Loaded Section .text at Offset 0x7F51E000
+Loaded Section .data at Offset 0x7F51F000
+Loaded Section .rdata at Offset 0x7F522000
+Loading Import Library SYSD/LibCrt.dll[LibCrt.dll]
+Hash:	[6307196192980050150:256073431676645]
+Mounting File [SYSD/LibCrt.dll] with "f"
+Hash:	[6307196192980050150:256073431676645]
+Opening File SYSD/LibCrt.dll[6307196192980050150:256073431676645]
+Opened Binary File SYSD/LibCrt.dll
+Allocated Executable SYSD/LibCrt.dll at Address 0x7F4EF000
+Loaded Section .text at Offset 0x7F4F0000
+Loaded Section .data at Offset 0x7F512000
+Loaded Section .rdata at Offset 0x7F513000
+Updated .text Memory Permissions
+No Memory Permissions to Update for .data
+Updated .rdata Memory Permissions
+No Memory Permissions to Update for .bss
+No Memory Permissions to Update for .edata
+No Memory Permissions to Update for .idata
+No Memory Permissions to Update for .reloc
+Un-Mounting File [6307196192980050150:256073431676645]
+Binary [LibCrt.dll]:  [0x7F4EF000:0x7F4EF000]  0  3
 
-cpu: ignore_bad_msrs=1
-magic_break: enabled=1
+Loaded Import Library LibCrt.dll at 2135879680(0x7F4EF000)
+Processing Import 0
+Loaded Import "InterruptCallbacks"	0x7F5120C0
+Loaded Import Library LibCrt.dll at 2135879680(0x7F4EF000)
+Processing Import 1
+Loaded Import "InterruptCallbacks"	0x7F5120C0
+Loaded Import Library LibCrt.dll at 2135879680(0x7F4EF000)
+Processing Import 2
+Loaded Import "AllocateInterruptVector"	0x7F4FC6F0
+Loaded Import "GetLocalAPICID"	0x7F4FE260
+Loaded Import "InitLocalAPIC"	0x7F4FE457
+Loaded Import "InitialiseAllocationState"	0x7F4F4B3E
+Loaded Import "InterruptCallbacks"	0x7F5120C0
+Loaded Import "LoadIDTR"	0x7F4FB7A0
+Loaded Import "__bochs"	0x7F4F0000
+Loaded Import "memcmp"	0x7F4F3F16
+Loaded Import "memcpy"	0x7F4F40A8
+Loaded Import "memset"	0x7F4F3D90
+Loaded Import "strlen"	0x7F4F43E0
+Loading Import Library SYSD/LibIO.dll[LibIO.dll]
+Hash:	[-7134510513485326878:30157078505633]
+Mounting File [SYSD/LibIO.dll] with "f"
+Hash:	[-7134510513485326878:30157078505633]
+Opening File SYSD/LibIO.dll[-7134510513485326878:30157078505633]
+Opened Binary File SYSD/LibIO.dll
+Allocated Executable SYSD/LibIO.dll at Address 0x7DE29000
+Loaded Section .text at Offset 0x7DE2A000
+Loaded Section .data at Offset 0x7DE33000
+Loaded Section .rdata at Offset 0x7DE34000
+Loaded Import Library LibCrt.dll at 2135879680(0x7F4EF000)
+Processing Import 0
+Loaded Import "AllocateAlignedPages"	0x7F4F80AC
+Loaded Import "AllocateIST"	0x7F4FCFFE
+Loaded Import "AllocateInterruptVector"	0x7F4FC6F0
+Loaded Import "AllocatePages"	0x7F4F54FE
+Loaded Import "DisableLocalAPIC"	0x7F4FE547
+Loaded Import "EnableLocalAPIC"	0x7F4FE4E7
+Loaded Import "FreeAlignedPages"	0x7F4F8089
+Loaded Import "GetLocalAPICBase"	0x7F4FE28F
+Loaded Import "ISRGetStackHeader"	0x7F4FCE84
+Loaded Import "ISRSetCallback"	0x7F4FC7E2
+Loaded Import "InvalidatePages"	0x7F4F1888
+Loaded Import "MapPhysical"	0x7F4F128C
+Loaded Import "MapVirtual"	0x7F4F74EF
+Loaded Import "PCIeResolveBar"	0x7F50D5F1
+Loaded Import "PCIeSearchDevice"	0x7F50D9D8
+Loaded Import "ReadGDTR"	0x7F4F0BBB
+Loaded Import "ReadIoApicInterruptRegister"	0x7F4FE06F
+Loaded Import "SafeAllocatePages"	0x7F4F81D3
+Loaded Import "SearchACPITable"	0x7F4FD94C
+Loaded Import "SearchPCIeCapabilitiesN"	0x7F50DFB7
+Loaded Import "SleepMS"	0x7F4FEE0A
+Loaded Import "WalkPageTreeByVirtual"	0x7F4F1718
+Loaded Import "WriteIoApicInterruptRegister"	0x7F4FE121
+Loaded Import "__inb"	0x7F4FB6E2
+Loaded Import "__insw"	0x7F4FB759
+Loaded Import "__inw"	0x7F4FB6FD
+Loaded Import "__outb"	0x7F4FB6D0
+Loaded Import "__outl"	0x7F4FB706
+Loaded Import "__outsw"	0x7F4FB745
+Loaded Import "descinfo"	0x7F4F9EA0
+Loaded Import "mcalloc"	0x7F4F909D
+Loaded Import "memcmp"	0x7F4F3F16
+Loaded Import "memcpy"	0x7F4F40A8
+Loaded Import "memset"	0x7F4F3D90
+Loaded Import "mfree"	0x7F4F9BC0
+Loaded Import "mmalloc"	0x7F4F96B4
+Loaded Import "mrealloc"	0x7F4F8E52
+Updated .text Memory Permissions
+No Memory Permissions to Update for .data
+Updated .rdata Memory Permissions
+No Memory Permissions to Update for .bss
+No Memory Permissions to Update for .edata
+No Memory Permissions to Update for .idata
+Un-Mounting File [-7134510513485326878:30157078505633]
+Binary [LibIO.dll]:  [0x7DE29000:0x7DE29000]  0  4
 
-sound: driver=default
-speaker: enabled=1, mode=sound
-e1000: enabled=1
-pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=e1000
-vga: extension=cirrus, update_freq=60, realtime=1
-mouse: enabled=1
+Loaded Import Library LibIO.dll at 2112000000(0x7DE29000)
+Processing Import 3
+Loaded Import "OpenRawHandle"	0x7DE3170E
+Loading Import Library SYSD/LibVideo.dll[LibVideo.dll]
+Hash:	[4910003476026771071:211255581938998]
+Mounting File [SYSD/LibVideo.dll] with "f"
+Hash:	[4910003476026771071:211255581938998]
+Opening File SYSD/LibVideo.dll[4910003476026771071:211255581938998]
+Opened Binary File SYSD/LibVideo.dll
+Allocated Executable SYSD/LibVideo.dll at Address 0x7DE20000
+Loaded Section .text at Offset 0x7DE21000
+Loaded Section .data at Offset 0x7DE23000
+Loaded Section .rdata at Offset 0x7DE24000
+Loaded Import Library LibCrt.dll at 2135879680(0x7F4EF000)
+Processing Import 0
+Loaded Import "AddTimerEvent"	0x7F4FE5D0
+Loaded Import "AllocateIST"	0x7F4FCFFE
+Loaded Import "AllocateInterruptVector"	0x7F4FC6F0
+Loaded Import "DisableLocalAPIC"	0x7F4FE547
+Loaded Import "EnableLocalAPIC"	0x7F4FE4E7
+Loaded Import "GetLocalAPICBase"	0x7F4FE28F
+Loaded Import "MapPhysical"	0x7F4F128C
+Loaded Import "RepointVirtualAddress"	0x7F4F1C6D
+Loaded Import "SafeAllocatePages"	0x7F4F81D3
+Loaded Import "mcalloc"	0x7F4F909D
+Loaded Import "memcpy"	0x7F4F40A8
+Loaded Import "mfree"	0x7F4F9BC0
+Loaded Import "mrealloc"	0x7F4F8E52
+Loaded Import "strlen"	0x7F4F43E0
+Updated .text Memory Permissions
+No Memory Permissions to Update for .data
+Updated .rdata Memory Permissions
+No Memory Permissions to Update for .bss
+No Memory Permissions to Update for .edata
+No Memory Permissions to Update for .idata
+Un-Mounting File [4910003476026771071:211255581938998]
+Binary [LibVideo.dll]:  [0x7DE20000:0x7DE20000]  0  4
 
-magic_break: enabled=1
-port_e9_hack: enabled=1, all_rings=1
+Loaded Import Library LibVideo.dll at 2111963136(0x7DE20000)
+Processing Import 4
+Loaded Import "AllocateVideoMemory"	0x7DE223F1
+Loaded Import "InitaliseVMA"	0x7DE2212B
+Loaded Import "SelectVideoContext"	0x7DE221B3
+Updated .text Memory Permissions
+No Memory Permissions to Update for .data
+No Memory Permissions to Update for IDT
+Updated .rdata Memory Permissions
+No Memory Permissions to Update for .pdata
+No Memory Permissions to Update for .xdata
+No Memory Permissions to Update for .bss
+No Memory Permissions to Update for .edata
+No Memory Permissions to Update for .idata
+No Memory Permissions to Update for .reloc
+Un-Mounting File [4397709807136810278:123480111967653]
+Binary [kboot.exe]:  [0x7F51D000:0x7F51EEA0]  3  4
 
-log: C:\GitHub\BlockyOS\Build\Build-nodate\bochs.log
-iodebug: all_rings=1
-
-romimage: file=C:\GitHub\BlockyOS\compile\toolchain\uefi\debug\OVMF_CODE.fd
-vgaromimage: file=C:\msys64\mingw64\share\bochs\VGABIOS-lgpl-latest-cirrus.bin
-ata0: enabled=1, ioaddr1=0x1F0, ioaddr2=0x3F0, irq=14
-ata0-master: type=disk, path="C:\GitHub\BlockyOS\Build\Build-nodate\disk.img", mode=flat, status=inserted, translation=lba
-"
+Hash:	[8827722889414338333:110380533765322]
+Mounting File [SYSD/icon.gif] with "f"
+Hash:	[8827722889414338333:110380533765322]
+Opening File SYSD/icon.gif[8827722889414338333:110380533765322]
+Printing GIF
+Printing GIF

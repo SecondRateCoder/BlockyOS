@@ -7,8 +7,23 @@ global _LoadGDTR
 ;   (rax(bool))LoadGDT(rdi(void *))
 _LoadGDTR:
     lgdt [rdi]
+	xor ax, ax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+
+	; Get the return RIP (where LoadMinimalGDT was called from)
+    pop rdx
+	; The offset of your new Code Segment in the GDT
+    mov rax, 0x08
+	; Push new CS
+    push rax
+	; Push RIP
+    push rdx
     mov rax, 1
-    ret
+    retfq
 
 global _ReadGDTR
 ;   (rax(bool))LoadGDT(rdi(void *))
