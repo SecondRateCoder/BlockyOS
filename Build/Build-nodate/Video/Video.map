@@ -29,6 +29,7 @@ Linker script and memory map
                 0x0000000000000000                __loader_flags__ = 0x0
                 0x0000000000000160                __dll_characteristics__ = 0x160
 LOAD compile/cache/elf.c.Video.o
+LOAD compile/cache/elf.c.Text.o
 LOAD Build/Build-nodate/root-part/LibCrt.dll
 LOAD src/kernel/services/Video/Video.def
                 0x00000000000002a0                . = SIZEOF_HEADERS
@@ -37,56 +38,57 @@ LOAD src/kernel/services/Video/Video.def
 .text           0x0000000000001000     0x2000
  *(SORT_NONE(.init))
  *(.text)
- .text          0x0000000000001000     0x1510 compile/cache/elf.c.Video.o
+ .text          0x0000000000001000      0xbd0 compile/cache/elf.c.Video.o
                 0x0000000000001000                VMAMemoryPoll
-                0x00000000000011c2                InitialiseVideoMemoryAllocator
-                0x0000000000001331                RequestVideoMemory
-                0x000000000000156a                FlushVideoMemory
-                0x0000000000001644                ReleaseVideoMemory
-                0x00000000000017b2                PrintGlyph
-                0x00000000000018eb                PrintTextByGlyph
-                0x0000000000001a99                TextCopyF
-                0x00000000000020c4                VMAIState
-                0x000000000000212b                InitaliseVMA
-                0x00000000000021b3                SelectVideoContext
-                0x00000000000022f5                VideoPrintf
-                0x00000000000023f1                AllocateVideoMemory
-                0x000000000000245d                FreeVideoMemory
-                0x00000000000024af                PreflushVideoMemory
- .text          0x0000000000002510        0x8 LibCrt_dll_d000001.o
-                0x0000000000002510                AddTimerEvent
- .text          0x0000000000002518        0x8 LibCrt_dll_d000002.o
-                0x0000000000002518                AllocateIST
- .text          0x0000000000002520        0x8 LibCrt_dll_d000003.o
-                0x0000000000002520                AllocateInterruptVector
- .text          0x0000000000002528        0x8 LibCrt_dll_d000004.o
-                0x0000000000002528                DisableLocalAPIC
- .text          0x0000000000002530        0x8 LibCrt_dll_d000005.o
-                0x0000000000002530                EnableLocalAPIC
- .text          0x0000000000002538        0x8 LibCrt_dll_d000006.o
-                0x0000000000002538                GetLocalAPICBase
- .text          0x0000000000002540        0x8 LibCrt_dll_d000007.o
-                0x0000000000002540                MapPhysical
- .text          0x0000000000002548        0x8 LibCrt_dll_d000008.o
-                0x0000000000002548                RepointVirtualAddress
- .text          0x0000000000002550        0x8 LibCrt_dll_d000009.o
-                0x0000000000002550                SafeAllocatePages
- .text          0x0000000000002558        0x8 LibCrt_dll_d000010.o
-                0x0000000000002558                mcalloc
- .text          0x0000000000002560        0x8 LibCrt_dll_d000011.o
-                0x0000000000002560                memcpy
- .text          0x0000000000002568        0x8 LibCrt_dll_d000012.o
-                0x0000000000002568                mfree
- .text          0x0000000000002570        0x8 LibCrt_dll_d000013.o
-                0x0000000000002570                mrealloc
- .text          0x0000000000002578        0x8 LibCrt_dll_d000014.o
-                0x0000000000002578                strlen
+                0x00000000000011ba                InitialiseVideoMemoryAllocator
+                0x0000000000001329                RequestVideoMemory
+                0x0000000000001562                FlushVideoMemory
+                0x000000000000162e                ReleaseVideoMemory
+                0x000000000000178b                VMAIState
+                0x00000000000017f2                InitaliseVMA
+                0x000000000000187a                SelectVideoContext
+                0x00000000000019af                VideoPrintf
+                0x0000000000001aab                AllocateVideoMemory
+                0x0000000000001b17                FreeVideoMemory
+                0x0000000000001b69                PreflushVideoMemory
+ .text          0x0000000000001bd0      0x8c0 compile/cache/elf.c.Text.o
+                0x0000000000001bd0                PrintGlyph
+                0x0000000000001cf9                PrintTextByGlyph
+                0x0000000000001e8f                TextCopyF
+ .text          0x0000000000002490        0x8 LibCrt_dll_d000001.o
+                0x0000000000002490                AddTimerEvent
+ .text          0x0000000000002498        0x8 LibCrt_dll_d000002.o
+                0x0000000000002498                AllocateIST
+ .text          0x00000000000024a0        0x8 LibCrt_dll_d000003.o
+                0x00000000000024a0                AllocateInterruptVector
+ .text          0x00000000000024a8        0x8 LibCrt_dll_d000004.o
+                0x00000000000024a8                DisableLocalAPIC
+ .text          0x00000000000024b0        0x8 LibCrt_dll_d000005.o
+                0x00000000000024b0                EnableLocalAPIC
+ .text          0x00000000000024b8        0x8 LibCrt_dll_d000006.o
+                0x00000000000024b8                GetLocalAPICBase
+ .text          0x00000000000024c0        0x8 LibCrt_dll_d000007.o
+                0x00000000000024c0                MapPhysical
+ .text          0x00000000000024c8        0x8 LibCrt_dll_d000008.o
+                0x00000000000024c8                RepointVirtualAddress
+ .text          0x00000000000024d0        0x8 LibCrt_dll_d000009.o
+                0x00000000000024d0                SafeAllocatePages
+ .text          0x00000000000024d8        0x8 LibCrt_dll_d000010.o
+                0x00000000000024d8                mcalloc
+ .text          0x00000000000024e0        0x8 LibCrt_dll_d000011.o
+                0x00000000000024e0                memcpy
+ .text          0x00000000000024e8        0x8 LibCrt_dll_d000012.o
+                0x00000000000024e8                mfree
+ .text          0x00000000000024f0        0x8 LibCrt_dll_d000013.o
+                0x00000000000024f0                mrealloc
+ .text          0x00000000000024f8        0x8 LibCrt_dll_d000014.o
+                0x00000000000024f8                strlen
  *(SORT_BY_NAME(.text$*))
  *(.text.*)
  *(.gnu.linkonce.t.*)
  *(.glue_7t)
  *(.glue_7)
-                0x0000000000002580                . = ALIGN (0x8)
+                0x0000000000002500                . = ALIGN (0x8)
  *(SORT_NONE(.fini))
  *(.gcc_exc)
                 [!provide]                        PROVIDE (etext = .)
@@ -96,71 +98,74 @@ LOAD src/kernel/services/Video/Video.def
                 0x0000000000003000                __data_start__ = .
  *(.data)
  .data          0x0000000000003000      0x200 compile/cache/elf.c.Video.o
+ .data          0x0000000000003200      0x200 compile/cache/elf.c.Text.o
  *(.data2)
  *(SORT_BY_NAME(.data$*))
  *(.jcr)
-                0x0000000000003200                __data_end__ = .
+                0x0000000000003400                __data_end__ = .
  *(.data_cygwin_nocopy)
 
 .rdata          0x0000000000004000     0x1000
  *(.rdata)
- .rdata         0x0000000000004000      0x120 compile/cache/elf.c.Video.o
+ .rdata         0x0000000000004000       0xc0 compile/cache/elf.c.Video.o
+ .rdata         0x00000000000040c0      0x120 compile/cache/elf.c.Text.o
  *(SORT_BY_NAME(.rdata$*))
- .rdata$zzz     0x0000000000004120       0x30 compile/cache/elf.c.Video.o
-                0x0000000000004150                . = ALIGN (0x4)
-                0x0000000000004150                __rt_psrelocs_start = .
+ .rdata$zzz     0x00000000000041e0       0x30 compile/cache/elf.c.Video.o
+ .rdata$zzz     0x0000000000004210       0x30 compile/cache/elf.c.Text.o
+                0x0000000000004240                . = ALIGN (0x4)
+                0x0000000000004240                __rt_psrelocs_start = .
  *(.rdata_runtime_pseudo_reloc)
-                0x0000000000004150                __rt_psrelocs_end = .
-                0x0000000000004150                . = ALIGN (0x8)
-                0x0000000000004150                __DELAY_IMPORT_DIRECTORY_start__ = .
+                0x0000000000004240                __rt_psrelocs_end = .
+                0x0000000000004240                . = ALIGN (0x8)
+                0x0000000000004240                __DELAY_IMPORT_DIRECTORY_start__ = .
  SORT_BY_NAME(*)(.didat$2)
  SORT_BY_NAME(*)(.didat$3)
-                0x0000000000004150                __DELAY_IMPORT_DIRECTORY_end__ = .
-                0x0000000000004150                . = (. + (__DELAY_IMPORT_DIRECTORY_end__ - __DELAY_IMPORT_DIRECTORY_start__)?0x20:0x0)
-                0x0000000000004150                . = ALIGN (0x8)
+                0x0000000000004240                __DELAY_IMPORT_DIRECTORY_end__ = .
+                0x0000000000004240                . = (. + (__DELAY_IMPORT_DIRECTORY_end__ - __DELAY_IMPORT_DIRECTORY_start__)?0x20:0x0)
+                0x0000000000004240                . = ALIGN (0x8)
  SORT_BY_NAME(*)(.didat$4)
  SORT_BY_NAME(*)(.didat$6)
  SORT_BY_NAME(*)(.didat$7)
-                0x0000000000004150                . = ALIGN (0x8)
-                0x0000000000004150                ___CTOR_LIST__ = .
-                0x0000000000004150                __CTOR_LIST__ = .
-                0x0000000000004150        0x4 LONG 0xffffffffffffffff
-                0x0000000000004154        0x4 LONG 0xffffffffffffffff
+                0x0000000000004240                . = ALIGN (0x8)
+                0x0000000000004240                ___CTOR_LIST__ = .
+                0x0000000000004240                __CTOR_LIST__ = .
+                0x0000000000004240        0x4 LONG 0xffffffffffffffff
+                0x0000000000004244        0x4 LONG 0xffffffffffffffff
  *(.ctors)
  *(.ctor)
  *(SORT_BY_NAME(.ctors.*))
-                0x0000000000004158        0x4 LONG 0x0
-                0x000000000000415c        0x4 LONG 0x0
-                0x0000000000004160                ___DTOR_LIST__ = .
-                0x0000000000004160                __DTOR_LIST__ = .
-                0x0000000000004160        0x4 LONG 0xffffffffffffffff
-                0x0000000000004164        0x4 LONG 0xffffffffffffffff
+                0x0000000000004248        0x4 LONG 0x0
+                0x000000000000424c        0x4 LONG 0x0
+                0x0000000000004250                ___DTOR_LIST__ = .
+                0x0000000000004250                __DTOR_LIST__ = .
+                0x0000000000004250        0x4 LONG 0xffffffffffffffff
+                0x0000000000004254        0x4 LONG 0xffffffffffffffff
  *(.dtors)
  *(.dtor)
  *(SORT_BY_NAME(.dtors.*))
-                0x0000000000004168        0x4 LONG 0x0
-                0x000000000000416c        0x4 LONG 0x0
-                0x0000000000004170                ___crt_xc_start__ = .
+                0x0000000000004258        0x4 LONG 0x0
+                0x000000000000425c        0x4 LONG 0x0
+                0x0000000000004260                ___crt_xc_start__ = .
  *(SORT_BY_NAME(.CRT$XC*))
-                0x0000000000004170                ___crt_xc_end__ = .
-                0x0000000000004170                ___crt_xi_start__ = .
+                0x0000000000004260                ___crt_xc_end__ = .
+                0x0000000000004260                ___crt_xi_start__ = .
  *(SORT_BY_NAME(.CRT$XI*))
-                0x0000000000004170                ___crt_xi_end__ = .
-                0x0000000000004170                ___crt_xl_start__ = .
+                0x0000000000004260                ___crt_xi_end__ = .
+                0x0000000000004260                ___crt_xl_start__ = .
  *(SORT_BY_NAME(.CRT$XL*))
-                0x0000000000004170                ___crt_xp_start__ = .
+                0x0000000000004260                ___crt_xp_start__ = .
  *(SORT_BY_NAME(.CRT$XP*))
-                0x0000000000004170                ___crt_xp_end__ = .
-                0x0000000000004170                ___crt_xt_start__ = .
+                0x0000000000004260                ___crt_xp_end__ = .
+                0x0000000000004260                ___crt_xt_start__ = .
  *(SORT_BY_NAME(.CRT$XT*))
-                0x0000000000004170                ___crt_xt_end__ = .
-                0x0000000000004170                ___crt_xd_start__ = .
+                0x0000000000004260                ___crt_xt_end__ = .
+                0x0000000000004260                ___crt_xd_start__ = .
  *(SORT_BY_NAME(.CRT$XD*))
-                0x0000000000004170                ___crt_xd_end__ = .
-                0x0000000000004150                ___RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
-                0x0000000000004150                __RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
-                0x0000000000004150                ___RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
-                0x0000000000004150                __RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+                0x0000000000004260                ___crt_xd_end__ = .
+                0x0000000000004240                ___RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x0000000000004240                __RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x0000000000004240                ___RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+                0x0000000000004240                __RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
 
 .eh_frame
  *(.eh_frame*)
@@ -177,12 +182,13 @@ LOAD src/kernel/services/Video/Video.def
  .bss           0x0000000000005000     0x1080 compile/cache/elf.c.Video.o
                 0x0000000000005000                gcontext
                 0x0000000000005008                ngcontext
+ .bss           0x0000000000006080        0x0 compile/cache/elf.c.Text.o
  *(COMMON)
                 0x0000000000006080                __bss_end__ = .
 
 .edata          0x0000000000007000     0x1000
  *(.edata)
- .edata         0x0000000000007000       0xe9 dll stuff
+ .edata         0x0000000000007000      0x12d dll stuff
 
 /DISCARD/
  *(.debug$S)

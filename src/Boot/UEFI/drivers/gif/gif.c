@@ -107,7 +107,7 @@ gifDescriptionSpace_t *OpenGIF(socket_t *gif, EFI_GRAPHICS_PIXEL_FORMAT PixelFor
 
 			while(true){
 				rt = socketfcall(gif, read, offset, sizeof(UINT8));
-				if(socketreterr(rt, sizeof(UINT8))){ break; }
+				if(socketreterr(rt, sizeof(UINT8))){break;}
 				UINT8 subLen = *((UINT8 *)rt.data);
 				__free(rt.data);
 				offset += sizeof(UINT8);
@@ -171,75 +171,6 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
 
     UINT32 totalPixels = width * height;
 
-    // // Extract contiguous LZW byte stream from sub-blocks
-    // UINT8 *lzwStream = (UINT8 *)__calloc(1, totalPixels * 2);
-    // UINT32 lzwSize = 0;
-    
-    // // Points to sub-blocks immediately following InitialCodeSize
-    // UINT8 *ptr = (UINT8 *)frame->rdb + sizeof(UINT8); 
-    // while(*ptr != 0){
-    //     UINT8 blockLen = *ptr++;
-    //     for(UINT8 i = 0; i < blockLen; i++){ lzwStream[lzwSize++] = *ptr++; }
-    // }
-
-    // // Initialize LZW Decoder state
-    // UINT8 initCodeSize = frame->rdb->InitialCodeSize;
-    // UINT32 clearCode = 1 << initCodeSize, 
-    //        eoiCode = clearCode + 1, 
-    //        codeSize = initCodeSize + 1, 
-    //        maxCode = 1 << codeSize, 
-    //        availableCode = eoiCode + 1;
-
-    // UINT16 prefix[4096] = {0};
-    // UINT8 suffix[4096] = {0}, 
-    //       pixelStack[4097] = {0};
-    // UINT32 stackPtr = 0;
-    // for(UINT32 i = 0; i < clearCode; i++){suffix[i] = (UINT8)i;}
-    // UINT32 oldCode = 0xFFFF, 
-    //        firstChar = 0, 
-    //        bitPos = 0, 
-    //        pixelIdx = 0;
-    // UINT8 *indices = (UINT8 *)__calloc(totalPixels, sizeof(UINT8));
-    // // Decode LZW stream to color-index array
-    // while(pixelIdx < totalPixels && (bitPos / 8) < lzwSize){
-    //     UINT32 byteIdx = bitPos / 8, 
-    //            bitOff = bitPos % 8, 
-    //            code = ((UINT32)lzwStream[byteIdx] | ((UINT32)lzwStream[byteIdx + 1] << 8) | ((UINT32)lzwStream[byteIdx + 2] << 16)) >> bitOff;
-    //     code &= (1 << codeSize) - 1;
-    //     bitPos += codeSize;
-    //     if(code == clearCode){
-    //         codeSize = initCodeSize + 1;
-    //         maxCode = 1 << codeSize;
-    //         availableCode = eoiCode + 1;
-    //         oldCode = 0xFFFF;
-    //         continue;
-    //     }
-    //     if(code == eoiCode){break;}
-    //     UINT32 inCode = code;
-    //     if(code >= availableCode){
-    //         pixelStack[stackPtr++] = (UINT8)firstChar;
-    //         code = oldCode;
-    //     }
-    //     while(code >= clearCode){
-    //         pixelStack[stackPtr++] = suffix[code];
-    //         code = prefix[code];
-    //     }
-    //     firstChar = suffix[code];
-    //     pixelStack[stackPtr++] = (UINT8)firstChar;
-    //     if(availableCode < 4096){
-    //         prefix[availableCode] = (UINT16)oldCode;
-    //         suffix[availableCode] = (UINT8)firstChar;
-    //         availableCode++;
-    //         if((availableCode >= maxCode) && (codeSize < 12)){
-    //             codeSize++;
-    //             maxCode = 1 << codeSize;
-    //         }
-    //     }
-    //     oldCode = inCode;
-    //     while(stackPtr > 0){ if(pixelIdx < totalPixels){ indices[pixelIdx++] = pixelStack[--stackPtr]; }else{ stackPtr--; } }
-    // }
-    // __free(lzwStream);
-
 	//	Safely extract all sub-blocks into a continuous LZW byte array
     UINT32 maxLzwBytes = totalPixels * 2;
     UINT8 *lzwStream = (UINT8 *)__calloc(1, maxLzwBytes);
@@ -251,7 +182,7 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
     
     while(*ptr != 0 && lzwSize < maxLzwBytes){
         UINT8 blockSize = *ptr++;
-        for(UINT32 i = 0; i < blockSize && lzwSize < maxLzwBytes; i++){lzwStream[lzwSize++] = *ptr++;}
+        for(register UINT32 i = 0; i < blockSize && lzwSize < maxLzwBytes; i++){lzwStream[lzwSize++] = *ptr++;}
     }
 
     //	Initialize LZW Decoder state
@@ -265,7 +196,7 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
     UINT8 pixelStack[4097];
     UINT32 stackPtr = 0;
 
-    for(UINT32 i = 0; i < clearCode; i++){
+    for(register UINT32 i = 0; i < clearCode; i++){
         prefix[i] = 0;
         suffix[i] = (UINT8)i;
     }
@@ -337,7 +268,7 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
     // Map indices to 32-bit Frame Buffer according to target Pixel Format
     UINT32 *frameBuffer = (UINT32 *)__calloc(totalPixels, sizeof(UINT32));
     gifGlobalColor_t *palette = (frame->ld->LocalColorMapExists && frame->lcm) ? (gifGlobalColor_t *)frame->lcm : (gifGlobalColor_t *)desc->gcm;
-    for(UINT32 i = 0; i < totalPixels; i++){
+    for(register UINT32 i = 0; i < totalPixels; i++){
         UINT8 idx = indices[i];
         if(transparentIdx >= 0 && idx == (UINT8)transparentIdx){frameBuffer[i] = 0x00000000;}//	Transparent (Alpha = 0)
 		else if(palette){
@@ -359,7 +290,7 @@ static inline void PlotPixel_32bpp(void *fb, UINT32 PixelsPerScanLine, UINT32 x,
 	*((uint32_t*)((UINT8*)fb + (4 * PixelsPerScanLine * y) + (4 * x))) = tmp;
 }
 static inline void PlotPixels_32bpp(void *fb, UINT32 PixelsPerScanLine, UINT32 x, UINT32 y, const UINT32 *pixels, UINT32 n){
-	for(UINT32 cc = 0; cc < n; ++cc){
+	for(register UINT32 cc = 0; cc < n; ++cc){
 		PlotPixel_32bpp(fb, PixelsPerScanLine, x + cc, y, (pixels[cc] >> 24) & UINT8_MAX, 
 			(pixels[cc] >> 16) & UINT8_MAX, (pixels[cc] >> 8) & UINT8_MAX, pixels[cc] & UINT8_MAX);
 	}
@@ -372,4 +303,25 @@ void BltFrame(const UINT32 *Frame, UINT32 FrameWidth, UINT32 FrameHeight,
 	for(INT32 y = 0; y < FrameHeight; ++y){
 		PlotPixels_32bpp(DestBuffer, DestWidth, DestX, DestY + y, 
 			Frame + (y * FrameWidth), __min(FrameWidth, DestWidth));}
+}
+
+void CloseGIF(gifDescriptionSpace_t *gif){
+	if(gif->hdr){__free(gif->hdr);}
+	if(gif->lsd){__free(gif->lsd);}
+	if(gif->gcm){__free(gif->gcm);}
+	if(gif->ext){
+		while(gif->nExt--){__free(gif->ext[gif->nExt]);}	__free(gif->ext);}
+	if(gif->frames){
+		while(gif->nFrames--){
+			if(gif->frames[gif->nFrames].ld){__free(gif->frames[gif->nFrames].ld);}
+			if(gif->frames[gif->nFrames].lcm){__free(gif->frames[gif->nFrames].lcm);}
+			if(gif->frames[gif->nFrames].rdb){__free(gif->frames[gif->nFrames].rdb);}
+			if(gif->frames[gif->nFrames].gce){__free(gif->frames[gif->nFrames].gce);}
+			if(gif->frames[gif->nFrames].fb){__free(gif->frames[gif->nFrames].fb);}
+		}
+		__free(gif->frames);}
+	if(gif->lcm){__free(gif->lcm);}
+	if(gif->rdb){__free(gif->rdb);}
+	__free(gif);
+	
 }

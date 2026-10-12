@@ -3,7 +3,7 @@
 #CACHE:ENABLED
 
 {
-	"LOG": "C:/GitHub/BlockyOS/Build/Build-nodate/Video.log", 
+	"LOG": "C:/GitHub/BlockyOS/Build/Build-nodate/Video/Video.log", 
 	"SCRIPT.VERSION": 999, 
 	"FS.IMAGE": "C:/GitHub/BlockyOS/Build/Build-nodate/disk.img", 
 	"FS.FORMAT": {
@@ -20,6 +20,7 @@
 				"LARGS": " --section-alignment 4096 --file-alignment 4096 --image-base 0x0 -shared -flinker-output=dyn -Bsymbolic --out-implib C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll.a", 
 				"FILES": [
 					"C:/GitHub/BlockyOS/src/kernel/services/Video/Video.c", 
+					"C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/Text.c", 
 					"C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll", 
 					"C:/GitHub/BlockyOS/src/kernel/services/Video/Video.def"
 				]

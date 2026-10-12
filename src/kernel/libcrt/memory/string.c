@@ -7,6 +7,13 @@ size_t strlen(const char *str){
 	return len;
 }
 
+char *strdup(const char *src){
+	const register uint64_t tmp = strlen(src);
+	char *out = mcalloc(tmp + 1, sizeof(char));
+	memcpy(out, src, tmp + 1);
+	return out;
+}
+
 bool strchecks(const char *str, const char *snippet){
 	const size_t str_len = strlen(str), 
 			snip_len = strlen(snippet);
@@ -26,7 +33,13 @@ int strcmpc(const char *a, const char *b){
 	}
 	return *(const unsigned char*)a - *(const unsigned char*)b;
 }
-bool isdigit(char c) {return (c >= '0') && (c <= '9');}
+
+bool isascii(char c){
+	if((c >= 0) && (c < 256)){return true;}
+	return false;
+}
+
+bool isdigit(char c){return (c >= '0') && (c <= '9');}
 int8_t tobitcomplex(char c){
 	if(isdigit(c)){return c - '0';}
 	return -1;

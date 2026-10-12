@@ -41,14 +41,14 @@ BOOLEAN checkdisk(EFI_GUID GUID, EFI_GUID altGUID){
 
 partdim loadpart(EFI_GUID GUID, EFI_GUID altGUID, GPTeNSTR name){
 	char gptname[GPTeNAMELEN + 1];	ZeroMem(gptname, GPTeNAMELEN + 1);
-	for(UINT8 cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
+	for(register UINT8 cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
 		// DEBUGPRINT(L"\n[%s:%u]  >>  Loading Partition:    %a", (L"" __FILE__), __LINE__, gptname);
 	if(checkdisk(GUID, altGUID)){
 		rawenv re = startup(GUID, altGUID, 0x00, __FS_DEFAULTBLOCKSIZE);
 		miniGPT *gpt = (miniGPT *)readblocks(re, GPT_LBA, sizeof(miniGPT));
 		GPTentry *ge = (GPTentry *)readblocks(re, gpt->partEntryLoc, gpt->nPartEntries * sizeof(GPTentry));
 		dispose(re);
-		for(UINT32 i = 0x00; i < gpt->nPartEntries; i++){
+		for(register UINT32 i = 0x00; i < gpt->nPartEntries; i++){
 			if(!__memcmp(name, ge[i].name, GPTeNAMESIZE)){
 				partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
 				__free(gpt);
@@ -72,7 +72,7 @@ void formatpart(
 ){
 	DEBUGDO{
 		char gptname[GPTeNAMELEN + 1];	ZeroMem(gptname, GPTeNAMELEN + 1);
-		for(UINT8 cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
+		for(register UINT8 cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (name[cc] & 0xFF);}
 		// DEBUGPRINT(L"\n[%s:%u]  >>  Formatting Partition:    %a", (L"" __FILE__), __LINE__, gptname);
 	}
 	partdim part = loadpart(GUID, altGUID, name);
@@ -128,9 +128,9 @@ partdim queryparttablefs(miniGPT *gpt, rawenv re){
 	// DEBUGPRINT(L"\n[%s:%u]  >>  Querying Part Table", (L"" __FILE__), __LINE__);
 	// Query all Partitions for the FileSystem.
 	GPTentry *ge = (GPTentry *)readblocks(re, gpt->partEntryLoc, gpt->nPartEntries * sizeof(GPTentry));
-	for(UINT32 i = 0x00; i < gpt->nPartEntries; i++){
+	for(register UINT32 i = 0x00; i < gpt->nPartEntries; i++){
 		char gptname[GPTeNAMELEN + 1];	ZeroMem(gptname, GPTeNAMELEN + 1);
-		for(UINT8 cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (ge[i].name[cc] & 0xFF);}
+		for(register UINT8 cc = 0x00; cc < GPTeNAMELEN; ++cc){gptname[cc] = (ge[i].name[cc] & 0xFF);}
 		// DEBUGPRINT(L"\n[%s:%u]  >>  GPT-Entry: %a{%llu:%llu -> %llu}", (L"" __FILE__), __LINE__, gptname, ge[i].sLBA, ge[i].eLBA, ge[i].eLBA - ge[i].sLBA);
 		if(queryfs(re, ge[i].sLBA)){
 			partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
@@ -216,7 +216,7 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 }
 
 fsblock *allocatecluster(conf_fsroot *root){
-	for(UINT64 i = root->lastClusterAlloc; i < root->clusterbuffer.nClusterItems; ++i){
+	for(register UINT64 i = root->lastClusterAlloc; i < root->clusterbuffer.nClusterItems; ++i){
 		if(!(root->clusterbuffer.clusterMap[i].fcodelow) && !(root->clusterbuffer.clusterMap[i].fcodehigh)){
 			root->lastClusterAlloc = i;
 			return root->clusterbuffer.clusterMap + i;
@@ -240,7 +240,7 @@ void __ffremovel(conf_fsroot *root, char *path){return __ffremovelh(root, __getf
 
 void __ffremovelh(conf_fsroot *root, UINT64 hash[2]){
 	hash[1] &= FCODEHASHMASK;
-	for(UINT64 cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
+	for(register UINT64 cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
 		if(root->clusterbuffer.clusterMap[cc].fcodelow == hash[0x00] && root->clusterbuffer.clusterMap[cc].fcodehigh == hash[1]){
 			root->clusterbuffer.clusterMap[cc].fcodehigh = 0x00;	root->clusterbuffer.clusterMap[cc].fcodelow = 0x00;}
 	}
@@ -279,7 +279,7 @@ fsblock *__faddr(conf_fsroot *root, fsblock *family){
 	fsblock *fb = allocatecluster(root);
 	if(fb){
 		fb->index = 0x00;
-		for(UINT64 i = 0x00; i < root->clusterbuffer.nClusterItems; ++i){
+		for(register UINT64 i = 0x00; i < root->clusterbuffer.nClusterItems; ++i){
 			if(root->clusterbuffer.clusterMap[i].fcodelow == family->fcodelow && 
 				root->clusterbuffer.clusterMap[i].fcodehigh == family->fcodehigh){fb->index++;}
 		}
@@ -306,7 +306,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 	EFI_TIME time;
 	if(EFI_ERROR(gRT->GetTime(&time, NULL))){time = (EFI_TIME){0x00};}
 	char *name = NULL;
-	for(UINT64 i = strlena(path); i > 0; i--){
+	for(register UINT64 i = strlena(path); i > 0; i--){
 		if(i > GPTeNAMELEN){path[i] = '\0';}else{
 			if(path[i] == PATHnoSEP || path[i] == PATHSEP){name = path + i++;	break;}else 
 			if(!isascii(path[i])){path[i] = 0x00;}
@@ -336,7 +336,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 
 fsblock *__ffindhi(conf_fsroot *root, UINT64 hash[2], UINT64 index){
 	hash[1] &= FCODEHASHMASK;
-	for(UINT64 cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
+	for(register UINT64 cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
 		if(root->clusterbuffer.clusterMap[cc].fcodelow == hash[0] && 
 			root->clusterbuffer.clusterMap[cc].fcodehigh == hash[1] && 
 			root->clusterbuffer.clusterMap[cc].index == index
@@ -356,7 +356,7 @@ void *__fread1(conf_fsroot *root, fsblock *fb, UINT64 *index){
 	if((*index) != fb->index){
 		fsblock *fb_ = __ffindhi(root, (UINT64[2]){fb->fcodelow, fb->fcodehigh}, (*index));
 		if(fb_ == NULL){return NULL;}else{
-			while(__check(fb_->attributes, __fsextensionallocatedcluster)){
+			while(flagcheck(fb_->attributes, __fsextensionallocatedcluster)){
 				fb_ = __ffindhi(root, (UINT64[2]){fb->fcodelow, fb->fcodehigh}, (*index));
 				(*index)++;
 			}
@@ -469,7 +469,7 @@ void __fdirrefresh(dirhandle *handle){
 			void *temp = readblocks(re, getloc(handle->root, fb), handle->root->root->confBlockSize);
 			__memcpy((void *)handle->dirarray + (getblocksize(re) * blockprogress), temp, getblocksize(re));
 			__free(temp);
-			for(UINT64 cc = 0x00; cc < __safediv(getblocksize(re), sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = TRUE;	break;}}
+			for(register UINT64 cc = 0x00; cc < __safediv(getblocksize(re), sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = TRUE;	break;}}
 			blockprogress++;
 		}else if(!fb){exit_ = TRUE;}
 	}while(!exit_);
@@ -555,7 +555,7 @@ UINT64 __fsize(fhandle *fh){
 }
 UINT64 __dsize(dirhandle *dh){
 	UINT64 size = 0x00;
-	for(UINT64 cc = 0x00; cc < __safediv((dh->loadedblocks * dh->root->root->confBlockSize), sizeof(diritem)); ++cc){
+	for(register UINT64 cc = 0x00; cc < __safediv((dh->loadedblocks * dh->root->root->confBlockSize), sizeof(diritem)); ++cc){
 		size += (((dh->dirarray + cc)->local) ? dh->root->root->confBlockSize: 0x00);}
 	DEBUGPRINT(L"\nDirectory Size %llu", size);
 	return size;
@@ -699,7 +699,7 @@ BOOLEAN __ftest(fhandle *h){
 	_fread(h, h->root->root->confBlockSize, &__block);
 	if(__block){
 		Print(L"\n");
-		for(UINT64 cc = 0x00; cc < h->root->root->confBlockSize; ++cc){
+		for(register UINT64 cc = 0x00; cc < h->root->root->confBlockSize; ++cc){
 			if(((uint8_t *)_block)[cc] != ((uint8_t *)__block)[cc]){
 				out = FALSE;
 				DEBUGPRINT(L"✖ %u:%u  ", ((uint8_t *)_block)[cc], ((uint8_t *)__block)[cc]);
@@ -793,7 +793,7 @@ static dirhandle *__dirr_pop(dirrunner *dr){
 
 void __dirr_free(dirrunner *dr){
 	if(!dr){return;}
-	for(UINT64 cc = 0x00; cc < dr->stack_depth; ++cc){
+	for(register UINT64 cc = 0x00; cc < dr->stack_depth; ++cc){
 		if(dr->dir_stack[cc]){if(cc > 0x00){fuloaddir(dr->dir_stack[cc]);}}
 	}
 	__free(dr->dir_stack);

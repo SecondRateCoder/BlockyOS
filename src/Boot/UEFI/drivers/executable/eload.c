@@ -32,7 +32,7 @@ static bool ResolveExport(LoadedPeExecutable *Import, bool OrdinalImport, UINT64
 		exportIndex = (UINT32)(Ordinal - exports->mOrdinalBase);
 		if(exportIndex >= exports->mNTableEntries){return false;}
 	}else{
-		for(UINT32 i = 0; i < exports->mNNamePointers; ++i){
+		for(register UINT32 i = 0; i < exports->mNNamePointers; ++i){
 			UINT16 index = Import->This->Fmt.exp.Ordinals[i];
 			if(index >= exports->mNTableEntries){continue;}
 			char *exportName = GetAtRVAFromSectionDataPe(
@@ -65,6 +65,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 	void *ImageBase = NULL;
 	uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, EfiRuntimeServicesData, 
 		__roundup((Exe->Fmt.Opt.Pe32->mMagic == Pe32? Exe->Fmt.Opt.Pe32->mSizeOfImage: Exe->Fmt.Opt.Pe32Plus->mSizeOfImage), EFI_PAGE_SIZE) / EFI_PAGE_SIZE, &ImageBase);
+	__memset(ImageBase, 0, __roundup((Exe->Fmt.Opt.Pe32->mMagic == Pe32? Exe->Fmt.Opt.Pe32->mSizeOfImage: Exe->Fmt.Opt.Pe32Plus->mSizeOfImage), EFI_PAGE_SIZE));
 	DEBUGPRINT(L"\nAllocated Executable %a at Address %p", file, ImageBase);
 	if((Root->NDependencies % 2) == 0){
 		if(Root->Dependencies){
@@ -73,7 +74,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 		else{Root->Dependencies = __calloc(2, sizeof(LoadedPeExecutable *));}
 	}
 	char *fname = NULL;		{
-		for(UINT32 cc = __strlen(file); cc > 0; --cc){if((file[cc] == '\\') || (file[cc] == '/')){fname = (file + cc + 1);	break;}}
+		for(register UINT32 cc = __strlen(file); cc > 0; --cc){if((file[cc] == '\\') || (file[cc] == '/')){fname = (file + cc + 1);	break;}}
 		if(!fname){fname = file;}
 	}
 	Root->NDependencies++;
@@ -83,7 +84,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 		.EntryPoint = ImageBase + (Exe->Fmt.Opt.Pe32->mMagic == Pe32? Exe->Fmt.Opt.Pe32->mAddressOfEntryPoint: Exe->Fmt.Opt.Pe32Plus->mAddressOfEntryPoint)
 	};
 	//	Load all relevant Code/Data Sections.
-	for(UINT32 cc = 0; cc < Exe->Fmt.Header->mNumberOfSections; ++cc){
+	for(register UINT32 cc = 0; cc < Exe->Fmt.Header->mNumberOfSections; ++cc){
 		BOOLEAN SectionLoaded = false;
 		if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeCodeSection, 8) || 
 			!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeDefDataSection, 8) || 
@@ -100,7 +101,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 			}
 		}else if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeImportSection, 8)){
 			//	Import Symbols.
-			for(UINT32 ImportEntry = 0; ImportEntry < Exe->Fmt.imp.nImports; ++ImportEntry){
+			for(register UINT32 ImportEntry = 0; ImportEntry < Exe->Fmt.imp.nImports; ++ImportEntry){
 				const UINT64 IATOffset = Exe->Fmt.imp.imports[ImportEntry].ImportAddressTableRVA;
 				UINT32 *IAT32 = ImageBase + IATOffset;
 				UINT64 *IAT64 = ImageBase + IATOffset;
@@ -123,13 +124,12 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 						__memcpy(fullPath, tmp, tmplen);
 						__memcpy(fullPath + tmplen, LibName, __strlen(LibName));
 
-						DEBUGPRINT(L"\nLoading Import Library %a[%a]", fullPath, LibName);
 						Import = LoadBinary(fullPath, Info, InfoMax, drive, Root->Dependencies[Root->NDependencies - 1]);
 						__free(fullPath);
 						__free(tmp);
 					}
 				}
-				if(Import){DEBUGPRINT(L"\nLoaded Import Library %a at %llu(%p)", LibName, Import->Base, Import->Base);}
+				// if(Import){DEBUGPRINT(L"\nLoaded Import Library %a at %llu(%p)", LibName, Import->Base, Import->Base);}
 				else{socketfcall(this, close, 0);		return NULL;}
 
 				SectionLoaded = true;
@@ -141,7 +141,8 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 					socketfcall(this, close, 0);
 					return NULL;
 				}
-				for(UINT32 ImportCounter = 0; ImportCounter < Exe->Fmt.imp.nEntries[ImportEntry]; ++ImportCounter){
+				UINT32 PrintLimit = 64;
+				for(register UINT32 ImportCounter = 0; ImportCounter < Exe->Fmt.imp.nEntries[ImportEntry]; ++ImportCounter){
 					bool OrdinalImport = Exe->Fmt.Opt.Pe32->mMagic == Pe32? 
 						Exe->Fmt.imp.perImport.lookups.ImportLookups32[ImportEntry][ImportCounter].Bits.ImportByOrdinal: 
 						Exe->Fmt.imp.perImport.lookups.ImportLookups64[ImportEntry][ImportCounter].Bits.ImportByOrdinal;
@@ -160,8 +161,13 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 						socketfcall(this, close, 0);
 						return NULL;
 					}
-					if(OrdinalImport){DEBUGPRINT(L"\nLoaded Import #%llu\t%p", ImportSym, (UINT64)Address);}
-								else{DEBUGPRINT(L"\nLoaded Import \"%a\"\t%p", ImportSym, (UINT64)Address);}
+					if(Info){
+						if(PrintLimit > 1){
+							if(OrdinalImport){DEBUGPRINT(L"\nLoaded Import #%llu\t%p", ImportSym, (UINT64)Address);}
+										else{DEBUGPRINT(L"\nLoaded Import \"%a\"\t%p", ImportSym, (UINT64)Address);}
+							PrintLimit--;
+						}else if(PrintLimit){DEBUGPRINT(L"\nOmitting Additional Imports...");	PrintLimit = 0;}
+					}
 					if(Exe->Fmt.Opt.Pe32->mMagic == Pe32){IAT32[ImportCounter] = (UINT32)Address;}else{IAT64[ImportCounter] = Address;}
 				}
 			}
@@ -185,7 +191,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 	EFI_GUID MemAttrGUID = {0xf4560cf6, 0x40ec, 0x4b4a, 0xa1, 0x92, 0xbf, 0x1d, 0x57, 0xd0, 0xb1, 0x89};
 	EFI_STATUS Status = uefi_call_wrapper(gBS->LocateProtocol, 0, &MemAttrGUID, NULL, (VOID **)&MemAttrProtocol);
 	if(!EFI_ERROR(Status)){
-		for(UINT32 cc = 0; cc < Exe->Fmt.Header->mNumberOfSections; ++cc){
+		for(register UINT32 cc = 0; cc < Exe->Fmt.Header->mNumberOfSections; ++cc){
 			UINT64 Attributes = 0;
 			if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeCodeSection, 8)){Attributes = EFI_MEMORY_RO;}
 			else if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeRDefDataSection, 8)){Attributes = EFI_MEMORY_RO | EFI_MEMORY_XP;}
@@ -195,8 +201,8 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 					__roundup(Exe->Fmt.SectionTable[cc].mVirtualSize, EFI_PAGE_SIZE), Attributes);
 				if(EFI_ERROR(Status)){
 					DEBUGPRINT(L"\nUnable to update %a Memory Permissions: %r", Exe->Fmt.SectionTable[cc].mName, Status);
-				}else{DEBUGPRINT(L"\nUpdated %a Memory Permissions", Exe->Fmt.SectionTable[cc].mName);}
-			}else{DEBUGPRINT(L"\nNo Memory Permissions to Update for %a", Exe->Fmt.SectionTable[cc].mName);}
+				}else if(Info){DEBUGPRINT(L"\nUpdated %a Memory Permissions", Exe->Fmt.SectionTable[cc].mName);}
+			}else if(Info){DEBUGPRINT(L"\nNo Memory Permissions to Update for %a", Exe->Fmt.SectionTable[cc].mName);}
 		}
 	}else{DEBUGPRINT(L"\nUnable to find MemorySetAttribute Protocol");}
 	socketfcall(this, close, 0);

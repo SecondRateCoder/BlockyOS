@@ -3,14 +3,14 @@
 FILE *fs_logf;
 
 bool strcheck(char *s, char c){
-	for(uint64_t cc = 0; cc < strlen(s); ++cc){
+	for(register uint64_t cc = 0; cc < strlen(s); ++cc){
 		if(s[cc] == c){return true;}
 	}
 	return false;
 }
 
 ssize_t strchecki(char *s, char c){
-	for(uint64_t cc = 0; cc < strlen(s); ++cc){
+	for(register uint64_t cc = 0; cc < strlen(s); ++cc){
 		if(c == s[cc]){return cc;}
 	}
 	return -1;
@@ -26,7 +26,7 @@ uint64_t *__getfcode(char *s_){
 	static uint64_t hash[2];
 	memset(hash, 0, sizeof(hash));
 	char *s = strdup(s_);
-	for(uint32_t cc = 0; cc < strlen(s_); ++cc){if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}}
+	for(register uint32_t cc = 0; cc < strlen(s_); ++cc){if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}}
 	blake2b_state hashstate;
 	blake2b_init(&hashstate, sizeof(uint64_t) * 2);
 	blake2b_update(&hashstate, s, strlen(s));
@@ -240,7 +240,7 @@ int trng__(void *key, uint64_t keylen){
 #endif
 
 char *str_tolower(char *s){
-	for(uint32_t cc = 0; cc < strlen(s); ++cc){if(!isdigit(s[cc])){s[cc] = tolower(s[cc]);}}
+	for(register uint32_t cc = 0; cc < strlen(s); ++cc){if(!isdigit(s[cc])){s[cc] = tolower(s[cc]);}}
 	return s;
 }
 
@@ -292,7 +292,7 @@ bool __pattmatch(const char *pattern, const char *str){
 
 GPTeNSTR *makeGPTeNSTR(char *str){
 	GPTeNSTR *out = calloc(sizeof(GPTeNSTR), 1);
-	for(uint64_t cc = 0; cc < __min(strlen(str), GPTeNAMELEN); ++cc){
+	for(register uint64_t cc = 0; cc < __min(strlen(str), GPTeNAMELEN); ++cc){
 		(*out)[cc] = (uint16_t)(str[cc]);
 	}
 	return out;

@@ -54,18 +54,18 @@ bool AllocateSystemDescriptor(void *PhysicalBase, uint32_t Limit, uint8_t Privil
 	GDTR64 R;
 	if(ReadGDTR(&R)){
 		GDTSystemSegmentDescriptor64 *Table = (GDTSystemSegmentDescriptor64 *)R.Base;
-		for(uint32_t cc = 0; cc < (R.Limit / sizeof(GDTDescriptor)); ++cc){
-			if(((GDTDescriptor *)Table)[cc].ABSystemSegmentBit){
+		for(register uint32_t cc = 0; cc < (R.Limit / sizeof(GDTDescriptor)); ++cc){
+			if(!((GDTDescriptor *)Table)[cc].ABSystemSegmentBit){
 				if(!((GDTSystemSegmentDescriptor64 *)((void *)Table + (cc * sizeof(GDTDescriptor))))->ABPresent){
 					*(GDTSystemSegmentDescriptor64 *)((void *)Table + (cc * sizeof(GDTDescriptor))) = (GDTSystemSegmentDescriptor64){
 						.ABPresent = true, .ABPriviledgeLevel = Priviledge, 
 						.ABSystemSegmentBit = true, .ABType = Type, 
-						.F32BitModeBit = __check(flags, _32BitSystemSegment), 
+						// .F32BitModeBit = __check(flags, _32BitSystemSegment), 
 						.FGranularity = __check(flags, Granularity4KB) && !__check(flags, Granularity1Byte), 
-						.FLongModeBit = __check(flags, _LongModeSystemSegment), 
+						// .FLongModeBit = __check(flags, _LongModeSystemSegment), 
 						.LimitHigh = (Limit >> 16) & 0xF, .LimitLow = Limit & 0xFFFF, 
-						.LinearBaseHigh = ((uint64_t)PhysicalBase >> 24) & 0xFFFFFFFFFF, 
-						.LinearBaseLow = (uint64_t)PhysicalBase & 0xFFFFFF
+						.BaseHigh = ((uint64_t)PhysicalBase >> 24) & 0xFFFFFFFFFF, 
+						.BaseLow = (uint64_t)PhysicalBase & 0xFFFFFF
 					};
 					return true;
 				}
@@ -75,12 +75,12 @@ bool AllocateSystemDescriptor(void *PhysicalBase, uint32_t Limit, uint8_t Privil
 			Table[R.Limit / sizeof(GDTSystemSegmentDescriptor64)] = (GDTSystemSegmentDescriptor64){
 				.ABPresent = true, .ABPriviledgeLevel = Priviledge, 
 				.ABSystemSegmentBit = true, .ABType = Type, 
-				.F32BitModeBit = __check(flags, _32BitSystemSegment), 
+				// .F32BitModeBit = __check(flags, _32BitSystemSegment), 
 				.FGranularity = __check(flags, Granularity4KB) && !__check(flags, Granularity1Byte), 
-				.FLongModeBit = __check(flags, _LongModeSystemSegment), 
+				// .FLongModeBit = __check(flags, _LongModeSystemSegment), 
 				.LimitHigh = (Limit >> 16) & 0xF, .LimitLow = Limit & 0xFFFF, 
-				.LinearBaseHigh = ((uint64_t)PhysicalBase >> 24) & 0xFFFFFFFFFF, 
-				.LinearBaseLow = (uint64_t)PhysicalBase & 0xFFFFFF
+				.BaseHigh = ((uint64_t)PhysicalBase >> 24) & 0xFFFFFFFFFF, 
+				.BaseLow = (uint64_t)PhysicalBase & 0xFFFFFF
 			};
 			R.Limit += sizeof(GDTSystemSegmentDescriptor64);
 			LoadGDTR(&R);

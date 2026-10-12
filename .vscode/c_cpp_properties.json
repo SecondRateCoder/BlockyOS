@@ -55,7 +55,8 @@
                 "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi",
                 "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi/legacy",
                 "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi/protocol",
-                "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64"
+                "${workspaceFolder}/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64",
+                "${workspaceFolder}/src/kernel/libcrt/uACPI/include/"
             ],
             "mergeConfigurations": true,
             "cppStandard": "c++17"

@@ -1,0 +1,180 @@
+Initializing CGCC.MAKE build process...
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\kboot\kboot.c. source=2026-10-11T23:40:15.7538041Z, stored=10/11/2026 22:44:16, delta=-2588640.246 sec
+gcc -c C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.kboot.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -mcmodel=small -fPIE -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -I C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/
+In file included from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:7,
+                 from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.h:3,
+                 from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c:1:
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:29:9: warning: '__safediv' redefined
+   29 | #define __safediv(A, B) SAFEOP((A), (B), ||, TRUE, !=, 0, &&, /, 1)
+      |         ^~~~~~~~~
+In file included from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64/efibind.h:100,
+                 from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efi.h:48,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:3:
+C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:181:9: note: this is the location of the previous definition
+  181 | #define __safediv(A, B) SAFEOP((A), (B), ||, true, !=, 0, &&, /, 1)
+      |         ^~~~~~~~~
+In file included from C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/struct.h:8,
+                 from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:8:
+C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/enum.h:5:9: warning: 'flagcheck' redefined
+    5 | #define flagcheck(n, f)                 (((n) & (f)) == (f))
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:53:9: note: this is the location of the previous definition
+   53 | #define flagcheck(v, f) (((v) & (f)) == (f))
+      |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/enum.h:6:9: warning: 'flagset' redefined
+    6 | #define flagset(n, f)                   ((n) |= (f))
+      |         ^~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:54:9: note: this is the location of the previous definition
+   54 | #define flagset(v, f)   ((v) |= (f))
+      |         ^~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:86:1: warning: 'naked' attribute only applies to functions [-Wattributes]
+   86 | typedef void __sysvabi __naked (*kernelmain)(__bootinfo * __restrict__ bootin);
+      | ^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/APIC.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.h:9:
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
+   42 | #define NaNf    (__builtin_nanf(""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
+   25 | #define NaNf            (__builtin_nanf (""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
+   50 | #define SNaNf    (__builtin_nansf(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
+   26 | #define SNaNf           (__builtin_nansf (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
+   51 | #define SNaNd    (__builtin_nans(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
+   27 | #define SNaNd           (__builtin_nans (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
+   52 | #define SNaNld   (__builtin_nansl(""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
+   28 | #define SNaNld          (__builtin_nansl (""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:22:9: warning: 'abs' redefined
+   22 | #define abs absf
+      |         ^~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:44:9: note: this is the location of the previous definition
+   44 | #define abs(n) (((INTN)(n)) < 0? -(n): (n))
+      |         ^~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:24:9: warning: '__max' redefined
+   24 | #define __max(a, b)                     ((b) > (a)? (b): (a))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:43:9: note: this is the location of the previous definition
+   43 | #define __max(a, b) ((a) < (b)? (b): (a))
+      |         ^~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6:
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
+      | ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
+      | ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
+      | ^~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.h:12:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISRCallback.h:264:33: warning: backslash-newline at end of file
+  264 | #define IDTCallbackInit(IDT)    \
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:34:1: warning: 'naked' attribute only applies to functions [-Wattributes]
+   34 | typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
+      | ^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:14,
+                 from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.h:26:
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:121:1: warning: 'packed' attribute ignored [-Wattributes]
+  121 | typedef uint128_t NVMeAdminCommandStruct(DirectiveRecieve, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:132:1: warning: 'packed' attribute ignored [-Wattributes]
+  132 | typedef uint128_t NVMeAdminCommandStruct(DirectiveSend, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:143:1: warning: 'packed' attribute ignored [-Wattributes]
+  143 | typedef uint128_t NVMeAdminCommandStruct(GetFeatures, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:200:1: warning: 'packed' attribute ignored [-Wattributes]
+  200 | typedef uint128_t NVMeAdminCommandStruct(GetLogPage, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:292:1: warning: 'packed' attribute ignored [-Wattributes]
+  292 | typedef uint32_t NVMeLogStruct(ChangedNamespaceList); // 4096 bytes
+      | ^~~~~~~
+In file included from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64/efibind.h:92:
+C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c: In function 'InitialiseGDT':
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/int.h:49:41: warning: conversion from 'long long unsigned int' to 'short unsigned int' changes value from '18446744073709551615' to '65535' [-Woverflow]
+   49 | #define UINT64_MAX                      (0xFFFFFFFFFFFFFFFFU)
+      |                                         ^
+C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c:27:58: note: in expansion of macro 'UINT64_MAX'
+   27 |                 .BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+      |                                                          ^~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/int.h:49:41: warning: conversion from 'long long unsigned int' to 'unsigned char:4' changes value from '18446744073709551615' to '15' [-Woverflow]
+   49 | #define UINT64_MAX                      (0xFFFFFFFFFFFFFFFFU)
+      |                                         ^
+C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c:27:83: note: in expansion of macro 'UINT64_MAX'
+   27 |                 .BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+      |                                                                                   ^~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/int.h:49:41: warning: conversion from 'long long unsigned int' to 'short unsigned int' changes value from '18446744073709551615' to '65535' [-Woverflow]
+   49 | #define UINT64_MAX                      (0xFFFFFFFFFFFFFFFFU)
+      |                                         ^
+C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c:34:50: note: in expansion of macro 'UINT64_MAX'
+   34 |         .BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+      |                                                  ^~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/int.h:49:41: warning: conversion from 'long long unsigned int' to 'unsigned char:4' changes value from '18446744073709551615' to '15' [-Woverflow]
+   49 | #define UINT64_MAX                      (0xFFFFFFFFFFFFFFFFU)
+      |                                         ^
+C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c:34:75: note: in expansion of macro 'UINT64_MAX'
+   34 |         .BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+      |                                                                           ^~~~~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_ATAPI.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:13:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h: At top level:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h:17:20: warning: inline function 'SleepS' declared but never defined
+   17 | LibAPI inline void SleepS(uint32_t seconds);
+      |                    ^~~~~~
+Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\kboot\kboot.c
+Skipping C:\GitHub\BlockyOS\src\kernel\kboot\kboot.asm - up to date; source=2026-10-11T23:30:54.3886047Z, stored=10/11/2026 23:30:54
+Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\CoreBootstrap.dll - up to date; source=2026-10-10T23:11:21.3433492Z, stored=10/10/2026 23:11:21
+Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-11T23:56:38.9759676Z, stored=10/11/2026 23:56:38
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll. source=2026-10-11T23:56:40.8291139Z, stored=10/11/2026 23:39:24, delta=-2590963.171 sec
+Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll. source=2026-10-11T23:56:41.9607787Z, stored=10/11/2026 23:39:25, delta=-2590963.039 sec
+Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll
+gcc compile/cache/elf.c.kboot.o compile/cache/elf.asm.kboot.o Build/Build-nodate/root-part/CoreBootstrap.dll Build/Build-nodate/root-part/LibCrt.dll Build/Build-nodate/root-part/services/LibIO.dll Build/Build-nodate/root-part/services/LibVideo.dll -Wl,-nostdlib -Wl,--disable-runtime-pseudo-reloc -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,-e,kboot_km -Wl,-pie -Wl,--image-base,0x0 -Wl,-Bsymbolic -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\kboot\kboot.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe
+Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe
+C:\GitHub\BlockyOS\Build\Build-nodate\kboot\kboot.dmp.log
+
+[SHELL]	FSFRAT.MAKE
+[SHELL]	FSFRAT.MOUNT
+[SHELL]	e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0
+[SHELL OUT]:	
+[SHELL OUT]:	FSFRAT DRIVER
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	create -la fc -p SYSD/ -n kboot.exe
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	000002193f90605b:fc	000002193f906061:SYSD/	000002193f90606a:kboot.exe	
+[SHELL OUT]:	[	SYSD/kboot.exe]
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.OPEN
+[SHELL]	open -p SYSD/kboot.exe -a KBOOT -la f
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.WRITE
+[SHELL]	fwrite -pp C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe -ia %KBOOT% -p 0 -n 0
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""

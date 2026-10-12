@@ -27,7 +27,7 @@
 #define __CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) ( ((PARTLAST) - ((PARTFIRST) + (nLogSectors))) * (uint64_t)sizeof(fsblock) )
 #define CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors, confSectorSize) (__safediv(__CLUSTERMAPSECTORS_CALC(PARTFIRST, PARTLAST, nLogSectors) + ((confSectorSize) - 1), (confSectorSize)))
 
-enumdef(fsattribute, uint8_t){
+enumdef(uint8_t, fsattribute){
 	__fsfile =						0x0000,
 	__fsdirectory =					0x0001,
 	__fsreadonly =					0x0002,
@@ -36,7 +36,7 @@ enumdef(fsattribute, uint8_t){
 	__fsextensionallocatedcluster =	0x0010,
 };
 
-enumdef(logoperation, uint16_t){
+enumdef(uint16_t, logoperation){
 	log__mov,
 	log__delete,
 	log__copy,

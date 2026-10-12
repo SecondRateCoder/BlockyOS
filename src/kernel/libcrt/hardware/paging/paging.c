@@ -9,33 +9,33 @@ uint32_t GetMaxPhysicalAddressBits(void){
 
 void *MapPhysical(void *Virtual){
 	bool Level5;
-	void *PT = GetPageTable(&Level5);
-	PML4Table *L4 = (PML4Table *)PHYS_TO_VIRT(PT);
+	void *PT = GetPageTable(&Level5, _StoredPageTableMode, NULL);
+	PML4Table *L4 = (PML4Table *)MapVirtual(PT);
 	PDPTTable *L3;
 	PageDirectory *L2;
 	PageTable *L1;
 	VirtualAddress Virt = *((VirtualAddress *)&Virtual);
 	if(Level5){
-		PML5Table *L5 = (PML5Table *)PHYS_TO_VIRT(PT);
+		PML5Table *L5 = (PML5Table *)MapVirtual(PT);
 		if(!((*L5)[Virt.L5].Present)){return NULL;}
-		L4 = (PML4Table *)PHYS_TO_VIRT((*L5)[Virt.L5].PhysicalAddress << 12);
+		L4 = (PML4Table *)MapVirtual((void *)((*L5)[Virt.L5].PhysicalAddress << 12));
 	}
 
 	if(!((*L4)[Virt.L4].Present)){return NULL;}else{
-		L3 = (PDPTTable *)PHYS_TO_VIRT((*L4)[Virt.L4].PhysicalAddress << 12);
+		L3 = (PDPTTable *)MapVirtual((void *)((*L4)[Virt.L4].PhysicalAddress << 12));
 	}
 	if(!(L3->directories[Virt.L3].Present)){return NULL;}else{
 		if(L3->directories[Virt.L3].PageSize){
 			// 1 GB pages are aligned to 1 GB, so the frame address must be shifted by 30 bits.
 			return (void *)((L3->pages1GB[Virt.L3].PhysicalAddress << 30) + ((uint64_t)Virtual & 0x3FFFFFFF));
-		}else{L2 = (PageDirectory *)PHYS_TO_VIRT(L3->directories[Virt.L3].PhysicalAddress << 12);}
+		}else{L2 = (PageDirectory *)MapVirtual((void *)(L3->directories[Virt.L3].PhysicalAddress << 12));}
 	}
 
 	if(!(L2->tables[Virt.L2].Present)){return NULL;}else{
 		if(L2->tables[Virt.L2].PageSize){
 			// 2 MB pages are aligned to 2 MB, so the frame address must be shifted by 21 bits.
 			return (void *)((L2->pages2MB[Virt.L2].PhysicalAddress << 21) + ((uint64_t)Virtual & 0x1FFFFF));
-		}else{L1 = (PageTable *)PHYS_TO_VIRT(L2->tables[Virt.L2].PhysicalAddress << 12);}
+		}else{L1 = (PageTable *)MapVirtual((void *)(L2->tables[Virt.L2].PhysicalAddress << 12));}
 	}
 
 	//	12 bits(1 byte and 4 bits)
@@ -63,7 +63,7 @@ void *WalkPageTreeByVirtual(void *Virtual, uint32_t *Level){
 
 void InvalidatePages(void *Virtual, uint64_t Bytes){
 	Bytes = __roundup(Bytes, PAGE_SIZE) / PAGE_SIZE;
-	for(uint32_t cc = 0; cc < Bytes; cc++){InvalidatePage(Virtual + (cc * PAGE_SIZE));}
+	for(register uint32_t cc = 0; cc < Bytes; cc++){InvalidatePage(Virtual + (cc * PAGE_SIZE));}
 	return;
 }
 void InvalidatePage(void *Virtual){
@@ -73,7 +73,7 @@ void InvalidatePage(void *Virtual){
 
 void *WalkPageTree(uint32_t *Level, PageCoordinate Coordinate){
 	bool L5Support;
-	void *Temp = GetPageTable(&L5Support);
+	void *Temp = GetPageTable(&L5Support, _StoredPageTableMode, NULL);
 	while(*Level){
 		switch(*Level){
 			case 5: {
@@ -147,163 +147,4 @@ bool RepointVirtualAddress(void *Virtual, void *NewPhysical){
     InvalidatePage(Virtual);
 
     return true;
-}
-
-//!	AI
-static bool ReverseWalk(uint64_t TargetFrame, uint64_t CurrentVirt, uint64_t *FoundVirt){
-	uint32_t Level = 0;
-	void *TableVirt = NULL;	{
-		TableVirt = GetPageTable((bool *)&Level);
-		Level = Level? 5: 4;
-	};
-	for(uint32_t i = 0; i < PagingTableLength; i++){
-		uint64_t BranchVirt = CurrentVirt | ((uint64_t)i << (12 + (Level - 1) * 9));
-		switch(Level){
-			//	4 KB Leaf Entries
-			case 1: {
-				PageTable *l1 = (PageTable *)TableVirt;
-				if((*l1)[i].Present){
-					if((*l1)[i].PhysicalAddress == TargetFrame){
-						*FoundVirt = BranchVirt;
-						return true;
-					}
-				}
-				continue;
-			} case 2: {
-				PageDirectory *l2 = (PageDirectory *)TableVirt;
-				if(l2->tables[i].Present){
-					if(l2->tables[i].PageSize){
-						//	2 MB Leaf Page: Target frame is physical_address >> 21
-						if(l2->pages2MB[i].PhysicalAddress == (TargetFrame >> 9)){
-							*FoundVirt = BranchVirt;
-							return true;
-						}
-					}else if(ReverseWalk(TargetFrame, BranchVirt, FoundVirt)){return true;}
-				}
-				continue;
-			} case 3: {
-				PDPTTable *l3 = (PDPTTable *)TableVirt;
-				if(l3->directories[i].Present){
-					if(l3->directories[i].PageSize){
-						//	1 GB Leaf Page: Target frame is physical_address >> 30
-						if(l3->pages1GB[i].PhysicalAddress == (TargetFrame >> 18)){
-							*FoundVirt = BranchVirt;
-							return true;
-						}
-					}else if(ReverseWalk(TargetFrame, BranchVirt, FoundVirt)){return true;}
-				}
-				continue;
-			} case 4: {
-				PML4Table *l4 = (PML4Table *)TableVirt;
-				if((*l4)[i].Present && ReverseWalk(TargetFrame, BranchVirt, FoundVirt)){return true;}
-				continue;
-			}
-		}
-
-		//	PML4
-		if(Level == 4){
-		}
-
-		//	PML5
-		if(Level == 5){
-			PML5Table *l5 = (PML5Table *)TableVirt;
-			if(!(*l5)[i].Present){continue;}
-			void *childPhys = (void *)((*l5)[i].PhysicalAddress << 12);
-			if(ReverseWalk(TargetFrame, BranchVirt, FoundVirt)){return true;}
-			continue;
-		}
-	}
-	return false;
-}
-void *__sysvabi MapPTVirtual(void *Physical){
-	bool Level5;
-	void *RootPhys = GetPageTable(&Level5);
-	uint64_t TargetFrame = (uint64_t)Physical >> 12, 
-			Offset = (uint64_t)Physical & 0xFFF, 
-			FoundVirt = 0;
-	//	We need to enumerate
-	if(ReverseWalk(TargetFrame, 0, &FoundVirt)){
-		// Sign-extend high canonical bits for kernel addresses
-		if(!Level5 && (FoundVirt & (1ULL << 47))){FoundVirt |= 0xFFFF000000000000ULL;}else
-		if(Level5 && (FoundVirt & (1ULL << 56))){FoundVirt |= 0xFF00000000000000ULL;}
-		return (void *)(FoundVirt + Offset);
-	}
-
-	return NULL; // Physical address is unmapped
-}
-
-typedef struct{
-	uint64_t FoundPhysAddr;
-	uint64_t MaxPhysAddr;
-	uint64_t CurrentBlockStart;
-	uint64_t CurrentBlockSize;
-	uint64_t TargetSize;
-	bool FoundGap;
-}SearchContext;
-
-// Helper to process mapped physical ranges and track contiguous spans / max address
-static void ProcessPhysicalRange(SearchContext *ctx, uint64_t physStart, uint64_t rangeSize) {
-	const uint64_t physEnd = physStart + rangeSize;
-
-	// Track highest physical address seen in the page table
-	if(physEnd > ctx->MaxPhysAddr){ctx->MaxPhysAddr = physEnd;}
-
-	if(ctx->FoundGap){return;}
-
-	// Check if this range continues the current contiguous block
-	if(ctx->CurrentBlockSize == 0){
-		ctx->CurrentBlockStart = physStart;
-		ctx->CurrentBlockSize = rangeSize;
-	}else if(physStart == ctx->CurrentBlockStart + ctx->CurrentBlockSize){
-		ctx->CurrentBlockSize += rangeSize;
-	}else{
-		// Discontinuity found: reset tracker to new range
-		ctx->CurrentBlockStart = physStart;
-		ctx->CurrentBlockSize = rangeSize;
-	}
-
-	// Check if we have accumulated enough contiguous physical memory
-	if(ctx->CurrentBlockSize >= ctx->TargetSize){
-		ctx->FoundPhysAddr = ctx->CurrentBlockStart;
-		ctx->FoundGap = true;
-	}
-}
-
-// Recursive walker (read-only inspection)
-static void WalkTreeReadOnly(void *TableVirt, int Level, SearchContext *ctx){
-	if(!TableVirt || ctx->FoundGap){return;}
-	for(int i = 0; i < PagingTableLength; i++){
-		if(ctx->FoundGap){break;}
-		switch(Level){
-			case 5: {
-				PML5Table *l5 = (PML5Table *)TableVirt;
-				if((*l5)[i].Present){WalkTreeReadOnly(PHYS_TO_VIRT((uint64_t)(*l5)[i].PhysicalAddress << 12), 4, ctx);}
-				continue;
-			} case 4: {
-				PML4Table *l4 = (PML4Table *)TableVirt;
-				if((*l4)[i].Present){WalkTreeReadOnly(PHYS_TO_VIRT((uint64_t)(*l4)[i].PhysicalAddress << 12), 3, ctx);}
-				continue;
-			} case 3: {
-				PDPTTable *l3 = (PDPTTable *)TableVirt;
-				if(l3->directories[i].Present){
-					if(l3->directories[i].PageSize){ // 1 GB Huge Page Leaf
-						ProcessPhysicalRange(ctx, (uint64_t)l3->pages1GB[i].PhysicalAddress << 30, PAGE_SIZE);
-					}else{WalkTreeReadOnly(PHYS_TO_VIRT((uint64_t)l3->directories[i].PhysicalAddress << 12), 2, ctx);}
-				}
-				continue;
-			} case 2: {
-				PageDirectory *l2 = (PageDirectory *)TableVirt;
-				if(l2->tables[i].Present){
-					if(l2->tables[i].PageSize){ // 2 MB Large Page Leaf
-						ProcessPhysicalRange(ctx, (uint64_t)l2->pages2MB[i].PhysicalAddress << 21, PAGE_SIZE2);
-					}else{WalkTreeReadOnly(PHYS_TO_VIRT((uint64_t)l2->tables[i].PhysicalAddress << 12), 1, ctx);}
-				}
-				continue;
-			} case 1: {
-				PageTable *l1 = (PageTable *)TableVirt;
-				if((*l1)[i].Present){ProcessPhysicalRange(ctx, (uint64_t)(*l1)[i].PhysicalAddress << 12, PAGE_SIZE3);}
-				continue;
-			}
-		}
-	}
 }

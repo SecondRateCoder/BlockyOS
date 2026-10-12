@@ -706,7 +706,7 @@ uint32_t AHCIReadBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Pos
 		CMDHeader->WriteFlag = false;
 		HBACommandTableEntry *Table = SafeAllocatePages((void *)CMDHeader->CommandTableBase, 
 		    sizeof(HBACommandTableEntry), (ReadWritable | SupervisorMode), 0x00, 0x20);
-		for(uint32_t cc = 0; cc < CMDHeader->PRDTableLength; ++cc){
+		for(register uint32_t cc = 0; cc < CMDHeader->PRDTableLength; ++cc){
 			Table->Table[cc].DataBaseAddress = (uint64_t)MapPhysical(Out + (cc * AHCI_TRANSFERBLOCKSIZE));
 			Table->Table[cc].DWORD3.CompletionInterruptEnable = true;
 			Table->Table[cc].DWORD3.DataByteCount = __min(AHCI_TRANSFERBLOCKSIZE - 1, Bytes);
@@ -760,7 +760,7 @@ uint32_t AHCIWriteBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Po
 		CMDHeader->WriteFlag = true;
 		HBACommandTableEntry *Table = SafeAllocatePages((void *)CMDHeader->CommandTableBase, 
 			sizeof(HBACommandTableEntry), (ReadWritable | SupervisorMode), 0x00, 0x20);
-		for(uint32_t cc = 0; cc < CMDHeader->PRDTableLength; ++cc){
+		for(register uint32_t cc = 0; cc < CMDHeader->PRDTableLength; ++cc){
 			Table->Table[cc].DataBaseAddress = (uint64_t)MapPhysical(Out + (cc * AHCI_TRANSFERBLOCKSIZE));
 			Table->Table[cc].DWORD3.CompletionInterruptEnable = true;
 			Table->Table[cc].DWORD3.DataByteCount = __min(AHCI_TRANSFERBLOCKSIZE - 1, Bytes);

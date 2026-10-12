@@ -43,9 +43,7 @@ LoadPageTree:
 	call IsLA57Supported
 	cmp rax, r8
 	je .Load
-	;	If 
 	jg .ErrorExpectsLevel5
-	;	jl .ErrorExpectsLevel4
 	mov eax, ErrorExpectsLevel4Code
 	ret
 .ErrorExpectsLevel5:
@@ -63,16 +61,42 @@ LoadPageTree:
 
 	jmp rsi
 
-extern MapPTVirtual
+; extern MapPTVirtual
 global GetPageTable
-;	rax(Pointer)GetPageTable(rdi(bool *))
+;	rax(Pointer)GetPageTable(rdi(bool *), rsi(Mode), rdx(PageTableVirtual *))
 GetPageTable:
 	call IsLA57Enabled
 	cmp rax, true
 	jne .Level5Disabled
 	mov [rdi], byte true
 .Level5Disabled:
+	cmp rsi, 1
+	je .StoredPageTableMode
+	;	1:1 Mapping Mode
+	cmp rsi, 0
+	jne .NoMode
 	mov rax, cr3
 	mov rdi, rax
-	call MapPTVirtual
+	jmp .11MappingMode
+;	Basically an Implicit Hang.
+.NoMode:
+	; call MapVirtual
+	mov rax, 0
+	jmp .11MappingMode
+;	The Page Table's Virtual Address is pre-stored in a specific Location. 
+;	Load/Update the stored Pointer
+.StoredPageTableMode:
+	lea rax, [rel StoredPageTable]
+	cmp rdx, 0
+	je .LoadStoredPageTablePTR
+.StorePageTablePTR:
+	mov [rax], rdx
+	mov rax, rdx
+	jmp .11MappingMode
+.LoadStoredPageTablePTR:
+	mov rax, [rax]
+.11MappingMode:
 	ret
+
+section .bss
+StoredPageTable:	resq 1

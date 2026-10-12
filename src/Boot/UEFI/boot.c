@@ -40,26 +40,23 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE Image, EFI_SYSTEM_TABLE *Table){
 	
 	socket_t *disk = diskrt.data;
 	
-	
-	
-	
 	LoadedPeExecutable *KBOOT = LoadExecutable(disk, FALSE, 32, "SYSD/kboot.exe");
 	if(!KBOOT){DEBUGPRINT(L"\nError Loading Executable");		Exit(EFI_ABORTED, 0, NULL);}
 	
-	EFI_GUID gopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
-	UINTN SizeOfInfo;
-	EFI_GRAPHICS_OUTPUT_PROTOCOL *gop;
-	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *info;
-	EFI_STATUS status = uefi_call_wrapper(BS->LocateProtocol, 0, &gopGuid, NULL, (void**)&gop);
-	status = uefi_call_wrapper(gop->QueryMode, 0, gop, (gop->Mode == NULL? 0: gop->Mode->Mode), &SizeOfInfo, &info);
-	if(status == EFI_NOT_STARTED){status = uefi_call_wrapper(gop->SetMode, 0, gop, 0);}
-	rt = socketfcall(disk, open, "SYSD/icon.gif", "f");
-	socket_t *gif = rt.data;
-	gifDescriptionSpace_t *GIF = OpenGIF(gif, gop->Mode->Info->PixelFormat);
-	DEBUGPRINT(L"\nPrinting GIF");
-	
-	GifShow(GIF, gop);
-	socketfcall(gif, close, 0);
+	// EFI_GUID gopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
+	// UINTN SizeOfInfo;
+	// EFI_GRAPHICS_OUTPUT_PROTOCOL *gop;
+	// EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *info;
+	// EFI_STATUS status = uefi_call_wrapper(BS->LocateProtocol, 0, &gopGuid, NULL, (void**)&gop);
+	// status = uefi_call_wrapper(gop->QueryMode, 0, gop, (gop->Mode == NULL? 0: gop->Mode->Mode), &SizeOfInfo, &info);
+	// if(status == EFI_NOT_STARTED){status = uefi_call_wrapper(gop->SetMode, 0, gop, 0);}
+	// rt = socketfcall(disk, open, "SYSD/icon.gif", "f");
+	// socket_t *gif = rt.data;
+	// gifDescriptionSpace_t *GIF = OpenGIF(gif, gop->Mode->Info->PixelFormat);
+
+	// GifShow(GIF, gop);
+	// socketfcall(gif, close, 0);
+	// CloseGIF(GIF);
 
 	__bootinfo *bootout = gatherbootinfo(Image);
 	// bochs_breakpoint();

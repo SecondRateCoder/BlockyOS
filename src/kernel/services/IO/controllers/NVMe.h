@@ -62,7 +62,7 @@ ISRCallbackDefinition(NVMeMarkCompletionQueue){
 	static GDTR64 R;
 	if(ReadGDTR(&R)){
 		GDTSystemSegmentDescriptor64 *D = (void *)R.Base + (sizeof(GDTDescriptor) * Frame->_GDT);
-		TSS_t *TSS = (void *)(((uint64_t)D->LinearBaseHigh << 24) + D->LinearBaseLow);
+		TSS_t *TSS = (void *)(((uint64_t)D->BaseHigh << 24) + D->BaseLow);
 
 		//	We get the last StackHeader, this allows us to process Interrupts.
 		NVMeInterruptStackHeader *SH = (void *)(TSS->IST[Frame->_IST]), *Previous = SH;
@@ -74,10 +74,10 @@ ISRCallbackDefinition(NVMeMarkCompletionQueue){
 		static uint32_t Level = 5;
 		void *_PT = WalkPageTreeByVirtual(SH->memory, &Level);
 		switch(Level){
-			case 3: {((PDPTEntryDirectory *)_PT)->ReadWrite = true;		break;} 
-			case 2: {((PageDirectoryEntry *)_PT)->ReadWrite = true;		break;} 
-			case 1: {((PageTableEntry4KB *)_PT)->ReadWrite = true;		break;} 
-			default: {ISRCallbackReturn;}
+			case 3:		{((PDPTEntryDirectory *)_PT)->ReadWrite = true;		break;} 
+			case 2:		{((PageDirectoryEntry *)_PT)->ReadWrite = true;		break;} 
+			case 1:		{((PageTableEntry4KB *)_PT)->ReadWrite = true;		break;} 
+			default:	{ISRCallbackReturn;}
 		}
 		InvalidatePages(SH->memory, SH->bytes);
 	}

@@ -1,0 +1,36 @@
+Initializing CGCC.MAKE build process...
+Skipping C:\GitHub\BlockyOS\src\kernel\services\IO\IO.c - up to date; source=2026-10-08T17:26:00.2985261Z, stored=10/08/2026 17:26:00
+Skipping C:\GitHub\BlockyOS\src\kernel\services\hostfs\controllers\frat\frat.c - up to date; source=2026-10-10T01:04:48.0363712Z, stored=10/10/2026 01:04:48
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll. source=2026-10-11T23:56:38.9759676Z, stored=10/11/2026 23:39:22, delta=-2590963.024 sec
+Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll
+Skipping C:\GitHub\BlockyOS\src\kernel\services\IO\IO.def - up to date; source=2026-10-08T16:55:10.1695868Z, stored=10/08/2026 16:55:10
+gcc compile/cache/elf.c.IO.o compile/cache/elf.c.frat.o Build/Build-nodate/root-part/LibCrt.dll src/kernel/services/IO/IO.def -Wl,-nostdlib -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,--image-base,0x0 -Wl,-shared -Wl,-flinker-output=dyn -Wl,-Bsymbolic -Wl,--out-implib,C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll.a -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\IO\IO.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll
+Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll
+C:\GitHub\BlockyOS\Build\Build-nodate\IO\IO.dmp.log
+
+[SHELL]	FSFRAT.MAKE
+[SHELL]	FSFRAT.MOUNT
+[SHELL]	e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0
+[SHELL OUT]:	
+[SHELL OUT]:	FSFRAT DRIVER
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	create -la fc -p SYSD/ -n LibIO.dll
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	0000024d7e12605b:fc	0000024d7e126061:SYSD/	0000024d7e12606a:LibIO.dll	
+[SHELL OUT]:	[	SYSD/LibIO.dll]
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.OPEN
+[SHELL]	open -p SYSD/LibIO.dll -a IO -la f
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.WRITE
+[SHELL]	fwrite -pp C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll -ia %IO% -p 0 -n 0
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""

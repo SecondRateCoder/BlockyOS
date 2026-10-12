@@ -2,9 +2,15 @@
 
 #include "src/Boot/UEFI/guid.h"
 #include "src/Boot/UEFI/tools/tools.h"
+// #include "src/Boot/UEFI/standard.h"
 #include "src/Boot/UEFI/drivers/socket/socket.h"
 
 #include "enum.h"
+
+#ifdef __roundup
+	#undef __roundup
+#endif
+#define __roundup(a, i)		((((volatile __typeof(a))(a) + ((volatile __typeof(a))(i) - 1)) / (volatile __typeof(a))(i)) * (volatile __typeof(a))(i))
 
 /*	* =========================
 	*  PE / COFF definitions

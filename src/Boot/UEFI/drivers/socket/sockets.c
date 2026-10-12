@@ -335,7 +335,7 @@ socket_ret socketfuncprefix __froot_sckinfo(struct socket_t *socket, UINT64 nArg
 			}
 		} case 7: {
 			// DEBUGPRINT(L"\nPrinting Cluster Table\n");
-			for(UINT64 cc = 0; cc < root->clusterbuffer.nClusterItems; ++cc){
+			for(register UINT64 cc = 0; cc < root->clusterbuffer.nClusterItems; ++cc){
 				if(root->clusterbuffer.clusterMap[cc].fcodehigh && root->clusterbuffer.clusterMap[cc].fcodelow){
 					if(cc){/*DEBUGPRINT(L", ");*/}
 					//	17326495997843702475:275180975602787

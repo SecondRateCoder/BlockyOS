@@ -5,13 +5,13 @@ uint64_t *getfcode(char *path){
 	static uint64_t hash[2];
 	char *canonicalPath = strdup(path);
 	if(!canonicalPath){return NULL;}
-	for(uint64_t i = 0; i < strlen(canonicalPath); ++i){if(canonicalPath[i] == '\\'){canonicalPath[i] = '/';}}
+	for(register uint64_t i = 0; i < strlen(canonicalPath); ++i){if(canonicalPath[i] == '\\'){canonicalPath[i] = '/';}}
 	blake2b_state state;
 	blake2b_init(&state, sizeof(hash));
 	blake2b_update(&state, canonicalPath, strlen(canonicalPath));
 	blake2b_final(&state, hash, sizeof(hash));
 	hash[1] &= FCODEHASHMASK;
-	free(canonicalPath);
+	mfree(canonicalPath);
 	return hash;
 }
 
@@ -52,14 +52,15 @@ bool checkdisk(rawenv re, GUID _GUID, GUID altGUID){
 }
 
 partdim loadpart(rawenv re, GUID _GUID, GUID altGUID, GPTNameStr name){
-	char gptname[GPTNameLength + 1];	ZeroMem(gptname, GPTNameLength + 1);
-	for(uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (name[cc] & 0xFF);}
+	char gptname[GPTNameLength + 1];	
+	memset(gptname, 0, GPTNameLength + 1);
+	for(register uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (name[cc] & 0xFF);}
 	// DEBUGPRINT(L"\n[%s:%u]  >>  Loading Partition:    %a", (L"" __FILE__), __LINE__, gptname);
 	if(checkdisk(re, _GUID, altGUID)){
 		miniGPT *gpt = (miniGPT *)ReadRawHandleBlocks(re, GPTLBA, ReBlocks(re, sizeof(miniGPT)));
 		GPTentry *ge = (GPTentry *)ReadRawHandleBlocks(re, gpt->partEntryLoc, ReBlocks(re, gpt->nPartEntries * sizeof(GPTentry)));
 		
-		for(uint32_t i = 0x00; i < gpt->nPartEntries; i++){
+		for(register uint32_t i = 0x00; i < gpt->nPartEntries; i++){
 			if(!memcmp(name, ge[i].name, GPTNameSize)){
 				partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
 				mfree(gpt);
@@ -83,7 +84,7 @@ void formatpart(
 ){
 	// DEBUGDO{
 	// 	char gptname[GPTNameLength + 1];	ZeroMem(gptname, GPTNameLength + 1);
-	// 	for(uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (name[cc] & 0xFF);}
+	// 	for(register uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (name[cc] & 0xFF);}
 	// 	DEBUGPRINT(L"\n[%s:%u]  >>  Formatting Partition:    %a", (L"" __FILE__), __LINE__, gptname);
 	// }
 	partdim part = loadpart(re, _GUID, altGUID, name);
@@ -127,9 +128,10 @@ partdim queryparttablefs(miniGPT *gpt, rawenv re){
 	// DEBUGPRINT(L"\n[%s:%u]  >>  Querying Part Table", (L"" __FILE__), __LINE__);
 	// Query all Partitions for the FileSystem.
 	GPTentry *ge = (GPTentry *)ReadRawHandleBlocks(re, gpt->partEntryLoc, ReBlocks(re, gpt->nPartEntries * sizeof(GPTentry)));
-	for(uint32_t i = 0x00; i < gpt->nPartEntries; i++){
-		char gptname[GPTNameLength + 1];	ZeroMem(gptname, GPTNameLength + 1);
-		for(uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (ge[i].name[cc] & 0xFF);}
+	for(register uint32_t i = 0x00; i < gpt->nPartEntries; i++){
+		char gptname[GPTNameLength + 1];
+		memset(gptname, 0, GPTNameLength + 1);
+		for(register uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (ge[i].name[cc] & 0xFF);}
 		// DEBUGPRINT(L"\n[%s:%u]  >>  GPT-Entry: %a{%llu:%llu -> %llu}", (L"" __FILE__), __LINE__, gptname, ge[i].sLBA, ge[i].eLBA, ge[i].eLBA - ge[i].sLBA);
 		if(queryfs(re, ge[i].sLBA)){
 			partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
@@ -183,27 +185,11 @@ conf_fsroot *fmount(rawenv re, GUID _GUID, GUID altGUID){
 		miniGPT *gpt = (miniGPT *)block;
 		if((partition = queryparttablefs(gpt, re)).high){mfree(gpt);}else{mfree(gpt);    return NULL;}
 		re->PartitionBase = partition.base;
-		// DEBUGPRINT(
-		// 	L"\n[%s:%u]  >>  Found Formatted Partition: %llu:%llu -> %llu", 
-		// 	(L"" __FILE__),__LINE__, partition.base, partition.high, partition.high - partition.base
-		// );
 		fsroot *fsroot_ = (fsroot *)ReadRawHandleBlocks(re, partition.base + FRATROOTOFFSET, ReBlocks(re, sizeof(fsroot)));
-		// DEBUGPRINT(
-		// 	L"\n[%s:%u]  >>  Root: %llu:%llu -> %llu LBAs"
-		// 	L"\n	Version-Code: [%u:%u]"
-		// 	L"\n	Configured Block-Size: %u"
-		// 	L"\n	Configured Cluster-Size: %u"
-		// 	L"\n	Configured # of Log-Sectors: %u"
-		// 	L"\n	Configured Log-Size: %u", 
-		// 	(L"" __FILE__),__LINE__, partition.base, partition.high, partition.high - partition.base, 
-		// 	fsroot_->verCode[0x00], fsroot_->verCode[1], 
-		// 	fsroot_->confBlockSize, CLUSTERMAPSECTORS_CALC(partition.base, partition.high, fsroot_->confLogSectors, fsroot_->confBlockSize), 
-		// 	fsroot_->confClusterSize, fsroot_->confLogSectors, fsroot_->confLogSectors * sizeof(fslogitem)
-		// );
 		re->CalcBlocks = fsroot_->confBlockSize;
 		conf_fsroot *largeroot = mcalloc(1, sizeof(conf_fsroot));
 		*largeroot = (conf_fsroot){
-			ReSetGUID(._GUID, _GUID), ReSetGUID(.altGUID, altGUID), 
+			._GUID = {0}, .altGUID = {0}, 
 			.loc = partition.base, .root = fsroot_, .lastClusterAlloc = 0x00,
 			.logblocks = {
 				.logBlock = ReadRawHandleBlocks(re, partition.base + LOGBLOCKOFFSET, ReBlocks(re, fsroot_->confBlockSize * fsroot_->confLogSectors)),
@@ -215,13 +201,15 @@ conf_fsroot *fmount(rawenv re, GUID _GUID, GUID altGUID){
 					partition.base + (CLUSTERMAPOFFSET(fsroot_->confLogSectors) * fsroot_->confBlockSize), ReBlocks(re, fsroot_->confClusterSize))
 			}, 
 		};
+		memcpy(largeroot->_GUID, _GUID, sizeof(GUID));
+		memcpy(largeroot->altGUID, altGUID, sizeof(GUID));
 		return largeroot;
 	}
 	return NULL;
 }
 
 fsblock *allocatecluster(conf_fsroot *root){
-	for(uint64_t i = root->lastClusterAlloc; i < root->clusterbuffer.nClusterItems; ++i){
+	for(register uint64_t i = root->lastClusterAlloc; i < root->clusterbuffer.nClusterItems; ++i){
 		if(!(root->clusterbuffer.clusterMap[i].fcodelow) && !(root->clusterbuffer.clusterMap[i].fcodehigh)){
 			root->lastClusterAlloc = i;
 			return root->clusterbuffer.clusterMap + i;
@@ -247,7 +235,7 @@ void __ffremovel(conf_fsroot *root, char *path){return __ffremovelh(root, getfco
 
 void __ffremovelh(conf_fsroot *root, uint64_t hash[2]){
 	hash[1] &= FCODEHASHMASK;
-	for(uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
+	for(register uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
 		if(root->clusterbuffer.clusterMap[cc].fcodelow == hash[0] && 
 			root->clusterbuffer.clusterMap[cc].fcodehigh == hash[1]){
 				root->clusterbuffer.clusterMap[cc].fcodehigh = 0x00;
@@ -263,7 +251,7 @@ void __fcreate(rawenv re, conf_fsroot *root, char *path, char *flags){
 	if(fb){
 		if(strcheck(flags, 'P')){fb->attributes |= __fsproxy;}else{
 			if(strcheck(flags, 'd') && !strcheck(flags, 'f')){fb->attributes |= __fsdirectory;}
-			if(strcheck(flags, 'f') && !flagcheck(fb->attributes, __fsdirectory)){fb->attributes &= __fsfile;}
+			if(strcheck(flags, 'f') && !__check(fb->attributes, __fsdirectory)){fb->attributes &= __fsfile;}
 			if(strcheck(flags, 'r')){fb->attributes |= __fsreadonly;}
 		}
 		fb->attributes |= __fsmetadatacluster;
@@ -286,18 +274,18 @@ void __fcreate(rawenv re, conf_fsroot *root, char *path, char *flags){
 }
 
 fsblock *__faddr(rawenv re, conf_fsroot *root, fsblock *family){
-	// DEBUGPRINT(L"\nAdding FS Table Entry: %llu, Type: %a", family->fcode, (flagcheck(family->attributes, __fsdirectory)? "DIRECTORY": "FILE"));
+	// DEBUGPRINT(L"\nAdding FS Table Entry: %llu, Type: %a", family->fcode, (__check(family->attributes, __fsdirectory)? "DIRECTORY": "FILE"));
 	fsblock *fb = allocatecluster(root);
 	if(fb){
 		fb->index = 0x00;
-		for(uint64_t i = 0x00; i < root->clusterbuffer.nClusterItems; ++i){
+		for(register uint64_t i = 0x00; i < root->clusterbuffer.nClusterItems; ++i){
 			if(root->clusterbuffer.clusterMap[i].fcodelow == family->fcodelow && 
 				root->clusterbuffer.clusterMap[i].fcodehigh == family->fcodehigh){fb->index++;}
 		}
 		fb->attributes = family->attributes;
 		fb->fcodehigh = family->fcodehigh;
 		fb->fcodelow = family->fcodelow;
-		flagunset(fb->attributes, __fsmetadatacluster);
+		__uset(fb->attributes, __fsmetadatacluster);
 		// Clear Block
 		void *bl0 = mcalloc(1, root->root->confBlockSize);
 		memset(bl0, 0x00, root->root->confBlockSize);
@@ -315,7 +303,7 @@ void __finit(rawenv re, conf_fsroot *root, fsblock *fb, char *path){
 	LBA loc = getloc(root, fb);
 	meta_fsblock *metadata = (meta_fsblock *)mcalloc(1, root->root->confBlockSize);
 	char *name = NULL;
-	for(uint64_t i = strlen(path); i > 0; i--){
+	for(register uint64_t i = strlen(path); i > 0; i--){
 		if(i > GPTNameLength){path[i] = '\0x00';}else{
 			if(path[i] == '\\' || path[i] == '/'){name = path + i++;	break;}else 
 			if(!isascii(path[i])){path[i] = 0x00;}
@@ -332,12 +320,12 @@ void __finit(rawenv re, conf_fsroot *root, fsblock *fb, char *path){
 		.writetime = 0x00,
 		.f = {
 			.attributes = fb->attributes,
-			.fcodelow = flagcheck(fb->attributes, __fsproxy) ? 0x00 : fb->fcodelow,
-			.fcodehigh = flagcheck(fb->attributes, __fsproxy) ? 0x00 : fb->fcodehigh
+			.fcodelow = __check(fb->attributes, __fsproxy) ? 0x00 : fb->fcodelow,
+			.fcodehigh = __check(fb->attributes, __fsproxy) ? 0x00 : fb->fcodehigh
 		}
 	};
 	memcpy(metadata->fsig, FRATBLOCKSIG, 8);
-	flagunset(metadata->f.attributes, __fsmetadatacluster);
+	__uset(metadata->f.attributes, __fsmetadatacluster);
 	memset(metadata->name, 0x00, GPTNameLength);
 	memcpy(metadata->name, name, strlen(name));
 	re->CalcBlocks = root->root->confBlockSize;
@@ -345,24 +333,24 @@ void __finit(rawenv re, conf_fsroot *root, fsblock *fb, char *path){
 	
 }
 
-fsblock *__ffindh(conf_fsroot *root, uint64_t hash[2]){
-	// DEBUGPRINT(L"\nRoot is %p", root);
-	hash[1] &= FCODEHASHMASK;
-	return __ffindhi(root, hash, 0x00);
-}
 
 fsblock *__ffindhi(conf_fsroot *root, uint64_t hash[2], uint64_t index){
 	hash[1] &= FCODEHASHMASK;
-	for(uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
+	for(register uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
 		if(root->clusterbuffer.clusterMap[cc].fcodelow == hash[0] && 
 			root->clusterbuffer.clusterMap[cc].fcodehigh == hash[1] && 
 			root->clusterbuffer.clusterMap[cc].index == index){
-			return root->clusterbuffer.clusterMap + cc;
+				return root->clusterbuffer.clusterMap + cc;
 		}
 	}
 	return NULL;
 }
 
+fsblock *__ffindh(conf_fsroot *root, uint64_t hash[2]){
+	// DEBUGPRINT(L"\nRoot is %p", root);
+	hash[1] &= FCODEHASHMASK;
+	return __ffindhi(root, hash, 0x00);
+}
 fsblock *__ffindi(conf_fsroot *root, char *path, uint64_t index){return __ffindhi(root, getfcode(path), index);}
 
 fsblock *__ffind(conf_fsroot *root, char *path){return __ffindi(root, path, 0);}
@@ -395,7 +383,7 @@ void __fpush1(rawenv re, conf_fsroot *root, fsblock *fb, uint64_t *i, void *buff
 			if(fb_){loc = getloc(root, fb_);
 			}else{return;}
 		}else{
-			while(fb_ && flagcheck(fb_->attributes, __fsextensionallocatedcluster)){
+			while(fb_ && __check(fb_->attributes, __fsextensionallocatedcluster)){
 				fb_ = __ffindhi(root, (uint64_t[2]){fb->fcodelow, fb->fcodehigh}, *i);
 				(*i)++;
 			}
@@ -406,7 +394,7 @@ void __fpush1(rawenv re, conf_fsroot *root, fsblock *fb, uint64_t *i, void *buff
 			}
 			loc = getloc(root, fb_);
 		}
-	}else{if(flagcheck(fb->attributes, __fsmetadatacluster)){return;}else{loc = getloc(root, fb);}}
+	}else{if(__check(fb->attributes, __fsmetadatacluster)){return;}else{loc = getloc(root, fb);}}
 	// DEBUGPRINT(L"\nWriting File Block at %llu, Item: %llu.\tRoot: %llu", loc, i, fb->fcode);
 	re->CalcBlocks = root->root->confBlockSize;
 	WriteRawHandleBlocks(re, loc, ReBlocks(re, root->root->confBlockSize), buffer);
@@ -426,7 +414,7 @@ dirhandle *floadhdir(rawenv re, conf_fsroot *root, char *path, char *args){
 		out->file = __ffind(root, path);
 		if(!out->file){return NULL;}
 	}
-	if(flagcheck(out->file->attributes, __fsdirectory)){__fdirrefresh(re, out);
+	if(__check(out->file->attributes, __fsdirectory)){__fdirrefresh(re, out);
 	}else{mfree(out->path);		mfree(out);		return NULL;}
 	return out;
 }
@@ -465,7 +453,7 @@ void __fdirrefresh(rawenv re, dirhandle *handle){
 			void *temp = ReadRawHandleBlocks(re, getloc(handle->root, fb), ReBlocks(re, handle->root->root->confBlockSize));
 			memcpy((void *)handle->dirarray + (re->CalcBlocks * blockprogress), temp, re->CalcBlocks);
 			mfree(temp);
-			for(uint64_t cc = 0x00; cc < __safediv(re->CalcBlocks, sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = true;	break;}}
+			for(register uint64_t cc = 0x00; cc < __safediv(re->CalcBlocks, sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = true;	break;}}
 			blockprogress++;
 		}else if(!fb){exit_ = true;}
 	}while(!exit_);
@@ -536,14 +524,14 @@ uint64_t __fsize(fhandle *fh){
 	UINT32 cc = 0;
 	fsblock *tmp = NULL;
 	while((tmp = __ffindhi(fh->root, (UINT64[2]){fh->file->fcodelow, fh->file->fcodehigh}, cc))){
-		if(!flagcheck(tmp->attributes, __fsmetadatacluster)){size += fh->root->root->confBlockSize;}
+		if(!__check(tmp->attributes, __fsmetadatacluster)){size += fh->root->root->confBlockSize;}
 		cc++;
 	}
 	return size;
 }
 uint64_t __dsize(dirhandle *dh){
 	uint64_t size = 0x00;
-	for(uint64_t cc = 0x00; cc < __safediv((dh->loadedblocks * dh->root->root->confBlockSize), sizeof(diritem)); ++cc){
+	for(register uint64_t cc = 0x00; cc < __safediv((dh->loadedblocks * dh->root->root->confBlockSize), sizeof(diritem)); ++cc){
 		size += (((dh->dirarray + cc)->local != 0x00) ? dh->root->root->confBlockSize: 0x00);
 	}
 	return size;
@@ -577,7 +565,7 @@ uint64_t _fwrite(rawenv re, fhandle *handle, uint64_t nbytes, const void *data){
     uint64_t left    = nbytes;
     uint64_t written = 0x00;
     __fupdatetstamp(re, handle->root, handle->file, true);
-    if(flagcheck((__ffindh(handle->root, (uint64_t[2]){handle->file->fcodelow, handle->file->fcodehigh}))->attributes, __fsreadonly)){return 0x00;}
+    if(__check((__ffindh(handle->root, (uint64_t[2]){handle->file->fcodelow, handle->file->fcodehigh}))->attributes, __fsreadonly)){return 0x00;}
     while(left > 0x00){
         uint64_t blkIndex   = __safediv(pos, blkSize);
         uint64_t  blkOffset  = (uint64_t)(pos % blkSize);
@@ -668,15 +656,15 @@ bool __ftest(rawenv re, fhandle *h){
 	// DEBUGPRINT(L"\nPerforming File Test. Code: %llu", h->file->fcode);
 	bool out = true;
 	void *_block = mcalloc(1, h->root->root->confBlockSize);
-	trng__(_block, h->root->root->confBlockSize);
+	SetTrueRandomRangedBytes(_block, UINT64_MIN, UINT64_MAX, h->root->root->confBlockSize);
 	_fseek(h, 1);
 	_fwrite(re, h, h->root->root->confBlockSize, _block);
 	_fseeko(h, -1);
 	void *__block = NULL;
 	_fread(re, h, h->root->root->confBlockSize, &__block);
 	if(__block){
-		Print(L"\n");
-		for(uint64_t cc = 0x00; cc < h->root->root->confBlockSize; ++cc){
+		// Print(L"\n");
+		for(register uint64_t cc = 0x00; cc < h->root->root->confBlockSize; ++cc){
 			if(((uint8_t *)_block)[cc] != ((uint8_t *)__block)[cc]){
 				out = false;
 				// DEBUGPRINT(L"✖ %u:%u  ", ((uint8_t *)_block)[cc], ((uint8_t *)__block)[cc]);
@@ -702,7 +690,7 @@ unhandle *__fdirlist(rawenv re, dirhandle *dir, uint64_t *index){
 			temp[strlen(dir->path)] = FRATPATHSEP;
 			mfree(finfo);
 			unhandle *out = mcalloc(1, sizeof(unhandle));
-			if((out->dir = flagcheck(fb->attributes, __fsdirectory))){
+			if((out->dir = __check(fb->attributes, __fsdirectory))){
 				out->dhandle_ = floadhdir(re, dir->root, temp, "");
 			}else{out->fhandle_ = floadh(re, dir->root, temp, "f");}
 			mfree(temp);
@@ -769,7 +757,7 @@ static dirhandle *__dirr_pop(dirrunner *dr){
 
 void __dirr_free(rawenv re, dirrunner *dr){
 	if(!dr){return;}
-	for(uint64_t cc = 0x00; cc < dr->stack_depth; ++cc){if(dr->dir_stack[cc]){if(cc > 0x00){fuloaddir(re, dr->dir_stack[cc]);}}}
+	for(register uint64_t cc = 0x00; cc < dr->stack_depth; ++cc){if(dr->dir_stack[cc]){if(cc > 0x00){fuloaddir(re, dr->dir_stack[cc]);}}}
 	mfree(dr->dir_stack);
 	mfree(dr->idx_stack);
 	mfree(dr);
@@ -828,8 +816,8 @@ void __fprint_info(meta_fsblock *finfo){
 	// 	L"\nAccess Date: %u"
 	// 	L"\nWrite Date: %u",
 	// 	finfo->fsig, finfo->headerversion, (uint64_t)finfo->fcode,
-	// 	(flagcheck(finfo->attributes, __fsdirectory) ? "true": "false"), (flagcheck(finfo->attributes, __fsfile) ? "true": "false"), 
-	// 	(flagcheck(finfo->attributes, __fsreadonly) ? "true": "false"), 
+	// 	(__check(finfo->attributes, __fsdirectory) ? "true": "false"), (__check(finfo->attributes, __fsfile) ? "true": "false"), 
+	// 	(__check(finfo->attributes, __fsreadonly) ? "true": "false"), 
 	// 	finfo->name, 
 	// 	(uint32_t)(__safediv(finfo->accesstime, 3600)), 
 	// 	(uint32_t)(__safediv((finfo->accesstime % 3600), 60)),

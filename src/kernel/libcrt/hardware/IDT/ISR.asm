@@ -1,6 +1,4 @@
 bits 64
-default rel
-
 extern InterruptCallbacks
 
 ; For interrupts w/o a CPU error code
@@ -53,9 +51,7 @@ common_isr_stub:
     cld                     ; Clear direction flag for standard C ABI
 
     ; Call C handler from callback array using the saved vector number
-    ; call qword [InterruptCallbacks + (8 * rbx)]
-	lea rax, [rel InterruptCallbacks]
-	call [rax + (8 * rbx)]
+    call qword [InterruptCallbacks + (8 * rbx)]
 
     ; Restore unaligned stack frame pointer
     mov rsp, rbp

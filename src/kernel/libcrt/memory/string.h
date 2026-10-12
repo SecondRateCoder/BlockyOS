@@ -11,7 +11,7 @@
 #define strnclr(str, len) memset((str), 0, (len))
 #define strclr(str) memset((str), 0, strlen(str))
 
-#define strcheck(str, c) memcheckb((str), strlen(str), (c))
+#define strcheck(str, c) memcheckb((str), (c), strlen(str))
 
 #define tobit(c) ((c) - '0')
 
@@ -21,10 +21,13 @@ typedef uint32_t char32_t;
 
 #define NULLSTR {0}
 
+bool isascii(char c);
 LibAPI bool isdigit(char c);
 LibAPI size_t strlen(const char *str);
 LibAPI bool strchecks(const char *str, const char *snippet);
 LibAPI int strcmpc(const char *a, const char *b);
+
+char *strdup(const char *src);
 
 LibAPI int8_t tobitcomplex(char c);
 LibAPI int8_t tobyte(const char *str);

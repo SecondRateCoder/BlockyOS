@@ -1,0 +1,35 @@
+Initializing CGCC.MAKE build process...
+Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\Video.c - up to date; source=2026-10-10T01:04:48.0363712Z, stored=10/10/2026 01:04:48
+Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\controllers\Text.c - up to date; source=2026-10-11T01:20:12.2275562Z, stored=10/11/2026 01:20:12
+Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-11T23:56:38.9759676Z, stored=10/11/2026 23:56:38
+Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\Video.def - up to date; source=2026-10-08T22:57:48.1675041Z, stored=10/08/2026 22:57:48
+gcc compile/cache/elf.c.Video.o compile/cache/elf.c.Text.o Build/Build-nodate/root-part/LibCrt.dll src/kernel/services/Video/Video.def -Wl,-nostdlib -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,--image-base,0x0 -Wl,-shared -Wl,-flinker-output=dyn -Wl,-Bsymbolic -Wl,--out-implib,C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll.a -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\Video\Video.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll
+Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll
+C:\GitHub\BlockyOS\Build\Build-nodate\Video\Video.dmp.log
+
+[SHELL]	FSFRAT.MAKE
+[SHELL]	FSFRAT.MOUNT
+[SHELL]	e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0
+[SHELL OUT]:	
+[SHELL OUT]:	FSFRAT DRIVER
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	create -la fc -p SYSD/ -n LibVideo.dll
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	000002089f00605b:fc	000002089f006061:SYSD/	000002089f00606a:LibVideo.dll	
+[SHELL OUT]:	[	SYSD/LibVideo.dll]
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.OPEN
+[SHELL]	open -p SYSD/LibVideo.dll -a VIDEO -la f
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.WRITE
+[SHELL]	fwrite -pp C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll -ia %VIDEO% -p 0 -n 0
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""

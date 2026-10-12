@@ -268,7 +268,7 @@ volatile void *mclone(void *original){
 
 bool mIsMapped(void *m){
 	volatile allocstate_t *astate = getastate();
-	for(uint32_t cc = 0; cc < astate->npools; cc++){
+	for(register uint32_t cc = 0; cc < astate->npools; cc++){
 		memdesc_t *md = getdescarrn(astate->pools + cc);
 		for(size_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 			if(((size_t)m >= (size_t)md[cc_].ptr) && ((size_t)m <= ((size_t)md[cc_].ptr + md[cc_].nbytes))){
@@ -282,7 +282,7 @@ bool mIsMapped(void *m){
 volatile void *mclone_s(void *original, size_t target){
 	size_t size = 0;
 	volatile allocstate_t *astate = getastate();
-	for(uint32_t cc = 0; cc < astate->npools; cc++){
+	for(register uint32_t cc = 0; cc < astate->npools; cc++){
 		memdesc_t *md = getdescarrn(astate->pools + cc);
 		for(size_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 			if((original >= md[cc_].ptr) && (original <= (md[cc_].ptr + md[cc_].nbytes))){
@@ -306,7 +306,7 @@ volatile void *mmalloc(size_t nbytes){
 	if(!nbytes){return NULL;}else{nbytes = __roundup(nbytes, allocALIGN);}
 	volatile allocstate_t *astate = getastate();
 	if(!astate->pools){initastate(__min(dBLOCKS, __roundup(nbytes, allocALIGN)), dPOOLS);}
-	for(uint32_t cc = 0; cc < astate->npools; ++cc){
+	for(register uint32_t cc = 0; cc < astate->npools; ++cc){
 		if((astate->totalNAllocations % DefaultFixMemFrequency) == 0){fixmdarray(astate->pools + cc, &(astate->pools[cc].nDescriptors));}
 		memdesc_t *md = querydescu((astate->pools + cc), nbytes);
 		if(md){
@@ -354,7 +354,7 @@ void mfree(void *__restrict ptr){
 	bool freed = false;
 	volatile allocstate_t *state = getastate();
 	if(!state->pools){initastate(dBLOCKS, dPOOLS);}else{
-		for(uint32_t cc = 0; cc < state->npools; ++cc){
+		for(register uint32_t cc = 0; cc < state->npools; ++cc){
 					inPool = ptr >= state->pools[cc].base && ptr < (state->pools[cc].base + (BLOCKSIZE * state->pools[cc].nblocks));
 			memdesc_t *md = getdescarrn((state->pools + cc));
 			for(size_t cc_ = (state->pools[cc].nDescriptors? state->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
@@ -376,7 +376,7 @@ void mfree(void *__restrict ptr){
 ml_t descinfo(volatile void *__restrict ptr){
 	volatile allocstate_t *state = getastate();
 	if(!state->pools){initastate(dBLOCKS, dPOOLS);}else{
-		for(uint32_t cc = 0; cc < state->npools; ++cc){
+		for(register uint32_t cc = 0; cc < state->npools; ++cc){
 			memdesc_t *md = getdescarrn((state->pools + cc));
 			for(size_t cc_ = (state->pools[cc].nDescriptors? state->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 				if(((size_t)ptr >= (size_t)md[cc_].ptr) && ((size_t)ptr <= ((size_t)md[cc_].ptr + md[cc_].nbytes))){
@@ -422,7 +422,7 @@ memdesc_t *mdump(uint32_t pool){
 // void printmem(){
 // 	volatile allocstate_t *astate = getastate();
 // 	printf("\n# of Allocations: %llu", astate->totalNAllocations);
-// 	for(uint32_t cc = 0; cc < astate->npools; ++cc){
+// 	for(register uint32_t cc = 0; cc < astate->npools; ++cc){
 // 		printf("\n  Pool #%u", cc);
 // 		memdesc_t *md = getdescarrn(astate->pools + cc);
 // 		for(size_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
@@ -444,7 +444,7 @@ memdesc_t *mdump(uint32_t pool){
 // 	// Analyse Memory
 // 	// For each Memory Descriptor, check if the adjacent Memory is filled by a Descriptor
 // 	printf("\nMap Dump:");
-// 	for(uint32_t cc = 0; cc < astate->npools; ++cc){
+// 	for(register uint32_t cc = 0; cc < astate->npools; ++cc){
 // 		fixmdarray(astate->pools + cc, &astate->pools[cc].nDescriptors);
 // 		memdesc_t *tmp = getdescarrt(astate->pools + cc);
 // 		printf(

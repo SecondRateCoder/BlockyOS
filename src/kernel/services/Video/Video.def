@@ -7,3 +7,6 @@ EXPORTS
 	VMAIState
 	VideoPrintf
 	SelectVideoContext
+	TextCopyF
+	PrintGlyph
+	PrintTextByGlyph

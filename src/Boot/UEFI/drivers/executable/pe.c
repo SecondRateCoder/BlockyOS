@@ -49,7 +49,7 @@ UINT32 RvaToFileOffsetPe(UINT32 rva, PeImageSectionHeader *Section){
 
 PeImageSectionHeader *FindSectionPe(void *header, char name[8]){
 	DecodePeExecutableHeader(header);
-	for(UINT32 cc = 0; cc < PH->mNumberOfSections; ++cc){
+	for(register UINT32 cc = 0; cc < PH->mNumberOfSections; ++cc){
 		if(!strncmpa(PISHs[cc].mName, name, 8)){return (PISHs + cc);}}
 	return NULL;
 }
@@ -124,7 +124,7 @@ ExpandedPeExecutable *ExpandPeExecutableFormat(socket_t *sck){
 	//	Indices of Various Addresses Exported in the Export Directory Table.
 	//	Subtract the Ordinal Base from the Digit.
 	UINT16 *OrdinalPointerRVAs = exports? GetAtRVAFromSectionDataPe(exports->OrdinalPointerRVA, PeExportSection, exports, header): NULL;
-	// if(exports){for(UINT32 cc = 0; cc < exports->mNNamePointers; ++cc){OrdinalPointerRVAs[cc] -= exports->mOrdinalBase;}}
+	// if(exports){for(register UINT32 cc = 0; cc < exports->mNNamePointers; ++cc){OrdinalPointerRVAs[cc] -= exports->mOrdinalBase;}}
 	PeExportAddressEntry *exportAddressTable = exports? GetAtRVAFromSectionDataPe(exports->mExportTableRVA, PeExportSection, exports, header): NULL;
 
 	PeImportDirectoryEntry *imports = ReadSectionPe(sck, header, PeImportSection);
@@ -135,7 +135,7 @@ ExpandedPeExecutable *ExpandPeExecutableFormat(socket_t *sck){
 	if(imports){ImportLookups32 = __calloc(POH->mMagic == Pe32? sizeof(PeImportLookupEntry32 *): sizeof(PeImportLookupEntry64 *), nImports);}
 	PeImportLookupEntry64 **ImportLookups64 = (PeImportLookupEntry64 **)ImportLookups32;
 	if(imports){
-		for(UINT32 cc = 0; cc < nImports; ++cc){
+		for(register UINT32 cc = 0; cc < nImports; ++cc){
 			UINT32 lookupRVA = imports[cc].ImportLookupTableRVA ?
 				imports[cc].ImportLookupTableRVA : imports[cc].ImportAddressTableRVA;
 			if(POH->mMagic == Pe32){
@@ -459,7 +459,7 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 			(UINT64)EXE->Fmt.Opt.Pe32Plus->mSizeOfHeapReserve, (UINT64)EXE->Fmt.Opt.Pe32Plus->mSizeOfHeapCommit, 
 			(UINT64)EXE->Fmt.Opt.Pe32Plus->mLoaderFlags,(UINT64)EXE->Fmt.Opt.Pe32Plus->mNumberOfRvaAndSizes);
 	}
-	for(UINT32 cc = 0; cc < EXE->Fmt.Header->mNumberOfSections; ++cc){
+	for(register UINT32 cc = 0; cc < EXE->Fmt.Header->mNumberOfSections; ++cc){
 		char *SectionCharacteristicsString = PeSectionCharacteristicsToString(EXE->Fmt.SectionTable[cc].mCharacteristics);
 		Print(L"\n    [%llu]: {"
 			"\n      .RVA\t%llu"
@@ -501,11 +501,11 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 				(UINT64)EXE->Fmt.exp.Export->mNNamePointers, (UINT64)EXE->Fmt.exp.Export->mExportTableRVA, 
 				(UINT64)EXE->Fmt.exp.Export->mNamePointerRVA, (UINT64)EXE->Fmt.exp.Export->OrdinalPointerRVA);
 			UINT32 *NamePointers = GetAtRVAFromSectionDataPe(EXE->Fmt.exp.Export->mNamePointerRVA, PeExportSection, EXE->Fmt.exp.Raw, EXE->Raw);
-			for(UINT32 cc__ = 0; cc__ < __min(DataMax, EXE->Fmt.exp.Export->mNNamePointers); ++cc__){
+			for(register UINT32 cc__ = 0; cc__ < __min(DataMax, EXE->Fmt.exp.Export->mNNamePointers); ++cc__){
 				Print(L"\n            \"%a\"", GetAtRVAFromSectionDataPe(NamePointers[cc__], PeExportSection, EXE->Fmt.exp.Raw, EXE->Raw));}
 		}else if(!strncmpa(EXE->Fmt.SectionTable[cc].mName, PeImportSection, 8)){
 			Print(L"\n      {\n        .NImports\t%llu", (UINT64)EXE->Fmt.imp.nImports);
-			for(UINT32 cc_ = 0; cc_ < EXE->Fmt.imp.nImports; ++cc_){
+			for(register UINT32 cc_ = 0; cc_ < EXE->Fmt.imp.nImports; ++cc_){
 				Print(L"\n        [%llu]: {"
 					"\n          .NEntries\t%llu"
 					"\n          .ImportLookupTableRVA\t%llu"
@@ -521,7 +521,7 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 					(UINT64)EXE->Fmt.imp.imports[cc_].ImportAddressTableRVA);
 				if(EXE->Fmt.Opt.Pe32->mMagic == Pe32){
 					PeImportLookupEntry32 *Table = GetAtRVAFromSectionDataPe(EXE->Fmt.imp.imports[cc_].ImportLookupTableRVA, PeImportSection, EXE->Fmt.imp.Raw, EXE->Raw);
-					for(UINT32 cc__ = 0; cc__ < __min(EXE->Fmt.imp.nEntries[cc_], DataMax); ++cc__){
+					for(register UINT32 cc__ = 0; cc__ < __min(EXE->Fmt.imp.nEntries[cc_], DataMax); ++cc__){
 						if(Table[cc__].Bits.ImportByOrdinal){Print(L"\n            \"#%llu\"", (UINT64)Table[cc__].Bits.OrdinalNumberOrNameRVA);}
 						else{
 							PeImportHintEntry *Name = GetAtRVAFromSectionDataPe(Table[cc__].Bits.OrdinalNumberOrNameRVA, PeImportSection, EXE->Fmt.imp.Raw, EXE->Raw);
@@ -530,7 +530,7 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 					}
 				}else if(EXE->Fmt.Opt.Pe32->mMagic == Pe32Plus){
 					PeImportLookupEntry64 *Table = GetAtRVAFromSectionDataPe(EXE->Fmt.imp.imports[cc_].ImportLookupTableRVA, PeImportSection, EXE->Fmt.imp.Raw, EXE->Raw);
-					for(UINT32 cc__ = 0; cc__ < __min(EXE->Fmt.imp.nEntries[cc_], DataMax); ++cc__){
+					for(register UINT32 cc__ = 0; cc__ < __min(EXE->Fmt.imp.nEntries[cc_], DataMax); ++cc__){
 						if(Table[cc__].Bits.ImportByOrdinal){Print(L"\n            \"#%llu\"", (UINT64)Table[cc__].Bits.OrdinalNumberOrNameRVA);}
 						else{
 							PeImportHintEntry *Name = GetAtRVAFromSectionDataPe(Table[cc__].Bits.OrdinalNumberOrNameRVA, PeImportSection, EXE->Fmt.imp.Raw, EXE->Raw);
@@ -549,7 +549,7 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 					Pe32MIPSExceptionDataEntry *Table = (Pe32MIPSExceptionDataEntry *)Data;
 					N = This->mSizeOfRawData / sizeof(Pe32MIPSExceptionDataEntry);
 					Print(L"\n      {\n        .N\t%llu\n        MachineType\t%a", N, PeMachineTypeToString(EXE->Fmt.Header->mMachine));
-					for(UINT64 cc_ = 0; cc_ < __min(N, PeDumpVolumeLine); ++cc_){
+					for(register UINT64 cc_ = 0; cc_ < __min(N, PeDumpVolumeLine); ++cc_){
 						Print(L"\n        [%llu]: {"
 							"\n          .VirtualAddress\t%llu"
 							"\n          .VirtualEnd\t%llu"
@@ -574,7 +574,7 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 					PeARMExceptionDataEntry *Table = (PeARMExceptionDataEntry *)Data;
 					N = This->mSizeOfRawData / sizeof(PeARMExceptionDataEntry);
 					Print(L"\n      {\n        .N\t%llu\n        MachineType\t%a", N, PeMachineTypeToString(EXE->Fmt.Header->mMachine));
-					for(UINT64 cc_ = 0; cc_ < __min(N, PeDumpVolumeLine); ++cc_){
+					for(register UINT64 cc_ = 0; cc_ < __min(N, PeDumpVolumeLine); ++cc_){
 						Print(L"\n        [%llu]  (32-Bit? %a\tHasHandler? %a): {"
 							"\n          .VirtualAddress\t%llu"
 							"\n          .PrologLength\t%llu"
@@ -594,7 +594,7 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 					Pe32PlusExceptionDataEntry *Table = (Pe32PlusExceptionDataEntry *)Data;
 					N = This->mSizeOfRawData / sizeof(Pe32PlusExceptionDataEntry);
 					Print(L"\n      {\n        .N\t%llu\n        MachineType\t%a", N, PeMachineTypeToString(EXE->Fmt.Header->mMachine));
-					for(UINT64 cc_ = 0; cc_ < __min(N, PeDumpVolumeLine); ++cc_){
+					for(register UINT64 cc_ = 0; cc_ < __min(N, PeDumpVolumeLine); ++cc_){
 						Print(L"\n        [%llu]: {"
 							"\n          .AddressRVA\t%llu"
 							"\n          .EndRVA\t%llu"
@@ -611,9 +611,9 @@ void PrintPeExecutableFormat(ExpandedPeExecutable *EXE, UINT32 DataMax){
 			PeImageSectionHeader *This = FindSectionPe(EXE->Raw, EXE->Fmt.SectionTable[cc].mName);
 			Print(L"\n      {");
 			if(Data){
-				for(UINT32 cc_ = 0; cc_ < (DataMax / PeDumpVolumeLine); ++cc_){
+				for(register UINT32 cc_ = 0; cc_ < (DataMax / PeDumpVolumeLine); ++cc_){
 					Print(L"\n        ");
-					for(UINT32 cc__ = 0; cc__ < PeDumpVolumeLine && ((cc_ * PeDumpVolumeLine) + cc__) < This->mSizeOfRawData; ++cc__){
+					for(register UINT32 cc__ = 0; cc__ < PeDumpVolumeLine && ((cc_ * PeDumpVolumeLine) + cc__) < This->mSizeOfRawData; ++cc__){
 						Print(L"%02x ", ((UINT8 *)Data)[cc_ + (cc__ * (DataMax / PeDumpVolumeLine))]);}
 				}
 			}

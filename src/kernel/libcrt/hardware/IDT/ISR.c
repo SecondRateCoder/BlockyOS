@@ -66,9 +66,9 @@ volatile ISRCallbackTable __align(64) InterruptCallbacks = {
 	SIMDFloatingPointExceptionISR, 
 	VirtualisationExceptionISR, 
 	ControlProtectionExceptionISR, 
-	NULL, NULL, NULL, 
-	NULL, NULL, NULL, 
-	NULL, NULL, NULL, 
+	GenericISR, GenericISR, GenericISR, 
+	GenericISR, GenericISR, GenericISR, 
+	GenericISR, GenericISR, GenericISR, 
 	//	Starts from Interrupt 0x20
 	GenericISR, GenericISR, GenericISR, GenericISR, 
 	GenericISR, GenericISR, GenericISR, GenericISR, 
@@ -131,7 +131,7 @@ volatile ISRCallbackTable __align(64) InterruptCallbacks = {
 
 bool __noinline __used AllocateInterruptVector(uint8_t *Vector){
 	if(!Vector){return false;}
-	for(uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
+	for(register uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
 		if(InterruptCallbacks[cc] == GenericISR){
 			*Vector = cc;
 			return true;
@@ -143,7 +143,7 @@ bool __noinline __used AllocateInterruptVector(uint8_t *Vector){
 
 bool QueryVectorByCallback(uint8_t *Vector, ISRCallback *CB){
 	if(!Vector || !CB){return false;}
-	for(uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
+	for(register uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
 		if(InterruptCallbacks[cc] == *CB){
 			*Vector = cc;
 			return true;
@@ -162,21 +162,15 @@ ISRCallback *ISRSetCallback(void *acpibase, uint8_t Vector, uint8_t Privilege, u
 		IDTR64 IR = {0};
 		GDTR64 GR = {0};
 		if(ReadIDTR(&IR) && ReadGDTR(&GR)){
-			GDTSystemSegmentDescriptor64 *Entry = ((GDTSystemSegmentDescriptor64 *)(GR.Base + (sizeof(GDTDescriptor) * SS.Index)));
-			TSS_t *_TSS = MapVirtual((void *)(((uint64_t)Entry->LinearBaseHigh << 24) + Entry->LinearBaseLow));
+			GDTSystemSegmentDescriptor64 *Entry = ((GDTSystemSegmentDescriptor64 *)(GR.Base + (sizeof(GDTDescriptor) * SS.Segment)));
+			TSS_t *_TSS = MapVirtual((void *)(((uint64_t)Entry->BaseHigh << 24) + Entry->BaseLow));
 			if(!_TSS->IST[IST]){
 				_TSS->IST[IST] = ((uint64_t)mcalloc(1, DefaultStackSize) + DefaultStackSize) - (sizeof(uint64_t) * 4);
 				*((uint64_t *)(_TSS->IST[IST] + (sizeof(uint64_t) * 0))) = (uint64_t)StackHeader;
 				*((uint64_t *)(_TSS->IST[IST] + (sizeof(uint64_t) * 1))) = IST;
-				*((uint64_t *)(_TSS->IST[IST] + (sizeof(uint64_t) * 2))) = SS.Index;
+				*((uint64_t *)(_TSS->IST[IST] + (sizeof(uint64_t) * 2))) = SS.Segment;
 				*((uint64_t *)(_TSS->IST[IST] + (sizeof(uint64_t) * 3))) = (uint64_t)GetLocalAPICBase(acpibase, NULL);
-				((IDTEntry64 *)IR.Base)[Vector] = (IDTEntry64){
-					.OffsetHigh = (uint64_t)InterruptCallbacks[Vector] >> 16, 
-					.OffsetLow = (uint64_t)InterruptCallbacks[Vector] & UINT16_MAX, 
-					.GateType = TrapGate? _64BitTrapGate: _64BitInterruptGate, 
-					.DescriptorPriviledgeLevel = Privilege, .SegmentSelector = SS, 
-					.InterruptStackTableOffset = IST, .Present = true
-				};
+				SetIDTe(*(IDTTable64 *)&(IR.Base), Vector, (uint64_t)InterruptCallbacks[Vector], SS, IST, _64BitInterruptGate, true);
 			}
 		}
 	}
@@ -191,8 +185,8 @@ bool ISRUSetCallback(uint32_t Vector){
 		GDTR64 GR = {0};
 		if(ReadIDTR(&IR) && ReadGDTR(&GR)){
 			IDTEntry64 *E = (void *)(IR.Base + (sizeof(IDTEntry64) * Vector));
-			GDTSystemSegmentDescriptor64 *Entry = ((GDTSystemSegmentDescriptor64 *)(GR.Base + (sizeof(GDTDescriptor) * E->SegmentSelector.Index)));
-			TSS_t *_TSS = MapVirtual((void *)(((uint64_t)Entry->LinearBaseHigh << 24) + Entry->LinearBaseLow));
+			GDTSystemSegmentDescriptor64 *Entry = ((GDTSystemSegmentDescriptor64 *)(GR.Base + (sizeof(GDTDescriptor) * E->SegmentSelector)));
+			TSS_t *_TSS = MapVirtual((void *)(((uint64_t)Entry->BaseHigh << 24) + Entry->BaseLow));
 			E->OffsetLow = (uint64_t)GenericISR & UINT16_MAX;
 			E->OffsetHigh = (uint64_t)GenericISR >> 16;
 			mfree((void *)(_TSS->IST[E->InterruptStackTableOffset] - DefaultStackSize) + (sizeof(uint64_t) * 4));
@@ -208,8 +202,8 @@ void *ISRGetStackHeader(uint32_t Vector){
 		GDTR64 GR = {0};
 		if(ReadIDTR(&IR) && ReadGDTR(&GR)){
 			IDTEntry64 *E = (void *)(IR.Base + (sizeof(IDTEntry64) * Vector));
-			GDTSystemSegmentDescriptor64 *Entry = ((GDTSystemSegmentDescriptor64 *)(GR.Base + (sizeof(GDTDescriptor) * E->SegmentSelector.Index)));
-			TSS_t *_TSS = MapVirtual((void *)(((uint64_t)Entry->LinearBaseHigh << 24) + Entry->LinearBaseLow));
+			GDTSystemSegmentDescriptor64 *Entry = ((GDTSystemSegmentDescriptor64 *)(GR.Base + (sizeof(GDTDescriptor) * E->SegmentSelector)));
+			TSS_t *_TSS = MapVirtual((void *)(((uint64_t)Entry->BaseHigh << 24) + Entry->BaseLow));
 			return (void *)(_TSS->IST[E->InterruptStackTableOffset] + (sizeof(uint64_t) * 4));
 		}
 	}
@@ -223,61 +217,61 @@ bool AllocateIST(uint8_t *IST, IDTEntrySegmentSelector64 *sselector){
 		*sselector = (IDTEntrySegmentSelector64){0};
 		uint32_t _GDT = 0;
 		for(; _GDT < (R.Limit / sizeof(GDTDescriptor)); ++_GDT){
-			if(((GDTDescriptor *)R.Base)[_GDT].ABSystemSegmentBit){
+			if(!((GDTDescriptor *)R.Base)[_GDT].ABSystemSegmentBit){
 				GDTSystemSegmentDescriptor64 *SS = (GDTSystemSegmentDescriptor64 *)(R.Base + (_GDT * sizeof(GDTDescriptor)));
 				if(SS->ABType == TSS64BitAvailable){
-					TSS_t *_TSS = (void *)(((uint64_t)SS->LinearBaseHigh << 24) + SS->LinearBaseLow);
+					TSS_t *_TSS = (void *)(((uint64_t)SS->BaseHigh << 24) + SS->BaseLow);
 					if(_TSS){_TSS = SafeAllocatePages(_TSS, sizeof(TSS_t), (ReadWritable | SupervisorMode), 0x00, 0x20);}else{
 						_TSS = AllocatePages(NULL, sizeof(TSS_t), (ReadWritable | SupervisorMode), 0x00);
 						uint64_t Phys = (uint64_t)MapPhysical(_TSS);
-						SS->LinearBaseHigh = (uint64_t)_TSS >> 24;
-						SS->LinearBaseLow = (uint64_t)_TSS & 0xFFFFFF;
+						SS->BaseHigh = (uint64_t)_TSS >> 24;
+						SS->BaseLow = (uint64_t)_TSS & 0xFFFFFF;
 					}
 					(*IST) = 8;
 					while((*IST)--){
 						uint32_t LevelTemp = 5;
 						//	If unmapped, then we Allocate and Use it.
 						if(!_TSS->IST[(*IST)]){
-							sselector->Index = _GDT;
+							sselector->Segment = _GDT;
 							break;
 						}
 					}
 				}
 				_GDT++;
 			}else{continue;}
-			if(sselector->Index){break;}
+			if(sselector->Segment){break;}
 		}
 		return true;
 	}
 	return false;
 }
 
-ISRCallbackDefinition(Generic){ISRCallbackReturn}
+ISRCallbackDefinition(Generic){__bochs();	ISRCallbackReturn;}
 
 ISRCallbackDefinition(DivideError){
 	Frame->RAX = UINT64_MAX;
 	Frame->RDX = UINT64_MAX;
-	ISRCallbackReturn
+	ISRCallbackReturn;
 }
 
 //	Handle Later
-ISRCallbackDefinition(DebugException){ISRCallbackReturn}
-ISRCallbackDefinition(NonMaskableExt){ISRCallbackReturn}
-ISRCallbackDefinition(Breakpoint){ISRCallbackReturn}
-ISRCallbackDefinition(Overflow){ISRCallbackReturn}
-ISRCallbackDefinition(BoundRangeException){ISRCallbackReturn}
-ISRCallbackDefinition(InvalidOpcode){ISRCallbackReturn}
-ISRCallbackDefinition(UnavailableDevice){ISRCallbackReturn}
-ISRCallbackDefinition(DoubleFault){ISRCallbackReturn}
-ISRCallbackDefinition(CoprocessorSegmentOverrun){ISRCallbackReturn}
-ISRCallbackDefinition(InvalidTSS){ISRCallbackReturn}
-ISRCallbackDefinition(SegmentNotPresent){ISRCallbackReturn}
-ISRCallbackDefinition(StackSegmentFault){ISRCallbackReturn}
-ISRCallbackDefinition(GeneralProtection){ISRCallbackReturn}
-ISRCallbackDefinition(PageFault){ISRCallbackReturn}
-ISRCallbackDefinition(x87FPUError){ISRCallbackReturn}
-ISRCallbackDefinition(AlignmentCheck){ISRCallbackReturn}
-ISRCallbackDefinition(MachineCheck){ISRCallbackReturn}
-ISRCallbackDefinition(SIMDFloatingPointException){ISRCallbackReturn}
-ISRCallbackDefinition(VirtualisationException){ISRCallbackReturn}
-ISRCallbackDefinition(ControlProtectionException){ISRCallbackReturn}
+ISRCallbackDefinition(DebugException){ISRCallbackReturn;}
+ISRCallbackDefinition(NonMaskableExt){ISRCallbackReturn;}
+ISRCallbackDefinition(Breakpoint){ISRCallbackReturn;}
+ISRCallbackDefinition(Overflow){ISRCallbackReturn;}
+ISRCallbackDefinition(BoundRangeException){ISRCallbackReturn;}
+ISRCallbackDefinition(InvalidOpcode){ISRCallbackReturn;}
+ISRCallbackDefinition(UnavailableDevice){ISRCallbackReturn;}
+ISRCallbackDefinition(DoubleFault){ISRCallbackReturn;}
+ISRCallbackDefinition(CoprocessorSegmentOverrun){ISRCallbackReturn;}
+ISRCallbackDefinition(InvalidTSS){ISRCallbackReturn;}
+ISRCallbackDefinition(SegmentNotPresent){ISRCallbackReturn;}
+ISRCallbackDefinition(StackSegmentFault){ISRCallbackReturn;}
+ISRCallbackDefinition(GeneralProtection){ISRCallbackReturn;}
+ISRCallbackDefinition(PageFault){ISRCallbackReturn;}
+ISRCallbackDefinition(x87FPUError){ISRCallbackReturn;}
+ISRCallbackDefinition(AlignmentCheck){ISRCallbackReturn;}
+ISRCallbackDefinition(MachineCheck){ISRCallbackReturn;}
+ISRCallbackDefinition(SIMDFloatingPointException){ISRCallbackReturn;}
+ISRCallbackDefinition(VirtualisationException){ISRCallbackReturn;}
+ISRCallbackDefinition(ControlProtectionException){ISRCallbackReturn;}

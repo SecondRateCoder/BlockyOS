@@ -33,7 +33,7 @@ void ATAPIPort(void *acpibase, uint32_t APIC, PCIDevice *device, uint32_t *nativ
 		if(((SDTHeader_t *)_MADT)->Revision >= XSDPRevision){
 			XSDT_MADT_t *MADT = _MADT;
 			uint64_t Offset = 0x00;
-			for(uint32_t cc = 0; cc < ((MADT->Header.Length - sizeof(XSDT_MADT_t)) / sizeof(XSDT_MADTEntry)); ++cc){
+			for(register uint32_t cc = 0; cc < ((MADT->Header.Length - sizeof(XSDT_MADT_t)) / sizeof(XSDT_MADTEntry)); ++cc){
 				XSDT_MADTEntry *E = (void *)MADT->Table + Offset;
 				if(MADT->Table[cc].Type == XSDT_IOAPICInterruptSourceOverride){
 					XSDT_IOAPICInterruptSourceOverride_t *Override = (XSDT_IOAPICInterruptSourceOverride_t *)E;
@@ -54,7 +54,7 @@ void ATAPIPort(void *acpibase, uint32_t APIC, PCIDevice *device, uint32_t *nativ
 		}else{
 			RSDT_MADT_t *MADT = _MADT;
 			uint64_t Offset = 0x00;
-			for(uint32_t cc = 0; cc < ((MADT->Header.Length - sizeof(RSDT_MADT_t)) / sizeof(RSDT_MADTEntry)); ++cc){
+			for(register uint32_t cc = 0; cc < ((MADT->Header.Length - sizeof(RSDT_MADT_t)) / sizeof(RSDT_MADTEntry)); ++cc){
 				RSDT_MADTEntry *E = (void *)MADT->Table + Offset;
 				if(MADT->Table[cc].Type == RSDT_IOAPICInterruptSourceOverride){
 					RSDT_IOAPICInterruptSourceOverride_t *Override = (RSDT_IOAPICInterruptSourceOverride_t *)E;
@@ -263,7 +263,7 @@ uint32_t _ATAPIReadRaw(bool slave, uint32_t cmd, uint32_t ctrl, uint32_t start, 
 	__outsw(cmd + ATAPI_DATA, (uint16_t *)(&read_cmd), 12);
 	if(!ntvmode){
 		// Read words
-		for(uint32_t i = 0; i < sectors; i++){
+		for(register uint32_t i = 0; i < sectors; i++){
 			while(true){
 				uint8_t status = __inb(ctrl);
 				if(status & 0x01){return 1;}
@@ -347,7 +347,7 @@ uint32_t _ATAPIWriteRaw(bool slave, uint32_t cmd, uint32_t ctrl, uint32_t start,
 
     if(!ntvmode){
         // Write words via PIO
-        for(uint32_t i = 0; i < sectors; i++){
+        for(register uint32_t i = 0; i < sectors; i++){
             while(true){
                 uint8_t status = __inb(ctrl);
                 if(status & 0x01){return 1;}

@@ -81,7 +81,7 @@ if($enablevars){$args_qemu += '-drive', "if=pflash,format=raw,file=$($ovmfvars)"
 $BOCHSFILE = "
 cpu: model=corei7_ivy_bridge_3770k, ips=10000000, count=2, reset_on_triple_fault=1
 boot: disk
-memory: guest=1024, host=1024
+memory: guest=4096, host=1024
 config_interface: win32config
 display_library: sdl
 
@@ -207,7 +207,7 @@ function Img-Pad{
 function Prepare{
 	if($clear -eq $true){
 		(Get-ChildItem -Path (Join-Path (Get-Location) "/Build/") -File -Recurse) | ForEach-Object{
-			if($_.BaseName -inotmatch "disk**"){Remove-Item $_.FullName -Force -Recurse}
+			if(($_.BaseName -inotmatch "disk**") -and ($_.FullName -inotmatch "**.dmp.log")){Remove-Item $_.FullName -Force -Recurse}
 		}
 		New-Item -Path $Build -ItemType Directory -Force
 	}else{
@@ -227,12 +227,12 @@ function Prepare{
 	if(-not(Test-Path $BootPartitionDir)){New-Item -Path $BootPartitionDir -ItemType Directory -Force}
 	if(-not(Test-Path $debuglog)){New-Item -Path $debuglog -ItemType File -Force}
 	if(-not(Test-Path $Image)){New-Item -Path $Image -ItemType File -Force}
-	Write-Host (& $NASM -v)
+	Out-Null ((& $NASM -v) 2>&1)
 	if($LASTEXITCODE -ne 0){
 		Log-Write -color Red -Msg "NASM not found at $($NASM). Please install NASM."
 		return 1
 	}
-	Write-Host (& 'gcc' -v)
+	Out-Null (& 'gcc' -v) 2>&1
 	if($LASTEXITCODE -ne 0){
 		Log-Write -color Red -Msg "GCC not found at $(GCC). Please install GCC."
 		return 1
@@ -349,7 +349,7 @@ if($InstallOS){
 		return 1
 	}
 	Log-Write -color Yellow "Running install.bos in current directory."
-	# (& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
+	(& $SHELLDRIVER -SHELLSCRIPT $InstallFile)
 }
 
 # Optimise by Using ShortCut
@@ -371,7 +371,7 @@ if($run){
 }elseif($runbochs){
 	$env:Path += $Build
 	Copy-Item -Path (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini") -Destination (Join-Path $Build "\bx_enh_dbg.ini")
-	Log-Write -Msg "$($BOCHS) -f $($BOCHSRC) -q -dbglog $($debuggerlog);`n`n `"$((Get-Content $BOCHSRC) -join "`n")`"" -color Blue
+	Log-Write -Msg "$($BOCHS) -f $($BOCHSRC) -q -dbg_gui -dbglog $($debuggerlog)`n`n `"$((Get-Content $BOCHSRC) -join "`n")`"" -color Blue
 	& $BOCHS '-f' $BOCHSRC '-q' '-dbg_gui' '-dbglog' $($debuggerlog)
 	Copy-Item -Path (Join-Path $Build "\bx_enh_dbg.ini") -Destination (Get-ChildItem -Path (Get-Location) -Name -Filter "bx_enh_dbg.ini")
 }

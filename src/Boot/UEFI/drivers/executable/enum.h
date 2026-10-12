@@ -5,7 +5,7 @@
 #define flagcheck(n, f)			(((n) & (f)) == (f))
 #define flagset(n, f)			((n) |= (f))
 #define flaguset(n, f)			((n) &= ~(f))
-#define enumdef(type, name)     typedef type name;  enum
+#define enumdef(type, ...)     typedef type __VA_ARGS__;  enum
 
 enumdef(UINT16, PeOptionalHeaderType){Pe32Plus = 0x20b, Pe32 = 0x10b};
 

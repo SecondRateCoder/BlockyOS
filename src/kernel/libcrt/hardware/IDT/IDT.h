@@ -19,9 +19,9 @@ typedef union{
 	struct{
 		uint16_t	PriviledgeLevel	: 2;
 		uint16_t	LocalDescriptor	: 1;
-		uint16_t	Index			: 13;
+		uint16_t	Segment			: 13;
 	};
-}IDTEntrySegmentSelector64;
+}__packed IDTEntrySegmentSelector64;
 
 #define _64BitInterruptGate		(0xE)
 #define _64BitTrapGate			(0xF)
@@ -50,25 +50,38 @@ typedef union{
 //	0x14		20		#VE		Fault		No			Virtualization Exception							EPT violations
 //	0x15		21		#CP		Fault		Yes			Control Protection Exception						RET, IRET, RSTORSSP, and SETSSBSY instructions can generate this exception. When CET indirect branch tracking is enabled, this exception can be generated due to a missing ENDBRANCH instruction at target of an indirect call or jump.
 //	0x16-0x1f 	22-31 	N/A								Reserved for future use as CPU exception vectors.
-typedef union{
-	uint128_t	Raw;
-	struct{
-		uint64_t					OffsetLow					:	16;
-		//	A Segment Selector with multiple fields which must point to a valid code segment in the GDT.
-		IDTEntrySegmentSelector64	SegmentSelector;
-		//	A 3-bit value which is an offset into the Interrupt Stack Table, 
-		//		which is stored in the Task State Segment. 
-		//	If the bits are all set to zero, the Interrupt Stack Table is not used.
-		uint64_t					InterruptStackTableOffset	:	3;
-		uint64_t												:	5;
-		uint64_t					GateType					:	4;
-		uint64_t												:	1;
-		uint64_t					DescriptorPriviledgeLevel	:	2;
-		uint64_t					Present						:	1;
-		uint64_t					OffsetHigh					:	48;
-		uint64_t												:	0;
-	};
+
+typedef volatile struct{
+	uint64_t	OffsetLow					: 16;
+	uint64_t	SegmentSelector				: 16;
+	uint64_t	InterruptStackTableOffset	: 3;
+	uint64_t								: 5;
+	uint64_t	GateType					: 4;
+	uint64_t								: 1;
+	uint64_t	DescriptorPrivilegeLevel	: 2;
+	uint64_t	PresentEntry				: 1;
+	uint64_t	OffsetMid					: 16;
+	uint64_t	OffsetHigh					: 32;
+	uint64_t								: 32;
 }__packed IDTEntry64, IDTTable64[IDTLength];
+
+typedef volatile struct{
+	uint64_t	OffsetLow					: 16;
+	uint64_t	SegmentSelector				: 16;
+	uint64_t	InterruptStackTableOffset	: 3;
+	uint64_t								: 5;
+	uint64_t	GateType					: 4;
+	uint64_t								: 1;
+	uint64_t	DescriptorPrivilegeLevel	: 2;
+	uint64_t	PresentEntry				: 1;
+	uint64_t	OffsetHigh					: 16;
+}__packed IDTEntry32, IDTTable32[IDTLength];
 
 LibAPI extern bool __sysvabi LoadIDTR(IDTR64 *Register);
 LibAPI extern bool __sysvabi ReadIDTR(IDTR64 *Register);
+LibAPI extern bool __sysvabi _LoadIDTR(IDTR64 *Register);
+LibAPI extern bool __sysvabi _ReadIDTR(IDTR64 *Register);
+void SetIDTe(IDTTable64 Table, uint32_t N, uint64_t hndlr, 
+	IDTEntrySegmentSelector64 sselector, uint8_t ist, 
+	uint8_t gatetype, bool enable
+);

@@ -6,6 +6,8 @@
 #include "kernel/libcrt/memory/allocator/malloc.h"
 #include "kernel/libcrt/BLAKE2/blake2.h"
 
+#include "kernel/libcrt/hardware/RNG/RNG.h"
+
 #include "kernel/services/IO/service.h"
 
 #define FRATPATHSEP										'\\'

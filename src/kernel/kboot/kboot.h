@@ -17,12 +17,11 @@
 #include "kernel/libcrt/memory/memory.h"
 #include "kernel/libcrt/memory/string.h"
 
-#ifdef __IMPORT
-	#undef __IMPORT
-#endif
-#define __IMPORT
+// #ifdef __IMPORT
+// 	#undef __IMPORT
+// #endif
+// #define __IMPORT
 #include "kernel/services/Video/service.h"
-#include "kernel/services/Video/controllers/Text.h"
 
 #include "kernel/services/IO/service.h"
 

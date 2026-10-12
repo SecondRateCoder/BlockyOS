@@ -1,6 +1,7 @@
 #include "LocalAPIC.h"
 #include "kernel/libcrt/def.h"
 #include "kernel/libcrt/hardware/PIT.h"
+#include "kernel/libcrt/hardware/paging/paging.h"
 
 /**	The Local APIC works by:	
  * 		When an Interuupt is Signalled:
@@ -36,7 +37,7 @@ void *GetLocalAPICBase(void *ACPIBase, bool *_RDST){
 	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
 		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(XSDT_MADT_t);
-		for(uint32_t cc = 0; RemBytes != 0; ++cc){
+		for(register uint32_t cc = 0; RemBytes != 0; ++cc){
 			if(Table->Table[cc].Type == XSDT_ProcessorLocalAPIC){
 				XSDT_ProcessorLocalAPIC_t *Local = (XSDT_ProcessorLocalAPIC_t *)(Table->Table + cc);
 				if(Local->ApicID == currentApicId){
@@ -51,7 +52,7 @@ void *GetLocalAPICBase(void *ACPIBase, bool *_RDST){
 	}else{
 		RSDT_MADT_t *Table = (RSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(RSDT_MADT_t);
-		for(uint32_t cc = 0; RemBytes != 0; ++cc){
+		for(register uint32_t cc = 0; RemBytes != 0; ++cc){
 			if(Table->Table[cc].Type == RSDT_ProcessorLocalAPIC){
 				RSDT_ProcessorLocalAPIC_t *Local = (RSDT_ProcessorLocalAPIC_t *)(Table->Table + cc);
 				(*_RDST) = true;
@@ -68,9 +69,7 @@ void *GetLocalAPICBase(void *ACPIBase, bool *_RDST){
 
 bool InitLocalAPIC(void *ACPIBase, uint8_t InterruptBase, bool Enable){
 	//	Ensure Higher than 32
-	if(InterruptBase <= 32){return false;}
-	//	Ensure Low 4-bits set
-	if((InterruptBase & 0x0F) != 0x0F){return false;}
+	if(InterruptBase < 32){return false;}
 	bool _RSDT = false;
 	void *Base = GetLocalAPICBase(ACPIBase, &_RSDT);
 	if(!Base){return false;}
@@ -94,4 +93,36 @@ void DisableLocalAPIC(void *ACPIBase){
 	if(!Base){return;}
 	ReadAPICRegister(Base, LAR_SpuriousInterruptVector, Temp);
 	WriteAPICRegister(Base, LAR_SpuriousInterruptVector, Temp & ~LocalAPICEnableBit);
+}
+
+void SendIPI(void *ACPIBase, uint32_t apic_id, uint32_t icr_low){
+	bool _RSDT = false;
+	void *Base = GetLocalAPICBase(ACPIBase, &_RSDT);
+    // Write target APIC ID to ICR High (bits 24-31)
+    WriteAPICRegister(Base, LAR_InterruptCommandRegister, apic_id << 24);
+    // Write command to ICR Low (triggers the interrupt)
+    WriteAPICRegister(Base, LAR_InterruptCommandRegister, icr_low);
+}
+
+void *BootCore(void *ACPIBase, uint8_t ApicID, uint8_t *InterruptVector, void *Code, UINT64 CodeLength){
+	//	Initialise the Memory at Location
+	void *Tmp = NULL;
+	*InterruptVector = 0;
+	while(!(Tmp = AllocatePages((void *)(*InterruptVector * PAGE_SIZE), CodeLength, (ReadWritable | SupervisorMode | ExecuteEnable), 0x00))){InterruptVector++;}
+	memcpy(Tmp, Code, CodeLength);
+    //	Send INIT IPI (Assert)
+    //	Delivery Mode = 101b (INIT), Level = 1, Trigger = Edge
+    SendIPI(ACPIBase, ApicID, 0x00004500);
+    SleepMS(10);
+
+    //	Send First Startup IPI (SIPI)
+    //	Delivery Mode = 110b (Startup), Vector = sipi_vector (e.g. 0x08 for 0x8000)
+    SendIPI(ACPIBase, ApicID, 0x00004600 | *InterruptVector);
+    SleepMS(10);
+
+    //	Send Second Startup IPI (SIPI) for hardware reliability
+    SendIPI(ACPIBase, ApicID, 0x00004600 | *InterruptVector);
+    SleepMS(10);
+
+	return Tmp;
 }

@@ -9,3 +9,12 @@ LibAPI __noinline uint64_t GetTrueRandomRange64U(uint64_t min, uint64_t max){
 	do{rand = GetTrueRandom64();}while(rand >= limit);
 	return min + (rand % range);
 }
+
+LibAPI __noinline void SetTrueRandomRangedBytes(void *dst, uint64_t min, uint64_t max, uint64_t n){
+	while(n > 8){
+		((uint64_t *)dst)[n / sizeof(uint64_t)] = GetTrueRandomRange64U(min, max);
+		n -= 8;
+	}
+	uint64_t tmp = GetTrueRandomRange64U(min, max);
+	while(n--){((uint8_t *)dst)[n] = (tmp >> (n * 8)) & UINT8_MAX;}
+}

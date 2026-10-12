@@ -3,7 +3,7 @@
 #include "tools.h"
 #include "frat.h"
 
-enumdef(cmddesc_argtype, uint8_t){
+enumdef(uint8_t, cmddesc_argtype){
 	// It's presence means it's true, false if absent
 	cmddescargtype__switch = 1,
 	// Only takes true and false
@@ -20,7 +20,7 @@ enumdef(cmddesc_argtype, uint8_t){
 	cmddescargtype__longdata = cmddescargtype__longinteger
 };
 
-enumdef(cmddesc_errtype, uint8_t){
+enumdef(uint8_t, cmddesc_errtype){
 	cmddescerrtype_eom = 0x1, 
     cmddescerrtype_undefined_setting
 };
@@ -55,7 +55,7 @@ typedef struct cmddesc{
 #define MAXshellFHANDLES 8
 #define cmd_erroutSUCCESS (cmd_errout){NULL, 0}
 
-enumdef(symtype_e, uint32_t){
+enumdef(uint32_t, symtype_e){
 	symtype_e__string,
 	symtype_e__fhandle,
 	symtype_e__dirhandle,

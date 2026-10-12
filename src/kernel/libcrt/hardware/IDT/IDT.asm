@@ -3,16 +3,16 @@ default rel
 
 section .text
 
-global LoadIDTR
+global _LoadIDTR
 ;   (rax(bool))LoadGDT(rdi(void *))
-LoadIDTR:
+_LoadIDTR:
     lidt [rdi]
     mov rax, 1
     ret
 
-global ReadIDTR
+global _ReadIDTR
 ;   (rax(bool))LoadGDT(rdi(void *))
-ReadIDTR:
+_ReadIDTR:
     sidt [rdi]
     mov rax, 1
     ret

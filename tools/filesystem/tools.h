@@ -40,14 +40,14 @@ GPTeNSTR *makeGPTeNSTR(char *str);
 #define PATHnoSEP '\\'
 #define CMDiMAX 256
 
-#define enumdef(name, type)     typedef type name;  enum
+#define enumdef(type, ...)     typedef type __VA_ARGS__;  enum
 #define bufdef(name, ptr, scale)		typedef struct name{ptr *name;		scale len;}name;
 
 #define flagcheck(v, f) ((v & f) == f)
 #define flagset(v, f)   (v |= f)
 #define flagunset(v, f) (v &= ~f)
 
-enumdef(strtokflags, uint32_t){
+enumdef(uint32_t, strtokflags){
 	strtok__ForceSameBorderingDelims = 0x1,
 	strtok__ForceDifferentBorderingDelims,
 	strtok__ForceStartingDelim = 0x80000000,

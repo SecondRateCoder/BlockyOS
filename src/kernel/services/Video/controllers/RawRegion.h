@@ -1,7 +1,6 @@
 #pragma once
 
 #include "kernel/libcrt/def.h"
-#include "kernel/libcrt/services.h"
 #include "kernel/libcrt/math/int.h"
 #include "kernel/libcrt/hardware/IDT/ISR.h"
 #include "kernel/libcrt/hardware/GDT/GDT.h"
@@ -49,7 +48,7 @@ LocalAPICTimerCallbackDefinition(VMAMemoryPoll){
 	RepointVirtualAddress(Tag->BackBuffer, PBase);
 
 	//  Blit Buffer
-	for(uint32_t y = 0; y < __min(RVMA->PixelHeight, Tag->PixelHeight); y++){
+	for(register uint32_t y = 0; y < __min(RVMA->PixelHeight, Tag->PixelHeight); y++){
 		memcpy(RVMA->videomemory + (y * RVMA->PixelWidth) + Tag->PixelX, 
 			Tag->BackBuffer, __min(RVMA->PixelWidth, Tag->PixelWidth) * sizeof(Pixel));
 	}
@@ -100,7 +99,7 @@ void *RequestVideoMemory(RawVideoMemoryAllocator *HND,
 
 void FlushVideoMemory(RawVideoMemoryAllocator *HND, void *VM, CommonMutex Mtx){
 	DisableLocalAPIC(HND->LocalAPICBase);
-	for(uint32_t cc= 0 ; cc < HND->TotalAllocations; ++cc){
+	for(register uint32_t cc= 0 ; cc < HND->TotalAllocations; ++cc){
 		if(HND->MemoryTags[cc].Base == VM){
 			HND->MemoryTags[cc].Ready = true;
 			HND->MemoryTags[cc].Mtx = Mtx;
@@ -113,7 +112,7 @@ void FlushVideoMemory(RawVideoMemoryAllocator *HND, void *VM, CommonMutex Mtx){
 
 void ReleaseVideoMemory(RawVideoMemoryAllocator *HND, void *VM){
 	DisableLocalAPIC(HND->LocalAPICBase);
-	for(uint32_t cc= 0 ; cc < HND->TotalAllocations; ++cc){
+	for(register uint32_t cc= 0 ; cc < HND->TotalAllocations; ++cc){
 		if(HND->MemoryTags[cc].Base == VM){
 			mfree(HND->MemoryTags[cc].Base);
 			mfree(HND->MemoryTags[cc].BackBuffer);

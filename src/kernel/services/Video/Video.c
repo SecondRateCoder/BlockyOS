@@ -1,5 +1,4 @@
 #include "controllers/RawRegion.h"
-#include "controllers/Text.h"
 #include "service.h"
 
 void *__noinline VMAIState(bool w, void *ptr){
@@ -21,7 +20,7 @@ FontGlyph **gcontext = NULL;
 uint32_t ngcontext = 0;
 void SelectVideoContext(void *vm, void **Glyph, uint32_t NGlyphs){
 	RawVideoMemoryAllocator *RVMA = VMAIState(false, NULL);
-	for(uint32_t cc = 0; cc < RVMA->TotalAllocations; ++cc){
+	for(register uint32_t cc = 0; cc < RVMA->TotalAllocations; ++cc){
 		if((RVMA->MemoryTags[cc].Base == vm) || (RVMA->MemoryTags[cc].BackBuffer == vm)){
 			vmcontextW = RVMA->MemoryTags[cc].PixelWidth;	vmcontextH = RVMA->MemoryTags[cc].PixelHeight;
 			vmcontextPS = RVMA->PixelSize;

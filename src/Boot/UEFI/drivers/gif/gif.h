@@ -99,7 +99,6 @@ typedef struct{
 }gifFrame_t;
 
 typedef struct{
-	void *Raw;
 	gifheader_t *hdr;
 	gifLogicalScreenSecriptor_t *lsd;
 	UINT32 gcmLength;
@@ -119,44 +118,113 @@ typedef struct{
 gifDescriptionSpace_t *OpenGIF(socket_t *gif, EFI_GRAPHICS_PIXEL_FORMAT PixelFormat);
 UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Width, UINT32 *_Height, EFI_GRAPHICS_PIXEL_FORMAT PixelFormat);
 void BltFrame(const UINT32 *Frame, UINT32 FrameWidth, UINT32 FrameHeight, 
-    UINT32 *DestBuffer, INT32 DestX, INT32 DestY, UINT32 DestWidth);
+	UINT32 *DestBuffer, INT32 DestX, INT32 DestY, UINT32 DestWidth);
+void CloseGIF(gifDescriptionSpace_t *gif);
 
-#define GifShow(GIF, GOP)	{																						\
-	DEBUGPRINT(L"\nPrinting GIF");																					\
-	/*Allocate a persistent canvas buffer matching screen dimensions (or GIF logical screen width/height)*/			\
-	UINT32 canvasWidth = gop->Mode->Info->HorizontalResolution, 													\
-			canvasHeight = gop->Mode->Info->VerticalResolution, 													\
-			*persistentCanvas = (UINT32 *)__calloc(canvasWidth * canvasHeight, sizeof(UINT32));						\
-	UINT64 FC = 0;																									\
-	while(true){																									\
-		gifFrame_t *currentFrame = &GIF->frames[FC % GIF->nFrames];													\
-		UINT32 *framePixels = (UINT32 *)currentFrame->fb;															\
-		if(framePixels){																							\
-			UINT32 fX = currentFrame->ld->HorizontalPosition, 														\
-					fY = currentFrame->ld->VerticalPosition, 														\
-					fW = currentFrame->fbw, 																		\
-					fH = currentFrame->fbh;																			\
-			/*Composite the current frame patch onto the persistent canvas at (fX, fY)*/							\
-			for(UINT32 y = 0; y < fH; y++){																			\
-				UINT32 targetY = fY + y;																			\
-				if(targetY >= canvasHeight){continue;}																\
-				for(UINT32 x = 0; x < fW; x++){																		\
-					UINT32 targetX = fX + x;																		\
-					if(targetX >= canvasWidth){continue;}															\
-					UINT32 srcPixel = framePixels[y * fW + x];														\
-					/*Optional: Handle transparent color index if your GIF format includes transparency*/			\
-					/*(Assuming 0x00000000 or a specific key represents transparency)*/								\
-					if((srcPixel & 0xFF000000) != 0){persistentCanvas[targetY * canvasWidth + targetX] = srcPixel;}	\
-				}																									\
-			}																										\
-			/*Blit the fully composited canvas to the physical framebuffer*/										\
-			BltFrame(persistentCanvas, canvasWidth, canvasHeight, 													\
-				(UINT32 *)gop->Mode->FrameBufferBase, 0, 0, 														\
-				gop->Mode->Info->PixelsPerScanLine);																\
-		}else{break;}																								\
-		FC++;																										\
-		uefi_call_wrapper(gBS->Stall, 0, 50000); /*50ms delay*/														\
-	}																												\
-	__free(persistentCanvas);																						\
-	socketfcall(gif, close, 0);																						\
-}
+// #define GifShow(GIF, GOP)	{																						\
+// 	DEBUGPRINT(L"\nPrinting GIF");																					\
+// 	/*Allocate a persistent canvas buffer matching screen dimensions (or GIF logical screen width/height)*/			\
+// 	UINT32 canvasWidth = gop->Mode->Info->HorizontalResolution, 													\
+// 			canvasHeight = gop->Mode->Info->VerticalResolution, 													\
+// 			*persistentCanvas = (UINT32 *)__calloc(canvasWidth * canvasHeight, sizeof(UINT32));						\
+// 	UINT64 FC = 0;																									\
+// 	while(true){																									\
+// 		gifFrame_t *currentFrame = &GIF->frames[FC % GIF->nFrames];													\
+// 		UINT32 *framePixels = (UINT32 *)currentFrame->fb;															\
+// 		if(framePixels){																							\
+// 			UINT32 fX = currentFrame->ld->HorizontalPosition, 														\
+// 					fY = currentFrame->ld->VerticalPosition, 														\
+// 					fW = currentFrame->fbw, 																		\
+// 					fH = currentFrame->fbh;																			\
+// 			/*Composite the current frame patch onto the persistent canvas at (fX, fY)*/							\
+// 			for(register UINT32 y = 0; y < fH; y++){																			\
+// 				UINT32 targetY = fY + y;																			\
+// 				if(targetY >= canvasHeight){continue;}																\
+// 				for(register UINT32 x = 0; x < fW; x++){																		\
+// 					UINT32 targetX = fX + x;																		\
+// 					if(targetX >= canvasWidth){continue;}															\
+// 					UINT32 srcPixel = framePixels[y * fW + x];														\
+// 					/*Optional: Handle transparent color index if your GIF format includes transparency*/			\
+// 					/*(Assuming 0x00000000 or a specific key represents transparency)*/								\
+// 					if((srcPixel & 0xFF000000) != 0){persistentCanvas[targetY * canvasWidth + targetX] = srcPixel;}	\
+// 				}																									\
+// 			}																										\
+// 			/*Blit the fully composited canvas to the physical framebuffer*/										\
+// 			BltFrame(persistentCanvas, canvasWidth, canvasHeight, 													\
+// 				(UINT32 *)gop->Mode->FrameBufferBase, 0, 0, 														\
+// 				gop->Mode->Info->PixelsPerScanLine);																\
+// 		}else{break;}																								\
+// 		FC++;																										\
+// 		uefi_call_wrapper(gBS->Stall, 0, 50000); /*50ms delay*/														\
+// 	}																												\
+// 	__free(persistentCanvas);																						\
+// 	socketfcall(gif, close, 0);																						\
+// }
+#define GifShow(GIF, GOP) do{                                                                              	\
+	DEBUGPRINT(L"\nPrinting GIF");                                                                         	\
+	if(!(GIF) || !(GOP) || !(GOP)->Mode || !(GOP)->Mode->Info || (GIF)->nFrames == 0){                     	\
+		DEBUGPRINT(L"\nInvalid GIF or GOP parameters.");                                                    \
+		break;                                                                                              \
+	}                                                                                                       \
+	UINT32 canvasWidth = (GOP)->Mode->Info->HorizontalResolution, 											\
+			canvasHeight = (GOP)->Mode->Info->VerticalResolution, 											\
+			*frameBuffer = (UINT32 *)(GOP)->Mode->FrameBufferBase;                                          \
+	if(!frameBuffer){break;}                                                                            	\
+	UINT32 *persistentCanvas = (UINT32 *)__calloc(canvasWidth * canvasHeight, sizeof(UINT32));              \
+	if(!persistentCanvas){                                                                                	\
+		DEBUGPRINT(L"\nFailed to allocate persistent canvas.");                                             \
+		break;                                                                                              \
+	}                                                                                                       \
+	UINT64 FC = 0;                                                                                          \
+	while(true){                                                                                          	\
+		UINT32 frameIdx = FC % (GIF)->nFrames;                                                              \
+		/*	Reset persistent canvas when animation loops back to Frame 0	*/                              \
+		if(frameIdx == 0) {for(register UINT32 i = 0; i < canvasWidth * canvasHeight; i++){persistentCanvas[i] = 0;}}\
+		gifFrame_t *currentFrame = &(GIF)->frames[frameIdx];                                                \
+		if (!currentFrame || !currentFrame->fb) { break; }                                                  \
+		UINT32 *framePixels = (UINT32 *)currentFrame->fb, 													\
+				fX = 0, fY = 0;                                                                             \
+		if(currentFrame->ld){                                                                             	\
+			fX = currentFrame->ld->HorizontalPosition;                                                      \
+			fY = currentFrame->ld->VerticalPosition;                                                        \
+		}                                                                                                   \
+		UINT32 fW = currentFrame->fbw, fH = currentFrame->fbh;                                              \
+		/*	Extract Disposal Method from Graphic Control Extension	*/                                    	\
+		UINT8 disposal = 0;                                                                                 \
+		if(currentFrame->gce && currentFrame->gce->Data){                                                 	\
+			gifExtBlockLocalDescriptorExtensionData *gceData = (gifExtBlockLocalDescriptorExtensionData *)currentFrame->gce->Data;	\
+			disposal = gceData->Disposal;                                                                  	\
+		}                                                                                                   \
+		/*	Composite frame patch onto persistent canvas	*/                                              \
+		for(register UINT32 y = 0; y < fH; y++){                                                                   	\
+			UINT32 targetY = fY + y;                                                                        \
+			if(targetY >= canvasHeight){continue;}                                                      	\
+			for(register UINT32 x = 0; x < fW; x++){                                                               	\
+				UINT32 targetX = fX + x;                                                                    \
+				if(targetX >= canvasWidth){continue;}                                                   	\
+				UINT32 srcPixel = framePixels[y * fW + x];                                                  \
+				if((srcPixel & 0xFF000000) != 0) {persistentCanvas[targetY * canvasWidth + targetX] = srcPixel;} \
+			}                                                                                               \
+		}                                                                                                   \
+		/*	Blit persistent canvas to screen	*/                                                          \
+		BltFrame(persistentCanvas, canvasWidth, canvasHeight,                                               \
+				 frameBuffer, 0, 0,                                                                         \
+				 (GOP)->Mode->Info->PixelsPerScanLine);                                                     \
+		/*	Handle Disposal Method 2 (Restore to Background)	*/                                          \
+		if(disposal == 2){                                                                                	\
+			for(register UINT32 y = 0; y < fH; y++){                                                               	\
+				UINT32 targetY = fY + y;                                                                    \
+				if(targetY >= canvasHeight){continue;}                                                  	\
+				for(register UINT32 x = 0; x < fW; x++){                                                           	\
+					UINT32 targetX = fX + x;                                                                \
+					if(targetX >= canvasWidth){continue;}                                               	\
+					persistentCanvas[targetY * canvasWidth + targetX] = 0;                                  \
+				}                                                                                           \
+			}                                                                                               \
+		}                                                                                                   \
+		FC++;                                                                                               \
+		uefi_call_wrapper(gBS->Stall, 0, 50000); /* 50ms delay */                                           \
+	}                                                                                                       \
+	__free(persistentCanvas);                                                                               \
+	socketfcall(gif, close, 0);                                                                             \
+}while(0)

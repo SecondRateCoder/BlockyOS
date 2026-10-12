@@ -5,7 +5,7 @@
 #include "kernel/libcrt/memory/memory.h"
 #include "TSS.h"
 
-#define GDTTableDefaultLength  ((UINT16_MAX / sizeof(GDTDescriptor)) + 1)
+#define GDTTableDefaultLength  ((UINT16_MAX + 1) / sizeof(GDTDescriptor))
 
 typedef struct{
 	uint16_t    Limit;
@@ -40,25 +40,31 @@ enumdef(uint8_t, GDTDescriptorAccessBits){
 	GDAAccessed = (1)
 };
 
-typedef volatile struct{
-	uint64_t	LimitLow				:	16;
-	uint64_t	BaseLow					:	24;
-	// uint64_t	AccessByte				:	8;
-	uint64_t		ABAccessedBit		:	1;
-	uint64_t		ABReadWritableBit	:	1;
-	uint64_t		ABDirectionBit		:	1;
-	uint64_t		ABExecutableBit		:	1;
-	uint64_t		ABSystemSegmentBit	:	1;
-	uint64_t		ABPriviledgeLevel	:	2;
-	uint64_t		ABPresent			:	1;
-	uint64_t	LimitHigh				:	4;
-	// uint64_t	Flags					:	4;
-	uint64_t		FGranularity		:	1;
-	uint64_t		F32BitModeBit		:	1;
-	uint64_t		FLongModeBit		:	1;
-	uint64_t		FReserved			:	1;
-	uint64_t	BaseHigh				:	8;
-}__packed GDTDescriptor;
+typedef volatile struct {
+    // --- Lower 32 Bits ---
+    uint64_t LimitLow            : 16; // Bits 0..15  : Segment Limit [15:0]
+    uint64_t BaseLow             : 24; // Bits 16..39 : Base Address [23:0]
+    
+    // --- Access Byte (Bits 40..47) ---
+    uint64_t ABAccessedBit       : 1;  // Bit 40      : Accessed bit
+    uint64_t ABReadWritableBit   : 1;  // Bit 41      : Readable/Writable
+    uint64_t ABDirectionBit      : 1;  // Bit 42      : Conforming/Direction
+    uint64_t ABExecutableBit     : 1;  // Bit 43      : Executable (1=Code, 0=Data)
+    uint64_t ABSystemSegmentBit  : 1;  // Bit 44      : Descriptor Type (1=Code/Data, 0=Sys)
+    uint64_t ABPriviledgeLevel   : 2;  // Bits 45..46 : DPL (0 = Ring 0)
+    uint64_t ABPresent           : 1;  // Bit 47      : Present bit
+    
+    // --- Upper 16 Bits ---
+    uint64_t LimitHigh           : 4;  // Bits 48..51 : Segment Limit [19:16]
+    
+    // --- Flags Nibble (Bits 52..55) FIXED ORDER ---
+    uint64_t FAvailable          : 1;  // Bit 52      : Available for OS software (AVL)
+    uint64_t FLongModeBit        : 1;  // Bit 53      : 64-bit Long Mode Code (L)
+    uint64_t F32BitModeBit       : 1;  // Bit 54      : Default / 32-bit Segment (D/B)
+    uint64_t FGranularity        : 1;  // Bit 55      : Granularity (0=Byte, 1=4KB)
+    
+    uint64_t BaseHigh            : 8;  // Bits 56..63 : Base Address [31:24]
+} __packed GDTDescriptor;
 
 enumdef(uint8_t, GDSSFlags){
 	Granularity1Byte = 0x0, Granularity4KB = 0x1, 
@@ -70,25 +76,36 @@ enumdef(uint8_t, GDSSFlags){
 
 enumdef(uint8_t, GDSSType64){TypeLDT = 0x2, TSS64BitAvailable = 0x9, TSS64BitBusy = 0xB};
 typedef volatile union{
-	uint128_t		Raw;
-	struct{
-		uint64_t	LimitLow				:	16;
-		uint64_t	LinearBaseLow			:	24;
-		uint64_t		ABType				:	5;
-		uint64_t		ABSystemSegmentBit	:	1;
-		uint64_t		ABPriviledgeLevel	:	2;
-		uint64_t		ABPresent			:	1;
-		uint64_t	LimitHigh				:	4;
-		uint64_t		FGranularity		:	1;
-		uint64_t		F32BitModeBit		:	1;
-		uint64_t		FLongModeBit		:	1;
-		uint64_t							:	1;
-		uint64_t	LinearBaseHigh			:	40;
-		uint64_t							:	0;
-	};
-}__packed GDTSystemSegmentDescriptor64;
+    uint128_t Raw;
+    struct{
+        // --- Lower 64 Bits (Descriptor Low) ---
+        uint64_t LimitLow			: 16; // Bits 0..15  : Limit [15:0]
+        uint64_t BaseLow			: 24; // Bits 16..39 : Base [23:0]
+        
+        // Access Byte (Bits 40..47)
+        uint64_t ABType				: 4;  // Bits 40..43 : System Type (FIXED: 4 bits, e.g. 0x9=TSS)
+        uint64_t ABSystemSegmentBit	: 1;  // Bit 44      : S = 0 for System Segment
+        uint64_t ABPriviledgeLevel	: 2;  // Bits 45..46 : DPL
+        uint64_t ABPresent			: 1;  // Bit 47      : Present bit
+        
+        uint64_t LimitHigh			: 4;  // Bits 48..51 : Limit [19:16]
+        
+        // Flags Nibble (Bits 52..55)
+        uint64_t FAvailable			: 1;  // Bit 52      : AVL
+        uint64_t 					: 2;  // Bits 53..54 : Reserved (Must be 0 for TSS)
+        uint64_t FGranularity		: 1;  // Bit 55      : Granularity (0=Byte, 1=4KB)
+
+        // --- Upper 64 Bits (Descriptor High) ---
+        uint64_t BaseHigh			: 40; // Bits 64..95 : Base [63:24]
+        uint64_t 					: 32; // Bits 96..127: Reserved (Must be 0)
+    };
+} __packed GDTSystemSegmentDescriptor64;
 
 LibAPI bool LoadGDTR(GDTR64 *Register);
 LibAPI bool ReadGDTR(GDTR64 *Register);
+extern LibAPI bool __sysvabi _LoadGDTR(GDTR64 *Register);
+extern LibAPI bool __sysvabi _ReadGDTR(GDTR64 *Register);
+extern LibAPI bool __sysvabi _LoadLDTR(GDTR64 *Register);
+extern LibAPI bool __sysvabi _ReadLDTR(GDTR64 *Register);
 LibAPI bool AllocateSystemDescriptor(void *PhysicalBase, uint32_t Limit, 
 	uint8_t Priviledge, GDSSType64 Type, GDSSFlags flags);

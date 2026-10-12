@@ -15,7 +15,7 @@ $CUSTOMASM = Join-Path $TOOLSDIR 'build-suite/asm.ps1'
 function Open-Log{
 	param([string]$LOG)
 	if(-not (Test-Path $script:BuildFeatures.LOG)){$script:BuildFeatures.LOG = $LOG}
-    if(-not (Test-Path $script:BuildFeatures.LOG)){New-Item -Path $script:BuildFeatures.LOG -ItemType File}
+    if(-not (Test-Path $script:BuildFeatures.LOG)){New-Item -Path $script:BuildFeatures.LOG -ItemType File -Force}
 }
 function global:Write-Log{
 	param([string]$MSG, [System.ConsoleColor]$COLOR)
@@ -1079,9 +1079,7 @@ foreach($Group in $GroupedCommands){# .Group contains the array of commands belo
 			continue
         } '^SHELL.REBUILD$' {
             $PathFS = Join-Path (Get-Location) 'tools\filesystem\fs.ps1'
-            $PathExec = Join-Path (Get-Location) 'tools\executable-format\exec.ps1'
-            Write-Log "$((& $PathFS) -join "`n")"
-            Write-Log "$((& $PathExec) -join "`n")"
+            Write-Log "$((& $PathFS -Release) -join "`n")"
 			continue
         } '^SHELL.EXECUTE$' {
             $PATH = $null

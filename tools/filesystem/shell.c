@@ -8,7 +8,7 @@ symtype_e togglesymtype(symtype_e value, bool set){
 
 cmddesc *getcmd(char *cmd){
 	if(!cmd){return NULL;}
-	for(uint64_t cc = 0; cc < ncommands; ++cc){
+	for(register uint64_t cc = 0; cc < ncommands; ++cc){
 		if(!memcmp(commands[cc].alias, cmd, __min(strlen(cmd), 8)) || 
 			!memcmp(commands[cc].cmd, cmd, __min(strlen(cmd), 8))
 		){return (commands + cc);}
@@ -22,7 +22,7 @@ void *resolvedata(char *src){
 	if(!symcd || !symcd->persistent){return NULL;}
 	symrefbuffer *buffer = symcd->persistent;
 	if(buffer){
-		for(uint32_t cc = 0; cc < buffer->len; ++cc){
+		for(register uint32_t cc = 0; cc < buffer->len; ++cc){
 			if(strstr(src, buffer->symrefbuffer[cc].alias)){
 				if(buffer->symrefbuffer[cc].type == symtype_e__string){
 					return str_replace(src, buffer->symrefbuffer[cc].alias, buffer->symrefbuffer[cc].data);
@@ -43,7 +43,7 @@ cmd_errout __shellparse(char *input){
 		if(cd == getcmd("e.sym")){togglesymtype(symtype_e__unknowndata, true);}
         uint64_t *buffer = calloc(cd->flags.nflags, sizeof(uint64_t));
 		while(tok = strtok_k(tokstate)){
-			for(uint64_t cc = 0; cc < cd->flags.nflags; ++cc){
+			for(register uint64_t cc = 0; cc < cd->flags.nflags; ++cc){
 				if(!strcmp(tok, cd->flags.flags[cc].flag)){
 					switch(cd->flags.flags[cc].type){
 						case cmddescargtype__switch: {
@@ -123,7 +123,7 @@ cmd_errout __shellhelp(uint64_t *buffer, void **persistent){
 			"\n\tFlags:",
 			((uint64_t)cd - (uint64_t)((void *)commands)) / sizeof(cmddesc), cd->cmd, cd->alias
 		);
-		for(uint8_t cc_ = 0; cc_ < cd->flags.nflags; ++cc_){
+		for(register uint8_t cc_ = 0; cc_ < cd->flags.nflags; ++cc_){
 			dualprintf(fs_logf, stdout, 
 				"\n\t\t{%.3s\t:\t%s\t:\t%s}",
 				cd->flags.flags[cc_].flag,
@@ -134,7 +134,7 @@ cmd_errout __shellhelp(uint64_t *buffer, void **persistent){
 		dualprintf(fs_logf, stdout, "\n\tDesc: %s", cd->desc);
 		return (cmd_errout){.errcode = 0, .msg = ""};
 	}else if(!strncmp(command, "..", __min(strlen(command), 2))){
-		for(uint64_t cc = 0; cc < ncommands; ++cc){
+		for(register uint64_t cc = 0; cc < ncommands; ++cc){
 			dualprintf(fs_logf, stdout, 
 				"\n[%llu]"
 				"\n\tCommand: %.8s"
@@ -142,7 +142,7 @@ cmd_errout __shellhelp(uint64_t *buffer, void **persistent){
 				"\n\tFlags:",
 				cc, commands[cc].cmd, commands[cc].alias
 			);
-			for(uint8_t cc_ = 0; cc_ < commands[cc].flags.nflags; ++cc_){
+			for(register uint8_t cc_ = 0; cc_ < commands[cc].flags.nflags; ++cc_){
 				dualprintf(fs_logf, stdout, 
 					"\n\t\t{%.3s\t:\t%s\t:\t%s}",
 					commands[cc].flags.flags[cc_].flag,
@@ -154,9 +154,9 @@ cmd_errout __shellhelp(uint64_t *buffer, void **persistent){
 		}
 		return (cmd_errout){.errcode = 0, .msg = ""};
 	}else if(!strncmp(command, "short", __min(strlen(command), 5))){
-		for(uint64_t cc = 0; cc < ncommands; ++cc){
+		for(register uint64_t cc = 0; cc < ncommands; ++cc){
 			dualprintf(fs_logf, stdout, "\n [%llu]: %.8s(%.8s)\t", cc, commands[cc].cmd, commands[cc].alias);
-			for(uint8_t cc_ = 0; cc_ < commands[cc].flags.nflags; ++cc_){
+			for(register uint8_t cc_ = 0; cc_ < commands[cc].flags.nflags; ++cc_){
 				dualprintf(fs_logf, stdout, " %.3s(%s)", commands[cc].flags.flags[cc_].flag, flagtypetostr(commands[cc].flags.flags[cc_].type));
 			}
 		}
@@ -262,11 +262,11 @@ cmd_errout __shellsym(uint64_t *buffer, void **persistent){
 }
 
 cmd_errout __shellflush(uint64_t *buffer, void **persistent){
-	for(uint64_t cc = 0; cc < ncommands; ++cc){
+	for(register uint64_t cc = 0; cc < ncommands; ++cc){
 		if((uint64_t)(commands[cc].func) == (uint64_t)__shellsym){
 			symrefbuffer *srb = commands[cc].persistent;
 			if(srb){
-				for(uint32_t index = 0; index < srb->len; ++index){
+				for(register uint32_t index = 0; index < srb->len; ++index){
 					free(srb->symrefbuffer[index].alias);
 					if(srb->symrefbuffer[index].type == symtype_e__string){
 						free(srb->symrefbuffer[index].data);
@@ -323,7 +323,7 @@ cmd_errout __shellclose(uint64_t *buffer, void **persistent){
 			return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Handle/Alias does not exist"};}
 		// Remove the Symbol.
 		if(!symcd || !symcd->persistent){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Dependency e.sym has not been defined"};}
-		for(uint32_t cc = 0; cc < ((symrefbuffer *)symcd->persistent)->len; ++cc){
+		for(register uint32_t cc = 0; cc < ((symrefbuffer *)symcd->persistent)->len; ++cc){
 			if((uint64_t)fh == (uint64_t)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data){
 				memcpy(((symrefbuffer *)symcd->persistent)->symrefbuffer + cc, ((symrefbuffer *)symcd->persistent)->symrefbuffer + cc + 1, 
 					sizeof(__symref) * (((symrefbuffer *)symcd->persistent)->len - (cc + 1)));
@@ -442,7 +442,7 @@ cmd_errout __shellsymprint(uint64_t *buffer, void **persistent){
 	symrefbuffer *srefb = symcd? symcd->persistent : NULL;
 	if(!srefb){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "No Defined Symbols"};}
 	if(!strncmp(symbol, "..", __min(strlen(symbol), 2))){
-		for(uint32_t cc = 0; cc < srefb->len; ++cc){
+		for(register uint32_t cc = 0; cc < srefb->len; ++cc){
 			char format[64];
 			if(srefb->symrefbuffer[cc].type == symtype_e__string){
 				snprintf(format, sizeof(format), "\n[%u]\t{%s:\t%.%llus}", cc, srefb->symrefbuffer[cc].alias, srefb->symrefbuffer[cc].nbytes);
@@ -454,7 +454,7 @@ cmd_errout __shellsymprint(uint64_t *buffer, void **persistent){
 		}
 		return (cmd_errout){.errcode = 0, .msg = ""};
 	}
-	for(uint32_t cc = 0; cc < srefb->len; ++cc){
+	for(register uint32_t cc = 0; cc < srefb->len; ++cc){
 		if(!strcmp(symbol, srefb->symrefbuffer[cc].alias) || !strcmp(symbol, srefb->symrefbuffer[cc].alias + 1) || !strncmp(symbol, srefb->symrefbuffer[cc].alias + 1, strlen(symbol))){
 			char format[64];
 			if(srefb->symrefbuffer[cc].type == symtype_e__string){
@@ -473,7 +473,7 @@ cmd_errout __shellsymprint(uint64_t *buffer, void **persistent){
 cmd_errout __shellexit(uint64_t *buffer, void **persistent){
 	cmddesc *mountcd = getcmd("e.mount"), *symcd = getcmd("e.sym");
 	if(!mountcd || !symcd || !symcd->persistent){return (cmd_errout){.errcode = cmddescerrtype_undefined_setting, .msg = "Dependency e.mount has not been defined"};}
-	for(uint32_t cc = 0; cc < ((symrefbuffer *)symcd->persistent)->len; ++cc){
+	for(register uint32_t cc = 0; cc < ((symrefbuffer *)symcd->persistent)->len; ++cc){
 		switch(((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].type){
 			case symtype_e__fhandle:	{fuloadh((fhandle *)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);		continue;}
 			case symtype_e__dirhandle:	{fuloaddir((dirhandle *)((symrefbuffer *)symcd->persistent)->symrefbuffer[cc].data);	continue;}

@@ -3,7 +3,7 @@
 #CACHE:ENABLED
 
 {
-	"LOG": "C:/GitHub/BlockyOS/Build/Build-nodate/alibcrt.log", 
+	"LOG": "C:/GitHub/BlockyOS/Build/Build-nodate/libcrt/libcrt.log", 
 	"SCRIPT.VERSION": 999, 
 	"FS.IMAGE": "C:/GitHub/BlockyOS/Build/Build-nodate/disk.img", 
 	"FS.FORMAT": {
@@ -36,6 +36,7 @@
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.c", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IO/IO.asm", 
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/IDT.c", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/IDT.asm", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.asm", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.c", 
@@ -53,7 +54,7 @@
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2xs-ref.c", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.c", 
 					"C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/SSE/UTILS.asm", 
-					"C:/GitHub/BlockyOS/src/kernel/libcrt/alibcrt.def"
+					"C:/GitHub/BlockyOS/src/kernel/libcrt/libcrt.def"
 				]
 			}
 		]

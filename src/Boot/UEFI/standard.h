@@ -3,10 +3,9 @@
 #include "efi.h"
 #include "guid.h"
 #include "efilib.h"
-#include "kernel/libcrt/def.h"
-#include "drivers/executable/struct.h"
+// #include "kernel/libcrt/def.h"
 #include "tools/tools.h"
-// #include "drivers/executable/eload.h"
+#include "drivers/executable/struct.h"
 
 #define BOOT_OPTION_ATTR (LOAD_OPTION_ACTIVE)
 
@@ -89,5 +88,10 @@ __bootinfo *gatherbootinfo(EFI_HANDLE Image);
 UINT8 CreateBootEntry(EFI_GUID *BootGuid, EFI_GUID *AltGuid, CHAR16 *OutBootVarName);
 const char *EfiStatusToString(EFI_STATUS Status);
 
+#define __roundup(a, i)		((((volatile __typeof(a))(a) + ((volatile __typeof(a))(i) - 1)) / (volatile __typeof(a))(i)) * (volatile __typeof(a))(i))
+
 #define bochs_breakpoint	__bochs_breakpoint
 extern void __bochs_breakpoint(void);
+
+bool __sysvabi __e9print(CHAR16 *str, uint64_t n);
+extern bool __sysvabi __e9printc(CHAR16 c);

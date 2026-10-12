@@ -5,8 +5,8 @@
 #include "efi.h"
 #include "efilib.h"
 
-#include "kernel/libcrt/def.h"
-#include "kernel/libcrt/math/math.h"
+// #include "kernel/libcrt/def.h"
+// #include "kernel/libcrt/math/math.h"
 #include "Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
 #ifdef _DEBUG
@@ -47,7 +47,7 @@ typedef cword_t GPTeNSTR[GPTeNAMELEN];
 #define PATHnoSEP '\\'
 #define CMDiMAX 256
 
-#define enumdef(type, name)     typedef type name;  enum
+#define enumdef(type, ...)     typedef type __VA_ARGS__;  enum
 #define bufdef(name, ptr, scale)		typedef struct name{ptr *name;		scale len;}name;
 
 #define flagcheck(v, f) (((v) & (f)) == (f))
@@ -65,7 +65,7 @@ static inline VOID IoWrite8Inline(UINT16 Port, UINT8 Value){
     );}
 #ifdef _DEBUG
 extern const EFI_PHYSICAL_ADDRESS DebugPort;
-#define BUFDEFPRINT(mem, nbytes, countername)	for(UINT64 countername = 0; countername < abs(nbytes); ++countername){IoWrite8Inline(DebugPort, ((uint8_t *)mem)[countername]);}
+#define BUFDEFPRINT(mem, nbytes, countername)	for(register UINT64 countername = 0; countername < abs(nbytes); ++countername){IoWrite8Inline(DebugPort, ((uint8_t *)mem)[countername]);}
 #else
 #define BUFDEFPRINT(...)
 #endif
@@ -100,7 +100,7 @@ typedef struct {
 #define __efiStepRight(node, memory) (node = (!__efiIsFirst(node)? *((node)->local__.parent)->local__.parent->local__.children[memory++]))
 #define __efiStepLeft(node, memory) (node = (!__efiIsFirst(node)? *((node)->local__.parent)->local__.parent->local__.children[memory--]))
 
-static CHAR16 *EfiMemoryTypeToStr(UINT32 type);
+static CHAR16 *EfiMemoryTypeToStr(EFI_MEMORY_TYPE type);
 EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSize, UINT32 *descVersion);
 
 enumdef(UINT32, strtokflags){

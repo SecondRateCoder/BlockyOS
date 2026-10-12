@@ -8,3 +8,28 @@ EXPORTS
 	WriteRawHandleBlocks
 	WriteRawHandleBytes
 	ReadRawHandleBlocks
+	__fsize
+	__dsize
+	loadpart
+	fmount
+	fuloadh
+	floadh
+	_fwrite
+	_fread
+	__fgetparent
+	__ftest
+	fuloaddir
+	floadhdir
+	_dreadinfo
+	_freadinfo
+	_fseek
+	_fseeko
+	__fdiradd
+	__ffind
+	__fdirrefresh
+	__fupdatetstamp
+	__fdirlist
+	__fprint_info
+	__dirr_init
+	__dirr
+	__dirr_free

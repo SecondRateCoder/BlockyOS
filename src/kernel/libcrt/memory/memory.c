@@ -15,12 +15,12 @@ void *memset(void *buffer, int val, uint64_t len){
 		StoreUAlignedIntegers(r0, vec_data);
 		
 		// Write 16 bytes at a time
-		for(uint64_t i = 0; i < chunks; i++){LoadUAlignedIntegers(r0, ptr + (i * 16));}
+		for(register uint64_t i = 0; i < chunks; i++){LoadUAlignedIntegers(r0, ptr + (i * 16));}
 		FreeSSERegister(r0);
 		// Handle remainder bytes
-		for(uint64_t i = chunks * 16; i < len; i++){ptr[i] = v;}
+		for(register uint64_t i = chunks * 16; i < len; i++){ptr[i] = v;}
 	// 	Fallback for small buffers
-	}else{for(uint64_t i = 0; i < len; i++){((uint8_t *)buffer)[i] = (uint8_t)val;}}
+	}else{for(register uint64_t i = 0; i < len; i++){((uint8_t *)buffer)[i] = (uint8_t)val;}}
 	return buffer;
 }
 
@@ -32,24 +32,18 @@ int memcmp(const void * __restrict__ a, const void * __restrict__ b, uint64_t le
 	const uint8_t *ptr_a = (const uint8_t *)a, 
 				*ptr_b = (const uint8_t *)b;
 	
-	// Fast path: Compare 8 bytes at a time
+	//	Fast path: Compare 8 bytes at a time
 	uint64_t chunks = len / 8;
-	for(uint64_t i = 0; i < chunks; i++){
+	for(register uint64_t i = 0; i < chunks; i++){
 		const uint64_t val_a = *(const uint64_t *)(ptr_a + (i * 8)), 
 					val_b = *(const uint64_t *)(ptr_b + (i * 8));
-		
-		// If they differ, we must find exactly which byte differed 
-		// to return the standard C positive/negative difference.
+		//	If they differ, we must find exactly which byte differed 
+		//		to return the standard C positive/negative difference.
 		if(val_a != val_b){
-			for(uint64_t j = i * 8; j < (i * 8) + 8; j++){
-				if(ptr_a[j] != ptr_b[j]){return ptr_a[j] - ptr_b[j];}
-			}
-		}
+			for(register uint64_t j = i * 8; j < (i * 8) + 8; j++){if(ptr_a[j] != ptr_b[j]){return ptr_a[j] - ptr_b[j];}}}
 	}
 	// Remainder loop
-	for(uint64_t i = chunks * 8; i < len; i++){
-		if(ptr_a[i] != ptr_b[i]){return ptr_a[i] - ptr_b[i];}
-	}
+	for(register uint64_t i = chunks * 8; i < len; i++){if(ptr_a[i] != ptr_b[i]){return ptr_a[i] - ptr_b[i];}}
 	return 0; // Equal
 }
 
@@ -61,7 +55,7 @@ void *memcpy(void * __restrict dst, const void * __restrict src, uint64_t len){
 		const uint8_t *s = (const uint8_t *)src;
 		
 		// Copy 16 bytes at a time
-		for(uint64_t i = 0; i < chunks; i++){
+		for(register uint64_t i = 0; i < chunks; i++){
 			uint64_t offset = i * 16;
 			StoreUAlignedIntegers(r0, (void *)(s + offset)); // Mem -> Reg
 			LoadUAlignedIntegers(r0, (void *)(d + offset));  // Reg -> Mem
@@ -69,12 +63,12 @@ void *memcpy(void * __restrict dst, const void * __restrict src, uint64_t len){
 		FreeSSERegister(r0);
 		
 		// Handle remainder bytes
-		for(uint64_t i = chunks * 16; i < len; i++){d[i] = s[i];}
+		for(register uint64_t i = chunks * 16; i < len; i++){d[i] = s[i];}
 	}else{
 		// Fallback for small buffers
 		uint8_t *d = (uint8_t *)dst;
 		const uint8_t *s = (const uint8_t *)src;
-		for(uint64_t i = 0; i < len; i++){d[i] = s[i];}
+		for(register uint64_t i = 0; i < len; i++){d[i] = s[i];}
 	}
 	return dst;
 }
@@ -100,4 +94,24 @@ errno_t memmove_s(void *__restrict a, uint64_t alen, void *__restrict b, uint64_
 	memcpy(temp, b, blen);		memcpy(a, temp, blen);
 	FreePages(temp);
 	return 0x00;
+}
+
+LibAPI bool memcheckb(void *p, uint8_t b, uint64_t n){
+	while(n){if(((uint8_t *)p)[n] == b){return true;}}
+	return false;
+}
+LibAPI bool memcheckw(void *p, uint16_t w, uint64_t n){
+	n /= sizeof(uint16_t);
+	while(n){if(((uint16_t *)p)[n] == w){return true;}}
+	return false;
+}
+LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n){
+	n /= sizeof(uint32_t);
+	while(n){if(((uint32_t *)p)[n] == l){return true;}}
+	return false;
+}
+LibAPI bool memcheckll(void *p, uint64_t ll, uint64_t n){
+	n /= sizeof(uint64_t);
+	while(n){if(((uint64_t *)p)[n] == ll){return true;}}
+	return false;
 }

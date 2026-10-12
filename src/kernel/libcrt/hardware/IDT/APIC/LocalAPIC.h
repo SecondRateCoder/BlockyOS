@@ -33,8 +33,8 @@
 #define LocalAPICEnableBit				0x100
 #define LocalAPICDefaultBaseInterrupt	(0xFF)
 
-#define WriteAPICRegister(BASE, REGISTER, VALUE)	if(LARAM_##REGISTER == LARAT_ReadWrite || LARAM_##REGISTER == LARAT_WriteOnly){*(__typeof(VALUE) *)((BASE) + (REGISTER)) = VALUE;}
-#define ReadAPICRegister(BASE, REGISTER, OUT)		if(LARAM_##REGISTER == LARAT_ReadWrite || LARAM_##REGISTER == LARAT_ReadOnly){OUT = *((__typeof(OUT) *)((BASE) + (REGISTER)));}
+#define WriteAPICRegister(BASE, REGISTER, VALUE)	if(LARAM_##REGISTER == LARAT_ReadWrite || LARAM_##REGISTER == LARAT_WriteOnly){*(__typeof(VALUE) *)((uint8_t *)(BASE) + (REGISTER)) = VALUE;}
+#define ReadAPICRegister(BASE, REGISTER, OUT)		if(LARAM_##REGISTER == LARAT_ReadWrite || LARAM_##REGISTER == LARAT_ReadOnly){OUT = *(__typeof(OUT) *)((uint8_t *)((BASE) + (REGISTER)));}
 
 enumdef(uint8_t, LocalAPICRegisterAccessType){LARAT_ReadOnly = 0x0, LARAT_ReadWrite = 0x1, LARAT_WriteOnly = 0x2};
 enumdef(uint8_t, LocalAPICTriggerMode){LATM_LevelTriggerMode = 0x1, LATM_EdgeTriggerMode = 0x0};
@@ -221,4 +221,7 @@ LibAPI void *GetLocalAPICBase(void *ACPIBase, bool *_RSDT);
 LibAPI bool InitLocalAPIC(void *ACPIBase, uint8_t InterruptBase, bool Enable);
 LibAPI void DisableLocalAPIC(void *ACPIBase);
 LibAPI void EnableLocalAPIC(void *ACPIBase);
-uint32_t GetLocalAPICID();
+LibAPI uint32_t GetLocalAPICID();
+
+LibAPI void SendIPI(void *ACPIBase, uint32_t apic_id, uint32_t icr_low);
+LibAPI void *BootCore(void *ACPIBase, uint8_t ApicID, uint8_t *InterruptVector, void *Code, UINT64 CodeLength);

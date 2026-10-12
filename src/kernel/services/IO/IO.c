@@ -3,6 +3,22 @@
 #include "controllers/NVMe.h"
 #include "service.h"
 
+const PCIDeviceSpecifier SupportedIODevices[] = {
+	// GetPCIstruct(MassStorage_SATA_AHCI), 
+	{.ProgIF = 0x01, .SubClass = 0x06, .ClassCode = 0x01}, 
+	// GetPCIstruct(MassStorage_NVMe_NVMHCI), 
+	{.ProgIF = 0x01, .SubClass = 0x08, .ClassCode = 0x01}, 
+	// GetPCIstruct(MassStorage_NVMe_Express), 
+	{.ProgIF = 0x02, .SubClass = 0x08, .ClassCode = 0x01}, 
+	// GetPCIstruct(MassStorage_NVMe_Other), 
+	{.ProgIF = 0x80, .SubClass = 0x08, .ClassCode = 0x01}, 
+	// GetPCIstruct(MassStorage_IDE_NativeBusMaster), 
+	{.ProgIF = 0x85, .SubClass = 0x01, .ClassCode = 0x01}, 
+	// GetPCIstruct(MassStorage_IDE_BothNativeBusMaster)
+	{.ProgIF = 0x8A, .SubClass = 0x01, .ClassCode = 0x01}
+};
+const uint8_t TotalSupportedIODevices = sizeof(SupportedIODevices) / sizeof(PCIDeviceSpecifier);
+
 void *GetMassStorageHandle(GenericMassStorageDeviceConfig *config, PCIDeviceSpecifier Device){
 	uint32_t bus, slot;
 	//	We initialise an ATA Device

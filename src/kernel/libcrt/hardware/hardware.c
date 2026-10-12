@@ -57,7 +57,7 @@ LibAPI void InitializePIT(void *acpibase, uint8_t IOAPIC, uint8_t LocalAPIC, uin
 		if(*((uint8_t *)_MADT + __offsetof(RSDP_t, Version0.Revision)) >= XSDPRevision){
 			XSDT_MADT_t *MADT = _MADT;
 			uint32_t Offset = 0x00;
-			for(uint32_t cc = 0; cc < (MADT->Header.Length - sizeof(XSDT_MADT_t) / sizeof(XSDT_MADTEntry)); ++cc){
+			for(register uint32_t cc = 0; cc < (MADT->Header.Length - sizeof(XSDT_MADT_t) / sizeof(XSDT_MADTEntry)); ++cc){
 				XSDT_MADTEntry *Entry = (void *)MADT->Table + Offset;
 				if(MADT->Table[cc].Type == XSDT_IOAPICInterruptSourceOverride){
 					XSDT_IOAPICInterruptSourceOverride_t *Override = (XSDT_IOAPICInterruptSourceOverride_t *)Entry;

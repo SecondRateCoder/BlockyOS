@@ -1,7 +1,6 @@
 #pragma once
 
 #include "kernel/libcrt/def.h"
-#include "kernel/libcrt/services.h"
 #include "kernel/libcrt/math/int.h"
 #include "kernel/libcrt/hardware/IDT/ISR.h"
 #include "kernel/libcrt/hardware/GDT/GDT.h"
@@ -74,21 +73,8 @@ typedef union{
 	}NVMe;
 }GenericMassStorageDeviceConfig;
 
-const PCIDeviceSpecifier SupportedIODevices[] = {
-	// GetPCIstruct(MassStorage_SATA_AHCI), 
-	{.ProgIF = 0x01, .SubClass = 0x06, .ClassCode = 0x01}, 
-	// GetPCIstruct(MassStorage_NVMe_NVMHCI), 
-	{.ProgIF = 0x01, .SubClass = 0x08, .ClassCode = 0x01}, 
-	// GetPCIstruct(MassStorage_NVMe_Express), 
-	{.ProgIF = 0x02, .SubClass = 0x08, .ClassCode = 0x01}, 
-	// GetPCIstruct(MassStorage_NVMe_Other), 
-	{.ProgIF = 0x80, .SubClass = 0x08, .ClassCode = 0x01}, 
-	// GetPCIstruct(MassStorage_IDE_NativeBusMaster), 
-	{.ProgIF = 0x85, .SubClass = 0x01, .ClassCode = 0x01}, 
-	// GetPCIstruct(MassStorage_IDE_BothNativeBusMaster)
-	{.ProgIF = 0x8A, .SubClass = 0x01, .ClassCode = 0x01}
-};
-const uint8_t TotalSupportedIODevices = sizeof(SupportedIODevices) / sizeof(PCIDeviceSpecifier);
+extern const PCIDeviceSpecifier SupportedIODevices[];
+extern const uint8_t TotalSupportedIODevices;
 
 enumdef(uint8_t, GenericDiskCommand){
 	IDENTIFY_DEVICE = 0xEC, 

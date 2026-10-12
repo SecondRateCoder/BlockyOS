@@ -1,5 +1,14 @@
 
 $OUT = Join-Path (Get-Location) 'src\kernel\libcrt\hardware\IDT\ISR.asm'
+$HDR = Join-Path (Get-Location) 'src\kernel\libcrt\hardware\IDT\ISRCallback.h'
+
+$HDRPrefix = '#pragma once
+
+#include "kernel/libcrt/math/int.h"
+#include "kernel/libcrt/def.h"
+#include "APIC/LocalAPIC.h"
+#include "IDT.h"
+'
 
 $MAX = 256
 $ERRS = @(8, 10, 11, 12, 13, 14, 17, 21)
@@ -85,9 +94,17 @@ common_isr_stub:
     iretq'
 
 Set-Content -Path $OUT -Value $PREFIX
+Set-Content -Path $HDR -Value $HDRPrefix
 
 for($i = 0; $i -lt $MAX; $i++){
+	Add-Content -Path $HDR -Value "extern __naked void isrCallback$($i)(void);"
     if($ERRS -contains $i){
         Add-Content -Path $OUT -Value "isrCallbackWError $($i)"
     }else{Add-Content -Path $OUT -Value "isrCallbackNoError $($i)"}
+}
+
+Add-Content -Path $HDR -Value "#define IDTCallbackInit(IDT)`t\"
+for($i = 0; $i -lt $MAX; $i++){
+	Add-Content -Path $HDR -Value "`t(IDT)[$($i)].OffsetHigh = ((uint64_t)isrCallback$($i) >> 16) & 0xFFFFFFFFFF;`t\"
+	Add-Content -Path $HDR -Value "`t(IDT)[$($i)].OffsetLow = (uint64_t)isrCallback$($i) & UINT16_MAX;`t`t`t`t\"
 }

@@ -1,0 +1,105 @@
+Initializing CGCC.MAKE build process...
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\std.asm. source=2026-10-11T23:54:32.6319089Z, stored=10/11/2026 01:02:10, delta=-2509657.368 sec
+nasm -s -O0 -f win64 -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ C:/GitHub/BlockyOS/src/kernel/libcrt/std.asm -o C:/GitHub/BlockyOS/compile/cache/elf.asm.std.o
+Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\std.asm
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\math\float.asm - up to date; source=2026-10-07T16:34:14.6332960Z, stored=10/07/2026 16:34:14
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\RNG\RNG.asm - up to date; source=2026-10-07T16:34:14.6442712Z, stored=10/07/2026 16:34:14
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\RNG\RNG.c - up to date; source=2026-10-08T17:10:04.9158927Z, stored=10/08/2026 17:10:04
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\GDT\GDT.asm - up to date; source=2026-10-08T21:31:38.0083844Z, stored=10/08/2026 21:31:38
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\GDT\GDT.c - up to date; source=2026-10-10T01:04:47.9713720Z, stored=10/10/2026 01:04:47
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\paging.asm - up to date; source=2026-10-11T22:19:42.3891213Z, stored=10/11/2026 22:19:42
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\paging.c - up to date; source=2026-10-10T23:53:52.4653807Z, stored=10/10/2026 23:53:52
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\SSE\SSE.asm - up to date; source=2026-10-07T16:34:14.6442712Z, stored=10/07/2026 16:34:14
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\SSE\SSE.c - up to date; source=2026-10-10T01:04:47.9713720Z, stored=10/10/2026 01:04:47
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\memory\memory.c - up to date; source=2026-10-10T01:04:47.9713720Z, stored=10/10/2026 01:04:47
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\memory\string.c - up to date; source=2026-10-08T17:16:06.3353562Z, stored=10/08/2026 17:16:06
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\palloc.c. source=2026-10-11T23:55:35.2161077Z, stored=10/11/2026 23:39:18, delta=-2591022.784 sec
+gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.palloc.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.h:4,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:1:
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
+   42 | #define NaNf    (__builtin_nanf(""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
+   25 | #define NaNf            (__builtin_nanf (""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
+   50 | #define SNaNf    (__builtin_nansf(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
+   26 | #define SNaNf           (__builtin_nansf (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
+   51 | #define SNaNd    (__builtin_nans(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
+   27 | #define SNaNd           (__builtin_nans (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
+   52 | #define SNaNld   (__builtin_nansl(""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
+   28 | #define SNaNld          (__builtin_nansl (""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'AllocatePagesFromRange':
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:163:44: warning: comparison between pointer and integer
+  163 |         while(MemoryIsMapped(Base) && Base < Limit){Base += PAGE_SIZE;}
+      |                                            ^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:164:17: warning: comparison between pointer and integer
+  164 |         if(Base >= Limit){return NULL;}else{return AllocatePages(Base, NBytes, Flags, ProtectionKey);}
+      |                 ^~
+Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\palloc.c
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\palloc.c - up to date; source=2026-10-10T01:04:47.9923705Z, stored=10/10/2026 01:04:47
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\mmalloc.c - up to date; source=2026-10-10T01:04:47.9923705Z, stored=10/10/2026 01:04:47
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\math\math.c - up to date; source=2026-09-12T00:53:16.5524318Z, stored=09/12/2026 00:53:16
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IO\IO.asm - up to date; source=2026-10-07T16:34:14.6442712Z, stored=10/07/2026 16:34:14
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\IDT.c - up to date; source=2026-10-09T21:10:25.1048108Z, stored=10/09/2026 21:10:25
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\IDT.asm - up to date; source=2026-10-08T22:29:27.9444712Z, stored=10/08/2026 22:29:27
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\ISR.asm - up to date; source=2026-10-09T08:03:14.9366955Z, stored=10/09/2026 08:03:14
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\ISR.c - up to date; source=2026-10-11T22:44:04.0047988Z, stored=10/11/2026 22:44:04
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\ACPI\ACPI.c - up to date; source=2026-10-11T23:38:15.6716932Z, stored=10/11/2026 23:38:15
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\APIC.c - up to date; source=2026-08-31T17:22:17.1088393Z, stored=08/31/2026 17:22:17
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\IOAPIC.c - up to date; source=2026-10-10T01:04:47.9713720Z, stored=10/10/2026 01:04:47
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\LocalAPIC.c - up to date; source=2026-10-10T23:20:23.9474066Z, stored=10/10/2026 23:20:23
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\LocalAPICTimer.c - up to date; source=2026-10-11T22:44:39.2077434Z, stored=10/11/2026 22:44:39
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\hardware.c - up to date; source=2026-10-11T22:44:19.5594732Z, stored=10/11/2026 22:44:19
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2b-ref.c - up to date; source=2026-08-31T20:05:16.6578387Z, stored=08/31/2026 20:05:16
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2bp-ref.c - up to date; source=2026-08-31T20:05:20.6816175Z, stored=08/31/2026 20:05:20
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2s-ref.c - up to date; source=2026-08-31T20:05:24.7027041Z, stored=08/31/2026 20:05:24
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2sp-ref.c - up to date; source=2026-08-31T20:05:27.6610089Z, stored=08/31/2026 20:05:27
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2xb-ref.c - up to date; source=2026-09-01T14:03:25.3444410Z, stored=09/01/2026 14:03:25
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2xs-ref.c - up to date; source=2026-08-31T17:22:17.0728377Z, stored=08/31/2026 17:22:17
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\PCIe\PCIe.c - up to date; source=2026-10-10T01:04:47.9713720Z, stored=10/10/2026 01:04:47
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\SSE\UTILS.asm - up to date; source=2026-10-07T16:34:14.6442712Z, stored=10/07/2026 16:34:14
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\libcrt.def - up to date; source=2026-10-11T00:13:43.3970927Z, stored=10/11/2026 00:13:43
+gcc compile/cache/elf.asm.std.o compile/cache/elf.asm.float.o compile/cache/elf.asm.RNG.o compile/cache/elf.c.RNG.o compile/cache/elf.asm.GDT.o compile/cache/elf.c.GDT.o compile/cache/elf.asm.paging.o compile/cache/elf.c.paging.o compile/cache/elf.asm.SSE.o compile/cache/elf.c.SSE.o compile/cache/elf.c.memory.o compile/cache/elf.c.string.o compile/cache/elf.c.palloc.o compile/cache/c.palloc(1).o compile/cache/elf.c.mmalloc.o compile/cache/elf.c.math.o compile/cache/elf.asm.IO.o compile/cache/elf.c.IDT.o compile/cache/elf.asm.IDT.o compile/cache/elf.asm.ISR.o compile/cache/elf.c.ISR.o compile/cache/elf.c.ACPI.o compile/cache/elf.c.APIC.o compile/cache/elf.c.IOAPIC.o compile/cache/elf.c.LocalAPIC.o compile/cache/elf.c.LocalAPICTimer.o compile/cache/elf.c.hardware.o compile/cache/elf.c.blake2b-ref.o compile/cache/elf.c.blake2bp-ref.o compile/cache/elf.c.blake2s-ref.o compile/cache/elf.c.blake2sp-ref.o compile/cache/elf.c.blake2xb-ref.o compile/cache/elf.c.blake2xs-ref.o compile/cache/elf.c.PCIe.o compile/cache/elf.asm.UTILS.o src/kernel/libcrt/libcrt.def -Wl,-nostdlib -Wl,--image-base,0x0 -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,-shared -Wl,-Bsymbolic -Wl,-flinker-output=dyn -Wl,--out-implib,C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll.a -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\libcrt\libcrt.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll
+Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll
+C:\GitHub\BlockyOS\Build\Build-nodate\libcrt\libcrt.dmp.log
+
+[SHELL]	FSFRAT.MAKE
+[SHELL]	FSFRAT.MOUNT
+[SHELL]	e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0
+[SHELL OUT]:	
+[SHELL OUT]:	FSFRAT DRIVER
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	create -la fc -p SYSD/ -n LibCrt.dll
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	000002c43014605b:fc	000002c430146061:SYSD/	000002c43014606a:LibCrt.dll	
+[SHELL OUT]:	[	SYSD/LibCrt.dll]
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.OPEN
+[SHELL]	open -p SYSD/LibCrt.dll -a LCRT -la f
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.WRITE
+[SHELL]	fwrite -pp C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll -ia %LCRT% -p 0 -n 0
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""

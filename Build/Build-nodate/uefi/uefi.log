@@ -1,0 +1,28 @@
+Initializing CGCC.MAKE build process...
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\fs\frat.c - up to date; source=2026-10-11T01:22:15.6937697Z, stored=10/11/2026 01:22:15
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\.disk\raw\raw.c - up to date; source=2026-10-10T01:04:22.7157236Z, stored=10/10/2026 01:04:22
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\bmp\bmp.c - up to date; source=2026-10-10T01:04:22.7157236Z, stored=10/10/2026 01:04:22
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2b-ref.c - up to date; source=2026-08-09T22:40:41.3627225Z, stored=08/09/2026 22:40:41
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2bp-ref.c - up to date; source=2026-08-09T22:40:41.3627225Z, stored=08/09/2026 22:40:41
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2s-ref.c - up to date; source=2026-08-09T22:40:41.3627225Z, stored=08/09/2026 22:40:41
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2sp-ref.c - up to date; source=2026-08-09T22:40:41.3617241Z, stored=08/09/2026 22:40:41
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2xb-ref.c - up to date; source=2026-08-09T22:40:41.3617241Z, stored=08/09/2026 22:40:41
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\crypto\blake2\ref\blake2xs-ref.c - up to date; source=2026-08-09T22:40:41.3617241Z, stored=08/09/2026 22:40:41
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\executable\eload.c - up to date; source=2026-10-10T01:12:01.0656738Z, stored=10/10/2026 01:12:01
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\executable\pe.c - up to date; source=2026-10-10T01:04:22.7157236Z, stored=10/10/2026 01:04:22
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\gif\gif.c - up to date; source=2026-10-10T01:04:22.7157236Z, stored=10/10/2026 01:04:22
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\socket.c - up to date; source=2026-10-06T22:05:21.0139023Z, stored=10/06/2026 22:05:21
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\drivers\socket\sockets.c - up to date; source=2026-10-10T01:04:22.7157236Z, stored=10/10/2026 01:04:22
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\tools\tools.c - up to date; source=2026-10-10T01:04:22.7157236Z, stored=10/10/2026 01:04:22
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\boot.asm - up to date; source=2026-10-11T20:17:03.6034863Z, stored=10/11/2026 20:17:03
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\boot.c - up to date; source=2026-10-11T01:24:16.0152669Z, stored=10/11/2026 01:24:16
+Skipping C:\GitHub\BlockyOS\src\Boot\UEFI\bthelper.c - up to date; source=2026-10-11T20:37:42.1906361Z, stored=10/11/2026 20:37:42
+x86_64-elf-gcc compile/cache/UEFI.c.frat.o compile/cache/UEFI.c.raw.o compile/cache/UEFI.c.bmp.o compile/cache/UEFI.c.blake2b-ref.o compile/cache/UEFI.c.blake2bp-ref.o compile/cache/UEFI.c.blake2s-ref.o compile/cache/UEFI.c.blake2sp-ref.o compile/cache/UEFI.c.blake2xb-ref.o compile/cache/UEFI.c.blake2xs-ref.o compile/cache/UEFI.c.eload.o compile/cache/UEFI.c.pe.o compile/cache/UEFI.c.gif.o compile/cache/UEFI.c.socket.o compile/cache/UEFI.c.sockets.o compile/cache/UEFI.c.tools.o compile/cache/UEFI.asm.boot.o compile/cache/UEFI.c.boot.o compile/cache/UEFI.c.bthelper.o -Wl,-nostdlib -Wl,-shared -Wl,-Bsymbolic -Wl,-znocombreloc -Wl,-z,noexecstack -Wl,-T,C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/elf_x86_64_efi.lds,C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\lib/crt0-efi-x86_64.o -Wl,-L,C:\GitHub\BlockyOS\compile\toolchain\gnu-efi-build\x86_64\/lib/ -Wl,-l,efi -Wl,-l,gnuefi -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\uefi\uefi.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so
+Build finished successfully -> C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so
+GNU objcopy (GNU Binutils) 2.46 Copyright (C) 2026 Free Software Foundation, Inc. This program is free software; you may redistribute it under the terms of the GNU General Public License version 3 or (at your option) any later version. This program has absolutely no warranty.
+objcopy -j .text -j .data -j .bss -j .rdata -j .rodata -j .sbss -j .sdata -j .srdata -j .dynamic -j .dynsym -j .rel -j .rel.* -j .rela -j .rela.* System.Object[] .idata -j .reloc -O efi-app-x86-64 --subsystem=10 C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob.efi
+objcopy --only-keep-debug C:\GitHub\BlockyOS\Build\Build-nodate\objs\blob_2.so C:\GitHub\BlockyOS\Build\Build-nodate\objs\debug.efi
+
+
+
+

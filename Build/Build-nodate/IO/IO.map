@@ -1,0 +1,842 @@
+
+Discarded input sections
+
+ .reloc         0x0000000000000000        0x0 dll stuff
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000000000                __image_base__ = 0x0
+                0x0000000000000000                __dll__ = 0x0
+                0x0000000000000000                __ImageBase = 0x0
+                0x0000000000001000                __section_alignment__ = 0x1000
+                0x0000000000001000                __file_alignment__ = 0x1000
+                0x0000000000000004                __major_os_version__ = 0x4
+                0x0000000000000000                __minor_os_version__ = 0x0
+                0x0000000000000000                __major_image_version__ = 0x0
+                0x0000000000000000                __minor_image_version__ = 0x0
+                0x0000000000000005                __major_subsystem_version__ = 0x5
+                0x0000000000000002                __minor_subsystem_version__ = 0x2
+                0x0000000000000003                __subsystem__ = 0x3
+                0x0000000000200000                __size_of_stack_reserve__ = 0x200000
+                0x0000000000001000                __size_of_stack_commit__ = 0x1000
+                0x0000000000100000                __size_of_heap_reserve__ = 0x100000
+                0x0000000000001000                __size_of_heap_commit__ = 0x1000
+                0x0000000000000000                __loader_flags__ = 0x0
+                0x0000000000000160                __dll_characteristics__ = 0x160
+LOAD compile/cache/elf.c.IO.o
+LOAD compile/cache/elf.c.frat.o
+LOAD Build/Build-nodate/root-part/LibCrt.dll
+LOAD src/kernel/services/IO/IO.def
+                0x00000000000002a0                . = SIZEOF_HEADERS
+                0x0000000000001000                . = ALIGN (__section_alignment__)
+
+.text           0x0000000000001000     0xd000
+ *(SORT_NONE(.init))
+ *(.text)
+ .text          0x0000000000001000     0x7e40 compile/cache/elf.c.IO.o
+                0x0000000000001000                HBAStartCmd
+                0x000000000000102e                HBAStopCmd
+                0x0000000000001087                AHCIDefaultHandlerISR
+                0x00000000000010a4                ConfigureAHCIController
+                0x0000000000001aba                AHCISelfTest
+                0x0000000000001cde                AHCISearchOpenCommandSlot
+                0x0000000000001d70                AHCIGetDriveInfo
+                0x0000000000001ecb                AHCIReadBytes
+                0x0000000000002380                AHCIWriteBytes
+                0x0000000000002835                ATAPIGetPorts
+                0x00000000000029c2                ATAPIPort
+                0x0000000000002f30                ATATPITransferOngoing
+                0x0000000000003011                ATAPIISR
+                0x0000000000003104                UpdateATAPIInterruptStackHeader
+                0x00000000000032b2                ConfigureATAPIController
+                0x0000000000003435                _ATAPISectorSize
+                0x00000000000035ce                ATAPISectorSize
+                0x00000000000036bc                ATAPIGetQueue
+                0x0000000000003738                _ATAPIReadRaw
+                0x0000000000003cce                ATAPIReadRaw
+                0x0000000000003e2c                _ATAPIWriteRaw
+                0x00000000000043b7                ATAPIWriteRaw
+                0x0000000000004515                UpdateNVMeInterruptStackFrame
+                0x0000000000004679                NVMeMarkCompletionQueueISR
+                0x00000000000048bc                NVMePollController
+                0x0000000000004b0f                ConfigureNVMeController
+                0x00000000000051f1                NVMePollNamespace
+                0x0000000000005444                NVMeFreeIOSubmissionQueue
+                0x00000000000057c4                NVMeFreeIOCompletionQueue
+                0x0000000000005b4a                NVMeAllocateIOSubmissionQueues
+                0x0000000000006066                NVMeAllocateIOCompletionQueue
+                0x0000000000006585                NVMeFlushVolatileData
+                0x000000000000696e                NVMeIOReadBytes
+                0x0000000000006ee5                NVMeIOWriteBytes
+                0x000000000000745c                GetMassStorageHandle
+                0x0000000000007866                GetMassStorageLogicalBlockSize
+                0x0000000000007a5e                GetMassStorageQueue
+                0x0000000000007ce1                ReleaseMassStorageQueue
+                0x0000000000007dd2                GetMassStorageData
+                0x0000000000008037                StoreMassStorageData
+                0x000000000000829c                MassStorageHandle
+                0x00000000000082d6                AllocateMassStorageQueue
+                0x0000000000008324                FreeMassStorageQueue
+                0x0000000000008374                MassStorageRead
+                0x00000000000084f4                MassStorageWrite
+                0x0000000000008674                OpenRawHandle
+                0x00000000000087c1                CloseRawHandle
+                0x000000000000892b                ReadRawHandleBlocks
+                0x0000000000008b5f                WriteRawHandleBlocks
+                0x0000000000008d8e                WriteRawHandleBytes
+ .text          0x0000000000008e40     0x49d0 compile/cache/elf.c.frat.o
+                0x0000000000008e40                getfcode
+                0x0000000000008f44                checkdisk
+                0x0000000000009007                loadpart
+                0x0000000000009299                formatpart
+                0x00000000000097bb                queryparttablefs
+                0x00000000000099aa                queryfs
+                0x0000000000009a5e                fmount
+                0x0000000000009ef6                allocatecluster
+                0x0000000000009fda                __ffremove
+                0x000000000000a052                __ffremoveh
+                0x000000000000a0e4                __ffremovel
+                0x000000000000a114                __ffremovelh
+                0x000000000000a26b                __fcreate
+                0x000000000000a742                __faddr
+                0x000000000000aabd                __finit
+                0x000000000000aeba                __ffindhi
+                0x000000000000afe4                __ffindh
+                0x000000000000b029                __ffindi
+                0x000000000000b066                __ffind
+                0x000000000000b091                __fread1
+                0x000000000000b2d2                __fpush1
+                0x000000000000b644                floadhdir
+                0x000000000000b7c3                fuloaddir
+                0x000000000000b9da                __fdirrefresh
+                0x000000000000bbaa                floadh
+                0x000000000000bc9b                fuloadh
+                0x000000000000bdd7                __freadinfo
+                0x000000000000be6b                __fupdatetstamp
+                0x000000000000bff4                __fsize
+                0x000000000000c0d6                __dsize
+                0x000000000000c16f                _dreadinfo
+                0x000000000000c1a3                _freadinfo
+                0x000000000000c1d7                _fseeko
+                0x000000000000c2b4                _fseek
+                0x000000000000c316                _fwrite
+                0x000000000000c642                _fread
+                0x000000000000c887                __fgetparent
+                0x000000000000c97d                __fdiradd
+                0x000000000000cc20                __ftest
+                0x000000000000cd7a                __fdirlist
+                0x000000000000d13b                __dirr_init
+                0x000000000000d4e4                __dirr_free
+                0x000000000000d595                __dirr
+                0x000000000000d78a                __fprint_info
+                0x000000000000d791                getloc
+ .text          0x000000000000d810        0x8 LibCrt_dll_d000001.o
+                0x000000000000d810                AllocateAlignedPages
+ .text          0x000000000000d818        0x8 LibCrt_dll_d000002.o
+                0x000000000000d818                AllocateIST
+ .text          0x000000000000d820        0x8 LibCrt_dll_d000003.o
+                0x000000000000d820                AllocateInterruptVector
+ .text          0x000000000000d828        0x8 LibCrt_dll_d000004.o
+                0x000000000000d828                AllocatePages
+ .text          0x000000000000d830        0x8 LibCrt_dll_d000005.o
+                0x000000000000d830                CMOSGetElapsedDays
+ .text          0x000000000000d838        0x8 LibCrt_dll_d000006.o
+                0x000000000000d838                CMOSGetTime
+ .text          0x000000000000d840        0x8 LibCrt_dll_d000007.o
+                0x000000000000d840                DisableLocalAPIC
+ .text          0x000000000000d848        0x8 LibCrt_dll_d000008.o
+                0x000000000000d848                EnableLocalAPIC
+ .text          0x000000000000d850        0x8 LibCrt_dll_d000009.o
+                0x000000000000d850                FreeAlignedPages
+ .text          0x000000000000d858        0x8 LibCrt_dll_d000010.o
+                0x000000000000d858                GetLocalAPICBase
+ .text          0x000000000000d860        0x8 LibCrt_dll_d000011.o
+                0x000000000000d860                ISRGetStackHeader
+ .text          0x000000000000d868        0x8 LibCrt_dll_d000012.o
+                0x000000000000d868                ISRSetCallback
+ .text          0x000000000000d870        0x8 LibCrt_dll_d000013.o
+                0x000000000000d870                InvalidatePages
+ .text          0x000000000000d878        0x8 LibCrt_dll_d000014.o
+                0x000000000000d878                MapPhysical
+ .text          0x000000000000d880        0x8 LibCrt_dll_d000015.o
+                0x000000000000d880                MapVirtual
+ .text          0x000000000000d888        0x8 LibCrt_dll_d000016.o
+                0x000000000000d888                PCIeResolveBar
+ .text          0x000000000000d890        0x8 LibCrt_dll_d000017.o
+                0x000000000000d890                PCIeSearchDevice
+ .text          0x000000000000d898        0x8 LibCrt_dll_d000018.o
+                0x000000000000d898                ReadGDTR
+ .text          0x000000000000d8a0        0x8 LibCrt_dll_d000019.o
+                0x000000000000d8a0                ReadIoApicInterruptRegister
+ .text          0x000000000000d8a8        0x8 LibCrt_dll_d000020.o
+                0x000000000000d8a8                SafeAllocatePages
+ .text          0x000000000000d8b0        0x8 LibCrt_dll_d000021.o
+                0x000000000000d8b0                SearchACPITable
+ .text          0x000000000000d8b8        0x8 LibCrt_dll_d000022.o
+                0x000000000000d8b8                SearchPCIeCapabilitiesN
+ .text          0x000000000000d8c0        0x8 LibCrt_dll_d000023.o
+                0x000000000000d8c0                SetTrueRandomRangedBytes
+ .text          0x000000000000d8c8        0x8 LibCrt_dll_d000024.o
+                0x000000000000d8c8                SleepMS
+ .text          0x000000000000d8d0        0x8 LibCrt_dll_d000025.o
+                0x000000000000d8d0                WalkPageTreeByVirtual
+ .text          0x000000000000d8d8        0x8 LibCrt_dll_d000026.o
+                0x000000000000d8d8                WriteIoApicInterruptRegister
+ .text          0x000000000000d8e0        0x8 LibCrt_dll_d000027.o
+                0x000000000000d8e0                __inb
+ .text          0x000000000000d8e8        0x8 LibCrt_dll_d000028.o
+                0x000000000000d8e8                __insw
+ .text          0x000000000000d8f0        0x8 LibCrt_dll_d000029.o
+                0x000000000000d8f0                __inw
+ .text          0x000000000000d8f8        0x8 LibCrt_dll_d000030.o
+                0x000000000000d8f8                __outb
+ .text          0x000000000000d900        0x8 LibCrt_dll_d000031.o
+                0x000000000000d900                __outl
+ .text          0x000000000000d908        0x8 LibCrt_dll_d000032.o
+                0x000000000000d908                __outsw
+ .text          0x000000000000d910        0x8 LibCrt_dll_d000033.o
+                0x000000000000d910                blake2b_final
+ .text          0x000000000000d918        0x8 LibCrt_dll_d000034.o
+                0x000000000000d918                blake2b_init
+ .text          0x000000000000d920        0x8 LibCrt_dll_d000035.o
+                0x000000000000d920                blake2b_update
+ .text          0x000000000000d928        0x8 LibCrt_dll_d000036.o
+                0x000000000000d928                descinfo
+ .text          0x000000000000d930        0x8 LibCrt_dll_d000037.o
+                0x000000000000d930                isascii
+ .text          0x000000000000d938        0x8 LibCrt_dll_d000038.o
+                0x000000000000d938                mcalloc
+ .text          0x000000000000d940        0x8 LibCrt_dll_d000039.o
+                0x000000000000d940                memcheckb
+ .text          0x000000000000d948        0x8 LibCrt_dll_d000040.o
+                0x000000000000d948                memcmp
+ .text          0x000000000000d950        0x8 LibCrt_dll_d000041.o
+                0x000000000000d950                memcpy
+ .text          0x000000000000d958        0x8 LibCrt_dll_d000042.o
+                0x000000000000d958                memset
+ .text          0x000000000000d960        0x8 LibCrt_dll_d000043.o
+                0x000000000000d960                mfree
+ .text          0x000000000000d968        0x8 LibCrt_dll_d000044.o
+                0x000000000000d968                mmalloc
+ .text          0x000000000000d970        0x8 LibCrt_dll_d000045.o
+                0x000000000000d970                mrealloc
+ .text          0x000000000000d978        0x8 LibCrt_dll_d000046.o
+                0x000000000000d978                pattmatch
+ .text          0x000000000000d980        0x8 LibCrt_dll_d000047.o
+                0x000000000000d980                strdup
+ .text          0x000000000000d988        0x8 LibCrt_dll_d000048.o
+                0x000000000000d988                strlen
+ *(SORT_BY_NAME(.text$*))
+ *(.text.*)
+ *(.gnu.linkonce.t.*)
+ *(.glue_7t)
+ *(.glue_7)
+                0x000000000000d990                . = ALIGN (0x8)
+ *(SORT_NONE(.fini))
+ *(.gcc_exc)
+                [!provide]                        PROVIDE (etext = .)
+ *(.gcc_except_table)
+
+.data           0x000000000000e000     0x1000
+                0x000000000000e000                __data_start__ = .
+ *(.data)
+ .data          0x000000000000e000      0x200 compile/cache/elf.c.IO.o
+ .data          0x000000000000e200      0x200 compile/cache/elf.c.frat.o
+ *(.data2)
+ *(SORT_BY_NAME(.data$*))
+ *(.jcr)
+                0x000000000000e400                __data_end__ = .
+ *(.data_cygwin_nocopy)
+
+.rdata          0x000000000000f000     0x1000
+ *(.rdata)
+ .rdata         0x000000000000f000      0x100 compile/cache/elf.c.IO.o
+                0x000000000000f0d0                SupportedIODevices
+                0x000000000000f0e2                TotalSupportedIODevices
+ .rdata         0x000000000000f100      0x100 compile/cache/elf.c.frat.o
+ *(SORT_BY_NAME(.rdata$*))
+ .rdata$zzz     0x000000000000f200       0x30 compile/cache/elf.c.IO.o
+ .rdata$zzz     0x000000000000f230       0x30 compile/cache/elf.c.frat.o
+                0x000000000000f260                . = ALIGN (0x4)
+                0x000000000000f260                __rt_psrelocs_start = .
+ *(.rdata_runtime_pseudo_reloc)
+                0x000000000000f260                __rt_psrelocs_end = .
+                0x000000000000f260                . = ALIGN (0x8)
+                0x000000000000f260                __DELAY_IMPORT_DIRECTORY_start__ = .
+ SORT_BY_NAME(*)(.didat$2)
+ SORT_BY_NAME(*)(.didat$3)
+                0x000000000000f260                __DELAY_IMPORT_DIRECTORY_end__ = .
+                0x000000000000f260                . = (. + (__DELAY_IMPORT_DIRECTORY_end__ - __DELAY_IMPORT_DIRECTORY_start__)?0x20:0x0)
+                0x000000000000f260                . = ALIGN (0x8)
+ SORT_BY_NAME(*)(.didat$4)
+ SORT_BY_NAME(*)(.didat$6)
+ SORT_BY_NAME(*)(.didat$7)
+                0x000000000000f260                . = ALIGN (0x8)
+                0x000000000000f260                ___CTOR_LIST__ = .
+                0x000000000000f260                __CTOR_LIST__ = .
+                0x000000000000f260        0x4 LONG 0xffffffffffffffff
+                0x000000000000f264        0x4 LONG 0xffffffffffffffff
+ *(.ctors)
+ *(.ctor)
+ *(SORT_BY_NAME(.ctors.*))
+                0x000000000000f268        0x4 LONG 0x0
+                0x000000000000f26c        0x4 LONG 0x0
+                0x000000000000f270                ___DTOR_LIST__ = .
+                0x000000000000f270                __DTOR_LIST__ = .
+                0x000000000000f270        0x4 LONG 0xffffffffffffffff
+                0x000000000000f274        0x4 LONG 0xffffffffffffffff
+ *(.dtors)
+ *(.dtor)
+ *(SORT_BY_NAME(.dtors.*))
+                0x000000000000f278        0x4 LONG 0x0
+                0x000000000000f27c        0x4 LONG 0x0
+                0x000000000000f280                ___crt_xc_start__ = .
+ *(SORT_BY_NAME(.CRT$XC*))
+                0x000000000000f280                ___crt_xc_end__ = .
+                0x000000000000f280                ___crt_xi_start__ = .
+ *(SORT_BY_NAME(.CRT$XI*))
+                0x000000000000f280                ___crt_xi_end__ = .
+                0x000000000000f280                ___crt_xl_start__ = .
+ *(SORT_BY_NAME(.CRT$XL*))
+                0x000000000000f280                ___crt_xp_start__ = .
+ *(SORT_BY_NAME(.CRT$XP*))
+                0x000000000000f280                ___crt_xp_end__ = .
+                0x000000000000f280                ___crt_xt_start__ = .
+ *(SORT_BY_NAME(.CRT$XT*))
+                0x000000000000f280                ___crt_xt_end__ = .
+                0x000000000000f280                ___crt_xd_start__ = .
+ *(SORT_BY_NAME(.CRT$XD*))
+                0x000000000000f280                ___crt_xd_end__ = .
+                0x000000000000f260                ___RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x000000000000f260                __RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x000000000000f260                ___RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+                0x000000000000f260                __RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+
+.eh_frame
+ *(.eh_frame*)
+
+.pdata
+ *(.pdata*)
+
+.xdata
+ *(.xdata*)
+
+.bss            0x0000000000010000      0x270
+                0x0000000000010000                __bss_start__ = .
+ *(.bss)
+ .bss           0x0000000000010000      0x260 compile/cache/elf.c.IO.o
+ .bss           0x0000000000010260       0x10 compile/cache/elf.c.frat.o
+ *(COMMON)
+                0x0000000000010270                __bss_end__ = .
+
+.edata          0x0000000000011000     0x1000
+ *(.edata)
+ .edata         0x0000000000011000      0x30a dll stuff
+
+/DISCARD/
+ *(.debug$S)
+ *(.debug$T)
+ *(.debug$F)
+ *(.drectve)
+ *(.note.GNU-stack)
+ *(.gnu.lto_*)
+ *(.gnu_object_only)
+
+.idata          0x0000000000012000     0x1000
+ SORT_BY_NAME(*)(.idata$2)
+ .idata$2       0x0000000000012000       0x14 LibCrt_dll_d000000.o
+                0x0000000000012000                _head_LibCrt_dll
+ SORT_BY_NAME(*)(.idata$3)
+                0x0000000000012014        0x4 LONG 0x0
+                0x0000000000012018        0x4 LONG 0x0
+                0x000000000001201c        0x4 LONG 0x0
+                0x0000000000012020        0x4 LONG 0x0
+                0x0000000000012024        0x4 LONG 0x0
+                0x0000000000012028                . = ALIGN (0x8)
+ SORT_BY_NAME(*)(.idata$4)
+ .idata$4       0x0000000000012028        0x0 LibCrt_dll_d000000.o
+ .idata$4       0x0000000000012028        0x8 LibCrt_dll_d000001.o
+ .idata$4       0x0000000000012030        0x8 LibCrt_dll_d000002.o
+ .idata$4       0x0000000000012038        0x8 LibCrt_dll_d000003.o
+ .idata$4       0x0000000000012040        0x8 LibCrt_dll_d000004.o
+ .idata$4       0x0000000000012048        0x8 LibCrt_dll_d000005.o
+ .idata$4       0x0000000000012050        0x8 LibCrt_dll_d000006.o
+ .idata$4       0x0000000000012058        0x8 LibCrt_dll_d000007.o
+ .idata$4       0x0000000000012060        0x8 LibCrt_dll_d000008.o
+ .idata$4       0x0000000000012068        0x8 LibCrt_dll_d000009.o
+ .idata$4       0x0000000000012070        0x8 LibCrt_dll_d000010.o
+ .idata$4       0x0000000000012078        0x8 LibCrt_dll_d000011.o
+ .idata$4       0x0000000000012080        0x8 LibCrt_dll_d000012.o
+ .idata$4       0x0000000000012088        0x8 LibCrt_dll_d000013.o
+ .idata$4       0x0000000000012090        0x8 LibCrt_dll_d000014.o
+ .idata$4       0x0000000000012098        0x8 LibCrt_dll_d000015.o
+ .idata$4       0x00000000000120a0        0x8 LibCrt_dll_d000016.o
+ .idata$4       0x00000000000120a8        0x8 LibCrt_dll_d000017.o
+ .idata$4       0x00000000000120b0        0x8 LibCrt_dll_d000018.o
+ .idata$4       0x00000000000120b8        0x8 LibCrt_dll_d000019.o
+ .idata$4       0x00000000000120c0        0x8 LibCrt_dll_d000020.o
+ .idata$4       0x00000000000120c8        0x8 LibCrt_dll_d000021.o
+ .idata$4       0x00000000000120d0        0x8 LibCrt_dll_d000022.o
+ .idata$4       0x00000000000120d8        0x8 LibCrt_dll_d000023.o
+ .idata$4       0x00000000000120e0        0x8 LibCrt_dll_d000024.o
+ .idata$4       0x00000000000120e8        0x8 LibCrt_dll_d000025.o
+ .idata$4       0x00000000000120f0        0x8 LibCrt_dll_d000026.o
+ .idata$4       0x00000000000120f8        0x8 LibCrt_dll_d000027.o
+ .idata$4       0x0000000000012100        0x8 LibCrt_dll_d000028.o
+ .idata$4       0x0000000000012108        0x8 LibCrt_dll_d000029.o
+ .idata$4       0x0000000000012110        0x8 LibCrt_dll_d000030.o
+ .idata$4       0x0000000000012118        0x8 LibCrt_dll_d000031.o
+ .idata$4       0x0000000000012120        0x8 LibCrt_dll_d000032.o
+ .idata$4       0x0000000000012128        0x8 LibCrt_dll_d000033.o
+ .idata$4       0x0000000000012130        0x8 LibCrt_dll_d000034.o
+ .idata$4       0x0000000000012138        0x8 LibCrt_dll_d000035.o
+ .idata$4       0x0000000000012140        0x8 LibCrt_dll_d000036.o
+ .idata$4       0x0000000000012148        0x8 LibCrt_dll_d000037.o
+ .idata$4       0x0000000000012150        0x8 LibCrt_dll_d000038.o
+ .idata$4       0x0000000000012158        0x8 LibCrt_dll_d000039.o
+ .idata$4       0x0000000000012160        0x8 LibCrt_dll_d000040.o
+ .idata$4       0x0000000000012168        0x8 LibCrt_dll_d000041.o
+ .idata$4       0x0000000000012170        0x8 LibCrt_dll_d000042.o
+ .idata$4       0x0000000000012178        0x8 LibCrt_dll_d000043.o
+ .idata$4       0x0000000000012180        0x8 LibCrt_dll_d000044.o
+ .idata$4       0x0000000000012188        0x8 LibCrt_dll_d000045.o
+ .idata$4       0x0000000000012190        0x8 LibCrt_dll_d000046.o
+ .idata$4       0x0000000000012198        0x8 LibCrt_dll_d000047.o
+ .idata$4       0x00000000000121a0        0x8 LibCrt_dll_d000048.o
+ .idata$4       0x00000000000121a8        0x8 LibCrt_dll_d000049.o
+                0x00000000000121b0                __IAT_start__ = .
+ SORT_BY_NAME(*)(.idata$5)
+ .idata$5       0x00000000000121b0        0x0 LibCrt_dll_d000000.o
+ .idata$5       0x00000000000121b0        0x8 LibCrt_dll_d000001.o
+                0x00000000000121b0                __imp_AllocateAlignedPages
+ .idata$5       0x00000000000121b8        0x8 LibCrt_dll_d000002.o
+                0x00000000000121b8                __imp_AllocateIST
+ .idata$5       0x00000000000121c0        0x8 LibCrt_dll_d000003.o
+                0x00000000000121c0                __imp_AllocateInterruptVector
+ .idata$5       0x00000000000121c8        0x8 LibCrt_dll_d000004.o
+                0x00000000000121c8                __imp_AllocatePages
+ .idata$5       0x00000000000121d0        0x8 LibCrt_dll_d000005.o
+                0x00000000000121d0                __imp_CMOSGetElapsedDays
+ .idata$5       0x00000000000121d8        0x8 LibCrt_dll_d000006.o
+                0x00000000000121d8                __imp_CMOSGetTime
+ .idata$5       0x00000000000121e0        0x8 LibCrt_dll_d000007.o
+                0x00000000000121e0                __imp_DisableLocalAPIC
+ .idata$5       0x00000000000121e8        0x8 LibCrt_dll_d000008.o
+                0x00000000000121e8                __imp_EnableLocalAPIC
+ .idata$5       0x00000000000121f0        0x8 LibCrt_dll_d000009.o
+                0x00000000000121f0                __imp_FreeAlignedPages
+ .idata$5       0x00000000000121f8        0x8 LibCrt_dll_d000010.o
+                0x00000000000121f8                __imp_GetLocalAPICBase
+ .idata$5       0x0000000000012200        0x8 LibCrt_dll_d000011.o
+                0x0000000000012200                __imp_ISRGetStackHeader
+ .idata$5       0x0000000000012208        0x8 LibCrt_dll_d000012.o
+                0x0000000000012208                __imp_ISRSetCallback
+ .idata$5       0x0000000000012210        0x8 LibCrt_dll_d000013.o
+                0x0000000000012210                __imp_InvalidatePages
+ .idata$5       0x0000000000012218        0x8 LibCrt_dll_d000014.o
+                0x0000000000012218                __imp_MapPhysical
+ .idata$5       0x0000000000012220        0x8 LibCrt_dll_d000015.o
+                0x0000000000012220                __imp_MapVirtual
+ .idata$5       0x0000000000012228        0x8 LibCrt_dll_d000016.o
+                0x0000000000012228                __imp_PCIeResolveBar
+ .idata$5       0x0000000000012230        0x8 LibCrt_dll_d000017.o
+                0x0000000000012230                __imp_PCIeSearchDevice
+ .idata$5       0x0000000000012238        0x8 LibCrt_dll_d000018.o
+                0x0000000000012238                __imp_ReadGDTR
+ .idata$5       0x0000000000012240        0x8 LibCrt_dll_d000019.o
+                0x0000000000012240                __imp_ReadIoApicInterruptRegister
+ .idata$5       0x0000000000012248        0x8 LibCrt_dll_d000020.o
+                0x0000000000012248                __imp_SafeAllocatePages
+ .idata$5       0x0000000000012250        0x8 LibCrt_dll_d000021.o
+                0x0000000000012250                __imp_SearchACPITable
+ .idata$5       0x0000000000012258        0x8 LibCrt_dll_d000022.o
+                0x0000000000012258                __imp_SearchPCIeCapabilitiesN
+ .idata$5       0x0000000000012260        0x8 LibCrt_dll_d000023.o
+                0x0000000000012260                __imp_SetTrueRandomRangedBytes
+ .idata$5       0x0000000000012268        0x8 LibCrt_dll_d000024.o
+                0x0000000000012268                __imp_SleepMS
+ .idata$5       0x0000000000012270        0x8 LibCrt_dll_d000025.o
+                0x0000000000012270                __imp_WalkPageTreeByVirtual
+ .idata$5       0x0000000000012278        0x8 LibCrt_dll_d000026.o
+                0x0000000000012278                __imp_WriteIoApicInterruptRegister
+ .idata$5       0x0000000000012280        0x8 LibCrt_dll_d000027.o
+                0x0000000000012280                __imp___inb
+ .idata$5       0x0000000000012288        0x8 LibCrt_dll_d000028.o
+                0x0000000000012288                __imp___insw
+ .idata$5       0x0000000000012290        0x8 LibCrt_dll_d000029.o
+                0x0000000000012290                __imp___inw
+ .idata$5       0x0000000000012298        0x8 LibCrt_dll_d000030.o
+                0x0000000000012298                __imp___outb
+ .idata$5       0x00000000000122a0        0x8 LibCrt_dll_d000031.o
+                0x00000000000122a0                __imp___outl
+ .idata$5       0x00000000000122a8        0x8 LibCrt_dll_d000032.o
+                0x00000000000122a8                __imp___outsw
+ .idata$5       0x00000000000122b0        0x8 LibCrt_dll_d000033.o
+                0x00000000000122b0                __imp_blake2b_final
+ .idata$5       0x00000000000122b8        0x8 LibCrt_dll_d000034.o
+                0x00000000000122b8                __imp_blake2b_init
+ .idata$5       0x00000000000122c0        0x8 LibCrt_dll_d000035.o
+                0x00000000000122c0                __imp_blake2b_update
+ .idata$5       0x00000000000122c8        0x8 LibCrt_dll_d000036.o
+                0x00000000000122c8                __imp_descinfo
+ .idata$5       0x00000000000122d0        0x8 LibCrt_dll_d000037.o
+                0x00000000000122d0                __imp_isascii
+ .idata$5       0x00000000000122d8        0x8 LibCrt_dll_d000038.o
+                0x00000000000122d8                __imp_mcalloc
+ .idata$5       0x00000000000122e0        0x8 LibCrt_dll_d000039.o
+                0x00000000000122e0                __imp_memcheckb
+ .idata$5       0x00000000000122e8        0x8 LibCrt_dll_d000040.o
+                0x00000000000122e8                __imp_memcmp
+ .idata$5       0x00000000000122f0        0x8 LibCrt_dll_d000041.o
+                0x00000000000122f0                __imp_memcpy
+ .idata$5       0x00000000000122f8        0x8 LibCrt_dll_d000042.o
+                0x00000000000122f8                __imp_memset
+ .idata$5       0x0000000000012300        0x8 LibCrt_dll_d000043.o
+                0x0000000000012300                __imp_mfree
+ .idata$5       0x0000000000012308        0x8 LibCrt_dll_d000044.o
+                0x0000000000012308                __imp_mmalloc
+ .idata$5       0x0000000000012310        0x8 LibCrt_dll_d000045.o
+                0x0000000000012310                __imp_mrealloc
+ .idata$5       0x0000000000012318        0x8 LibCrt_dll_d000046.o
+                0x0000000000012318                __imp_pattmatch
+ .idata$5       0x0000000000012320        0x8 LibCrt_dll_d000047.o
+                0x0000000000012320                __imp_strdup
+ .idata$5       0x0000000000012328        0x8 LibCrt_dll_d000048.o
+                0x0000000000012328                __imp_strlen
+ .idata$5       0x0000000000012330        0x8 LibCrt_dll_d000049.o
+                0x0000000000012338                __IAT_end__ = .
+ SORT_BY_NAME(*)(.idata$6)
+ .idata$6       0x0000000000012338       0x18 LibCrt_dll_d000001.o
+ .idata$6       0x0000000000012350       0x10 LibCrt_dll_d000002.o
+ .idata$6       0x0000000000012360       0x1c LibCrt_dll_d000003.o
+ .idata$6       0x000000000001237c       0x10 LibCrt_dll_d000004.o
+ .idata$6       0x000000000001238c       0x18 LibCrt_dll_d000005.o
+ .idata$6       0x00000000000123a4       0x10 LibCrt_dll_d000006.o
+ .idata$6       0x00000000000123b4       0x14 LibCrt_dll_d000007.o
+ .idata$6       0x00000000000123c8       0x14 LibCrt_dll_d000008.o
+ .idata$6       0x00000000000123dc       0x14 LibCrt_dll_d000009.o
+ .idata$6       0x00000000000123f0       0x14 LibCrt_dll_d000010.o
+ .idata$6       0x0000000000012404       0x14 LibCrt_dll_d000011.o
+ .idata$6       0x0000000000012418       0x14 LibCrt_dll_d000012.o
+ .idata$6       0x000000000001242c       0x14 LibCrt_dll_d000013.o
+ .idata$6       0x0000000000012440       0x10 LibCrt_dll_d000014.o
+ .idata$6       0x0000000000012450       0x10 LibCrt_dll_d000015.o
+ .idata$6       0x0000000000012460       0x14 LibCrt_dll_d000016.o
+ .idata$6       0x0000000000012474       0x14 LibCrt_dll_d000017.o
+ .idata$6       0x0000000000012488        0xc LibCrt_dll_d000018.o
+ .idata$6       0x0000000000012494       0x20 LibCrt_dll_d000019.o
+ .idata$6       0x00000000000124b4       0x14 LibCrt_dll_d000020.o
+ .idata$6       0x00000000000124c8       0x14 LibCrt_dll_d000021.o
+ .idata$6       0x00000000000124dc       0x1c LibCrt_dll_d000022.o
+ .idata$6       0x00000000000124f8       0x1c LibCrt_dll_d000023.o
+ .idata$6       0x0000000000012514        0xc LibCrt_dll_d000024.o
+ .idata$6       0x0000000000012520       0x18 LibCrt_dll_d000025.o
+ .idata$6       0x0000000000012538       0x20 LibCrt_dll_d000026.o
+ .idata$6       0x0000000000012558        0x8 LibCrt_dll_d000027.o
+ .idata$6       0x0000000000012560        0xc LibCrt_dll_d000028.o
+ .idata$6       0x000000000001256c        0x8 LibCrt_dll_d000029.o
+ .idata$6       0x0000000000012574        0xc LibCrt_dll_d000030.o
+ .idata$6       0x0000000000012580        0xc LibCrt_dll_d000031.o
+ .idata$6       0x000000000001258c        0xc LibCrt_dll_d000032.o
+ .idata$6       0x0000000000012598       0x10 LibCrt_dll_d000033.o
+ .idata$6       0x00000000000125a8       0x10 LibCrt_dll_d000034.o
+ .idata$6       0x00000000000125b8       0x14 LibCrt_dll_d000035.o
+ .idata$6       0x00000000000125cc        0xc LibCrt_dll_d000036.o
+ .idata$6       0x00000000000125d8        0xc LibCrt_dll_d000037.o
+ .idata$6       0x00000000000125e4        0xc LibCrt_dll_d000038.o
+ .idata$6       0x00000000000125f0        0xc LibCrt_dll_d000039.o
+ .idata$6       0x00000000000125fc        0xc LibCrt_dll_d000040.o
+ .idata$6       0x0000000000012608        0xc LibCrt_dll_d000041.o
+ .idata$6       0x0000000000012614        0xc LibCrt_dll_d000042.o
+ .idata$6       0x0000000000012620        0x8 LibCrt_dll_d000043.o
+ .idata$6       0x0000000000012628        0xc LibCrt_dll_d000044.o
+ .idata$6       0x0000000000012634        0xc LibCrt_dll_d000045.o
+ .idata$6       0x0000000000012640        0xc LibCrt_dll_d000046.o
+ .idata$6       0x000000000001264c        0xc LibCrt_dll_d000047.o
+ .idata$6       0x0000000000012658        0xc LibCrt_dll_d000048.o
+ SORT_BY_NAME(*)(.idata$7)
+ .idata$7       0x0000000000012664        0x4 LibCrt_dll_d000001.o
+ .idata$7       0x0000000000012668        0x4 LibCrt_dll_d000002.o
+ .idata$7       0x000000000001266c        0x4 LibCrt_dll_d000003.o
+ .idata$7       0x0000000000012670        0x4 LibCrt_dll_d000004.o
+ .idata$7       0x0000000000012674        0x4 LibCrt_dll_d000005.o
+ .idata$7       0x0000000000012678        0x4 LibCrt_dll_d000006.o
+ .idata$7       0x000000000001267c        0x4 LibCrt_dll_d000007.o
+ .idata$7       0x0000000000012680        0x4 LibCrt_dll_d000008.o
+ .idata$7       0x0000000000012684        0x4 LibCrt_dll_d000009.o
+ .idata$7       0x0000000000012688        0x4 LibCrt_dll_d000010.o
+ .idata$7       0x000000000001268c        0x4 LibCrt_dll_d000011.o
+ .idata$7       0x0000000000012690        0x4 LibCrt_dll_d000012.o
+ .idata$7       0x0000000000012694        0x4 LibCrt_dll_d000013.o
+ .idata$7       0x0000000000012698        0x4 LibCrt_dll_d000014.o
+ .idata$7       0x000000000001269c        0x4 LibCrt_dll_d000015.o
+ .idata$7       0x00000000000126a0        0x4 LibCrt_dll_d000016.o
+ .idata$7       0x00000000000126a4        0x4 LibCrt_dll_d000017.o
+ .idata$7       0x00000000000126a8        0x4 LibCrt_dll_d000018.o
+ .idata$7       0x00000000000126ac        0x4 LibCrt_dll_d000019.o
+ .idata$7       0x00000000000126b0        0x4 LibCrt_dll_d000020.o
+ .idata$7       0x00000000000126b4        0x4 LibCrt_dll_d000021.o
+ .idata$7       0x00000000000126b8        0x4 LibCrt_dll_d000022.o
+ .idata$7       0x00000000000126bc        0x4 LibCrt_dll_d000023.o
+ .idata$7       0x00000000000126c0        0x4 LibCrt_dll_d000024.o
+ .idata$7       0x00000000000126c4        0x4 LibCrt_dll_d000025.o
+ .idata$7       0x00000000000126c8        0x4 LibCrt_dll_d000026.o
+ .idata$7       0x00000000000126cc        0x4 LibCrt_dll_d000027.o
+ .idata$7       0x00000000000126d0        0x4 LibCrt_dll_d000028.o
+ .idata$7       0x00000000000126d4        0x4 LibCrt_dll_d000029.o
+ .idata$7       0x00000000000126d8        0x4 LibCrt_dll_d000030.o
+ .idata$7       0x00000000000126dc        0x4 LibCrt_dll_d000031.o
+ .idata$7       0x00000000000126e0        0x4 LibCrt_dll_d000032.o
+ .idata$7       0x00000000000126e4        0x4 LibCrt_dll_d000033.o
+ .idata$7       0x00000000000126e8        0x4 LibCrt_dll_d000034.o
+ .idata$7       0x00000000000126ec        0x4 LibCrt_dll_d000035.o
+ .idata$7       0x00000000000126f0        0x4 LibCrt_dll_d000036.o
+ .idata$7       0x00000000000126f4        0x4 LibCrt_dll_d000037.o
+ .idata$7       0x00000000000126f8        0x4 LibCrt_dll_d000038.o
+ .idata$7       0x00000000000126fc        0x4 LibCrt_dll_d000039.o
+ .idata$7       0x0000000000012700        0x4 LibCrt_dll_d000040.o
+ .idata$7       0x0000000000012704        0x4 LibCrt_dll_d000041.o
+ .idata$7       0x0000000000012708        0x4 LibCrt_dll_d000042.o
+ .idata$7       0x000000000001270c        0x4 LibCrt_dll_d000043.o
+ .idata$7       0x0000000000012710        0x4 LibCrt_dll_d000044.o
+ .idata$7       0x0000000000012714        0x4 LibCrt_dll_d000045.o
+ .idata$7       0x0000000000012718        0x4 LibCrt_dll_d000046.o
+ .idata$7       0x000000000001271c        0x4 LibCrt_dll_d000047.o
+ .idata$7       0x0000000000012720        0x4 LibCrt_dll_d000048.o
+ .idata$7       0x0000000000012724        0xc LibCrt_dll_d000049.o
+                0x0000000000012724                LibCrt_dll_iname
+
+.didat
+ SORT_BY_NAME(*)(.didat$5)
+
+.tls            0x0000000000013000        0x0
+                0x0000000000013000                ___tls_start__ = .
+ *(.tls$AAA)
+ *(.tls)
+ *(.tls$)
+ *(SORT_BY_NAME(.tls$*))
+ *(.tls$ZZZ)
+                0x0000000000013000                ___tls_end__ = .
+
+.endjunk        0x0000000000013000        0x0
+                [!provide]                        PROVIDE (end = .)
+                [!provide]                        PROVIDE (_end = .)
+                0x0000000000013000                __end__ = .
+
+.rsrc
+ *(.rsrc)
+ *(.rsrc$*)
+
+.reloc          0x0000000000013000        0x0
+ *(.reloc)
+ .reloc         0x0000000000013000        0x0 dll stuff
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.zdebug_aranges
+ *(.zdebug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.zdebug_pubnames
+ *(.zdebug_pubnames)
+
+.debug_info
+ *(.debug_info .gnu.linkonce.wi.*)
+
+.zdebug_info
+ *(.zdebug_info .zdebug.gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.zdebug_abbrev
+ *(.zdebug_abbrev)
+
+.debug_line
+ *(.debug_line)
+
+.zdebug_line
+ *(.zdebug_line)
+
+.debug_frame
+ *(.debug_frame*)
+
+.zdebug_frame
+ *(.zdebug_frame*)
+
+.debug_str
+ *(.debug_str)
+
+.zdebug_str
+ *(.zdebug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.zdebug_loc
+ *(.zdebug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.zdebug_macinfo
+ *(.zdebug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.zdebug_weaknames
+ *(.zdebug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.zdebug_funcnames
+ *(.zdebug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.zdebug_typenames
+ *(.zdebug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.zdebug_varnames
+ *(.zdebug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.zdebug_pubtypes
+ *(.zdebug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.zdebug_ranges
+ *(.zdebug_ranges)
+
+.debug_types
+ *(.debug_types .gnu.linkonce.wt.*)
+
+.zdebug_types
+ *(.zdebug_types .gnu.linkonce.wt.*)
+
+.debug_addr
+ *(.debug_addr)
+
+.zdebug_addr
+ *(.zdebug_addr)
+
+.debug_line_str
+ *(.debug_line_str)
+
+.zdebug_line_str
+ *(.zdebug_line_str)
+
+.debug_loclists
+ *(.debug_loclists)
+
+.zdebug_loclists
+ *(.zdebug_loclists)
+
+.debug_macro
+ *(.debug_macro)
+
+.zdebug_macro
+ *(.zdebug_macro)
+
+.debug_names
+ *(.debug_names)
+
+.zdebug_names
+ *(.zdebug_names)
+
+.debug_rnglists
+ *(.debug_rnglists)
+
+.zdebug_rnglists
+ *(.zdebug_rnglists)
+
+.debug_str_offsets
+ *(.debug_str_offsets)
+
+.zdebug_str_offsets
+ *(.zdebug_str_offsets)
+
+.debug_sup
+ *(.debug_sup)
+
+.debug_gdb_scripts
+ *(.debug_gdb_scripts)
+
+.zdebug_gdb_scripts
+ *(.zdebug_gdb_scripts)
+OUTPUT(C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll pei-x86-64)
+LOAD LibCrt_dll_d000000.o
+LOAD LibCrt_dll_d000001.o
+LOAD LibCrt_dll_d000002.o
+LOAD LibCrt_dll_d000003.o
+LOAD LibCrt_dll_d000004.o
+LOAD LibCrt_dll_d000005.o
+LOAD LibCrt_dll_d000006.o
+LOAD LibCrt_dll_d000007.o
+LOAD LibCrt_dll_d000008.o
+LOAD LibCrt_dll_d000009.o
+LOAD LibCrt_dll_d000010.o
+LOAD LibCrt_dll_d000011.o
+LOAD LibCrt_dll_d000012.o
+LOAD LibCrt_dll_d000013.o
+LOAD LibCrt_dll_d000014.o
+LOAD LibCrt_dll_d000015.o
+LOAD LibCrt_dll_d000016.o
+LOAD LibCrt_dll_d000017.o
+LOAD LibCrt_dll_d000018.o
+LOAD LibCrt_dll_d000019.o
+LOAD LibCrt_dll_d000020.o
+LOAD LibCrt_dll_d000021.o
+LOAD LibCrt_dll_d000022.o
+LOAD LibCrt_dll_d000023.o
+LOAD LibCrt_dll_d000024.o
+LOAD LibCrt_dll_d000025.o
+LOAD LibCrt_dll_d000026.o
+LOAD LibCrt_dll_d000027.o
+LOAD LibCrt_dll_d000028.o
+LOAD LibCrt_dll_d000029.o
+LOAD LibCrt_dll_d000030.o
+LOAD LibCrt_dll_d000031.o
+LOAD LibCrt_dll_d000032.o
+LOAD LibCrt_dll_d000033.o
+LOAD LibCrt_dll_d000034.o
+LOAD LibCrt_dll_d000035.o
+LOAD LibCrt_dll_d000036.o
+LOAD LibCrt_dll_d000037.o
+LOAD LibCrt_dll_d000038.o
+LOAD LibCrt_dll_d000039.o
+LOAD LibCrt_dll_d000040.o
+LOAD LibCrt_dll_d000041.o
+LOAD LibCrt_dll_d000042.o
+LOAD LibCrt_dll_d000043.o
+LOAD LibCrt_dll_d000044.o
+LOAD LibCrt_dll_d000045.o
+LOAD LibCrt_dll_d000046.o
+LOAD LibCrt_dll_d000047.o
+LOAD LibCrt_dll_d000048.o
+LOAD LibCrt_dll_d000049.o
+LOAD dll stuff

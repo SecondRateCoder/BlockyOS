@@ -8,13 +8,13 @@
 
 #define PagingTableLength				(512)
 #define DIRECT_MAP_BASE					0xFFFF800000000000ULL
-#define PHYS_TO_VIRT(phys) ((void *)((uint64_t)(phys) + DIRECT_MAP_BASE))
+// #define PHYS_TO_VIRT(phys) ((void *)((uint64_t)(phys) + DIRECT_MAP_BASE))
 #define SearchPageTableAddress(Table, Address)		\
 	{for(cc = 0; cc < PagingTableLength; ++cc){if(!((Table)[cc].Present) || ((Table)[cc].PhysicalAddress == Address)){break;}}}
 
 // Page Map Level 5 Entry (PML5E)
 // Points to a PML4 table in 57-bit virtual addressing mode
-typedef struct{
+typedef volatile struct{
 	//	1 = Present in memory
     uint64_t Present				: 1;  
 	//	0 = Read-only, 1 = Read/Write
@@ -44,7 +44,7 @@ typedef struct{
 
 // Page Map Level 4 Entry (PML4E)
 // Points to a Page Directory Pointer Table (PDPT)
-typedef struct{
+typedef volatile struct{
 	//	1 = Present in memory
     uint64_t Present				: 1;  
 	//	0 = Read-only, 1 = Read/Write
@@ -72,7 +72,7 @@ typedef struct{
     uint64_t ExecuteDisable			: 1;  
 }__packed PML4Entry;
 
-typedef struct{
+typedef volatile struct{
 	//	1 = Present
     uint64_t Present				: 1;  
 	//	0 = Read-only, 1 = Read/Write
@@ -99,7 +99,7 @@ typedef struct{
 	//	NX Bit
     uint64_t ExecuteDisable			: 1;  
 }__packed PDPTEntryDirectory;
-typedef struct{
+typedef volatile struct{
 	//	1 = Present
     uint64_t Present				: 1;  
 	//	0 = Read-only, 1 = Read/Write
@@ -136,7 +136,7 @@ typedef struct{
     uint64_t ExecuteDisable			: 1;  
 }__packed PDPTEntry1GB;
 
-typedef struct{
+typedef volatile struct{
 	//	1 = Present
     uint64_t Present				: 1;  
 	//	0 = Read-only, 1 = Read/Write
@@ -163,7 +163,7 @@ typedef struct{
 	//	NX Bit
     uint64_t ExecuteDisable			: 1;  
 }__packed PageDirectoryEntry;
-typedef struct{
+typedef volatile struct{
 	//	1 = Present
     uint64_t Present				: 1;  
 	//	0 = Read-only, 1 = Read/Write
@@ -202,7 +202,7 @@ typedef struct{
 
 // Page Table Entry (PTE)
 // Final translation entry mapping a standard 4 KB physical frame
-typedef struct{
+typedef volatile struct{
 	//	1 = Present
     uint64_t Present				: 1;  
 	//	0 = Read-only, 1 = Read/Write
@@ -236,13 +236,13 @@ typedef struct{
 }__packed PageTableEntry4KB;
 
 // Table containers wrapping 512 entries per 4KB table page
-typedef __align(4096) PML5Entry PML5Table[PagingTableLength];
-typedef __align(4096) PML4Entry PML4Table[PagingTableLength];
-typedef union{
+typedef volatile __align(4096) PML5Entry PML5Table[PagingTableLength];
+typedef volatile __align(4096) PML4Entry PML4Table[PagingTableLength];
+typedef volatile union{
 	PDPTEntryDirectory		directories[PagingTableLength];
 	PDPTEntry1GB			pages1GB[PagingTableLength];
 }__align(4096) PDPTTable;
-typedef union{
+typedef volatile union{
 	PageDirectoryEntry	tables[PagingTableLength];
 	PageDirectoryEntry2MB	pages2MB[PagingTableLength];
 }__align(4096) PageDirectory;
@@ -302,7 +302,8 @@ enumdef(uint32_t, PageAllocationFlags){
 
 //	Each Bit Corresponds to 32 bytes
 //	.5% of each Gigabyte is used for the PageAllocationTable
-typedef struct{
+//	.5% of all Page Levels are used to map each block.
+typedef volatile struct{
 	GenericReference	Parent;
 	PageAllocationType	Type;
 	//	Have a uint16_t worth of Padding
@@ -316,7 +317,7 @@ LibAPI uint32_t GetMaxPhysicalAddressBits(void);
 LibAPI void InvalidatePage(void *Virtual);
 LibAPI void InvalidatePages(void *Virtual, uint64_t Bytes);
 
-LibAPI void *__sysvabi MapPTVirtual(void *Physical);
+// LibAPI void *__sysvabi MapPTVirtual(void *Physical);
 LibAPI void *MapPhysical(void *Virtual);
 LibAPI void *WalkPageTreeByVirtual(void *Virtual, uint32_t *Level);
 LibAPI bool RepointVirtualAddress(void *Virtual, void *NewPhysical);
@@ -326,7 +327,8 @@ LibAPI void *WalkPageTree(uint32_t *Level, PageCoordinate Coordinate);
 LibAPI extern bool __sysvabi IsLA57Supported(void);
 LibAPI extern void __sysvabi EnableLA57(void);
 LibAPI extern bool __sysvabi IsLA57Enabled(void);
-LibAPI extern void *__sysvabi GetPageTable(bool *Level5);
+enumdef(uint32_t, GetPageTableMode){_1To1MappingMode = 0x00, _StoredPageTableMode = 0x01, _UpdatePageTableMode = 0x01, _CPUStall = 0x02};
+LibAPI extern void *__sysvabi GetPageTable(bool *Level5, GetPageTableMode Mode, void *OptionalPageTableVirtual);
 LibAPI extern uint32_t __sysvabi LoadPageTree(void *PagingTree, void(*PTR)(void), uint64_t DataSegment, uint64_t CodeSegment, bool64_t Level5);
 LibAPI uint64_t TotalMemorySize(void);
 LibAPI bool MemoryIsMapped(void *Ptr);
@@ -334,7 +336,7 @@ LibAPI uint64_t TotalMappedMemory(void *ptr);
 
 LibAPI void FreePages(void *Virtual);
 LibAPI void *MapVirtual(void *Physical);
-LibAPI bool InitialiseAllocationState(void *D_, uint64_t N, uint64_t TotalMemory);
 LibAPI void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey);
+LibAPI bool InitialiseAllocationState(void *D_, const uint64_t StructSize, const uint64_t N, const uint64_t TotalMemory);
 LibAPI void *AllocatePagesFromRange(void *Base, uint64_t Limit, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey);
 LibAPI void *AllocateAlignedPagesFromRange(void *Base, uint64_t Limit, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey, uint32_t Align);

@@ -1,0 +1,2549 @@
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000000000                __image_base__ = 0x0
+                0x0000000000000000                __dll__ = 0x0
+                0x0000000000000000                __ImageBase = 0x0
+                0x0000000000001000                __section_alignment__ = 0x1000
+                0x0000000000001000                __file_alignment__ = 0x1000
+                0x0000000000000004                __major_os_version__ = 0x4
+                0x0000000000000000                __minor_os_version__ = 0x0
+                0x0000000000000000                __major_image_version__ = 0x0
+                0x0000000000000000                __minor_image_version__ = 0x0
+                0x0000000000000005                __major_subsystem_version__ = 0x5
+                0x0000000000000002                __minor_subsystem_version__ = 0x2
+                0x0000000000000003                __subsystem__ = 0x3
+                0x0000000000200000                __size_of_stack_reserve__ = 0x200000
+                0x0000000000001000                __size_of_stack_commit__ = 0x1000
+                0x0000000000100000                __size_of_heap_reserve__ = 0x100000
+                0x0000000000001000                __size_of_heap_commit__ = 0x1000
+                0x0000000000000000                __loader_flags__ = 0x0
+                0x0000000000000160                __dll_characteristics__ = 0x160
+LOAD compile/cache/elf.c.kboot.o
+LOAD compile/cache/elf.asm.kboot.o
+LOAD Build/Build-nodate/root-part/CoreBootstrap.dll
+LOAD Build/Build-nodate/root-part/LibCrt.dll
+LOAD Build/Build-nodate/root-part/services/LibIO.dll
+LOAD Build/Build-nodate/root-part/services/LibVideo.dll
+                0x00000000000002f0                . = SIZEOF_HEADERS
+                0x0000000000001000                . = ALIGN (__section_alignment__)
+
+.text           0x0000000000001000     0x6000
+ *(SORT_NONE(.init))
+ *(.text)
+ .text          0x0000000000001000     0x5180 compile/cache/elf.c.kboot.o
+                0x0000000000001000                InitialiseGDT
+                0x0000000000001339                InitialiseIDT
+                0x0000000000005dd4                GenericIOISR
+                0x0000000000005df1                __main
+ .text          0x0000000000006180       0x1e compile/cache/elf.asm.kboot.o
+                0x0000000000006180                kboot_km
+ *fill*         0x000000000000619e        0x2 
+ .text          0x00000000000061a0        0x8 LibVideo_dll_d000001.o
+                0x00000000000061a0                AllocateVideoMemory
+ .text          0x00000000000061a8        0x8 LibVideo_dll_d000002.o
+                0x00000000000061a8                InitaliseVMA
+ .text          0x00000000000061b0        0x8 LibVideo_dll_d000003.o
+                0x00000000000061b0                SelectVideoContext
+ .text          0x00000000000061b8        0x8 LibIO_dll_d000006.o
+                0x00000000000061b8                OpenRawHandle
+ .text          0x00000000000061c0        0x8 LibCrt_dll_d000009.o
+                0x00000000000061c0                AllocateInterruptVector
+ .text          0x00000000000061c8        0x8 LibCrt_dll_d000010.o
+                0x00000000000061c8                GetLocalAPICID
+ .text          0x00000000000061d0        0x8 LibCrt_dll_d000011.o
+                0x00000000000061d0                InitLocalAPIC
+ .text          0x00000000000061d8        0x8 LibCrt_dll_d000012.o
+                0x00000000000061d8                InitialiseAllocationState
+ .text          0x00000000000061e0        0x8 LibCrt_dll_d000013.o
+                0x00000000000061e0                SetIDTe
+ .text          0x00000000000061e8        0x8 LibCrt_dll_d000014.o
+                0x00000000000061e8                _LoadGDTR
+ .text          0x00000000000061f0        0x8 LibCrt_dll_d000015.o
+                0x00000000000061f0                _LoadIDTR
+ .text          0x00000000000061f8        0x8 LibCrt_dll_d000016.o
+                0x00000000000061f8                __bochs
+ .text          0x0000000000006200        0x8 LibCrt_dll_d000017.o
+                0x0000000000006200                isrCallback0
+ .text          0x0000000000006208        0x8 LibCrt_dll_d000018.o
+                0x0000000000006208                isrCallback1
+ .text          0x0000000000006210        0x8 LibCrt_dll_d000019.o
+                0x0000000000006210                isrCallback10
+ .text          0x0000000000006218        0x8 LibCrt_dll_d000020.o
+                0x0000000000006218                isrCallback100
+ .text          0x0000000000006220        0x8 LibCrt_dll_d000021.o
+                0x0000000000006220                isrCallback101
+ .text          0x0000000000006228        0x8 LibCrt_dll_d000022.o
+                0x0000000000006228                isrCallback102
+ .text          0x0000000000006230        0x8 LibCrt_dll_d000023.o
+                0x0000000000006230                isrCallback103
+ .text          0x0000000000006238        0x8 LibCrt_dll_d000024.o
+                0x0000000000006238                isrCallback104
+ .text          0x0000000000006240        0x8 LibCrt_dll_d000025.o
+                0x0000000000006240                isrCallback105
+ .text          0x0000000000006248        0x8 LibCrt_dll_d000026.o
+                0x0000000000006248                isrCallback106
+ .text          0x0000000000006250        0x8 LibCrt_dll_d000027.o
+                0x0000000000006250                isrCallback107
+ .text          0x0000000000006258        0x8 LibCrt_dll_d000028.o
+                0x0000000000006258                isrCallback108
+ .text          0x0000000000006260        0x8 LibCrt_dll_d000029.o
+                0x0000000000006260                isrCallback109
+ .text          0x0000000000006268        0x8 LibCrt_dll_d000030.o
+                0x0000000000006268                isrCallback11
+ .text          0x0000000000006270        0x8 LibCrt_dll_d000031.o
+                0x0000000000006270                isrCallback110
+ .text          0x0000000000006278        0x8 LibCrt_dll_d000032.o
+                0x0000000000006278                isrCallback111
+ .text          0x0000000000006280        0x8 LibCrt_dll_d000033.o
+                0x0000000000006280                isrCallback112
+ .text          0x0000000000006288        0x8 LibCrt_dll_d000034.o
+                0x0000000000006288                isrCallback113
+ .text          0x0000000000006290        0x8 LibCrt_dll_d000035.o
+                0x0000000000006290                isrCallback114
+ .text          0x0000000000006298        0x8 LibCrt_dll_d000036.o
+                0x0000000000006298                isrCallback115
+ .text          0x00000000000062a0        0x8 LibCrt_dll_d000037.o
+                0x00000000000062a0                isrCallback116
+ .text          0x00000000000062a8        0x8 LibCrt_dll_d000038.o
+                0x00000000000062a8                isrCallback117
+ .text          0x00000000000062b0        0x8 LibCrt_dll_d000039.o
+                0x00000000000062b0                isrCallback118
+ .text          0x00000000000062b8        0x8 LibCrt_dll_d000040.o
+                0x00000000000062b8                isrCallback119
+ .text          0x00000000000062c0        0x8 LibCrt_dll_d000041.o
+                0x00000000000062c0                isrCallback12
+ .text          0x00000000000062c8        0x8 LibCrt_dll_d000042.o
+                0x00000000000062c8                isrCallback120
+ .text          0x00000000000062d0        0x8 LibCrt_dll_d000043.o
+                0x00000000000062d0                isrCallback121
+ .text          0x00000000000062d8        0x8 LibCrt_dll_d000044.o
+                0x00000000000062d8                isrCallback122
+ .text          0x00000000000062e0        0x8 LibCrt_dll_d000045.o
+                0x00000000000062e0                isrCallback123
+ .text          0x00000000000062e8        0x8 LibCrt_dll_d000046.o
+                0x00000000000062e8                isrCallback124
+ .text          0x00000000000062f0        0x8 LibCrt_dll_d000047.o
+                0x00000000000062f0                isrCallback125
+ .text          0x00000000000062f8        0x8 LibCrt_dll_d000048.o
+                0x00000000000062f8                isrCallback126
+ .text          0x0000000000006300        0x8 LibCrt_dll_d000049.o
+                0x0000000000006300                isrCallback127
+ .text          0x0000000000006308        0x8 LibCrt_dll_d000050.o
+                0x0000000000006308                isrCallback128
+ .text          0x0000000000006310        0x8 LibCrt_dll_d000051.o
+                0x0000000000006310                isrCallback129
+ .text          0x0000000000006318        0x8 LibCrt_dll_d000052.o
+                0x0000000000006318                isrCallback13
+ .text          0x0000000000006320        0x8 LibCrt_dll_d000053.o
+                0x0000000000006320                isrCallback130
+ .text          0x0000000000006328        0x8 LibCrt_dll_d000054.o
+                0x0000000000006328                isrCallback131
+ .text          0x0000000000006330        0x8 LibCrt_dll_d000055.o
+                0x0000000000006330                isrCallback132
+ .text          0x0000000000006338        0x8 LibCrt_dll_d000056.o
+                0x0000000000006338                isrCallback133
+ .text          0x0000000000006340        0x8 LibCrt_dll_d000057.o
+                0x0000000000006340                isrCallback134
+ .text          0x0000000000006348        0x8 LibCrt_dll_d000058.o
+                0x0000000000006348                isrCallback135
+ .text          0x0000000000006350        0x8 LibCrt_dll_d000059.o
+                0x0000000000006350                isrCallback136
+ .text          0x0000000000006358        0x8 LibCrt_dll_d000060.o
+                0x0000000000006358                isrCallback137
+ .text          0x0000000000006360        0x8 LibCrt_dll_d000061.o
+                0x0000000000006360                isrCallback138
+ .text          0x0000000000006368        0x8 LibCrt_dll_d000062.o
+                0x0000000000006368                isrCallback139
+ .text          0x0000000000006370        0x8 LibCrt_dll_d000063.o
+                0x0000000000006370                isrCallback14
+ .text          0x0000000000006378        0x8 LibCrt_dll_d000064.o
+                0x0000000000006378                isrCallback140
+ .text          0x0000000000006380        0x8 LibCrt_dll_d000065.o
+                0x0000000000006380                isrCallback141
+ .text          0x0000000000006388        0x8 LibCrt_dll_d000066.o
+                0x0000000000006388                isrCallback142
+ .text          0x0000000000006390        0x8 LibCrt_dll_d000067.o
+                0x0000000000006390                isrCallback143
+ .text          0x0000000000006398        0x8 LibCrt_dll_d000068.o
+                0x0000000000006398                isrCallback144
+ .text          0x00000000000063a0        0x8 LibCrt_dll_d000069.o
+                0x00000000000063a0                isrCallback145
+ .text          0x00000000000063a8        0x8 LibCrt_dll_d000070.o
+                0x00000000000063a8                isrCallback146
+ .text          0x00000000000063b0        0x8 LibCrt_dll_d000071.o
+                0x00000000000063b0                isrCallback147
+ .text          0x00000000000063b8        0x8 LibCrt_dll_d000072.o
+                0x00000000000063b8                isrCallback148
+ .text          0x00000000000063c0        0x8 LibCrt_dll_d000073.o
+                0x00000000000063c0                isrCallback149
+ .text          0x00000000000063c8        0x8 LibCrt_dll_d000074.o
+                0x00000000000063c8                isrCallback15
+ .text          0x00000000000063d0        0x8 LibCrt_dll_d000075.o
+                0x00000000000063d0                isrCallback150
+ .text          0x00000000000063d8        0x8 LibCrt_dll_d000076.o
+                0x00000000000063d8                isrCallback151
+ .text          0x00000000000063e0        0x8 LibCrt_dll_d000077.o
+                0x00000000000063e0                isrCallback152
+ .text          0x00000000000063e8        0x8 LibCrt_dll_d000078.o
+                0x00000000000063e8                isrCallback153
+ .text          0x00000000000063f0        0x8 LibCrt_dll_d000079.o
+                0x00000000000063f0                isrCallback154
+ .text          0x00000000000063f8        0x8 LibCrt_dll_d000080.o
+                0x00000000000063f8                isrCallback155
+ .text          0x0000000000006400        0x8 LibCrt_dll_d000081.o
+                0x0000000000006400                isrCallback156
+ .text          0x0000000000006408        0x8 LibCrt_dll_d000082.o
+                0x0000000000006408                isrCallback157
+ .text          0x0000000000006410        0x8 LibCrt_dll_d000083.o
+                0x0000000000006410                isrCallback158
+ .text          0x0000000000006418        0x8 LibCrt_dll_d000084.o
+                0x0000000000006418                isrCallback159
+ .text          0x0000000000006420        0x8 LibCrt_dll_d000085.o
+                0x0000000000006420                isrCallback16
+ .text          0x0000000000006428        0x8 LibCrt_dll_d000086.o
+                0x0000000000006428                isrCallback160
+ .text          0x0000000000006430        0x8 LibCrt_dll_d000087.o
+                0x0000000000006430                isrCallback161
+ .text          0x0000000000006438        0x8 LibCrt_dll_d000088.o
+                0x0000000000006438                isrCallback162
+ .text          0x0000000000006440        0x8 LibCrt_dll_d000089.o
+                0x0000000000006440                isrCallback163
+ .text          0x0000000000006448        0x8 LibCrt_dll_d000090.o
+                0x0000000000006448                isrCallback164
+ .text          0x0000000000006450        0x8 LibCrt_dll_d000091.o
+                0x0000000000006450                isrCallback165
+ .text          0x0000000000006458        0x8 LibCrt_dll_d000092.o
+                0x0000000000006458                isrCallback166
+ .text          0x0000000000006460        0x8 LibCrt_dll_d000093.o
+                0x0000000000006460                isrCallback167
+ .text          0x0000000000006468        0x8 LibCrt_dll_d000094.o
+                0x0000000000006468                isrCallback168
+ .text          0x0000000000006470        0x8 LibCrt_dll_d000095.o
+                0x0000000000006470                isrCallback169
+ .text          0x0000000000006478        0x8 LibCrt_dll_d000096.o
+                0x0000000000006478                isrCallback17
+ .text          0x0000000000006480        0x8 LibCrt_dll_d000097.o
+                0x0000000000006480                isrCallback170
+ .text          0x0000000000006488        0x8 LibCrt_dll_d000098.o
+                0x0000000000006488                isrCallback171
+ .text          0x0000000000006490        0x8 LibCrt_dll_d000099.o
+                0x0000000000006490                isrCallback172
+ .text          0x0000000000006498        0x8 LibCrt_dll_d000100.o
+                0x0000000000006498                isrCallback173
+ .text          0x00000000000064a0        0x8 LibCrt_dll_d000101.o
+                0x00000000000064a0                isrCallback174
+ .text          0x00000000000064a8        0x8 LibCrt_dll_d000102.o
+                0x00000000000064a8                isrCallback175
+ .text          0x00000000000064b0        0x8 LibCrt_dll_d000103.o
+                0x00000000000064b0                isrCallback176
+ .text          0x00000000000064b8        0x8 LibCrt_dll_d000104.o
+                0x00000000000064b8                isrCallback177
+ .text          0x00000000000064c0        0x8 LibCrt_dll_d000105.o
+                0x00000000000064c0                isrCallback178
+ .text          0x00000000000064c8        0x8 LibCrt_dll_d000106.o
+                0x00000000000064c8                isrCallback179
+ .text          0x00000000000064d0        0x8 LibCrt_dll_d000107.o
+                0x00000000000064d0                isrCallback18
+ .text          0x00000000000064d8        0x8 LibCrt_dll_d000108.o
+                0x00000000000064d8                isrCallback180
+ .text          0x00000000000064e0        0x8 LibCrt_dll_d000109.o
+                0x00000000000064e0                isrCallback181
+ .text          0x00000000000064e8        0x8 LibCrt_dll_d000110.o
+                0x00000000000064e8                isrCallback182
+ .text          0x00000000000064f0        0x8 LibCrt_dll_d000111.o
+                0x00000000000064f0                isrCallback183
+ .text          0x00000000000064f8        0x8 LibCrt_dll_d000112.o
+                0x00000000000064f8                isrCallback184
+ .text          0x0000000000006500        0x8 LibCrt_dll_d000113.o
+                0x0000000000006500                isrCallback185
+ .text          0x0000000000006508        0x8 LibCrt_dll_d000114.o
+                0x0000000000006508                isrCallback186
+ .text          0x0000000000006510        0x8 LibCrt_dll_d000115.o
+                0x0000000000006510                isrCallback187
+ .text          0x0000000000006518        0x8 LibCrt_dll_d000116.o
+                0x0000000000006518                isrCallback188
+ .text          0x0000000000006520        0x8 LibCrt_dll_d000117.o
+                0x0000000000006520                isrCallback189
+ .text          0x0000000000006528        0x8 LibCrt_dll_d000118.o
+                0x0000000000006528                isrCallback19
+ .text          0x0000000000006530        0x8 LibCrt_dll_d000119.o
+                0x0000000000006530                isrCallback190
+ .text          0x0000000000006538        0x8 LibCrt_dll_d000120.o
+                0x0000000000006538                isrCallback191
+ .text          0x0000000000006540        0x8 LibCrt_dll_d000121.o
+                0x0000000000006540                isrCallback192
+ .text          0x0000000000006548        0x8 LibCrt_dll_d000122.o
+                0x0000000000006548                isrCallback193
+ .text          0x0000000000006550        0x8 LibCrt_dll_d000123.o
+                0x0000000000006550                isrCallback194
+ .text          0x0000000000006558        0x8 LibCrt_dll_d000124.o
+                0x0000000000006558                isrCallback195
+ .text          0x0000000000006560        0x8 LibCrt_dll_d000125.o
+                0x0000000000006560                isrCallback196
+ .text          0x0000000000006568        0x8 LibCrt_dll_d000126.o
+                0x0000000000006568                isrCallback197
+ .text          0x0000000000006570        0x8 LibCrt_dll_d000127.o
+                0x0000000000006570                isrCallback198
+ .text          0x0000000000006578        0x8 LibCrt_dll_d000128.o
+                0x0000000000006578                isrCallback199
+ .text          0x0000000000006580        0x8 LibCrt_dll_d000129.o
+                0x0000000000006580                isrCallback2
+ .text          0x0000000000006588        0x8 LibCrt_dll_d000130.o
+                0x0000000000006588                isrCallback20
+ .text          0x0000000000006590        0x8 LibCrt_dll_d000131.o
+                0x0000000000006590                isrCallback200
+ .text          0x0000000000006598        0x8 LibCrt_dll_d000132.o
+                0x0000000000006598                isrCallback201
+ .text          0x00000000000065a0        0x8 LibCrt_dll_d000133.o
+                0x00000000000065a0                isrCallback202
+ .text          0x00000000000065a8        0x8 LibCrt_dll_d000134.o
+                0x00000000000065a8                isrCallback203
+ .text          0x00000000000065b0        0x8 LibCrt_dll_d000135.o
+                0x00000000000065b0                isrCallback204
+ .text          0x00000000000065b8        0x8 LibCrt_dll_d000136.o
+                0x00000000000065b8                isrCallback205
+ .text          0x00000000000065c0        0x8 LibCrt_dll_d000137.o
+                0x00000000000065c0                isrCallback206
+ .text          0x00000000000065c8        0x8 LibCrt_dll_d000138.o
+                0x00000000000065c8                isrCallback207
+ .text          0x00000000000065d0        0x8 LibCrt_dll_d000139.o
+                0x00000000000065d0                isrCallback208
+ .text          0x00000000000065d8        0x8 LibCrt_dll_d000140.o
+                0x00000000000065d8                isrCallback209
+ .text          0x00000000000065e0        0x8 LibCrt_dll_d000141.o
+                0x00000000000065e0                isrCallback21
+ .text          0x00000000000065e8        0x8 LibCrt_dll_d000142.o
+                0x00000000000065e8                isrCallback210
+ .text          0x00000000000065f0        0x8 LibCrt_dll_d000143.o
+                0x00000000000065f0                isrCallback211
+ .text          0x00000000000065f8        0x8 LibCrt_dll_d000144.o
+                0x00000000000065f8                isrCallback212
+ .text          0x0000000000006600        0x8 LibCrt_dll_d000145.o
+                0x0000000000006600                isrCallback213
+ .text          0x0000000000006608        0x8 LibCrt_dll_d000146.o
+                0x0000000000006608                isrCallback214
+ .text          0x0000000000006610        0x8 LibCrt_dll_d000147.o
+                0x0000000000006610                isrCallback215
+ .text          0x0000000000006618        0x8 LibCrt_dll_d000148.o
+                0x0000000000006618                isrCallback216
+ .text          0x0000000000006620        0x8 LibCrt_dll_d000149.o
+                0x0000000000006620                isrCallback217
+ .text          0x0000000000006628        0x8 LibCrt_dll_d000150.o
+                0x0000000000006628                isrCallback218
+ .text          0x0000000000006630        0x8 LibCrt_dll_d000151.o
+                0x0000000000006630                isrCallback219
+ .text          0x0000000000006638        0x8 LibCrt_dll_d000152.o
+                0x0000000000006638                isrCallback22
+ .text          0x0000000000006640        0x8 LibCrt_dll_d000153.o
+                0x0000000000006640                isrCallback220
+ .text          0x0000000000006648        0x8 LibCrt_dll_d000154.o
+                0x0000000000006648                isrCallback221
+ .text          0x0000000000006650        0x8 LibCrt_dll_d000155.o
+                0x0000000000006650                isrCallback222
+ .text          0x0000000000006658        0x8 LibCrt_dll_d000156.o
+                0x0000000000006658                isrCallback223
+ .text          0x0000000000006660        0x8 LibCrt_dll_d000157.o
+                0x0000000000006660                isrCallback224
+ .text          0x0000000000006668        0x8 LibCrt_dll_d000158.o
+                0x0000000000006668                isrCallback225
+ .text          0x0000000000006670        0x8 LibCrt_dll_d000159.o
+                0x0000000000006670                isrCallback226
+ .text          0x0000000000006678        0x8 LibCrt_dll_d000160.o
+                0x0000000000006678                isrCallback227
+ .text          0x0000000000006680        0x8 LibCrt_dll_d000161.o
+                0x0000000000006680                isrCallback228
+ .text          0x0000000000006688        0x8 LibCrt_dll_d000162.o
+                0x0000000000006688                isrCallback229
+ .text          0x0000000000006690        0x8 LibCrt_dll_d000163.o
+                0x0000000000006690                isrCallback23
+ .text          0x0000000000006698        0x8 LibCrt_dll_d000164.o
+                0x0000000000006698                isrCallback230
+ .text          0x00000000000066a0        0x8 LibCrt_dll_d000165.o
+                0x00000000000066a0                isrCallback231
+ .text          0x00000000000066a8        0x8 LibCrt_dll_d000166.o
+                0x00000000000066a8                isrCallback232
+ .text          0x00000000000066b0        0x8 LibCrt_dll_d000167.o
+                0x00000000000066b0                isrCallback233
+ .text          0x00000000000066b8        0x8 LibCrt_dll_d000168.o
+                0x00000000000066b8                isrCallback234
+ .text          0x00000000000066c0        0x8 LibCrt_dll_d000169.o
+                0x00000000000066c0                isrCallback235
+ .text          0x00000000000066c8        0x8 LibCrt_dll_d000170.o
+                0x00000000000066c8                isrCallback236
+ .text          0x00000000000066d0        0x8 LibCrt_dll_d000171.o
+                0x00000000000066d0                isrCallback237
+ .text          0x00000000000066d8        0x8 LibCrt_dll_d000172.o
+                0x00000000000066d8                isrCallback238
+ .text          0x00000000000066e0        0x8 LibCrt_dll_d000173.o
+                0x00000000000066e0                isrCallback239
+ .text          0x00000000000066e8        0x8 LibCrt_dll_d000174.o
+                0x00000000000066e8                isrCallback24
+ .text          0x00000000000066f0        0x8 LibCrt_dll_d000175.o
+                0x00000000000066f0                isrCallback240
+ .text          0x00000000000066f8        0x8 LibCrt_dll_d000176.o
+                0x00000000000066f8                isrCallback241
+ .text          0x0000000000006700        0x8 LibCrt_dll_d000177.o
+                0x0000000000006700                isrCallback242
+ .text          0x0000000000006708        0x8 LibCrt_dll_d000178.o
+                0x0000000000006708                isrCallback243
+ .text          0x0000000000006710        0x8 LibCrt_dll_d000179.o
+                0x0000000000006710                isrCallback244
+ .text          0x0000000000006718        0x8 LibCrt_dll_d000180.o
+                0x0000000000006718                isrCallback245
+ .text          0x0000000000006720        0x8 LibCrt_dll_d000181.o
+                0x0000000000006720                isrCallback246
+ .text          0x0000000000006728        0x8 LibCrt_dll_d000182.o
+                0x0000000000006728                isrCallback247
+ .text          0x0000000000006730        0x8 LibCrt_dll_d000183.o
+                0x0000000000006730                isrCallback248
+ .text          0x0000000000006738        0x8 LibCrt_dll_d000184.o
+                0x0000000000006738                isrCallback249
+ .text          0x0000000000006740        0x8 LibCrt_dll_d000185.o
+                0x0000000000006740                isrCallback25
+ .text          0x0000000000006748        0x8 LibCrt_dll_d000186.o
+                0x0000000000006748                isrCallback250
+ .text          0x0000000000006750        0x8 LibCrt_dll_d000187.o
+                0x0000000000006750                isrCallback251
+ .text          0x0000000000006758        0x8 LibCrt_dll_d000188.o
+                0x0000000000006758                isrCallback252
+ .text          0x0000000000006760        0x8 LibCrt_dll_d000189.o
+                0x0000000000006760                isrCallback253
+ .text          0x0000000000006768        0x8 LibCrt_dll_d000190.o
+                0x0000000000006768                isrCallback254
+ .text          0x0000000000006770        0x8 LibCrt_dll_d000191.o
+                0x0000000000006770                isrCallback255
+ .text          0x0000000000006778        0x8 LibCrt_dll_d000192.o
+                0x0000000000006778                isrCallback26
+ .text          0x0000000000006780        0x8 LibCrt_dll_d000193.o
+                0x0000000000006780                isrCallback27
+ .text          0x0000000000006788        0x8 LibCrt_dll_d000194.o
+                0x0000000000006788                isrCallback28
+ .text          0x0000000000006790        0x8 LibCrt_dll_d000195.o
+                0x0000000000006790                isrCallback29
+ .text          0x0000000000006798        0x8 LibCrt_dll_d000196.o
+                0x0000000000006798                isrCallback3
+ .text          0x00000000000067a0        0x8 LibCrt_dll_d000197.o
+                0x00000000000067a0                isrCallback30
+ .text          0x00000000000067a8        0x8 LibCrt_dll_d000198.o
+                0x00000000000067a8                isrCallback31
+ .text          0x00000000000067b0        0x8 LibCrt_dll_d000199.o
+                0x00000000000067b0                isrCallback32
+ .text          0x00000000000067b8        0x8 LibCrt_dll_d000200.o
+                0x00000000000067b8                isrCallback33
+ .text          0x00000000000067c0        0x8 LibCrt_dll_d000201.o
+                0x00000000000067c0                isrCallback34
+ .text          0x00000000000067c8        0x8 LibCrt_dll_d000202.o
+                0x00000000000067c8                isrCallback35
+ .text          0x00000000000067d0        0x8 LibCrt_dll_d000203.o
+                0x00000000000067d0                isrCallback36
+ .text          0x00000000000067d8        0x8 LibCrt_dll_d000204.o
+                0x00000000000067d8                isrCallback37
+ .text          0x00000000000067e0        0x8 LibCrt_dll_d000205.o
+                0x00000000000067e0                isrCallback38
+ .text          0x00000000000067e8        0x8 LibCrt_dll_d000206.o
+                0x00000000000067e8                isrCallback39
+ .text          0x00000000000067f0        0x8 LibCrt_dll_d000207.o
+                0x00000000000067f0                isrCallback4
+ .text          0x00000000000067f8        0x8 LibCrt_dll_d000208.o
+                0x00000000000067f8                isrCallback40
+ .text          0x0000000000006800        0x8 LibCrt_dll_d000209.o
+                0x0000000000006800                isrCallback41
+ .text          0x0000000000006808        0x8 LibCrt_dll_d000210.o
+                0x0000000000006808                isrCallback42
+ .text          0x0000000000006810        0x8 LibCrt_dll_d000211.o
+                0x0000000000006810                isrCallback43
+ .text          0x0000000000006818        0x8 LibCrt_dll_d000212.o
+                0x0000000000006818                isrCallback44
+ .text          0x0000000000006820        0x8 LibCrt_dll_d000213.o
+                0x0000000000006820                isrCallback45
+ .text          0x0000000000006828        0x8 LibCrt_dll_d000214.o
+                0x0000000000006828                isrCallback46
+ .text          0x0000000000006830        0x8 LibCrt_dll_d000215.o
+                0x0000000000006830                isrCallback47
+ .text          0x0000000000006838        0x8 LibCrt_dll_d000216.o
+                0x0000000000006838                isrCallback48
+ .text          0x0000000000006840        0x8 LibCrt_dll_d000217.o
+                0x0000000000006840                isrCallback49
+ .text          0x0000000000006848        0x8 LibCrt_dll_d000218.o
+                0x0000000000006848                isrCallback5
+ .text          0x0000000000006850        0x8 LibCrt_dll_d000219.o
+                0x0000000000006850                isrCallback50
+ .text          0x0000000000006858        0x8 LibCrt_dll_d000220.o
+                0x0000000000006858                isrCallback51
+ .text          0x0000000000006860        0x8 LibCrt_dll_d000221.o
+                0x0000000000006860                isrCallback52
+ .text          0x0000000000006868        0x8 LibCrt_dll_d000222.o
+                0x0000000000006868                isrCallback53
+ .text          0x0000000000006870        0x8 LibCrt_dll_d000223.o
+                0x0000000000006870                isrCallback54
+ .text          0x0000000000006878        0x8 LibCrt_dll_d000224.o
+                0x0000000000006878                isrCallback55
+ .text          0x0000000000006880        0x8 LibCrt_dll_d000225.o
+                0x0000000000006880                isrCallback56
+ .text          0x0000000000006888        0x8 LibCrt_dll_d000226.o
+                0x0000000000006888                isrCallback57
+ .text          0x0000000000006890        0x8 LibCrt_dll_d000227.o
+                0x0000000000006890                isrCallback58
+ .text          0x0000000000006898        0x8 LibCrt_dll_d000228.o
+                0x0000000000006898                isrCallback59
+ .text          0x00000000000068a0        0x8 LibCrt_dll_d000229.o
+                0x00000000000068a0                isrCallback6
+ .text          0x00000000000068a8        0x8 LibCrt_dll_d000230.o
+                0x00000000000068a8                isrCallback60
+ .text          0x00000000000068b0        0x8 LibCrt_dll_d000231.o
+                0x00000000000068b0                isrCallback61
+ .text          0x00000000000068b8        0x8 LibCrt_dll_d000232.o
+                0x00000000000068b8                isrCallback62
+ .text          0x00000000000068c0        0x8 LibCrt_dll_d000233.o
+                0x00000000000068c0                isrCallback63
+ .text          0x00000000000068c8        0x8 LibCrt_dll_d000234.o
+                0x00000000000068c8                isrCallback64
+ .text          0x00000000000068d0        0x8 LibCrt_dll_d000235.o
+                0x00000000000068d0                isrCallback65
+ .text          0x00000000000068d8        0x8 LibCrt_dll_d000236.o
+                0x00000000000068d8                isrCallback66
+ .text          0x00000000000068e0        0x8 LibCrt_dll_d000237.o
+                0x00000000000068e0                isrCallback67
+ .text          0x00000000000068e8        0x8 LibCrt_dll_d000238.o
+                0x00000000000068e8                isrCallback68
+ .text          0x00000000000068f0        0x8 LibCrt_dll_d000239.o
+                0x00000000000068f0                isrCallback69
+ .text          0x00000000000068f8        0x8 LibCrt_dll_d000240.o
+                0x00000000000068f8                isrCallback7
+ .text          0x0000000000006900        0x8 LibCrt_dll_d000241.o
+                0x0000000000006900                isrCallback70
+ .text          0x0000000000006908        0x8 LibCrt_dll_d000242.o
+                0x0000000000006908                isrCallback71
+ .text          0x0000000000006910        0x8 LibCrt_dll_d000243.o
+                0x0000000000006910                isrCallback72
+ .text          0x0000000000006918        0x8 LibCrt_dll_d000244.o
+                0x0000000000006918                isrCallback73
+ .text          0x0000000000006920        0x8 LibCrt_dll_d000245.o
+                0x0000000000006920                isrCallback74
+ .text          0x0000000000006928        0x8 LibCrt_dll_d000246.o
+                0x0000000000006928                isrCallback75
+ .text          0x0000000000006930        0x8 LibCrt_dll_d000247.o
+                0x0000000000006930                isrCallback76
+ .text          0x0000000000006938        0x8 LibCrt_dll_d000248.o
+                0x0000000000006938                isrCallback77
+ .text          0x0000000000006940        0x8 LibCrt_dll_d000249.o
+                0x0000000000006940                isrCallback78
+ .text          0x0000000000006948        0x8 LibCrt_dll_d000250.o
+                0x0000000000006948                isrCallback79
+ .text          0x0000000000006950        0x8 LibCrt_dll_d000251.o
+                0x0000000000006950                isrCallback8
+ .text          0x0000000000006958        0x8 LibCrt_dll_d000252.o
+                0x0000000000006958                isrCallback80
+ .text          0x0000000000006960        0x8 LibCrt_dll_d000253.o
+                0x0000000000006960                isrCallback81
+ .text          0x0000000000006968        0x8 LibCrt_dll_d000254.o
+                0x0000000000006968                isrCallback82
+ .text          0x0000000000006970        0x8 LibCrt_dll_d000255.o
+                0x0000000000006970                isrCallback83
+ .text          0x0000000000006978        0x8 LibCrt_dll_d000256.o
+                0x0000000000006978                isrCallback84
+ .text          0x0000000000006980        0x8 LibCrt_dll_d000257.o
+                0x0000000000006980                isrCallback85
+ .text          0x0000000000006988        0x8 LibCrt_dll_d000258.o
+                0x0000000000006988                isrCallback86
+ .text          0x0000000000006990        0x8 LibCrt_dll_d000259.o
+                0x0000000000006990                isrCallback87
+ .text          0x0000000000006998        0x8 LibCrt_dll_d000260.o
+                0x0000000000006998                isrCallback88
+ .text          0x00000000000069a0        0x8 LibCrt_dll_d000261.o
+                0x00000000000069a0                isrCallback89
+ .text          0x00000000000069a8        0x8 LibCrt_dll_d000262.o
+                0x00000000000069a8                isrCallback9
+ .text          0x00000000000069b0        0x8 LibCrt_dll_d000263.o
+                0x00000000000069b0                isrCallback90
+ .text          0x00000000000069b8        0x8 LibCrt_dll_d000264.o
+                0x00000000000069b8                isrCallback91
+ .text          0x00000000000069c0        0x8 LibCrt_dll_d000265.o
+                0x00000000000069c0                isrCallback92
+ .text          0x00000000000069c8        0x8 LibCrt_dll_d000266.o
+                0x00000000000069c8                isrCallback93
+ .text          0x00000000000069d0        0x8 LibCrt_dll_d000267.o
+                0x00000000000069d0                isrCallback94
+ .text          0x00000000000069d8        0x8 LibCrt_dll_d000268.o
+                0x00000000000069d8                isrCallback95
+ .text          0x00000000000069e0        0x8 LibCrt_dll_d000269.o
+                0x00000000000069e0                isrCallback96
+ .text          0x00000000000069e8        0x8 LibCrt_dll_d000270.o
+                0x00000000000069e8                isrCallback97
+ .text          0x00000000000069f0        0x8 LibCrt_dll_d000271.o
+                0x00000000000069f0                isrCallback98
+ .text          0x00000000000069f8        0x8 LibCrt_dll_d000272.o
+                0x00000000000069f8                isrCallback99
+ .text          0x0000000000006a00        0x8 LibCrt_dll_d000273.o
+                0x0000000000006a00                memcmp
+ .text          0x0000000000006a08        0x8 LibCrt_dll_d000274.o
+                0x0000000000006a08                memset
+ *(SORT_BY_NAME(.text$*))
+ *(.text.*)
+ *(.gnu.linkonce.t.*)
+ *(.glue_7t)
+ *(.glue_7)
+                0x0000000000006a10                . = ALIGN (0x8)
+ *(SORT_NONE(.fini))
+ *(.gcc_exc)
+                [!provide]                        PROVIDE (etext = .)
+ *(.gcc_except_table)
+
+.data           0x0000000000007000     0x1000
+                0x0000000000007000                __data_start__ = .
+ *(.data)
+ .data          0x0000000000007000      0x500 compile/cache/elf.c.kboot.o
+                0x0000000000007200                ASCII
+                0x00000000000074f8                ASCIILength
+ *(.data2)
+ *(SORT_BY_NAME(.data$*))
+ *(.rdata)
+ .rdata         0x0000000000007500      0xa60 compile/cache/elf.c.kboot.o
+ *(SORT_BY_NAME(.rdata$*))
+ .rdata$zzz     0x0000000000007f60       0x30 compile/cache/elf.c.kboot.o
+ *(.jcr)
+                0x0000000000007f90                __data_end__ = .
+ *(.data_cygwin_nocopy)
+
+.rdata          0x0000000000008000     0x1000
+                0x0000000000008000                . = ALIGN (0x4)
+                0x0000000000008000                __rt_psrelocs_start = .
+ *(.rdata_runtime_pseudo_reloc)
+                0x0000000000008000                __rt_psrelocs_end = .
+                0x0000000000008000                . = ALIGN (0x8)
+                0x0000000000008000                __DELAY_IMPORT_DIRECTORY_start__ = .
+ SORT_BY_NAME(*)(.didat$2)
+ SORT_BY_NAME(*)(.didat$3)
+                0x0000000000008000                __DELAY_IMPORT_DIRECTORY_end__ = .
+                0x0000000000008000                . = (. + (__DELAY_IMPORT_DIRECTORY_end__ - __DELAY_IMPORT_DIRECTORY_start__)?0x20:0x0)
+                0x0000000000008000                . = ALIGN (0x8)
+ SORT_BY_NAME(*)(.didat$4)
+ SORT_BY_NAME(*)(.didat$6)
+ SORT_BY_NAME(*)(.didat$7)
+                0x0000000000008000                . = ALIGN (0x8)
+                0x0000000000008000                ___CTOR_LIST__ = .
+                0x0000000000008000                __CTOR_LIST__ = .
+                0x0000000000008000        0x4 LONG 0xffffffffffffffff
+                0x0000000000008004        0x4 LONG 0xffffffffffffffff
+ *(.ctors)
+ *(.ctor)
+ *(SORT_BY_NAME(.ctors.*))
+                0x0000000000008008        0x4 LONG 0x0
+                0x000000000000800c        0x4 LONG 0x0
+                0x0000000000008010                ___DTOR_LIST__ = .
+                0x0000000000008010                __DTOR_LIST__ = .
+                0x0000000000008010        0x4 LONG 0xffffffffffffffff
+                0x0000000000008014        0x4 LONG 0xffffffffffffffff
+ *(.dtors)
+ *(.dtor)
+ *(SORT_BY_NAME(.dtors.*))
+                0x0000000000008018        0x4 LONG 0x0
+                0x000000000000801c        0x4 LONG 0x0
+                0x0000000000008020                ___crt_xc_start__ = .
+ *(SORT_BY_NAME(.CRT$XC*))
+                0x0000000000008020                ___crt_xc_end__ = .
+                0x0000000000008020                ___crt_xi_start__ = .
+ *(SORT_BY_NAME(.CRT$XI*))
+                0x0000000000008020                ___crt_xi_end__ = .
+                0x0000000000008020                ___crt_xl_start__ = .
+ *(SORT_BY_NAME(.CRT$XL*))
+                0x0000000000008020                ___crt_xp_start__ = .
+ *(SORT_BY_NAME(.CRT$XP*))
+                0x0000000000008020                ___crt_xp_end__ = .
+                0x0000000000008020                ___crt_xt_start__ = .
+ *(SORT_BY_NAME(.CRT$XT*))
+                0x0000000000008020                ___crt_xt_end__ = .
+                0x0000000000008020                ___crt_xd_start__ = .
+ *(SORT_BY_NAME(.CRT$XD*))
+                0x0000000000008020                ___crt_xd_end__ = .
+                0x0000000000008000                ___RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x0000000000008000                __RUNTIME_PSEUDO_RELOC_LIST_END__ = __rt_psrelocs_end
+                0x0000000000008000                ___RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+                0x0000000000008000                __RUNTIME_PSEUDO_RELOC_LIST__ = __rt_psrelocs_start
+
+.eh_frame
+ *(.eh_frame*)
+
+.pdata          0x0000000000009000     0x1000
+ *(.pdata*)
+ .pdata         0x0000000000009000       0x30 compile/cache/elf.c.kboot.o
+
+.xdata          0x000000000000a000     0x1000
+ *(.xdata*)
+ .xdata         0x000000000000a000       0x28 compile/cache/elf.c.kboot.o
+
+.bss            0x000000000000b000    0x190a0
+                0x000000000000b000                __bss_start__ = .
+ *(.bss)
+ .bss           0x000000000000b000    0x190a0 compile/cache/elf.c.kboot.o
+                0x000000000000b000                InterruptTable
+                0x000000000000c000                re
+ *(COMMON)
+                0x00000000000240a0                __bss_end__ = .
+
+.edata          0x0000000000025000     0x1000
+ *(.edata)
+ .edata         0x0000000000025000       0x32 dll stuff
+
+/DISCARD/
+ *(.debug$S)
+ *(.debug$T)
+ *(.debug$F)
+ *(.drectve)
+ *(.note.GNU-stack)
+ *(.gnu.lto_*)
+ *(.gnu_object_only)
+
+.idata          0x0000000000026000     0x3000
+ SORT_BY_NAME(*)(.idata$2)
+ .idata$2       0x0000000000026000       0x14 LibCrt_dll_d000008.o
+                0x0000000000026000                _head_LibCrt_dll
+ .idata$2       0x0000000000026014       0x14 LibIO_dll_d000005.o
+                0x0000000000026014                _head_LibIO_dll
+ .idata$2       0x0000000000026028       0x14 LibVideo_dll_d000000.o
+                0x0000000000026028                _head_LibVideo_dll
+ SORT_BY_NAME(*)(.idata$3)
+                0x000000000002603c        0x4 LONG 0x0
+                0x0000000000026040        0x4 LONG 0x0
+                0x0000000000026044        0x4 LONG 0x0
+                0x0000000000026048        0x4 LONG 0x0
+                0x000000000002604c        0x4 LONG 0x0
+                0x0000000000026050                . = ALIGN (0x8)
+ SORT_BY_NAME(*)(.idata$4)
+ .idata$4       0x0000000000026050        0x0 LibCrt_dll_d000008.o
+ .idata$4       0x0000000000026050        0x8 LibCrt_dll_d000009.o
+ .idata$4       0x0000000000026058        0x8 LibCrt_dll_d000010.o
+ .idata$4       0x0000000000026060        0x8 LibCrt_dll_d000011.o
+ .idata$4       0x0000000000026068        0x8 LibCrt_dll_d000012.o
+ .idata$4       0x0000000000026070        0x8 LibCrt_dll_d000013.o
+ .idata$4       0x0000000000026078        0x8 LibCrt_dll_d000014.o
+ .idata$4       0x0000000000026080        0x8 LibCrt_dll_d000015.o
+ .idata$4       0x0000000000026088        0x8 LibCrt_dll_d000016.o
+ .idata$4       0x0000000000026090        0x8 LibCrt_dll_d000017.o
+ .idata$4       0x0000000000026098        0x8 LibCrt_dll_d000018.o
+ .idata$4       0x00000000000260a0        0x8 LibCrt_dll_d000019.o
+ .idata$4       0x00000000000260a8        0x8 LibCrt_dll_d000020.o
+ .idata$4       0x00000000000260b0        0x8 LibCrt_dll_d000021.o
+ .idata$4       0x00000000000260b8        0x8 LibCrt_dll_d000022.o
+ .idata$4       0x00000000000260c0        0x8 LibCrt_dll_d000023.o
+ .idata$4       0x00000000000260c8        0x8 LibCrt_dll_d000024.o
+ .idata$4       0x00000000000260d0        0x8 LibCrt_dll_d000025.o
+ .idata$4       0x00000000000260d8        0x8 LibCrt_dll_d000026.o
+ .idata$4       0x00000000000260e0        0x8 LibCrt_dll_d000027.o
+ .idata$4       0x00000000000260e8        0x8 LibCrt_dll_d000028.o
+ .idata$4       0x00000000000260f0        0x8 LibCrt_dll_d000029.o
+ .idata$4       0x00000000000260f8        0x8 LibCrt_dll_d000030.o
+ .idata$4       0x0000000000026100        0x8 LibCrt_dll_d000031.o
+ .idata$4       0x0000000000026108        0x8 LibCrt_dll_d000032.o
+ .idata$4       0x0000000000026110        0x8 LibCrt_dll_d000033.o
+ .idata$4       0x0000000000026118        0x8 LibCrt_dll_d000034.o
+ .idata$4       0x0000000000026120        0x8 LibCrt_dll_d000035.o
+ .idata$4       0x0000000000026128        0x8 LibCrt_dll_d000036.o
+ .idata$4       0x0000000000026130        0x8 LibCrt_dll_d000037.o
+ .idata$4       0x0000000000026138        0x8 LibCrt_dll_d000038.o
+ .idata$4       0x0000000000026140        0x8 LibCrt_dll_d000039.o
+ .idata$4       0x0000000000026148        0x8 LibCrt_dll_d000040.o
+ .idata$4       0x0000000000026150        0x8 LibCrt_dll_d000041.o
+ .idata$4       0x0000000000026158        0x8 LibCrt_dll_d000042.o
+ .idata$4       0x0000000000026160        0x8 LibCrt_dll_d000043.o
+ .idata$4       0x0000000000026168        0x8 LibCrt_dll_d000044.o
+ .idata$4       0x0000000000026170        0x8 LibCrt_dll_d000045.o
+ .idata$4       0x0000000000026178        0x8 LibCrt_dll_d000046.o
+ .idata$4       0x0000000000026180        0x8 LibCrt_dll_d000047.o
+ .idata$4       0x0000000000026188        0x8 LibCrt_dll_d000048.o
+ .idata$4       0x0000000000026190        0x8 LibCrt_dll_d000049.o
+ .idata$4       0x0000000000026198        0x8 LibCrt_dll_d000050.o
+ .idata$4       0x00000000000261a0        0x8 LibCrt_dll_d000051.o
+ .idata$4       0x00000000000261a8        0x8 LibCrt_dll_d000052.o
+ .idata$4       0x00000000000261b0        0x8 LibCrt_dll_d000053.o
+ .idata$4       0x00000000000261b8        0x8 LibCrt_dll_d000054.o
+ .idata$4       0x00000000000261c0        0x8 LibCrt_dll_d000055.o
+ .idata$4       0x00000000000261c8        0x8 LibCrt_dll_d000056.o
+ .idata$4       0x00000000000261d0        0x8 LibCrt_dll_d000057.o
+ .idata$4       0x00000000000261d8        0x8 LibCrt_dll_d000058.o
+ .idata$4       0x00000000000261e0        0x8 LibCrt_dll_d000059.o
+ .idata$4       0x00000000000261e8        0x8 LibCrt_dll_d000060.o
+ .idata$4       0x00000000000261f0        0x8 LibCrt_dll_d000061.o
+ .idata$4       0x00000000000261f8        0x8 LibCrt_dll_d000062.o
+ .idata$4       0x0000000000026200        0x8 LibCrt_dll_d000063.o
+ .idata$4       0x0000000000026208        0x8 LibCrt_dll_d000064.o
+ .idata$4       0x0000000000026210        0x8 LibCrt_dll_d000065.o
+ .idata$4       0x0000000000026218        0x8 LibCrt_dll_d000066.o
+ .idata$4       0x0000000000026220        0x8 LibCrt_dll_d000067.o
+ .idata$4       0x0000000000026228        0x8 LibCrt_dll_d000068.o
+ .idata$4       0x0000000000026230        0x8 LibCrt_dll_d000069.o
+ .idata$4       0x0000000000026238        0x8 LibCrt_dll_d000070.o
+ .idata$4       0x0000000000026240        0x8 LibCrt_dll_d000071.o
+ .idata$4       0x0000000000026248        0x8 LibCrt_dll_d000072.o
+ .idata$4       0x0000000000026250        0x8 LibCrt_dll_d000073.o
+ .idata$4       0x0000000000026258        0x8 LibCrt_dll_d000074.o
+ .idata$4       0x0000000000026260        0x8 LibCrt_dll_d000075.o
+ .idata$4       0x0000000000026268        0x8 LibCrt_dll_d000076.o
+ .idata$4       0x0000000000026270        0x8 LibCrt_dll_d000077.o
+ .idata$4       0x0000000000026278        0x8 LibCrt_dll_d000078.o
+ .idata$4       0x0000000000026280        0x8 LibCrt_dll_d000079.o
+ .idata$4       0x0000000000026288        0x8 LibCrt_dll_d000080.o
+ .idata$4       0x0000000000026290        0x8 LibCrt_dll_d000081.o
+ .idata$4       0x0000000000026298        0x8 LibCrt_dll_d000082.o
+ .idata$4       0x00000000000262a0        0x8 LibCrt_dll_d000083.o
+ .idata$4       0x00000000000262a8        0x8 LibCrt_dll_d000084.o
+ .idata$4       0x00000000000262b0        0x8 LibCrt_dll_d000085.o
+ .idata$4       0x00000000000262b8        0x8 LibCrt_dll_d000086.o
+ .idata$4       0x00000000000262c0        0x8 LibCrt_dll_d000087.o
+ .idata$4       0x00000000000262c8        0x8 LibCrt_dll_d000088.o
+ .idata$4       0x00000000000262d0        0x8 LibCrt_dll_d000089.o
+ .idata$4       0x00000000000262d8        0x8 LibCrt_dll_d000090.o
+ .idata$4       0x00000000000262e0        0x8 LibCrt_dll_d000091.o
+ .idata$4       0x00000000000262e8        0x8 LibCrt_dll_d000092.o
+ .idata$4       0x00000000000262f0        0x8 LibCrt_dll_d000093.o
+ .idata$4       0x00000000000262f8        0x8 LibCrt_dll_d000094.o
+ .idata$4       0x0000000000026300        0x8 LibCrt_dll_d000095.o
+ .idata$4       0x0000000000026308        0x8 LibCrt_dll_d000096.o
+ .idata$4       0x0000000000026310        0x8 LibCrt_dll_d000097.o
+ .idata$4       0x0000000000026318        0x8 LibCrt_dll_d000098.o
+ .idata$4       0x0000000000026320        0x8 LibCrt_dll_d000099.o
+ .idata$4       0x0000000000026328        0x8 LibCrt_dll_d000100.o
+ .idata$4       0x0000000000026330        0x8 LibCrt_dll_d000101.o
+ .idata$4       0x0000000000026338        0x8 LibCrt_dll_d000102.o
+ .idata$4       0x0000000000026340        0x8 LibCrt_dll_d000103.o
+ .idata$4       0x0000000000026348        0x8 LibCrt_dll_d000104.o
+ .idata$4       0x0000000000026350        0x8 LibCrt_dll_d000105.o
+ .idata$4       0x0000000000026358        0x8 LibCrt_dll_d000106.o
+ .idata$4       0x0000000000026360        0x8 LibCrt_dll_d000107.o
+ .idata$4       0x0000000000026368        0x8 LibCrt_dll_d000108.o
+ .idata$4       0x0000000000026370        0x8 LibCrt_dll_d000109.o
+ .idata$4       0x0000000000026378        0x8 LibCrt_dll_d000110.o
+ .idata$4       0x0000000000026380        0x8 LibCrt_dll_d000111.o
+ .idata$4       0x0000000000026388        0x8 LibCrt_dll_d000112.o
+ .idata$4       0x0000000000026390        0x8 LibCrt_dll_d000113.o
+ .idata$4       0x0000000000026398        0x8 LibCrt_dll_d000114.o
+ .idata$4       0x00000000000263a0        0x8 LibCrt_dll_d000115.o
+ .idata$4       0x00000000000263a8        0x8 LibCrt_dll_d000116.o
+ .idata$4       0x00000000000263b0        0x8 LibCrt_dll_d000117.o
+ .idata$4       0x00000000000263b8        0x8 LibCrt_dll_d000118.o
+ .idata$4       0x00000000000263c0        0x8 LibCrt_dll_d000119.o
+ .idata$4       0x00000000000263c8        0x8 LibCrt_dll_d000120.o
+ .idata$4       0x00000000000263d0        0x8 LibCrt_dll_d000121.o
+ .idata$4       0x00000000000263d8        0x8 LibCrt_dll_d000122.o
+ .idata$4       0x00000000000263e0        0x8 LibCrt_dll_d000123.o
+ .idata$4       0x00000000000263e8        0x8 LibCrt_dll_d000124.o
+ .idata$4       0x00000000000263f0        0x8 LibCrt_dll_d000125.o
+ .idata$4       0x00000000000263f8        0x8 LibCrt_dll_d000126.o
+ .idata$4       0x0000000000026400        0x8 LibCrt_dll_d000127.o
+ .idata$4       0x0000000000026408        0x8 LibCrt_dll_d000128.o
+ .idata$4       0x0000000000026410        0x8 LibCrt_dll_d000129.o
+ .idata$4       0x0000000000026418        0x8 LibCrt_dll_d000130.o
+ .idata$4       0x0000000000026420        0x8 LibCrt_dll_d000131.o
+ .idata$4       0x0000000000026428        0x8 LibCrt_dll_d000132.o
+ .idata$4       0x0000000000026430        0x8 LibCrt_dll_d000133.o
+ .idata$4       0x0000000000026438        0x8 LibCrt_dll_d000134.o
+ .idata$4       0x0000000000026440        0x8 LibCrt_dll_d000135.o
+ .idata$4       0x0000000000026448        0x8 LibCrt_dll_d000136.o
+ .idata$4       0x0000000000026450        0x8 LibCrt_dll_d000137.o
+ .idata$4       0x0000000000026458        0x8 LibCrt_dll_d000138.o
+ .idata$4       0x0000000000026460        0x8 LibCrt_dll_d000139.o
+ .idata$4       0x0000000000026468        0x8 LibCrt_dll_d000140.o
+ .idata$4       0x0000000000026470        0x8 LibCrt_dll_d000141.o
+ .idata$4       0x0000000000026478        0x8 LibCrt_dll_d000142.o
+ .idata$4       0x0000000000026480        0x8 LibCrt_dll_d000143.o
+ .idata$4       0x0000000000026488        0x8 LibCrt_dll_d000144.o
+ .idata$4       0x0000000000026490        0x8 LibCrt_dll_d000145.o
+ .idata$4       0x0000000000026498        0x8 LibCrt_dll_d000146.o
+ .idata$4       0x00000000000264a0        0x8 LibCrt_dll_d000147.o
+ .idata$4       0x00000000000264a8        0x8 LibCrt_dll_d000148.o
+ .idata$4       0x00000000000264b0        0x8 LibCrt_dll_d000149.o
+ .idata$4       0x00000000000264b8        0x8 LibCrt_dll_d000150.o
+ .idata$4       0x00000000000264c0        0x8 LibCrt_dll_d000151.o
+ .idata$4       0x00000000000264c8        0x8 LibCrt_dll_d000152.o
+ .idata$4       0x00000000000264d0        0x8 LibCrt_dll_d000153.o
+ .idata$4       0x00000000000264d8        0x8 LibCrt_dll_d000154.o
+ .idata$4       0x00000000000264e0        0x8 LibCrt_dll_d000155.o
+ .idata$4       0x00000000000264e8        0x8 LibCrt_dll_d000156.o
+ .idata$4       0x00000000000264f0        0x8 LibCrt_dll_d000157.o
+ .idata$4       0x00000000000264f8        0x8 LibCrt_dll_d000158.o
+ .idata$4       0x0000000000026500        0x8 LibCrt_dll_d000159.o
+ .idata$4       0x0000000000026508        0x8 LibCrt_dll_d000160.o
+ .idata$4       0x0000000000026510        0x8 LibCrt_dll_d000161.o
+ .idata$4       0x0000000000026518        0x8 LibCrt_dll_d000162.o
+ .idata$4       0x0000000000026520        0x8 LibCrt_dll_d000163.o
+ .idata$4       0x0000000000026528        0x8 LibCrt_dll_d000164.o
+ .idata$4       0x0000000000026530        0x8 LibCrt_dll_d000165.o
+ .idata$4       0x0000000000026538        0x8 LibCrt_dll_d000166.o
+ .idata$4       0x0000000000026540        0x8 LibCrt_dll_d000167.o
+ .idata$4       0x0000000000026548        0x8 LibCrt_dll_d000168.o
+ .idata$4       0x0000000000026550        0x8 LibCrt_dll_d000169.o
+ .idata$4       0x0000000000026558        0x8 LibCrt_dll_d000170.o
+ .idata$4       0x0000000000026560        0x8 LibCrt_dll_d000171.o
+ .idata$4       0x0000000000026568        0x8 LibCrt_dll_d000172.o
+ .idata$4       0x0000000000026570        0x8 LibCrt_dll_d000173.o
+ .idata$4       0x0000000000026578        0x8 LibCrt_dll_d000174.o
+ .idata$4       0x0000000000026580        0x8 LibCrt_dll_d000175.o
+ .idata$4       0x0000000000026588        0x8 LibCrt_dll_d000176.o
+ .idata$4       0x0000000000026590        0x8 LibCrt_dll_d000177.o
+ .idata$4       0x0000000000026598        0x8 LibCrt_dll_d000178.o
+ .idata$4       0x00000000000265a0        0x8 LibCrt_dll_d000179.o
+ .idata$4       0x00000000000265a8        0x8 LibCrt_dll_d000180.o
+ .idata$4       0x00000000000265b0        0x8 LibCrt_dll_d000181.o
+ .idata$4       0x00000000000265b8        0x8 LibCrt_dll_d000182.o
+ .idata$4       0x00000000000265c0        0x8 LibCrt_dll_d000183.o
+ .idata$4       0x00000000000265c8        0x8 LibCrt_dll_d000184.o
+ .idata$4       0x00000000000265d0        0x8 LibCrt_dll_d000185.o
+ .idata$4       0x00000000000265d8        0x8 LibCrt_dll_d000186.o
+ .idata$4       0x00000000000265e0        0x8 LibCrt_dll_d000187.o
+ .idata$4       0x00000000000265e8        0x8 LibCrt_dll_d000188.o
+ .idata$4       0x00000000000265f0        0x8 LibCrt_dll_d000189.o
+ .idata$4       0x00000000000265f8        0x8 LibCrt_dll_d000190.o
+ .idata$4       0x0000000000026600        0x8 LibCrt_dll_d000191.o
+ .idata$4       0x0000000000026608        0x8 LibCrt_dll_d000192.o
+ .idata$4       0x0000000000026610        0x8 LibCrt_dll_d000193.o
+ .idata$4       0x0000000000026618        0x8 LibCrt_dll_d000194.o
+ .idata$4       0x0000000000026620        0x8 LibCrt_dll_d000195.o
+ .idata$4       0x0000000000026628        0x8 LibCrt_dll_d000196.o
+ .idata$4       0x0000000000026630        0x8 LibCrt_dll_d000197.o
+ .idata$4       0x0000000000026638        0x8 LibCrt_dll_d000198.o
+ .idata$4       0x0000000000026640        0x8 LibCrt_dll_d000199.o
+ .idata$4       0x0000000000026648        0x8 LibCrt_dll_d000200.o
+ .idata$4       0x0000000000026650        0x8 LibCrt_dll_d000201.o
+ .idata$4       0x0000000000026658        0x8 LibCrt_dll_d000202.o
+ .idata$4       0x0000000000026660        0x8 LibCrt_dll_d000203.o
+ .idata$4       0x0000000000026668        0x8 LibCrt_dll_d000204.o
+ .idata$4       0x0000000000026670        0x8 LibCrt_dll_d000205.o
+ .idata$4       0x0000000000026678        0x8 LibCrt_dll_d000206.o
+ .idata$4       0x0000000000026680        0x8 LibCrt_dll_d000207.o
+ .idata$4       0x0000000000026688        0x8 LibCrt_dll_d000208.o
+ .idata$4       0x0000000000026690        0x8 LibCrt_dll_d000209.o
+ .idata$4       0x0000000000026698        0x8 LibCrt_dll_d000210.o
+ .idata$4       0x00000000000266a0        0x8 LibCrt_dll_d000211.o
+ .idata$4       0x00000000000266a8        0x8 LibCrt_dll_d000212.o
+ .idata$4       0x00000000000266b0        0x8 LibCrt_dll_d000213.o
+ .idata$4       0x00000000000266b8        0x8 LibCrt_dll_d000214.o
+ .idata$4       0x00000000000266c0        0x8 LibCrt_dll_d000215.o
+ .idata$4       0x00000000000266c8        0x8 LibCrt_dll_d000216.o
+ .idata$4       0x00000000000266d0        0x8 LibCrt_dll_d000217.o
+ .idata$4       0x00000000000266d8        0x8 LibCrt_dll_d000218.o
+ .idata$4       0x00000000000266e0        0x8 LibCrt_dll_d000219.o
+ .idata$4       0x00000000000266e8        0x8 LibCrt_dll_d000220.o
+ .idata$4       0x00000000000266f0        0x8 LibCrt_dll_d000221.o
+ .idata$4       0x00000000000266f8        0x8 LibCrt_dll_d000222.o
+ .idata$4       0x0000000000026700        0x8 LibCrt_dll_d000223.o
+ .idata$4       0x0000000000026708        0x8 LibCrt_dll_d000224.o
+ .idata$4       0x0000000000026710        0x8 LibCrt_dll_d000225.o
+ .idata$4       0x0000000000026718        0x8 LibCrt_dll_d000226.o
+ .idata$4       0x0000000000026720        0x8 LibCrt_dll_d000227.o
+ .idata$4       0x0000000000026728        0x8 LibCrt_dll_d000228.o
+ .idata$4       0x0000000000026730        0x8 LibCrt_dll_d000229.o
+ .idata$4       0x0000000000026738        0x8 LibCrt_dll_d000230.o
+ .idata$4       0x0000000000026740        0x8 LibCrt_dll_d000231.o
+ .idata$4       0x0000000000026748        0x8 LibCrt_dll_d000232.o
+ .idata$4       0x0000000000026750        0x8 LibCrt_dll_d000233.o
+ .idata$4       0x0000000000026758        0x8 LibCrt_dll_d000234.o
+ .idata$4       0x0000000000026760        0x8 LibCrt_dll_d000235.o
+ .idata$4       0x0000000000026768        0x8 LibCrt_dll_d000236.o
+ .idata$4       0x0000000000026770        0x8 LibCrt_dll_d000237.o
+ .idata$4       0x0000000000026778        0x8 LibCrt_dll_d000238.o
+ .idata$4       0x0000000000026780        0x8 LibCrt_dll_d000239.o
+ .idata$4       0x0000000000026788        0x8 LibCrt_dll_d000240.o
+ .idata$4       0x0000000000026790        0x8 LibCrt_dll_d000241.o
+ .idata$4       0x0000000000026798        0x8 LibCrt_dll_d000242.o
+ .idata$4       0x00000000000267a0        0x8 LibCrt_dll_d000243.o
+ .idata$4       0x00000000000267a8        0x8 LibCrt_dll_d000244.o
+ .idata$4       0x00000000000267b0        0x8 LibCrt_dll_d000245.o
+ .idata$4       0x00000000000267b8        0x8 LibCrt_dll_d000246.o
+ .idata$4       0x00000000000267c0        0x8 LibCrt_dll_d000247.o
+ .idata$4       0x00000000000267c8        0x8 LibCrt_dll_d000248.o
+ .idata$4       0x00000000000267d0        0x8 LibCrt_dll_d000249.o
+ .idata$4       0x00000000000267d8        0x8 LibCrt_dll_d000250.o
+ .idata$4       0x00000000000267e0        0x8 LibCrt_dll_d000251.o
+ .idata$4       0x00000000000267e8        0x8 LibCrt_dll_d000252.o
+ .idata$4       0x00000000000267f0        0x8 LibCrt_dll_d000253.o
+ .idata$4       0x00000000000267f8        0x8 LibCrt_dll_d000254.o
+ .idata$4       0x0000000000026800        0x8 LibCrt_dll_d000255.o
+ .idata$4       0x0000000000026808        0x8 LibCrt_dll_d000256.o
+ .idata$4       0x0000000000026810        0x8 LibCrt_dll_d000257.o
+ .idata$4       0x0000000000026818        0x8 LibCrt_dll_d000258.o
+ .idata$4       0x0000000000026820        0x8 LibCrt_dll_d000259.o
+ .idata$4       0x0000000000026828        0x8 LibCrt_dll_d000260.o
+ .idata$4       0x0000000000026830        0x8 LibCrt_dll_d000261.o
+ .idata$4       0x0000000000026838        0x8 LibCrt_dll_d000262.o
+ .idata$4       0x0000000000026840        0x8 LibCrt_dll_d000263.o
+ .idata$4       0x0000000000026848        0x8 LibCrt_dll_d000264.o
+ .idata$4       0x0000000000026850        0x8 LibCrt_dll_d000265.o
+ .idata$4       0x0000000000026858        0x8 LibCrt_dll_d000266.o
+ .idata$4       0x0000000000026860        0x8 LibCrt_dll_d000267.o
+ .idata$4       0x0000000000026868        0x8 LibCrt_dll_d000268.o
+ .idata$4       0x0000000000026870        0x8 LibCrt_dll_d000269.o
+ .idata$4       0x0000000000026878        0x8 LibCrt_dll_d000270.o
+ .idata$4       0x0000000000026880        0x8 LibCrt_dll_d000271.o
+ .idata$4       0x0000000000026888        0x8 LibCrt_dll_d000272.o
+ .idata$4       0x0000000000026890        0x8 LibCrt_dll_d000273.o
+ .idata$4       0x0000000000026898        0x8 LibCrt_dll_d000274.o
+ .idata$4       0x00000000000268a0        0x8 LibCrt_dll_d000275.o
+ .idata$4       0x00000000000268a8        0x0 LibIO_dll_d000005.o
+ .idata$4       0x00000000000268a8        0x8 LibIO_dll_d000006.o
+ .idata$4       0x00000000000268b0        0x8 LibIO_dll_d000007.o
+ .idata$4       0x00000000000268b8        0x0 LibVideo_dll_d000000.o
+ .idata$4       0x00000000000268b8        0x8 LibVideo_dll_d000001.o
+ .idata$4       0x00000000000268c0        0x8 LibVideo_dll_d000002.o
+ .idata$4       0x00000000000268c8        0x8 LibVideo_dll_d000003.o
+ .idata$4       0x00000000000268d0        0x8 LibVideo_dll_d000004.o
+                0x00000000000268d8                __IAT_start__ = .
+ SORT_BY_NAME(*)(.idata$5)
+ .idata$5       0x00000000000268d8        0x0 LibCrt_dll_d000008.o
+ .idata$5       0x00000000000268d8        0x8 LibCrt_dll_d000009.o
+                0x00000000000268d8                __imp_AllocateInterruptVector
+ .idata$5       0x00000000000268e0        0x8 LibCrt_dll_d000010.o
+                0x00000000000268e0                __imp_GetLocalAPICID
+ .idata$5       0x00000000000268e8        0x8 LibCrt_dll_d000011.o
+                0x00000000000268e8                __imp_InitLocalAPIC
+ .idata$5       0x00000000000268f0        0x8 LibCrt_dll_d000012.o
+                0x00000000000268f0                __imp_InitialiseAllocationState
+ .idata$5       0x00000000000268f8        0x8 LibCrt_dll_d000013.o
+                0x00000000000268f8                __imp_SetIDTe
+ .idata$5       0x0000000000026900        0x8 LibCrt_dll_d000014.o
+                0x0000000000026900                __imp__LoadGDTR
+ .idata$5       0x0000000000026908        0x8 LibCrt_dll_d000015.o
+                0x0000000000026908                __imp__LoadIDTR
+ .idata$5       0x0000000000026910        0x8 LibCrt_dll_d000016.o
+                0x0000000000026910                __imp___bochs
+ .idata$5       0x0000000000026918        0x8 LibCrt_dll_d000017.o
+                0x0000000000026918                __imp_isrCallback0
+ .idata$5       0x0000000000026920        0x8 LibCrt_dll_d000018.o
+                0x0000000000026920                __imp_isrCallback1
+ .idata$5       0x0000000000026928        0x8 LibCrt_dll_d000019.o
+                0x0000000000026928                __imp_isrCallback10
+ .idata$5       0x0000000000026930        0x8 LibCrt_dll_d000020.o
+                0x0000000000026930                __imp_isrCallback100
+ .idata$5       0x0000000000026938        0x8 LibCrt_dll_d000021.o
+                0x0000000000026938                __imp_isrCallback101
+ .idata$5       0x0000000000026940        0x8 LibCrt_dll_d000022.o
+                0x0000000000026940                __imp_isrCallback102
+ .idata$5       0x0000000000026948        0x8 LibCrt_dll_d000023.o
+                0x0000000000026948                __imp_isrCallback103
+ .idata$5       0x0000000000026950        0x8 LibCrt_dll_d000024.o
+                0x0000000000026950                __imp_isrCallback104
+ .idata$5       0x0000000000026958        0x8 LibCrt_dll_d000025.o
+                0x0000000000026958                __imp_isrCallback105
+ .idata$5       0x0000000000026960        0x8 LibCrt_dll_d000026.o
+                0x0000000000026960                __imp_isrCallback106
+ .idata$5       0x0000000000026968        0x8 LibCrt_dll_d000027.o
+                0x0000000000026968                __imp_isrCallback107
+ .idata$5       0x0000000000026970        0x8 LibCrt_dll_d000028.o
+                0x0000000000026970                __imp_isrCallback108
+ .idata$5       0x0000000000026978        0x8 LibCrt_dll_d000029.o
+                0x0000000000026978                __imp_isrCallback109
+ .idata$5       0x0000000000026980        0x8 LibCrt_dll_d000030.o
+                0x0000000000026980                __imp_isrCallback11
+ .idata$5       0x0000000000026988        0x8 LibCrt_dll_d000031.o
+                0x0000000000026988                __imp_isrCallback110
+ .idata$5       0x0000000000026990        0x8 LibCrt_dll_d000032.o
+                0x0000000000026990                __imp_isrCallback111
+ .idata$5       0x0000000000026998        0x8 LibCrt_dll_d000033.o
+                0x0000000000026998                __imp_isrCallback112
+ .idata$5       0x00000000000269a0        0x8 LibCrt_dll_d000034.o
+                0x00000000000269a0                __imp_isrCallback113
+ .idata$5       0x00000000000269a8        0x8 LibCrt_dll_d000035.o
+                0x00000000000269a8                __imp_isrCallback114
+ .idata$5       0x00000000000269b0        0x8 LibCrt_dll_d000036.o
+                0x00000000000269b0                __imp_isrCallback115
+ .idata$5       0x00000000000269b8        0x8 LibCrt_dll_d000037.o
+                0x00000000000269b8                __imp_isrCallback116
+ .idata$5       0x00000000000269c0        0x8 LibCrt_dll_d000038.o
+                0x00000000000269c0                __imp_isrCallback117
+ .idata$5       0x00000000000269c8        0x8 LibCrt_dll_d000039.o
+                0x00000000000269c8                __imp_isrCallback118
+ .idata$5       0x00000000000269d0        0x8 LibCrt_dll_d000040.o
+                0x00000000000269d0                __imp_isrCallback119
+ .idata$5       0x00000000000269d8        0x8 LibCrt_dll_d000041.o
+                0x00000000000269d8                __imp_isrCallback12
+ .idata$5       0x00000000000269e0        0x8 LibCrt_dll_d000042.o
+                0x00000000000269e0                __imp_isrCallback120
+ .idata$5       0x00000000000269e8        0x8 LibCrt_dll_d000043.o
+                0x00000000000269e8                __imp_isrCallback121
+ .idata$5       0x00000000000269f0        0x8 LibCrt_dll_d000044.o
+                0x00000000000269f0                __imp_isrCallback122
+ .idata$5       0x00000000000269f8        0x8 LibCrt_dll_d000045.o
+                0x00000000000269f8                __imp_isrCallback123
+ .idata$5       0x0000000000026a00        0x8 LibCrt_dll_d000046.o
+                0x0000000000026a00                __imp_isrCallback124
+ .idata$5       0x0000000000026a08        0x8 LibCrt_dll_d000047.o
+                0x0000000000026a08                __imp_isrCallback125
+ .idata$5       0x0000000000026a10        0x8 LibCrt_dll_d000048.o
+                0x0000000000026a10                __imp_isrCallback126
+ .idata$5       0x0000000000026a18        0x8 LibCrt_dll_d000049.o
+                0x0000000000026a18                __imp_isrCallback127
+ .idata$5       0x0000000000026a20        0x8 LibCrt_dll_d000050.o
+                0x0000000000026a20                __imp_isrCallback128
+ .idata$5       0x0000000000026a28        0x8 LibCrt_dll_d000051.o
+                0x0000000000026a28                __imp_isrCallback129
+ .idata$5       0x0000000000026a30        0x8 LibCrt_dll_d000052.o
+                0x0000000000026a30                __imp_isrCallback13
+ .idata$5       0x0000000000026a38        0x8 LibCrt_dll_d000053.o
+                0x0000000000026a38                __imp_isrCallback130
+ .idata$5       0x0000000000026a40        0x8 LibCrt_dll_d000054.o
+                0x0000000000026a40                __imp_isrCallback131
+ .idata$5       0x0000000000026a48        0x8 LibCrt_dll_d000055.o
+                0x0000000000026a48                __imp_isrCallback132
+ .idata$5       0x0000000000026a50        0x8 LibCrt_dll_d000056.o
+                0x0000000000026a50                __imp_isrCallback133
+ .idata$5       0x0000000000026a58        0x8 LibCrt_dll_d000057.o
+                0x0000000000026a58                __imp_isrCallback134
+ .idata$5       0x0000000000026a60        0x8 LibCrt_dll_d000058.o
+                0x0000000000026a60                __imp_isrCallback135
+ .idata$5       0x0000000000026a68        0x8 LibCrt_dll_d000059.o
+                0x0000000000026a68                __imp_isrCallback136
+ .idata$5       0x0000000000026a70        0x8 LibCrt_dll_d000060.o
+                0x0000000000026a70                __imp_isrCallback137
+ .idata$5       0x0000000000026a78        0x8 LibCrt_dll_d000061.o
+                0x0000000000026a78                __imp_isrCallback138
+ .idata$5       0x0000000000026a80        0x8 LibCrt_dll_d000062.o
+                0x0000000000026a80                __imp_isrCallback139
+ .idata$5       0x0000000000026a88        0x8 LibCrt_dll_d000063.o
+                0x0000000000026a88                __imp_isrCallback14
+ .idata$5       0x0000000000026a90        0x8 LibCrt_dll_d000064.o
+                0x0000000000026a90                __imp_isrCallback140
+ .idata$5       0x0000000000026a98        0x8 LibCrt_dll_d000065.o
+                0x0000000000026a98                __imp_isrCallback141
+ .idata$5       0x0000000000026aa0        0x8 LibCrt_dll_d000066.o
+                0x0000000000026aa0                __imp_isrCallback142
+ .idata$5       0x0000000000026aa8        0x8 LibCrt_dll_d000067.o
+                0x0000000000026aa8                __imp_isrCallback143
+ .idata$5       0x0000000000026ab0        0x8 LibCrt_dll_d000068.o
+                0x0000000000026ab0                __imp_isrCallback144
+ .idata$5       0x0000000000026ab8        0x8 LibCrt_dll_d000069.o
+                0x0000000000026ab8                __imp_isrCallback145
+ .idata$5       0x0000000000026ac0        0x8 LibCrt_dll_d000070.o
+                0x0000000000026ac0                __imp_isrCallback146
+ .idata$5       0x0000000000026ac8        0x8 LibCrt_dll_d000071.o
+                0x0000000000026ac8                __imp_isrCallback147
+ .idata$5       0x0000000000026ad0        0x8 LibCrt_dll_d000072.o
+                0x0000000000026ad0                __imp_isrCallback148
+ .idata$5       0x0000000000026ad8        0x8 LibCrt_dll_d000073.o
+                0x0000000000026ad8                __imp_isrCallback149
+ .idata$5       0x0000000000026ae0        0x8 LibCrt_dll_d000074.o
+                0x0000000000026ae0                __imp_isrCallback15
+ .idata$5       0x0000000000026ae8        0x8 LibCrt_dll_d000075.o
+                0x0000000000026ae8                __imp_isrCallback150
+ .idata$5       0x0000000000026af0        0x8 LibCrt_dll_d000076.o
+                0x0000000000026af0                __imp_isrCallback151
+ .idata$5       0x0000000000026af8        0x8 LibCrt_dll_d000077.o
+                0x0000000000026af8                __imp_isrCallback152
+ .idata$5       0x0000000000026b00        0x8 LibCrt_dll_d000078.o
+                0x0000000000026b00                __imp_isrCallback153
+ .idata$5       0x0000000000026b08        0x8 LibCrt_dll_d000079.o
+                0x0000000000026b08                __imp_isrCallback154
+ .idata$5       0x0000000000026b10        0x8 LibCrt_dll_d000080.o
+                0x0000000000026b10                __imp_isrCallback155
+ .idata$5       0x0000000000026b18        0x8 LibCrt_dll_d000081.o
+                0x0000000000026b18                __imp_isrCallback156
+ .idata$5       0x0000000000026b20        0x8 LibCrt_dll_d000082.o
+                0x0000000000026b20                __imp_isrCallback157
+ .idata$5       0x0000000000026b28        0x8 LibCrt_dll_d000083.o
+                0x0000000000026b28                __imp_isrCallback158
+ .idata$5       0x0000000000026b30        0x8 LibCrt_dll_d000084.o
+                0x0000000000026b30                __imp_isrCallback159
+ .idata$5       0x0000000000026b38        0x8 LibCrt_dll_d000085.o
+                0x0000000000026b38                __imp_isrCallback16
+ .idata$5       0x0000000000026b40        0x8 LibCrt_dll_d000086.o
+                0x0000000000026b40                __imp_isrCallback160
+ .idata$5       0x0000000000026b48        0x8 LibCrt_dll_d000087.o
+                0x0000000000026b48                __imp_isrCallback161
+ .idata$5       0x0000000000026b50        0x8 LibCrt_dll_d000088.o
+                0x0000000000026b50                __imp_isrCallback162
+ .idata$5       0x0000000000026b58        0x8 LibCrt_dll_d000089.o
+                0x0000000000026b58                __imp_isrCallback163
+ .idata$5       0x0000000000026b60        0x8 LibCrt_dll_d000090.o
+                0x0000000000026b60                __imp_isrCallback164
+ .idata$5       0x0000000000026b68        0x8 LibCrt_dll_d000091.o
+                0x0000000000026b68                __imp_isrCallback165
+ .idata$5       0x0000000000026b70        0x8 LibCrt_dll_d000092.o
+                0x0000000000026b70                __imp_isrCallback166
+ .idata$5       0x0000000000026b78        0x8 LibCrt_dll_d000093.o
+                0x0000000000026b78                __imp_isrCallback167
+ .idata$5       0x0000000000026b80        0x8 LibCrt_dll_d000094.o
+                0x0000000000026b80                __imp_isrCallback168
+ .idata$5       0x0000000000026b88        0x8 LibCrt_dll_d000095.o
+                0x0000000000026b88                __imp_isrCallback169
+ .idata$5       0x0000000000026b90        0x8 LibCrt_dll_d000096.o
+                0x0000000000026b90                __imp_isrCallback17
+ .idata$5       0x0000000000026b98        0x8 LibCrt_dll_d000097.o
+                0x0000000000026b98                __imp_isrCallback170
+ .idata$5       0x0000000000026ba0        0x8 LibCrt_dll_d000098.o
+                0x0000000000026ba0                __imp_isrCallback171
+ .idata$5       0x0000000000026ba8        0x8 LibCrt_dll_d000099.o
+                0x0000000000026ba8                __imp_isrCallback172
+ .idata$5       0x0000000000026bb0        0x8 LibCrt_dll_d000100.o
+                0x0000000000026bb0                __imp_isrCallback173
+ .idata$5       0x0000000000026bb8        0x8 LibCrt_dll_d000101.o
+                0x0000000000026bb8                __imp_isrCallback174
+ .idata$5       0x0000000000026bc0        0x8 LibCrt_dll_d000102.o
+                0x0000000000026bc0                __imp_isrCallback175
+ .idata$5       0x0000000000026bc8        0x8 LibCrt_dll_d000103.o
+                0x0000000000026bc8                __imp_isrCallback176
+ .idata$5       0x0000000000026bd0        0x8 LibCrt_dll_d000104.o
+                0x0000000000026bd0                __imp_isrCallback177
+ .idata$5       0x0000000000026bd8        0x8 LibCrt_dll_d000105.o
+                0x0000000000026bd8                __imp_isrCallback178
+ .idata$5       0x0000000000026be0        0x8 LibCrt_dll_d000106.o
+                0x0000000000026be0                __imp_isrCallback179
+ .idata$5       0x0000000000026be8        0x8 LibCrt_dll_d000107.o
+                0x0000000000026be8                __imp_isrCallback18
+ .idata$5       0x0000000000026bf0        0x8 LibCrt_dll_d000108.o
+                0x0000000000026bf0                __imp_isrCallback180
+ .idata$5       0x0000000000026bf8        0x8 LibCrt_dll_d000109.o
+                0x0000000000026bf8                __imp_isrCallback181
+ .idata$5       0x0000000000026c00        0x8 LibCrt_dll_d000110.o
+                0x0000000000026c00                __imp_isrCallback182
+ .idata$5       0x0000000000026c08        0x8 LibCrt_dll_d000111.o
+                0x0000000000026c08                __imp_isrCallback183
+ .idata$5       0x0000000000026c10        0x8 LibCrt_dll_d000112.o
+                0x0000000000026c10                __imp_isrCallback184
+ .idata$5       0x0000000000026c18        0x8 LibCrt_dll_d000113.o
+                0x0000000000026c18                __imp_isrCallback185
+ .idata$5       0x0000000000026c20        0x8 LibCrt_dll_d000114.o
+                0x0000000000026c20                __imp_isrCallback186
+ .idata$5       0x0000000000026c28        0x8 LibCrt_dll_d000115.o
+                0x0000000000026c28                __imp_isrCallback187
+ .idata$5       0x0000000000026c30        0x8 LibCrt_dll_d000116.o
+                0x0000000000026c30                __imp_isrCallback188
+ .idata$5       0x0000000000026c38        0x8 LibCrt_dll_d000117.o
+                0x0000000000026c38                __imp_isrCallback189
+ .idata$5       0x0000000000026c40        0x8 LibCrt_dll_d000118.o
+                0x0000000000026c40                __imp_isrCallback19
+ .idata$5       0x0000000000026c48        0x8 LibCrt_dll_d000119.o
+                0x0000000000026c48                __imp_isrCallback190
+ .idata$5       0x0000000000026c50        0x8 LibCrt_dll_d000120.o
+                0x0000000000026c50                __imp_isrCallback191
+ .idata$5       0x0000000000026c58        0x8 LibCrt_dll_d000121.o
+                0x0000000000026c58                __imp_isrCallback192
+ .idata$5       0x0000000000026c60        0x8 LibCrt_dll_d000122.o
+                0x0000000000026c60                __imp_isrCallback193
+ .idata$5       0x0000000000026c68        0x8 LibCrt_dll_d000123.o
+                0x0000000000026c68                __imp_isrCallback194
+ .idata$5       0x0000000000026c70        0x8 LibCrt_dll_d000124.o
+                0x0000000000026c70                __imp_isrCallback195
+ .idata$5       0x0000000000026c78        0x8 LibCrt_dll_d000125.o
+                0x0000000000026c78                __imp_isrCallback196
+ .idata$5       0x0000000000026c80        0x8 LibCrt_dll_d000126.o
+                0x0000000000026c80                __imp_isrCallback197
+ .idata$5       0x0000000000026c88        0x8 LibCrt_dll_d000127.o
+                0x0000000000026c88                __imp_isrCallback198
+ .idata$5       0x0000000000026c90        0x8 LibCrt_dll_d000128.o
+                0x0000000000026c90                __imp_isrCallback199
+ .idata$5       0x0000000000026c98        0x8 LibCrt_dll_d000129.o
+                0x0000000000026c98                __imp_isrCallback2
+ .idata$5       0x0000000000026ca0        0x8 LibCrt_dll_d000130.o
+                0x0000000000026ca0                __imp_isrCallback20
+ .idata$5       0x0000000000026ca8        0x8 LibCrt_dll_d000131.o
+                0x0000000000026ca8                __imp_isrCallback200
+ .idata$5       0x0000000000026cb0        0x8 LibCrt_dll_d000132.o
+                0x0000000000026cb0                __imp_isrCallback201
+ .idata$5       0x0000000000026cb8        0x8 LibCrt_dll_d000133.o
+                0x0000000000026cb8                __imp_isrCallback202
+ .idata$5       0x0000000000026cc0        0x8 LibCrt_dll_d000134.o
+                0x0000000000026cc0                __imp_isrCallback203
+ .idata$5       0x0000000000026cc8        0x8 LibCrt_dll_d000135.o
+                0x0000000000026cc8                __imp_isrCallback204
+ .idata$5       0x0000000000026cd0        0x8 LibCrt_dll_d000136.o
+                0x0000000000026cd0                __imp_isrCallback205
+ .idata$5       0x0000000000026cd8        0x8 LibCrt_dll_d000137.o
+                0x0000000000026cd8                __imp_isrCallback206
+ .idata$5       0x0000000000026ce0        0x8 LibCrt_dll_d000138.o
+                0x0000000000026ce0                __imp_isrCallback207
+ .idata$5       0x0000000000026ce8        0x8 LibCrt_dll_d000139.o
+                0x0000000000026ce8                __imp_isrCallback208
+ .idata$5       0x0000000000026cf0        0x8 LibCrt_dll_d000140.o
+                0x0000000000026cf0                __imp_isrCallback209
+ .idata$5       0x0000000000026cf8        0x8 LibCrt_dll_d000141.o
+                0x0000000000026cf8                __imp_isrCallback21
+ .idata$5       0x0000000000026d00        0x8 LibCrt_dll_d000142.o
+                0x0000000000026d00                __imp_isrCallback210
+ .idata$5       0x0000000000026d08        0x8 LibCrt_dll_d000143.o
+                0x0000000000026d08                __imp_isrCallback211
+ .idata$5       0x0000000000026d10        0x8 LibCrt_dll_d000144.o
+                0x0000000000026d10                __imp_isrCallback212
+ .idata$5       0x0000000000026d18        0x8 LibCrt_dll_d000145.o
+                0x0000000000026d18                __imp_isrCallback213
+ .idata$5       0x0000000000026d20        0x8 LibCrt_dll_d000146.o
+                0x0000000000026d20                __imp_isrCallback214
+ .idata$5       0x0000000000026d28        0x8 LibCrt_dll_d000147.o
+                0x0000000000026d28                __imp_isrCallback215
+ .idata$5       0x0000000000026d30        0x8 LibCrt_dll_d000148.o
+                0x0000000000026d30                __imp_isrCallback216
+ .idata$5       0x0000000000026d38        0x8 LibCrt_dll_d000149.o
+                0x0000000000026d38                __imp_isrCallback217
+ .idata$5       0x0000000000026d40        0x8 LibCrt_dll_d000150.o
+                0x0000000000026d40                __imp_isrCallback218
+ .idata$5       0x0000000000026d48        0x8 LibCrt_dll_d000151.o
+                0x0000000000026d48                __imp_isrCallback219
+ .idata$5       0x0000000000026d50        0x8 LibCrt_dll_d000152.o
+                0x0000000000026d50                __imp_isrCallback22
+ .idata$5       0x0000000000026d58        0x8 LibCrt_dll_d000153.o
+                0x0000000000026d58                __imp_isrCallback220
+ .idata$5       0x0000000000026d60        0x8 LibCrt_dll_d000154.o
+                0x0000000000026d60                __imp_isrCallback221
+ .idata$5       0x0000000000026d68        0x8 LibCrt_dll_d000155.o
+                0x0000000000026d68                __imp_isrCallback222
+ .idata$5       0x0000000000026d70        0x8 LibCrt_dll_d000156.o
+                0x0000000000026d70                __imp_isrCallback223
+ .idata$5       0x0000000000026d78        0x8 LibCrt_dll_d000157.o
+                0x0000000000026d78                __imp_isrCallback224
+ .idata$5       0x0000000000026d80        0x8 LibCrt_dll_d000158.o
+                0x0000000000026d80                __imp_isrCallback225
+ .idata$5       0x0000000000026d88        0x8 LibCrt_dll_d000159.o
+                0x0000000000026d88                __imp_isrCallback226
+ .idata$5       0x0000000000026d90        0x8 LibCrt_dll_d000160.o
+                0x0000000000026d90                __imp_isrCallback227
+ .idata$5       0x0000000000026d98        0x8 LibCrt_dll_d000161.o
+                0x0000000000026d98                __imp_isrCallback228
+ .idata$5       0x0000000000026da0        0x8 LibCrt_dll_d000162.o
+                0x0000000000026da0                __imp_isrCallback229
+ .idata$5       0x0000000000026da8        0x8 LibCrt_dll_d000163.o
+                0x0000000000026da8                __imp_isrCallback23
+ .idata$5       0x0000000000026db0        0x8 LibCrt_dll_d000164.o
+                0x0000000000026db0                __imp_isrCallback230
+ .idata$5       0x0000000000026db8        0x8 LibCrt_dll_d000165.o
+                0x0000000000026db8                __imp_isrCallback231
+ .idata$5       0x0000000000026dc0        0x8 LibCrt_dll_d000166.o
+                0x0000000000026dc0                __imp_isrCallback232
+ .idata$5       0x0000000000026dc8        0x8 LibCrt_dll_d000167.o
+                0x0000000000026dc8                __imp_isrCallback233
+ .idata$5       0x0000000000026dd0        0x8 LibCrt_dll_d000168.o
+                0x0000000000026dd0                __imp_isrCallback234
+ .idata$5       0x0000000000026dd8        0x8 LibCrt_dll_d000169.o
+                0x0000000000026dd8                __imp_isrCallback235
+ .idata$5       0x0000000000026de0        0x8 LibCrt_dll_d000170.o
+                0x0000000000026de0                __imp_isrCallback236
+ .idata$5       0x0000000000026de8        0x8 LibCrt_dll_d000171.o
+                0x0000000000026de8                __imp_isrCallback237
+ .idata$5       0x0000000000026df0        0x8 LibCrt_dll_d000172.o
+                0x0000000000026df0                __imp_isrCallback238
+ .idata$5       0x0000000000026df8        0x8 LibCrt_dll_d000173.o
+                0x0000000000026df8                __imp_isrCallback239
+ .idata$5       0x0000000000026e00        0x8 LibCrt_dll_d000174.o
+                0x0000000000026e00                __imp_isrCallback24
+ .idata$5       0x0000000000026e08        0x8 LibCrt_dll_d000175.o
+                0x0000000000026e08                __imp_isrCallback240
+ .idata$5       0x0000000000026e10        0x8 LibCrt_dll_d000176.o
+                0x0000000000026e10                __imp_isrCallback241
+ .idata$5       0x0000000000026e18        0x8 LibCrt_dll_d000177.o
+                0x0000000000026e18                __imp_isrCallback242
+ .idata$5       0x0000000000026e20        0x8 LibCrt_dll_d000178.o
+                0x0000000000026e20                __imp_isrCallback243
+ .idata$5       0x0000000000026e28        0x8 LibCrt_dll_d000179.o
+                0x0000000000026e28                __imp_isrCallback244
+ .idata$5       0x0000000000026e30        0x8 LibCrt_dll_d000180.o
+                0x0000000000026e30                __imp_isrCallback245
+ .idata$5       0x0000000000026e38        0x8 LibCrt_dll_d000181.o
+                0x0000000000026e38                __imp_isrCallback246
+ .idata$5       0x0000000000026e40        0x8 LibCrt_dll_d000182.o
+                0x0000000000026e40                __imp_isrCallback247
+ .idata$5       0x0000000000026e48        0x8 LibCrt_dll_d000183.o
+                0x0000000000026e48                __imp_isrCallback248
+ .idata$5       0x0000000000026e50        0x8 LibCrt_dll_d000184.o
+                0x0000000000026e50                __imp_isrCallback249
+ .idata$5       0x0000000000026e58        0x8 LibCrt_dll_d000185.o
+                0x0000000000026e58                __imp_isrCallback25
+ .idata$5       0x0000000000026e60        0x8 LibCrt_dll_d000186.o
+                0x0000000000026e60                __imp_isrCallback250
+ .idata$5       0x0000000000026e68        0x8 LibCrt_dll_d000187.o
+                0x0000000000026e68                __imp_isrCallback251
+ .idata$5       0x0000000000026e70        0x8 LibCrt_dll_d000188.o
+                0x0000000000026e70                __imp_isrCallback252
+ .idata$5       0x0000000000026e78        0x8 LibCrt_dll_d000189.o
+                0x0000000000026e78                __imp_isrCallback253
+ .idata$5       0x0000000000026e80        0x8 LibCrt_dll_d000190.o
+                0x0000000000026e80                __imp_isrCallback254
+ .idata$5       0x0000000000026e88        0x8 LibCrt_dll_d000191.o
+                0x0000000000026e88                __imp_isrCallback255
+ .idata$5       0x0000000000026e90        0x8 LibCrt_dll_d000192.o
+                0x0000000000026e90                __imp_isrCallback26
+ .idata$5       0x0000000000026e98        0x8 LibCrt_dll_d000193.o
+                0x0000000000026e98                __imp_isrCallback27
+ .idata$5       0x0000000000026ea0        0x8 LibCrt_dll_d000194.o
+                0x0000000000026ea0                __imp_isrCallback28
+ .idata$5       0x0000000000026ea8        0x8 LibCrt_dll_d000195.o
+                0x0000000000026ea8                __imp_isrCallback29
+ .idata$5       0x0000000000026eb0        0x8 LibCrt_dll_d000196.o
+                0x0000000000026eb0                __imp_isrCallback3
+ .idata$5       0x0000000000026eb8        0x8 LibCrt_dll_d000197.o
+                0x0000000000026eb8                __imp_isrCallback30
+ .idata$5       0x0000000000026ec0        0x8 LibCrt_dll_d000198.o
+                0x0000000000026ec0                __imp_isrCallback31
+ .idata$5       0x0000000000026ec8        0x8 LibCrt_dll_d000199.o
+                0x0000000000026ec8                __imp_isrCallback32
+ .idata$5       0x0000000000026ed0        0x8 LibCrt_dll_d000200.o
+                0x0000000000026ed0                __imp_isrCallback33
+ .idata$5       0x0000000000026ed8        0x8 LibCrt_dll_d000201.o
+                0x0000000000026ed8                __imp_isrCallback34
+ .idata$5       0x0000000000026ee0        0x8 LibCrt_dll_d000202.o
+                0x0000000000026ee0                __imp_isrCallback35
+ .idata$5       0x0000000000026ee8        0x8 LibCrt_dll_d000203.o
+                0x0000000000026ee8                __imp_isrCallback36
+ .idata$5       0x0000000000026ef0        0x8 LibCrt_dll_d000204.o
+                0x0000000000026ef0                __imp_isrCallback37
+ .idata$5       0x0000000000026ef8        0x8 LibCrt_dll_d000205.o
+                0x0000000000026ef8                __imp_isrCallback38
+ .idata$5       0x0000000000026f00        0x8 LibCrt_dll_d000206.o
+                0x0000000000026f00                __imp_isrCallback39
+ .idata$5       0x0000000000026f08        0x8 LibCrt_dll_d000207.o
+                0x0000000000026f08                __imp_isrCallback4
+ .idata$5       0x0000000000026f10        0x8 LibCrt_dll_d000208.o
+                0x0000000000026f10                __imp_isrCallback40
+ .idata$5       0x0000000000026f18        0x8 LibCrt_dll_d000209.o
+                0x0000000000026f18                __imp_isrCallback41
+ .idata$5       0x0000000000026f20        0x8 LibCrt_dll_d000210.o
+                0x0000000000026f20                __imp_isrCallback42
+ .idata$5       0x0000000000026f28        0x8 LibCrt_dll_d000211.o
+                0x0000000000026f28                __imp_isrCallback43
+ .idata$5       0x0000000000026f30        0x8 LibCrt_dll_d000212.o
+                0x0000000000026f30                __imp_isrCallback44
+ .idata$5       0x0000000000026f38        0x8 LibCrt_dll_d000213.o
+                0x0000000000026f38                __imp_isrCallback45
+ .idata$5       0x0000000000026f40        0x8 LibCrt_dll_d000214.o
+                0x0000000000026f40                __imp_isrCallback46
+ .idata$5       0x0000000000026f48        0x8 LibCrt_dll_d000215.o
+                0x0000000000026f48                __imp_isrCallback47
+ .idata$5       0x0000000000026f50        0x8 LibCrt_dll_d000216.o
+                0x0000000000026f50                __imp_isrCallback48
+ .idata$5       0x0000000000026f58        0x8 LibCrt_dll_d000217.o
+                0x0000000000026f58                __imp_isrCallback49
+ .idata$5       0x0000000000026f60        0x8 LibCrt_dll_d000218.o
+                0x0000000000026f60                __imp_isrCallback5
+ .idata$5       0x0000000000026f68        0x8 LibCrt_dll_d000219.o
+                0x0000000000026f68                __imp_isrCallback50
+ .idata$5       0x0000000000026f70        0x8 LibCrt_dll_d000220.o
+                0x0000000000026f70                __imp_isrCallback51
+ .idata$5       0x0000000000026f78        0x8 LibCrt_dll_d000221.o
+                0x0000000000026f78                __imp_isrCallback52
+ .idata$5       0x0000000000026f80        0x8 LibCrt_dll_d000222.o
+                0x0000000000026f80                __imp_isrCallback53
+ .idata$5       0x0000000000026f88        0x8 LibCrt_dll_d000223.o
+                0x0000000000026f88                __imp_isrCallback54
+ .idata$5       0x0000000000026f90        0x8 LibCrt_dll_d000224.o
+                0x0000000000026f90                __imp_isrCallback55
+ .idata$5       0x0000000000026f98        0x8 LibCrt_dll_d000225.o
+                0x0000000000026f98                __imp_isrCallback56
+ .idata$5       0x0000000000026fa0        0x8 LibCrt_dll_d000226.o
+                0x0000000000026fa0                __imp_isrCallback57
+ .idata$5       0x0000000000026fa8        0x8 LibCrt_dll_d000227.o
+                0x0000000000026fa8                __imp_isrCallback58
+ .idata$5       0x0000000000026fb0        0x8 LibCrt_dll_d000228.o
+                0x0000000000026fb0                __imp_isrCallback59
+ .idata$5       0x0000000000026fb8        0x8 LibCrt_dll_d000229.o
+                0x0000000000026fb8                __imp_isrCallback6
+ .idata$5       0x0000000000026fc0        0x8 LibCrt_dll_d000230.o
+                0x0000000000026fc0                __imp_isrCallback60
+ .idata$5       0x0000000000026fc8        0x8 LibCrt_dll_d000231.o
+                0x0000000000026fc8                __imp_isrCallback61
+ .idata$5       0x0000000000026fd0        0x8 LibCrt_dll_d000232.o
+                0x0000000000026fd0                __imp_isrCallback62
+ .idata$5       0x0000000000026fd8        0x8 LibCrt_dll_d000233.o
+                0x0000000000026fd8                __imp_isrCallback63
+ .idata$5       0x0000000000026fe0        0x8 LibCrt_dll_d000234.o
+                0x0000000000026fe0                __imp_isrCallback64
+ .idata$5       0x0000000000026fe8        0x8 LibCrt_dll_d000235.o
+                0x0000000000026fe8                __imp_isrCallback65
+ .idata$5       0x0000000000026ff0        0x8 LibCrt_dll_d000236.o
+                0x0000000000026ff0                __imp_isrCallback66
+ .idata$5       0x0000000000026ff8        0x8 LibCrt_dll_d000237.o
+                0x0000000000026ff8                __imp_isrCallback67
+ .idata$5       0x0000000000027000        0x8 LibCrt_dll_d000238.o
+                0x0000000000027000                __imp_isrCallback68
+ .idata$5       0x0000000000027008        0x8 LibCrt_dll_d000239.o
+                0x0000000000027008                __imp_isrCallback69
+ .idata$5       0x0000000000027010        0x8 LibCrt_dll_d000240.o
+                0x0000000000027010                __imp_isrCallback7
+ .idata$5       0x0000000000027018        0x8 LibCrt_dll_d000241.o
+                0x0000000000027018                __imp_isrCallback70
+ .idata$5       0x0000000000027020        0x8 LibCrt_dll_d000242.o
+                0x0000000000027020                __imp_isrCallback71
+ .idata$5       0x0000000000027028        0x8 LibCrt_dll_d000243.o
+                0x0000000000027028                __imp_isrCallback72
+ .idata$5       0x0000000000027030        0x8 LibCrt_dll_d000244.o
+                0x0000000000027030                __imp_isrCallback73
+ .idata$5       0x0000000000027038        0x8 LibCrt_dll_d000245.o
+                0x0000000000027038                __imp_isrCallback74
+ .idata$5       0x0000000000027040        0x8 LibCrt_dll_d000246.o
+                0x0000000000027040                __imp_isrCallback75
+ .idata$5       0x0000000000027048        0x8 LibCrt_dll_d000247.o
+                0x0000000000027048                __imp_isrCallback76
+ .idata$5       0x0000000000027050        0x8 LibCrt_dll_d000248.o
+                0x0000000000027050                __imp_isrCallback77
+ .idata$5       0x0000000000027058        0x8 LibCrt_dll_d000249.o
+                0x0000000000027058                __imp_isrCallback78
+ .idata$5       0x0000000000027060        0x8 LibCrt_dll_d000250.o
+                0x0000000000027060                __imp_isrCallback79
+ .idata$5       0x0000000000027068        0x8 LibCrt_dll_d000251.o
+                0x0000000000027068                __imp_isrCallback8
+ .idata$5       0x0000000000027070        0x8 LibCrt_dll_d000252.o
+                0x0000000000027070                __imp_isrCallback80
+ .idata$5       0x0000000000027078        0x8 LibCrt_dll_d000253.o
+                0x0000000000027078                __imp_isrCallback81
+ .idata$5       0x0000000000027080        0x8 LibCrt_dll_d000254.o
+                0x0000000000027080                __imp_isrCallback82
+ .idata$5       0x0000000000027088        0x8 LibCrt_dll_d000255.o
+                0x0000000000027088                __imp_isrCallback83
+ .idata$5       0x0000000000027090        0x8 LibCrt_dll_d000256.o
+                0x0000000000027090                __imp_isrCallback84
+ .idata$5       0x0000000000027098        0x8 LibCrt_dll_d000257.o
+                0x0000000000027098                __imp_isrCallback85
+ .idata$5       0x00000000000270a0        0x8 LibCrt_dll_d000258.o
+                0x00000000000270a0                __imp_isrCallback86
+ .idata$5       0x00000000000270a8        0x8 LibCrt_dll_d000259.o
+                0x00000000000270a8                __imp_isrCallback87
+ .idata$5       0x00000000000270b0        0x8 LibCrt_dll_d000260.o
+                0x00000000000270b0                __imp_isrCallback88
+ .idata$5       0x00000000000270b8        0x8 LibCrt_dll_d000261.o
+                0x00000000000270b8                __imp_isrCallback89
+ .idata$5       0x00000000000270c0        0x8 LibCrt_dll_d000262.o
+                0x00000000000270c0                __imp_isrCallback9
+ .idata$5       0x00000000000270c8        0x8 LibCrt_dll_d000263.o
+                0x00000000000270c8                __imp_isrCallback90
+ .idata$5       0x00000000000270d0        0x8 LibCrt_dll_d000264.o
+                0x00000000000270d0                __imp_isrCallback91
+ .idata$5       0x00000000000270d8        0x8 LibCrt_dll_d000265.o
+                0x00000000000270d8                __imp_isrCallback92
+ .idata$5       0x00000000000270e0        0x8 LibCrt_dll_d000266.o
+                0x00000000000270e0                __imp_isrCallback93
+ .idata$5       0x00000000000270e8        0x8 LibCrt_dll_d000267.o
+                0x00000000000270e8                __imp_isrCallback94
+ .idata$5       0x00000000000270f0        0x8 LibCrt_dll_d000268.o
+                0x00000000000270f0                __imp_isrCallback95
+ .idata$5       0x00000000000270f8        0x8 LibCrt_dll_d000269.o
+                0x00000000000270f8                __imp_isrCallback96
+ .idata$5       0x0000000000027100        0x8 LibCrt_dll_d000270.o
+                0x0000000000027100                __imp_isrCallback97
+ .idata$5       0x0000000000027108        0x8 LibCrt_dll_d000271.o
+                0x0000000000027108                __imp_isrCallback98
+ .idata$5       0x0000000000027110        0x8 LibCrt_dll_d000272.o
+                0x0000000000027110                __imp_isrCallback99
+ .idata$5       0x0000000000027118        0x8 LibCrt_dll_d000273.o
+                0x0000000000027118                __imp_memcmp
+ .idata$5       0x0000000000027120        0x8 LibCrt_dll_d000274.o
+                0x0000000000027120                __imp_memset
+ .idata$5       0x0000000000027128        0x8 LibCrt_dll_d000275.o
+ .idata$5       0x0000000000027130        0x0 LibIO_dll_d000005.o
+ .idata$5       0x0000000000027130        0x8 LibIO_dll_d000006.o
+                0x0000000000027130                __imp_OpenRawHandle
+ .idata$5       0x0000000000027138        0x8 LibIO_dll_d000007.o
+ .idata$5       0x0000000000027140        0x0 LibVideo_dll_d000000.o
+ .idata$5       0x0000000000027140        0x8 LibVideo_dll_d000001.o
+                0x0000000000027140                __imp_AllocateVideoMemory
+ .idata$5       0x0000000000027148        0x8 LibVideo_dll_d000002.o
+                0x0000000000027148                __imp_InitaliseVMA
+ .idata$5       0x0000000000027150        0x8 LibVideo_dll_d000003.o
+                0x0000000000027150                __imp_SelectVideoContext
+ .idata$5       0x0000000000027158        0x8 LibVideo_dll_d000004.o
+                0x0000000000027160                __IAT_end__ = .
+ SORT_BY_NAME(*)(.idata$6)
+ .idata$6       0x0000000000027160       0x1c LibCrt_dll_d000009.o
+ .idata$6       0x000000000002717c       0x14 LibCrt_dll_d000010.o
+ .idata$6       0x0000000000027190       0x10 LibCrt_dll_d000011.o
+ .idata$6       0x00000000000271a0       0x1c LibCrt_dll_d000012.o
+ .idata$6       0x00000000000271bc        0xc LibCrt_dll_d000013.o
+ .idata$6       0x00000000000271c8        0xc LibCrt_dll_d000014.o
+ .idata$6       0x00000000000271d4        0xc LibCrt_dll_d000015.o
+ .idata$6       0x00000000000271e0        0xc LibCrt_dll_d000016.o
+ .idata$6       0x00000000000271ec       0x10 LibCrt_dll_d000017.o
+ .idata$6       0x00000000000271fc       0x10 LibCrt_dll_d000018.o
+ .idata$6       0x000000000002720c       0x10 LibCrt_dll_d000019.o
+ .idata$6       0x000000000002721c       0x14 LibCrt_dll_d000020.o
+ .idata$6       0x0000000000027230       0x14 LibCrt_dll_d000021.o
+ .idata$6       0x0000000000027244       0x14 LibCrt_dll_d000022.o
+ .idata$6       0x0000000000027258       0x14 LibCrt_dll_d000023.o
+ .idata$6       0x000000000002726c       0x14 LibCrt_dll_d000024.o
+ .idata$6       0x0000000000027280       0x14 LibCrt_dll_d000025.o
+ .idata$6       0x0000000000027294       0x14 LibCrt_dll_d000026.o
+ .idata$6       0x00000000000272a8       0x14 LibCrt_dll_d000027.o
+ .idata$6       0x00000000000272bc       0x14 LibCrt_dll_d000028.o
+ .idata$6       0x00000000000272d0       0x14 LibCrt_dll_d000029.o
+ .idata$6       0x00000000000272e4       0x10 LibCrt_dll_d000030.o
+ .idata$6       0x00000000000272f4       0x14 LibCrt_dll_d000031.o
+ .idata$6       0x0000000000027308       0x14 LibCrt_dll_d000032.o
+ .idata$6       0x000000000002731c       0x14 LibCrt_dll_d000033.o
+ .idata$6       0x0000000000027330       0x14 LibCrt_dll_d000034.o
+ .idata$6       0x0000000000027344       0x14 LibCrt_dll_d000035.o
+ .idata$6       0x0000000000027358       0x14 LibCrt_dll_d000036.o
+ .idata$6       0x000000000002736c       0x14 LibCrt_dll_d000037.o
+ .idata$6       0x0000000000027380       0x14 LibCrt_dll_d000038.o
+ .idata$6       0x0000000000027394       0x14 LibCrt_dll_d000039.o
+ .idata$6       0x00000000000273a8       0x14 LibCrt_dll_d000040.o
+ .idata$6       0x00000000000273bc       0x10 LibCrt_dll_d000041.o
+ .idata$6       0x00000000000273cc       0x14 LibCrt_dll_d000042.o
+ .idata$6       0x00000000000273e0       0x14 LibCrt_dll_d000043.o
+ .idata$6       0x00000000000273f4       0x14 LibCrt_dll_d000044.o
+ .idata$6       0x0000000000027408       0x14 LibCrt_dll_d000045.o
+ .idata$6       0x000000000002741c       0x14 LibCrt_dll_d000046.o
+ .idata$6       0x0000000000027430       0x14 LibCrt_dll_d000047.o
+ .idata$6       0x0000000000027444       0x14 LibCrt_dll_d000048.o
+ .idata$6       0x0000000000027458       0x14 LibCrt_dll_d000049.o
+ .idata$6       0x000000000002746c       0x14 LibCrt_dll_d000050.o
+ .idata$6       0x0000000000027480       0x14 LibCrt_dll_d000051.o
+ .idata$6       0x0000000000027494       0x10 LibCrt_dll_d000052.o
+ .idata$6       0x00000000000274a4       0x14 LibCrt_dll_d000053.o
+ .idata$6       0x00000000000274b8       0x14 LibCrt_dll_d000054.o
+ .idata$6       0x00000000000274cc       0x14 LibCrt_dll_d000055.o
+ .idata$6       0x00000000000274e0       0x14 LibCrt_dll_d000056.o
+ .idata$6       0x00000000000274f4       0x14 LibCrt_dll_d000057.o
+ .idata$6       0x0000000000027508       0x14 LibCrt_dll_d000058.o
+ .idata$6       0x000000000002751c       0x14 LibCrt_dll_d000059.o
+ .idata$6       0x0000000000027530       0x14 LibCrt_dll_d000060.o
+ .idata$6       0x0000000000027544       0x14 LibCrt_dll_d000061.o
+ .idata$6       0x0000000000027558       0x14 LibCrt_dll_d000062.o
+ .idata$6       0x000000000002756c       0x10 LibCrt_dll_d000063.o
+ .idata$6       0x000000000002757c       0x14 LibCrt_dll_d000064.o
+ .idata$6       0x0000000000027590       0x14 LibCrt_dll_d000065.o
+ .idata$6       0x00000000000275a4       0x14 LibCrt_dll_d000066.o
+ .idata$6       0x00000000000275b8       0x14 LibCrt_dll_d000067.o
+ .idata$6       0x00000000000275cc       0x14 LibCrt_dll_d000068.o
+ .idata$6       0x00000000000275e0       0x14 LibCrt_dll_d000069.o
+ .idata$6       0x00000000000275f4       0x14 LibCrt_dll_d000070.o
+ .idata$6       0x0000000000027608       0x14 LibCrt_dll_d000071.o
+ .idata$6       0x000000000002761c       0x14 LibCrt_dll_d000072.o
+ .idata$6       0x0000000000027630       0x14 LibCrt_dll_d000073.o
+ .idata$6       0x0000000000027644       0x10 LibCrt_dll_d000074.o
+ .idata$6       0x0000000000027654       0x14 LibCrt_dll_d000075.o
+ .idata$6       0x0000000000027668       0x14 LibCrt_dll_d000076.o
+ .idata$6       0x000000000002767c       0x14 LibCrt_dll_d000077.o
+ .idata$6       0x0000000000027690       0x14 LibCrt_dll_d000078.o
+ .idata$6       0x00000000000276a4       0x14 LibCrt_dll_d000079.o
+ .idata$6       0x00000000000276b8       0x14 LibCrt_dll_d000080.o
+ .idata$6       0x00000000000276cc       0x14 LibCrt_dll_d000081.o
+ .idata$6       0x00000000000276e0       0x14 LibCrt_dll_d000082.o
+ .idata$6       0x00000000000276f4       0x14 LibCrt_dll_d000083.o
+ .idata$6       0x0000000000027708       0x14 LibCrt_dll_d000084.o
+ .idata$6       0x000000000002771c       0x10 LibCrt_dll_d000085.o
+ .idata$6       0x000000000002772c       0x14 LibCrt_dll_d000086.o
+ .idata$6       0x0000000000027740       0x14 LibCrt_dll_d000087.o
+ .idata$6       0x0000000000027754       0x14 LibCrt_dll_d000088.o
+ .idata$6       0x0000000000027768       0x14 LibCrt_dll_d000089.o
+ .idata$6       0x000000000002777c       0x14 LibCrt_dll_d000090.o
+ .idata$6       0x0000000000027790       0x14 LibCrt_dll_d000091.o
+ .idata$6       0x00000000000277a4       0x14 LibCrt_dll_d000092.o
+ .idata$6       0x00000000000277b8       0x14 LibCrt_dll_d000093.o
+ .idata$6       0x00000000000277cc       0x14 LibCrt_dll_d000094.o
+ .idata$6       0x00000000000277e0       0x14 LibCrt_dll_d000095.o
+ .idata$6       0x00000000000277f4       0x10 LibCrt_dll_d000096.o
+ .idata$6       0x0000000000027804       0x14 LibCrt_dll_d000097.o
+ .idata$6       0x0000000000027818       0x14 LibCrt_dll_d000098.o
+ .idata$6       0x000000000002782c       0x14 LibCrt_dll_d000099.o
+ .idata$6       0x0000000000027840       0x14 LibCrt_dll_d000100.o
+ .idata$6       0x0000000000027854       0x14 LibCrt_dll_d000101.o
+ .idata$6       0x0000000000027868       0x14 LibCrt_dll_d000102.o
+ .idata$6       0x000000000002787c       0x14 LibCrt_dll_d000103.o
+ .idata$6       0x0000000000027890       0x14 LibCrt_dll_d000104.o
+ .idata$6       0x00000000000278a4       0x14 LibCrt_dll_d000105.o
+ .idata$6       0x00000000000278b8       0x14 LibCrt_dll_d000106.o
+ .idata$6       0x00000000000278cc       0x10 LibCrt_dll_d000107.o
+ .idata$6       0x00000000000278dc       0x14 LibCrt_dll_d000108.o
+ .idata$6       0x00000000000278f0       0x14 LibCrt_dll_d000109.o
+ .idata$6       0x0000000000027904       0x14 LibCrt_dll_d000110.o
+ .idata$6       0x0000000000027918       0x14 LibCrt_dll_d000111.o
+ .idata$6       0x000000000002792c       0x14 LibCrt_dll_d000112.o
+ .idata$6       0x0000000000027940       0x14 LibCrt_dll_d000113.o
+ .idata$6       0x0000000000027954       0x14 LibCrt_dll_d000114.o
+ .idata$6       0x0000000000027968       0x14 LibCrt_dll_d000115.o
+ .idata$6       0x000000000002797c       0x14 LibCrt_dll_d000116.o
+ .idata$6       0x0000000000027990       0x14 LibCrt_dll_d000117.o
+ .idata$6       0x00000000000279a4       0x10 LibCrt_dll_d000118.o
+ .idata$6       0x00000000000279b4       0x14 LibCrt_dll_d000119.o
+ .idata$6       0x00000000000279c8       0x14 LibCrt_dll_d000120.o
+ .idata$6       0x00000000000279dc       0x14 LibCrt_dll_d000121.o
+ .idata$6       0x00000000000279f0       0x14 LibCrt_dll_d000122.o
+ .idata$6       0x0000000000027a04       0x14 LibCrt_dll_d000123.o
+ .idata$6       0x0000000000027a18       0x14 LibCrt_dll_d000124.o
+ .idata$6       0x0000000000027a2c       0x14 LibCrt_dll_d000125.o
+ .idata$6       0x0000000000027a40       0x14 LibCrt_dll_d000126.o
+ .idata$6       0x0000000000027a54       0x14 LibCrt_dll_d000127.o
+ .idata$6       0x0000000000027a68       0x14 LibCrt_dll_d000128.o
+ .idata$6       0x0000000000027a7c       0x10 LibCrt_dll_d000129.o
+ .idata$6       0x0000000000027a8c       0x10 LibCrt_dll_d000130.o
+ .idata$6       0x0000000000027a9c       0x14 LibCrt_dll_d000131.o
+ .idata$6       0x0000000000027ab0       0x14 LibCrt_dll_d000132.o
+ .idata$6       0x0000000000027ac4       0x14 LibCrt_dll_d000133.o
+ .idata$6       0x0000000000027ad8       0x14 LibCrt_dll_d000134.o
+ .idata$6       0x0000000000027aec       0x14 LibCrt_dll_d000135.o
+ .idata$6       0x0000000000027b00       0x14 LibCrt_dll_d000136.o
+ .idata$6       0x0000000000027b14       0x14 LibCrt_dll_d000137.o
+ .idata$6       0x0000000000027b28       0x14 LibCrt_dll_d000138.o
+ .idata$6       0x0000000000027b3c       0x14 LibCrt_dll_d000139.o
+ .idata$6       0x0000000000027b50       0x14 LibCrt_dll_d000140.o
+ .idata$6       0x0000000000027b64       0x10 LibCrt_dll_d000141.o
+ .idata$6       0x0000000000027b74       0x14 LibCrt_dll_d000142.o
+ .idata$6       0x0000000000027b88       0x14 LibCrt_dll_d000143.o
+ .idata$6       0x0000000000027b9c       0x14 LibCrt_dll_d000144.o
+ .idata$6       0x0000000000027bb0       0x14 LibCrt_dll_d000145.o
+ .idata$6       0x0000000000027bc4       0x14 LibCrt_dll_d000146.o
+ .idata$6       0x0000000000027bd8       0x14 LibCrt_dll_d000147.o
+ .idata$6       0x0000000000027bec       0x14 LibCrt_dll_d000148.o
+ .idata$6       0x0000000000027c00       0x14 LibCrt_dll_d000149.o
+ .idata$6       0x0000000000027c14       0x14 LibCrt_dll_d000150.o
+ .idata$6       0x0000000000027c28       0x14 LibCrt_dll_d000151.o
+ .idata$6       0x0000000000027c3c       0x10 LibCrt_dll_d000152.o
+ .idata$6       0x0000000000027c4c       0x14 LibCrt_dll_d000153.o
+ .idata$6       0x0000000000027c60       0x14 LibCrt_dll_d000154.o
+ .idata$6       0x0000000000027c74       0x14 LibCrt_dll_d000155.o
+ .idata$6       0x0000000000027c88       0x14 LibCrt_dll_d000156.o
+ .idata$6       0x0000000000027c9c       0x14 LibCrt_dll_d000157.o
+ .idata$6       0x0000000000027cb0       0x14 LibCrt_dll_d000158.o
+ .idata$6       0x0000000000027cc4       0x14 LibCrt_dll_d000159.o
+ .idata$6       0x0000000000027cd8       0x14 LibCrt_dll_d000160.o
+ .idata$6       0x0000000000027cec       0x14 LibCrt_dll_d000161.o
+ .idata$6       0x0000000000027d00       0x14 LibCrt_dll_d000162.o
+ .idata$6       0x0000000000027d14       0x10 LibCrt_dll_d000163.o
+ .idata$6       0x0000000000027d24       0x14 LibCrt_dll_d000164.o
+ .idata$6       0x0000000000027d38       0x14 LibCrt_dll_d000165.o
+ .idata$6       0x0000000000027d4c       0x14 LibCrt_dll_d000166.o
+ .idata$6       0x0000000000027d60       0x14 LibCrt_dll_d000167.o
+ .idata$6       0x0000000000027d74       0x14 LibCrt_dll_d000168.o
+ .idata$6       0x0000000000027d88       0x14 LibCrt_dll_d000169.o
+ .idata$6       0x0000000000027d9c       0x14 LibCrt_dll_d000170.o
+ .idata$6       0x0000000000027db0       0x14 LibCrt_dll_d000171.o
+ .idata$6       0x0000000000027dc4       0x14 LibCrt_dll_d000172.o
+ .idata$6       0x0000000000027dd8       0x14 LibCrt_dll_d000173.o
+ .idata$6       0x0000000000027dec       0x10 LibCrt_dll_d000174.o
+ .idata$6       0x0000000000027dfc       0x14 LibCrt_dll_d000175.o
+ .idata$6       0x0000000000027e10       0x14 LibCrt_dll_d000176.o
+ .idata$6       0x0000000000027e24       0x14 LibCrt_dll_d000177.o
+ .idata$6       0x0000000000027e38       0x14 LibCrt_dll_d000178.o
+ .idata$6       0x0000000000027e4c       0x14 LibCrt_dll_d000179.o
+ .idata$6       0x0000000000027e60       0x14 LibCrt_dll_d000180.o
+ .idata$6       0x0000000000027e74       0x14 LibCrt_dll_d000181.o
+ .idata$6       0x0000000000027e88       0x14 LibCrt_dll_d000182.o
+ .idata$6       0x0000000000027e9c       0x14 LibCrt_dll_d000183.o
+ .idata$6       0x0000000000027eb0       0x14 LibCrt_dll_d000184.o
+ .idata$6       0x0000000000027ec4       0x10 LibCrt_dll_d000185.o
+ .idata$6       0x0000000000027ed4       0x14 LibCrt_dll_d000186.o
+ .idata$6       0x0000000000027ee8       0x14 LibCrt_dll_d000187.o
+ .idata$6       0x0000000000027efc       0x14 LibCrt_dll_d000188.o
+ .idata$6       0x0000000000027f10       0x14 LibCrt_dll_d000189.o
+ .idata$6       0x0000000000027f24       0x14 LibCrt_dll_d000190.o
+ .idata$6       0x0000000000027f38       0x14 LibCrt_dll_d000191.o
+ .idata$6       0x0000000000027f4c       0x10 LibCrt_dll_d000192.o
+ .idata$6       0x0000000000027f5c       0x10 LibCrt_dll_d000193.o
+ .idata$6       0x0000000000027f6c       0x10 LibCrt_dll_d000194.o
+ .idata$6       0x0000000000027f7c       0x10 LibCrt_dll_d000195.o
+ .idata$6       0x0000000000027f8c       0x10 LibCrt_dll_d000196.o
+ .idata$6       0x0000000000027f9c       0x10 LibCrt_dll_d000197.o
+ .idata$6       0x0000000000027fac       0x10 LibCrt_dll_d000198.o
+ .idata$6       0x0000000000027fbc       0x10 LibCrt_dll_d000199.o
+ .idata$6       0x0000000000027fcc       0x10 LibCrt_dll_d000200.o
+ .idata$6       0x0000000000027fdc       0x10 LibCrt_dll_d000201.o
+ .idata$6       0x0000000000027fec       0x10 LibCrt_dll_d000202.o
+ .idata$6       0x0000000000027ffc       0x10 LibCrt_dll_d000203.o
+ .idata$6       0x000000000002800c       0x10 LibCrt_dll_d000204.o
+ .idata$6       0x000000000002801c       0x10 LibCrt_dll_d000205.o
+ .idata$6       0x000000000002802c       0x10 LibCrt_dll_d000206.o
+ .idata$6       0x000000000002803c       0x10 LibCrt_dll_d000207.o
+ .idata$6       0x000000000002804c       0x10 LibCrt_dll_d000208.o
+ .idata$6       0x000000000002805c       0x10 LibCrt_dll_d000209.o
+ .idata$6       0x000000000002806c       0x10 LibCrt_dll_d000210.o
+ .idata$6       0x000000000002807c       0x10 LibCrt_dll_d000211.o
+ .idata$6       0x000000000002808c       0x10 LibCrt_dll_d000212.o
+ .idata$6       0x000000000002809c       0x10 LibCrt_dll_d000213.o
+ .idata$6       0x00000000000280ac       0x10 LibCrt_dll_d000214.o
+ .idata$6       0x00000000000280bc       0x10 LibCrt_dll_d000215.o
+ .idata$6       0x00000000000280cc       0x10 LibCrt_dll_d000216.o
+ .idata$6       0x00000000000280dc       0x10 LibCrt_dll_d000217.o
+ .idata$6       0x00000000000280ec       0x10 LibCrt_dll_d000218.o
+ .idata$6       0x00000000000280fc       0x10 LibCrt_dll_d000219.o
+ .idata$6       0x000000000002810c       0x10 LibCrt_dll_d000220.o
+ .idata$6       0x000000000002811c       0x10 LibCrt_dll_d000221.o
+ .idata$6       0x000000000002812c       0x10 LibCrt_dll_d000222.o
+ .idata$6       0x000000000002813c       0x10 LibCrt_dll_d000223.o
+ .idata$6       0x000000000002814c       0x10 LibCrt_dll_d000224.o
+ .idata$6       0x000000000002815c       0x10 LibCrt_dll_d000225.o
+ .idata$6       0x000000000002816c       0x10 LibCrt_dll_d000226.o
+ .idata$6       0x000000000002817c       0x10 LibCrt_dll_d000227.o
+ .idata$6       0x000000000002818c       0x10 LibCrt_dll_d000228.o
+ .idata$6       0x000000000002819c       0x10 LibCrt_dll_d000229.o
+ .idata$6       0x00000000000281ac       0x10 LibCrt_dll_d000230.o
+ .idata$6       0x00000000000281bc       0x10 LibCrt_dll_d000231.o
+ .idata$6       0x00000000000281cc       0x10 LibCrt_dll_d000232.o
+ .idata$6       0x00000000000281dc       0x10 LibCrt_dll_d000233.o
+ .idata$6       0x00000000000281ec       0x10 LibCrt_dll_d000234.o
+ .idata$6       0x00000000000281fc       0x10 LibCrt_dll_d000235.o
+ .idata$6       0x000000000002820c       0x10 LibCrt_dll_d000236.o
+ .idata$6       0x000000000002821c       0x10 LibCrt_dll_d000237.o
+ .idata$6       0x000000000002822c       0x10 LibCrt_dll_d000238.o
+ .idata$6       0x000000000002823c       0x10 LibCrt_dll_d000239.o
+ .idata$6       0x000000000002824c       0x10 LibCrt_dll_d000240.o
+ .idata$6       0x000000000002825c       0x10 LibCrt_dll_d000241.o
+ .idata$6       0x000000000002826c       0x10 LibCrt_dll_d000242.o
+ .idata$6       0x000000000002827c       0x10 LibCrt_dll_d000243.o
+ .idata$6       0x000000000002828c       0x10 LibCrt_dll_d000244.o
+ .idata$6       0x000000000002829c       0x10 LibCrt_dll_d000245.o
+ .idata$6       0x00000000000282ac       0x10 LibCrt_dll_d000246.o
+ .idata$6       0x00000000000282bc       0x10 LibCrt_dll_d000247.o
+ .idata$6       0x00000000000282cc       0x10 LibCrt_dll_d000248.o
+ .idata$6       0x00000000000282dc       0x10 LibCrt_dll_d000249.o
+ .idata$6       0x00000000000282ec       0x10 LibCrt_dll_d000250.o
+ .idata$6       0x00000000000282fc       0x10 LibCrt_dll_d000251.o
+ .idata$6       0x000000000002830c       0x10 LibCrt_dll_d000252.o
+ .idata$6       0x000000000002831c       0x10 LibCrt_dll_d000253.o
+ .idata$6       0x000000000002832c       0x10 LibCrt_dll_d000254.o
+ .idata$6       0x000000000002833c       0x10 LibCrt_dll_d000255.o
+ .idata$6       0x000000000002834c       0x10 LibCrt_dll_d000256.o
+ .idata$6       0x000000000002835c       0x10 LibCrt_dll_d000257.o
+ .idata$6       0x000000000002836c       0x10 LibCrt_dll_d000258.o
+ .idata$6       0x000000000002837c       0x10 LibCrt_dll_d000259.o
+ .idata$6       0x000000000002838c       0x10 LibCrt_dll_d000260.o
+ .idata$6       0x000000000002839c       0x10 LibCrt_dll_d000261.o
+ .idata$6       0x00000000000283ac       0x10 LibCrt_dll_d000262.o
+ .idata$6       0x00000000000283bc       0x10 LibCrt_dll_d000263.o
+ .idata$6       0x00000000000283cc       0x10 LibCrt_dll_d000264.o
+ .idata$6       0x00000000000283dc       0x10 LibCrt_dll_d000265.o
+ .idata$6       0x00000000000283ec       0x10 LibCrt_dll_d000266.o
+ .idata$6       0x00000000000283fc       0x10 LibCrt_dll_d000267.o
+ .idata$6       0x000000000002840c       0x10 LibCrt_dll_d000268.o
+ .idata$6       0x000000000002841c       0x10 LibCrt_dll_d000269.o
+ .idata$6       0x000000000002842c       0x10 LibCrt_dll_d000270.o
+ .idata$6       0x000000000002843c       0x10 LibCrt_dll_d000271.o
+ .idata$6       0x000000000002844c       0x10 LibCrt_dll_d000272.o
+ .idata$6       0x000000000002845c        0xc LibCrt_dll_d000273.o
+ .idata$6       0x0000000000028468        0xc LibCrt_dll_d000274.o
+ .idata$6       0x0000000000028474       0x10 LibIO_dll_d000006.o
+ .idata$6       0x0000000000028484       0x18 LibVideo_dll_d000001.o
+ .idata$6       0x000000000002849c       0x10 LibVideo_dll_d000002.o
+ .idata$6       0x00000000000284ac       0x18 LibVideo_dll_d000003.o
+ SORT_BY_NAME(*)(.idata$7)
+ .idata$7       0x00000000000284c4        0x4 LibCrt_dll_d000009.o
+ .idata$7       0x00000000000284c8        0x4 LibCrt_dll_d000010.o
+ .idata$7       0x00000000000284cc        0x4 LibCrt_dll_d000011.o
+ .idata$7       0x00000000000284d0        0x4 LibCrt_dll_d000012.o
+ .idata$7       0x00000000000284d4        0x4 LibCrt_dll_d000013.o
+ .idata$7       0x00000000000284d8        0x4 LibCrt_dll_d000014.o
+ .idata$7       0x00000000000284dc        0x4 LibCrt_dll_d000015.o
+ .idata$7       0x00000000000284e0        0x4 LibCrt_dll_d000016.o
+ .idata$7       0x00000000000284e4        0x4 LibCrt_dll_d000017.o
+ .idata$7       0x00000000000284e8        0x4 LibCrt_dll_d000018.o
+ .idata$7       0x00000000000284ec        0x4 LibCrt_dll_d000019.o
+ .idata$7       0x00000000000284f0        0x4 LibCrt_dll_d000020.o
+ .idata$7       0x00000000000284f4        0x4 LibCrt_dll_d000021.o
+ .idata$7       0x00000000000284f8        0x4 LibCrt_dll_d000022.o
+ .idata$7       0x00000000000284fc        0x4 LibCrt_dll_d000023.o
+ .idata$7       0x0000000000028500        0x4 LibCrt_dll_d000024.o
+ .idata$7       0x0000000000028504        0x4 LibCrt_dll_d000025.o
+ .idata$7       0x0000000000028508        0x4 LibCrt_dll_d000026.o
+ .idata$7       0x000000000002850c        0x4 LibCrt_dll_d000027.o
+ .idata$7       0x0000000000028510        0x4 LibCrt_dll_d000028.o
+ .idata$7       0x0000000000028514        0x4 LibCrt_dll_d000029.o
+ .idata$7       0x0000000000028518        0x4 LibCrt_dll_d000030.o
+ .idata$7       0x000000000002851c        0x4 LibCrt_dll_d000031.o
+ .idata$7       0x0000000000028520        0x4 LibCrt_dll_d000032.o
+ .idata$7       0x0000000000028524        0x4 LibCrt_dll_d000033.o
+ .idata$7       0x0000000000028528        0x4 LibCrt_dll_d000034.o
+ .idata$7       0x000000000002852c        0x4 LibCrt_dll_d000035.o
+ .idata$7       0x0000000000028530        0x4 LibCrt_dll_d000036.o
+ .idata$7       0x0000000000028534        0x4 LibCrt_dll_d000037.o
+ .idata$7       0x0000000000028538        0x4 LibCrt_dll_d000038.o
+ .idata$7       0x000000000002853c        0x4 LibCrt_dll_d000039.o
+ .idata$7       0x0000000000028540        0x4 LibCrt_dll_d000040.o
+ .idata$7       0x0000000000028544        0x4 LibCrt_dll_d000041.o
+ .idata$7       0x0000000000028548        0x4 LibCrt_dll_d000042.o
+ .idata$7       0x000000000002854c        0x4 LibCrt_dll_d000043.o
+ .idata$7       0x0000000000028550        0x4 LibCrt_dll_d000044.o
+ .idata$7       0x0000000000028554        0x4 LibCrt_dll_d000045.o
+ .idata$7       0x0000000000028558        0x4 LibCrt_dll_d000046.o
+ .idata$7       0x000000000002855c        0x4 LibCrt_dll_d000047.o
+ .idata$7       0x0000000000028560        0x4 LibCrt_dll_d000048.o
+ .idata$7       0x0000000000028564        0x4 LibCrt_dll_d000049.o
+ .idata$7       0x0000000000028568        0x4 LibCrt_dll_d000050.o
+ .idata$7       0x000000000002856c        0x4 LibCrt_dll_d000051.o
+ .idata$7       0x0000000000028570        0x4 LibCrt_dll_d000052.o
+ .idata$7       0x0000000000028574        0x4 LibCrt_dll_d000053.o
+ .idata$7       0x0000000000028578        0x4 LibCrt_dll_d000054.o
+ .idata$7       0x000000000002857c        0x4 LibCrt_dll_d000055.o
+ .idata$7       0x0000000000028580        0x4 LibCrt_dll_d000056.o
+ .idata$7       0x0000000000028584        0x4 LibCrt_dll_d000057.o
+ .idata$7       0x0000000000028588        0x4 LibCrt_dll_d000058.o
+ .idata$7       0x000000000002858c        0x4 LibCrt_dll_d000059.o
+ .idata$7       0x0000000000028590        0x4 LibCrt_dll_d000060.o
+ .idata$7       0x0000000000028594        0x4 LibCrt_dll_d000061.o
+ .idata$7       0x0000000000028598        0x4 LibCrt_dll_d000062.o
+ .idata$7       0x000000000002859c        0x4 LibCrt_dll_d000063.o
+ .idata$7       0x00000000000285a0        0x4 LibCrt_dll_d000064.o
+ .idata$7       0x00000000000285a4        0x4 LibCrt_dll_d000065.o
+ .idata$7       0x00000000000285a8        0x4 LibCrt_dll_d000066.o
+ .idata$7       0x00000000000285ac        0x4 LibCrt_dll_d000067.o
+ .idata$7       0x00000000000285b0        0x4 LibCrt_dll_d000068.o
+ .idata$7       0x00000000000285b4        0x4 LibCrt_dll_d000069.o
+ .idata$7       0x00000000000285b8        0x4 LibCrt_dll_d000070.o
+ .idata$7       0x00000000000285bc        0x4 LibCrt_dll_d000071.o
+ .idata$7       0x00000000000285c0        0x4 LibCrt_dll_d000072.o
+ .idata$7       0x00000000000285c4        0x4 LibCrt_dll_d000073.o
+ .idata$7       0x00000000000285c8        0x4 LibCrt_dll_d000074.o
+ .idata$7       0x00000000000285cc        0x4 LibCrt_dll_d000075.o
+ .idata$7       0x00000000000285d0        0x4 LibCrt_dll_d000076.o
+ .idata$7       0x00000000000285d4        0x4 LibCrt_dll_d000077.o
+ .idata$7       0x00000000000285d8        0x4 LibCrt_dll_d000078.o
+ .idata$7       0x00000000000285dc        0x4 LibCrt_dll_d000079.o
+ .idata$7       0x00000000000285e0        0x4 LibCrt_dll_d000080.o
+ .idata$7       0x00000000000285e4        0x4 LibCrt_dll_d000081.o
+ .idata$7       0x00000000000285e8        0x4 LibCrt_dll_d000082.o
+ .idata$7       0x00000000000285ec        0x4 LibCrt_dll_d000083.o
+ .idata$7       0x00000000000285f0        0x4 LibCrt_dll_d000084.o
+ .idata$7       0x00000000000285f4        0x4 LibCrt_dll_d000085.o
+ .idata$7       0x00000000000285f8        0x4 LibCrt_dll_d000086.o
+ .idata$7       0x00000000000285fc        0x4 LibCrt_dll_d000087.o
+ .idata$7       0x0000000000028600        0x4 LibCrt_dll_d000088.o
+ .idata$7       0x0000000000028604        0x4 LibCrt_dll_d000089.o
+ .idata$7       0x0000000000028608        0x4 LibCrt_dll_d000090.o
+ .idata$7       0x000000000002860c        0x4 LibCrt_dll_d000091.o
+ .idata$7       0x0000000000028610        0x4 LibCrt_dll_d000092.o
+ .idata$7       0x0000000000028614        0x4 LibCrt_dll_d000093.o
+ .idata$7       0x0000000000028618        0x4 LibCrt_dll_d000094.o
+ .idata$7       0x000000000002861c        0x4 LibCrt_dll_d000095.o
+ .idata$7       0x0000000000028620        0x4 LibCrt_dll_d000096.o
+ .idata$7       0x0000000000028624        0x4 LibCrt_dll_d000097.o
+ .idata$7       0x0000000000028628        0x4 LibCrt_dll_d000098.o
+ .idata$7       0x000000000002862c        0x4 LibCrt_dll_d000099.o
+ .idata$7       0x0000000000028630        0x4 LibCrt_dll_d000100.o
+ .idata$7       0x0000000000028634        0x4 LibCrt_dll_d000101.o
+ .idata$7       0x0000000000028638        0x4 LibCrt_dll_d000102.o
+ .idata$7       0x000000000002863c        0x4 LibCrt_dll_d000103.o
+ .idata$7       0x0000000000028640        0x4 LibCrt_dll_d000104.o
+ .idata$7       0x0000000000028644        0x4 LibCrt_dll_d000105.o
+ .idata$7       0x0000000000028648        0x4 LibCrt_dll_d000106.o
+ .idata$7       0x000000000002864c        0x4 LibCrt_dll_d000107.o
+ .idata$7       0x0000000000028650        0x4 LibCrt_dll_d000108.o
+ .idata$7       0x0000000000028654        0x4 LibCrt_dll_d000109.o
+ .idata$7       0x0000000000028658        0x4 LibCrt_dll_d000110.o
+ .idata$7       0x000000000002865c        0x4 LibCrt_dll_d000111.o
+ .idata$7       0x0000000000028660        0x4 LibCrt_dll_d000112.o
+ .idata$7       0x0000000000028664        0x4 LibCrt_dll_d000113.o
+ .idata$7       0x0000000000028668        0x4 LibCrt_dll_d000114.o
+ .idata$7       0x000000000002866c        0x4 LibCrt_dll_d000115.o
+ .idata$7       0x0000000000028670        0x4 LibCrt_dll_d000116.o
+ .idata$7       0x0000000000028674        0x4 LibCrt_dll_d000117.o
+ .idata$7       0x0000000000028678        0x4 LibCrt_dll_d000118.o
+ .idata$7       0x000000000002867c        0x4 LibCrt_dll_d000119.o
+ .idata$7       0x0000000000028680        0x4 LibCrt_dll_d000120.o
+ .idata$7       0x0000000000028684        0x4 LibCrt_dll_d000121.o
+ .idata$7       0x0000000000028688        0x4 LibCrt_dll_d000122.o
+ .idata$7       0x000000000002868c        0x4 LibCrt_dll_d000123.o
+ .idata$7       0x0000000000028690        0x4 LibCrt_dll_d000124.o
+ .idata$7       0x0000000000028694        0x4 LibCrt_dll_d000125.o
+ .idata$7       0x0000000000028698        0x4 LibCrt_dll_d000126.o
+ .idata$7       0x000000000002869c        0x4 LibCrt_dll_d000127.o
+ .idata$7       0x00000000000286a0        0x4 LibCrt_dll_d000128.o
+ .idata$7       0x00000000000286a4        0x4 LibCrt_dll_d000129.o
+ .idata$7       0x00000000000286a8        0x4 LibCrt_dll_d000130.o
+ .idata$7       0x00000000000286ac        0x4 LibCrt_dll_d000131.o
+ .idata$7       0x00000000000286b0        0x4 LibCrt_dll_d000132.o
+ .idata$7       0x00000000000286b4        0x4 LibCrt_dll_d000133.o
+ .idata$7       0x00000000000286b8        0x4 LibCrt_dll_d000134.o
+ .idata$7       0x00000000000286bc        0x4 LibCrt_dll_d000135.o
+ .idata$7       0x00000000000286c0        0x4 LibCrt_dll_d000136.o
+ .idata$7       0x00000000000286c4        0x4 LibCrt_dll_d000137.o
+ .idata$7       0x00000000000286c8        0x4 LibCrt_dll_d000138.o
+ .idata$7       0x00000000000286cc        0x4 LibCrt_dll_d000139.o
+ .idata$7       0x00000000000286d0        0x4 LibCrt_dll_d000140.o
+ .idata$7       0x00000000000286d4        0x4 LibCrt_dll_d000141.o
+ .idata$7       0x00000000000286d8        0x4 LibCrt_dll_d000142.o
+ .idata$7       0x00000000000286dc        0x4 LibCrt_dll_d000143.o
+ .idata$7       0x00000000000286e0        0x4 LibCrt_dll_d000144.o
+ .idata$7       0x00000000000286e4        0x4 LibCrt_dll_d000145.o
+ .idata$7       0x00000000000286e8        0x4 LibCrt_dll_d000146.o
+ .idata$7       0x00000000000286ec        0x4 LibCrt_dll_d000147.o
+ .idata$7       0x00000000000286f0        0x4 LibCrt_dll_d000148.o
+ .idata$7       0x00000000000286f4        0x4 LibCrt_dll_d000149.o
+ .idata$7       0x00000000000286f8        0x4 LibCrt_dll_d000150.o
+ .idata$7       0x00000000000286fc        0x4 LibCrt_dll_d000151.o
+ .idata$7       0x0000000000028700        0x4 LibCrt_dll_d000152.o
+ .idata$7       0x0000000000028704        0x4 LibCrt_dll_d000153.o
+ .idata$7       0x0000000000028708        0x4 LibCrt_dll_d000154.o
+ .idata$7       0x000000000002870c        0x4 LibCrt_dll_d000155.o
+ .idata$7       0x0000000000028710        0x4 LibCrt_dll_d000156.o
+ .idata$7       0x0000000000028714        0x4 LibCrt_dll_d000157.o
+ .idata$7       0x0000000000028718        0x4 LibCrt_dll_d000158.o
+ .idata$7       0x000000000002871c        0x4 LibCrt_dll_d000159.o
+ .idata$7       0x0000000000028720        0x4 LibCrt_dll_d000160.o
+ .idata$7       0x0000000000028724        0x4 LibCrt_dll_d000161.o
+ .idata$7       0x0000000000028728        0x4 LibCrt_dll_d000162.o
+ .idata$7       0x000000000002872c        0x4 LibCrt_dll_d000163.o
+ .idata$7       0x0000000000028730        0x4 LibCrt_dll_d000164.o
+ .idata$7       0x0000000000028734        0x4 LibCrt_dll_d000165.o
+ .idata$7       0x0000000000028738        0x4 LibCrt_dll_d000166.o
+ .idata$7       0x000000000002873c        0x4 LibCrt_dll_d000167.o
+ .idata$7       0x0000000000028740        0x4 LibCrt_dll_d000168.o
+ .idata$7       0x0000000000028744        0x4 LibCrt_dll_d000169.o
+ .idata$7       0x0000000000028748        0x4 LibCrt_dll_d000170.o
+ .idata$7       0x000000000002874c        0x4 LibCrt_dll_d000171.o
+ .idata$7       0x0000000000028750        0x4 LibCrt_dll_d000172.o
+ .idata$7       0x0000000000028754        0x4 LibCrt_dll_d000173.o
+ .idata$7       0x0000000000028758        0x4 LibCrt_dll_d000174.o
+ .idata$7       0x000000000002875c        0x4 LibCrt_dll_d000175.o
+ .idata$7       0x0000000000028760        0x4 LibCrt_dll_d000176.o
+ .idata$7       0x0000000000028764        0x4 LibCrt_dll_d000177.o
+ .idata$7       0x0000000000028768        0x4 LibCrt_dll_d000178.o
+ .idata$7       0x000000000002876c        0x4 LibCrt_dll_d000179.o
+ .idata$7       0x0000000000028770        0x4 LibCrt_dll_d000180.o
+ .idata$7       0x0000000000028774        0x4 LibCrt_dll_d000181.o
+ .idata$7       0x0000000000028778        0x4 LibCrt_dll_d000182.o
+ .idata$7       0x000000000002877c        0x4 LibCrt_dll_d000183.o
+ .idata$7       0x0000000000028780        0x4 LibCrt_dll_d000184.o
+ .idata$7       0x0000000000028784        0x4 LibCrt_dll_d000185.o
+ .idata$7       0x0000000000028788        0x4 LibCrt_dll_d000186.o
+ .idata$7       0x000000000002878c        0x4 LibCrt_dll_d000187.o
+ .idata$7       0x0000000000028790        0x4 LibCrt_dll_d000188.o
+ .idata$7       0x0000000000028794        0x4 LibCrt_dll_d000189.o
+ .idata$7       0x0000000000028798        0x4 LibCrt_dll_d000190.o
+ .idata$7       0x000000000002879c        0x4 LibCrt_dll_d000191.o
+ .idata$7       0x00000000000287a0        0x4 LibCrt_dll_d000192.o
+ .idata$7       0x00000000000287a4        0x4 LibCrt_dll_d000193.o
+ .idata$7       0x00000000000287a8        0x4 LibCrt_dll_d000194.o
+ .idata$7       0x00000000000287ac        0x4 LibCrt_dll_d000195.o
+ .idata$7       0x00000000000287b0        0x4 LibCrt_dll_d000196.o
+ .idata$7       0x00000000000287b4        0x4 LibCrt_dll_d000197.o
+ .idata$7       0x00000000000287b8        0x4 LibCrt_dll_d000198.o
+ .idata$7       0x00000000000287bc        0x4 LibCrt_dll_d000199.o
+ .idata$7       0x00000000000287c0        0x4 LibCrt_dll_d000200.o
+ .idata$7       0x00000000000287c4        0x4 LibCrt_dll_d000201.o
+ .idata$7       0x00000000000287c8        0x4 LibCrt_dll_d000202.o
+ .idata$7       0x00000000000287cc        0x4 LibCrt_dll_d000203.o
+ .idata$7       0x00000000000287d0        0x4 LibCrt_dll_d000204.o
+ .idata$7       0x00000000000287d4        0x4 LibCrt_dll_d000205.o
+ .idata$7       0x00000000000287d8        0x4 LibCrt_dll_d000206.o
+ .idata$7       0x00000000000287dc        0x4 LibCrt_dll_d000207.o
+ .idata$7       0x00000000000287e0        0x4 LibCrt_dll_d000208.o
+ .idata$7       0x00000000000287e4        0x4 LibCrt_dll_d000209.o
+ .idata$7       0x00000000000287e8        0x4 LibCrt_dll_d000210.o
+ .idata$7       0x00000000000287ec        0x4 LibCrt_dll_d000211.o
+ .idata$7       0x00000000000287f0        0x4 LibCrt_dll_d000212.o
+ .idata$7       0x00000000000287f4        0x4 LibCrt_dll_d000213.o
+ .idata$7       0x00000000000287f8        0x4 LibCrt_dll_d000214.o
+ .idata$7       0x00000000000287fc        0x4 LibCrt_dll_d000215.o
+ .idata$7       0x0000000000028800        0x4 LibCrt_dll_d000216.o
+ .idata$7       0x0000000000028804        0x4 LibCrt_dll_d000217.o
+ .idata$7       0x0000000000028808        0x4 LibCrt_dll_d000218.o
+ .idata$7       0x000000000002880c        0x4 LibCrt_dll_d000219.o
+ .idata$7       0x0000000000028810        0x4 LibCrt_dll_d000220.o
+ .idata$7       0x0000000000028814        0x4 LibCrt_dll_d000221.o
+ .idata$7       0x0000000000028818        0x4 LibCrt_dll_d000222.o
+ .idata$7       0x000000000002881c        0x4 LibCrt_dll_d000223.o
+ .idata$7       0x0000000000028820        0x4 LibCrt_dll_d000224.o
+ .idata$7       0x0000000000028824        0x4 LibCrt_dll_d000225.o
+ .idata$7       0x0000000000028828        0x4 LibCrt_dll_d000226.o
+ .idata$7       0x000000000002882c        0x4 LibCrt_dll_d000227.o
+ .idata$7       0x0000000000028830        0x4 LibCrt_dll_d000228.o
+ .idata$7       0x0000000000028834        0x4 LibCrt_dll_d000229.o
+ .idata$7       0x0000000000028838        0x4 LibCrt_dll_d000230.o
+ .idata$7       0x000000000002883c        0x4 LibCrt_dll_d000231.o
+ .idata$7       0x0000000000028840        0x4 LibCrt_dll_d000232.o
+ .idata$7       0x0000000000028844        0x4 LibCrt_dll_d000233.o
+ .idata$7       0x0000000000028848        0x4 LibCrt_dll_d000234.o
+ .idata$7       0x000000000002884c        0x4 LibCrt_dll_d000235.o
+ .idata$7       0x0000000000028850        0x4 LibCrt_dll_d000236.o
+ .idata$7       0x0000000000028854        0x4 LibCrt_dll_d000237.o
+ .idata$7       0x0000000000028858        0x4 LibCrt_dll_d000238.o
+ .idata$7       0x000000000002885c        0x4 LibCrt_dll_d000239.o
+ .idata$7       0x0000000000028860        0x4 LibCrt_dll_d000240.o
+ .idata$7       0x0000000000028864        0x4 LibCrt_dll_d000241.o
+ .idata$7       0x0000000000028868        0x4 LibCrt_dll_d000242.o
+ .idata$7       0x000000000002886c        0x4 LibCrt_dll_d000243.o
+ .idata$7       0x0000000000028870        0x4 LibCrt_dll_d000244.o
+ .idata$7       0x0000000000028874        0x4 LibCrt_dll_d000245.o
+ .idata$7       0x0000000000028878        0x4 LibCrt_dll_d000246.o
+ .idata$7       0x000000000002887c        0x4 LibCrt_dll_d000247.o
+ .idata$7       0x0000000000028880        0x4 LibCrt_dll_d000248.o
+ .idata$7       0x0000000000028884        0x4 LibCrt_dll_d000249.o
+ .idata$7       0x0000000000028888        0x4 LibCrt_dll_d000250.o
+ .idata$7       0x000000000002888c        0x4 LibCrt_dll_d000251.o
+ .idata$7       0x0000000000028890        0x4 LibCrt_dll_d000252.o
+ .idata$7       0x0000000000028894        0x4 LibCrt_dll_d000253.o
+ .idata$7       0x0000000000028898        0x4 LibCrt_dll_d000254.o
+ .idata$7       0x000000000002889c        0x4 LibCrt_dll_d000255.o
+ .idata$7       0x00000000000288a0        0x4 LibCrt_dll_d000256.o
+ .idata$7       0x00000000000288a4        0x4 LibCrt_dll_d000257.o
+ .idata$7       0x00000000000288a8        0x4 LibCrt_dll_d000258.o
+ .idata$7       0x00000000000288ac        0x4 LibCrt_dll_d000259.o
+ .idata$7       0x00000000000288b0        0x4 LibCrt_dll_d000260.o
+ .idata$7       0x00000000000288b4        0x4 LibCrt_dll_d000261.o
+ .idata$7       0x00000000000288b8        0x4 LibCrt_dll_d000262.o
+ .idata$7       0x00000000000288bc        0x4 LibCrt_dll_d000263.o
+ .idata$7       0x00000000000288c0        0x4 LibCrt_dll_d000264.o
+ .idata$7       0x00000000000288c4        0x4 LibCrt_dll_d000265.o
+ .idata$7       0x00000000000288c8        0x4 LibCrt_dll_d000266.o
+ .idata$7       0x00000000000288cc        0x4 LibCrt_dll_d000267.o
+ .idata$7       0x00000000000288d0        0x4 LibCrt_dll_d000268.o
+ .idata$7       0x00000000000288d4        0x4 LibCrt_dll_d000269.o
+ .idata$7       0x00000000000288d8        0x4 LibCrt_dll_d000270.o
+ .idata$7       0x00000000000288dc        0x4 LibCrt_dll_d000271.o
+ .idata$7       0x00000000000288e0        0x4 LibCrt_dll_d000272.o
+ .idata$7       0x00000000000288e4        0x4 LibCrt_dll_d000273.o
+ .idata$7       0x00000000000288e8        0x4 LibCrt_dll_d000274.o
+ .idata$7       0x00000000000288ec        0xc LibCrt_dll_d000275.o
+                0x00000000000288ec                LibCrt_dll_iname
+ .idata$7       0x00000000000288f8        0x4 LibIO_dll_d000006.o
+ .idata$7       0x00000000000288fc        0xc LibIO_dll_d000007.o
+                0x00000000000288fc                LibIO_dll_iname
+ .idata$7       0x0000000000028908        0x4 LibVideo_dll_d000001.o
+ .idata$7       0x000000000002890c        0x4 LibVideo_dll_d000002.o
+ .idata$7       0x0000000000028910        0x4 LibVideo_dll_d000003.o
+ .idata$7       0x0000000000028914       0x10 LibVideo_dll_d000004.o
+                0x0000000000028914                LibVideo_dll_iname
+
+.didat
+ SORT_BY_NAME(*)(.didat$5)
+
+.tls            0x0000000000029000        0x0
+                0x0000000000029000                ___tls_start__ = .
+ *(.tls$AAA)
+ *(.tls)
+ *(.tls$)
+ *(SORT_BY_NAME(.tls$*))
+ *(.tls$ZZZ)
+                0x0000000000029000                ___tls_end__ = .
+
+.endjunk        0x0000000000029000        0x0
+                [!provide]                        PROVIDE (end = .)
+                [!provide]                        PROVIDE (_end = .)
+                0x0000000000029000                __end__ = .
+
+.rsrc
+ *(.rsrc)
+ *(.rsrc$*)
+
+.reloc          0x0000000000029000     0x1000
+ *(.reloc)
+ .reloc         0x0000000000029000       0xcc dll stuff
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.zdebug_aranges
+ *(.zdebug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.zdebug_pubnames
+ *(.zdebug_pubnames)
+
+.debug_info
+ *(.debug_info .gnu.linkonce.wi.*)
+
+.zdebug_info
+ *(.zdebug_info .zdebug.gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.zdebug_abbrev
+ *(.zdebug_abbrev)
+
+.debug_line
+ *(.debug_line)
+
+.zdebug_line
+ *(.zdebug_line)
+
+.debug_frame
+ *(.debug_frame*)
+
+.zdebug_frame
+ *(.zdebug_frame*)
+
+.debug_str
+ *(.debug_str)
+
+.zdebug_str
+ *(.zdebug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.zdebug_loc
+ *(.zdebug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.zdebug_macinfo
+ *(.zdebug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.zdebug_weaknames
+ *(.zdebug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.zdebug_funcnames
+ *(.zdebug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.zdebug_typenames
+ *(.zdebug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.zdebug_varnames
+ *(.zdebug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.zdebug_pubtypes
+ *(.zdebug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.zdebug_ranges
+ *(.zdebug_ranges)
+
+.debug_types
+ *(.debug_types .gnu.linkonce.wt.*)
+
+.zdebug_types
+ *(.zdebug_types .gnu.linkonce.wt.*)
+
+.debug_addr
+ *(.debug_addr)
+
+.zdebug_addr
+ *(.zdebug_addr)
+
+.debug_line_str
+ *(.debug_line_str)
+
+.zdebug_line_str
+ *(.zdebug_line_str)
+
+.debug_loclists
+ *(.debug_loclists)
+
+.zdebug_loclists
+ *(.zdebug_loclists)
+
+.debug_macro
+ *(.debug_macro)
+
+.zdebug_macro
+ *(.zdebug_macro)
+
+.debug_names
+ *(.debug_names)
+
+.zdebug_names
+ *(.zdebug_names)
+
+.debug_rnglists
+ *(.debug_rnglists)
+
+.zdebug_rnglists
+ *(.zdebug_rnglists)
+
+.debug_str_offsets
+ *(.debug_str_offsets)
+
+.zdebug_str_offsets
+ *(.zdebug_str_offsets)
+
+.debug_sup
+ *(.debug_sup)
+
+.debug_gdb_scripts
+ *(.debug_gdb_scripts)
+
+.zdebug_gdb_scripts
+ *(.zdebug_gdb_scripts)
+OUTPUT(C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe pei-x86-64)
+LOAD LibVideo_dll_d000000.o
+LOAD LibVideo_dll_d000001.o
+LOAD LibVideo_dll_d000002.o
+LOAD LibVideo_dll_d000003.o
+LOAD LibVideo_dll_d000004.o
+LOAD LibIO_dll_d000005.o
+LOAD LibIO_dll_d000006.o
+LOAD LibIO_dll_d000007.o
+LOAD LibCrt_dll_d000008.o
+LOAD LibCrt_dll_d000009.o
+LOAD LibCrt_dll_d000010.o
+LOAD LibCrt_dll_d000011.o
+LOAD LibCrt_dll_d000012.o
+LOAD LibCrt_dll_d000013.o
+LOAD LibCrt_dll_d000014.o
+LOAD LibCrt_dll_d000015.o
+LOAD LibCrt_dll_d000016.o
+LOAD LibCrt_dll_d000017.o
+LOAD LibCrt_dll_d000018.o
+LOAD LibCrt_dll_d000019.o
+LOAD LibCrt_dll_d000020.o
+LOAD LibCrt_dll_d000021.o
+LOAD LibCrt_dll_d000022.o
+LOAD LibCrt_dll_d000023.o
+LOAD LibCrt_dll_d000024.o
+LOAD LibCrt_dll_d000025.o
+LOAD LibCrt_dll_d000026.o
+LOAD LibCrt_dll_d000027.o
+LOAD LibCrt_dll_d000028.o
+LOAD LibCrt_dll_d000029.o
+LOAD LibCrt_dll_d000030.o
+LOAD LibCrt_dll_d000031.o
+LOAD LibCrt_dll_d000032.o
+LOAD LibCrt_dll_d000033.o
+LOAD LibCrt_dll_d000034.o
+LOAD LibCrt_dll_d000035.o
+LOAD LibCrt_dll_d000036.o
+LOAD LibCrt_dll_d000037.o
+LOAD LibCrt_dll_d000038.o
+LOAD LibCrt_dll_d000039.o
+LOAD LibCrt_dll_d000040.o
+LOAD LibCrt_dll_d000041.o
+LOAD LibCrt_dll_d000042.o
+LOAD LibCrt_dll_d000043.o
+LOAD LibCrt_dll_d000044.o
+LOAD LibCrt_dll_d000045.o
+LOAD LibCrt_dll_d000046.o
+LOAD LibCrt_dll_d000047.o
+LOAD LibCrt_dll_d000048.o
+LOAD LibCrt_dll_d000049.o
+LOAD LibCrt_dll_d000050.o
+LOAD LibCrt_dll_d000051.o
+LOAD LibCrt_dll_d000052.o
+LOAD LibCrt_dll_d000053.o
+LOAD LibCrt_dll_d000054.o
+LOAD LibCrt_dll_d000055.o
+LOAD LibCrt_dll_d000056.o
+LOAD LibCrt_dll_d000057.o
+LOAD LibCrt_dll_d000058.o
+LOAD LibCrt_dll_d000059.o
+LOAD LibCrt_dll_d000060.o
+LOAD LibCrt_dll_d000061.o
+LOAD LibCrt_dll_d000062.o
+LOAD LibCrt_dll_d000063.o
+LOAD LibCrt_dll_d000064.o
+LOAD LibCrt_dll_d000065.o
+LOAD LibCrt_dll_d000066.o
+LOAD LibCrt_dll_d000067.o
+LOAD LibCrt_dll_d000068.o
+LOAD LibCrt_dll_d000069.o
+LOAD LibCrt_dll_d000070.o
+LOAD LibCrt_dll_d000071.o
+LOAD LibCrt_dll_d000072.o
+LOAD LibCrt_dll_d000073.o
+LOAD LibCrt_dll_d000074.o
+LOAD LibCrt_dll_d000075.o
+LOAD LibCrt_dll_d000076.o
+LOAD LibCrt_dll_d000077.o
+LOAD LibCrt_dll_d000078.o
+LOAD LibCrt_dll_d000079.o
+LOAD LibCrt_dll_d000080.o
+LOAD LibCrt_dll_d000081.o
+LOAD LibCrt_dll_d000082.o
+LOAD LibCrt_dll_d000083.o
+LOAD LibCrt_dll_d000084.o
+LOAD LibCrt_dll_d000085.o
+LOAD LibCrt_dll_d000086.o
+LOAD LibCrt_dll_d000087.o
+LOAD LibCrt_dll_d000088.o
+LOAD LibCrt_dll_d000089.o
+LOAD LibCrt_dll_d000090.o
+LOAD LibCrt_dll_d000091.o
+LOAD LibCrt_dll_d000092.o
+LOAD LibCrt_dll_d000093.o
+LOAD LibCrt_dll_d000094.o
+LOAD LibCrt_dll_d000095.o
+LOAD LibCrt_dll_d000096.o
+LOAD LibCrt_dll_d000097.o
+LOAD LibCrt_dll_d000098.o
+LOAD LibCrt_dll_d000099.o
+LOAD LibCrt_dll_d000100.o
+LOAD LibCrt_dll_d000101.o
+LOAD LibCrt_dll_d000102.o
+LOAD LibCrt_dll_d000103.o
+LOAD LibCrt_dll_d000104.o
+LOAD LibCrt_dll_d000105.o
+LOAD LibCrt_dll_d000106.o
+LOAD LibCrt_dll_d000107.o
+LOAD LibCrt_dll_d000108.o
+LOAD LibCrt_dll_d000109.o
+LOAD LibCrt_dll_d000110.o
+LOAD LibCrt_dll_d000111.o
+LOAD LibCrt_dll_d000112.o
+LOAD LibCrt_dll_d000113.o
+LOAD LibCrt_dll_d000114.o
+LOAD LibCrt_dll_d000115.o
+LOAD LibCrt_dll_d000116.o
+LOAD LibCrt_dll_d000117.o
+LOAD LibCrt_dll_d000118.o
+LOAD LibCrt_dll_d000119.o
+LOAD LibCrt_dll_d000120.o
+LOAD LibCrt_dll_d000121.o
+LOAD LibCrt_dll_d000122.o
+LOAD LibCrt_dll_d000123.o
+LOAD LibCrt_dll_d000124.o
+LOAD LibCrt_dll_d000125.o
+LOAD LibCrt_dll_d000126.o
+LOAD LibCrt_dll_d000127.o
+LOAD LibCrt_dll_d000128.o
+LOAD LibCrt_dll_d000129.o
+LOAD LibCrt_dll_d000130.o
+LOAD LibCrt_dll_d000131.o
+LOAD LibCrt_dll_d000132.o
+LOAD LibCrt_dll_d000133.o
+LOAD LibCrt_dll_d000134.o
+LOAD LibCrt_dll_d000135.o
+LOAD LibCrt_dll_d000136.o
+LOAD LibCrt_dll_d000137.o
+LOAD LibCrt_dll_d000138.o
+LOAD LibCrt_dll_d000139.o
+LOAD LibCrt_dll_d000140.o
+LOAD LibCrt_dll_d000141.o
+LOAD LibCrt_dll_d000142.o
+LOAD LibCrt_dll_d000143.o
+LOAD LibCrt_dll_d000144.o
+LOAD LibCrt_dll_d000145.o
+LOAD LibCrt_dll_d000146.o
+LOAD LibCrt_dll_d000147.o
+LOAD LibCrt_dll_d000148.o
+LOAD LibCrt_dll_d000149.o
+LOAD LibCrt_dll_d000150.o
+LOAD LibCrt_dll_d000151.o
+LOAD LibCrt_dll_d000152.o
+LOAD LibCrt_dll_d000153.o
+LOAD LibCrt_dll_d000154.o
+LOAD LibCrt_dll_d000155.o
+LOAD LibCrt_dll_d000156.o
+LOAD LibCrt_dll_d000157.o
+LOAD LibCrt_dll_d000158.o
+LOAD LibCrt_dll_d000159.o
+LOAD LibCrt_dll_d000160.o
+LOAD LibCrt_dll_d000161.o
+LOAD LibCrt_dll_d000162.o
+LOAD LibCrt_dll_d000163.o
+LOAD LibCrt_dll_d000164.o
+LOAD LibCrt_dll_d000165.o
+LOAD LibCrt_dll_d000166.o
+LOAD LibCrt_dll_d000167.o
+LOAD LibCrt_dll_d000168.o
+LOAD LibCrt_dll_d000169.o
+LOAD LibCrt_dll_d000170.o
+LOAD LibCrt_dll_d000171.o
+LOAD LibCrt_dll_d000172.o
+LOAD LibCrt_dll_d000173.o
+LOAD LibCrt_dll_d000174.o
+LOAD LibCrt_dll_d000175.o
+LOAD LibCrt_dll_d000176.o
+LOAD LibCrt_dll_d000177.o
+LOAD LibCrt_dll_d000178.o
+LOAD LibCrt_dll_d000179.o
+LOAD LibCrt_dll_d000180.o
+LOAD LibCrt_dll_d000181.o
+LOAD LibCrt_dll_d000182.o
+LOAD LibCrt_dll_d000183.o
+LOAD LibCrt_dll_d000184.o
+LOAD LibCrt_dll_d000185.o
+LOAD LibCrt_dll_d000186.o
+LOAD LibCrt_dll_d000187.o
+LOAD LibCrt_dll_d000188.o
+LOAD LibCrt_dll_d000189.o
+LOAD LibCrt_dll_d000190.o
+LOAD LibCrt_dll_d000191.o
+LOAD LibCrt_dll_d000192.o
+LOAD LibCrt_dll_d000193.o
+LOAD LibCrt_dll_d000194.o
+LOAD LibCrt_dll_d000195.o
+LOAD LibCrt_dll_d000196.o
+LOAD LibCrt_dll_d000197.o
+LOAD LibCrt_dll_d000198.o
+LOAD LibCrt_dll_d000199.o
+LOAD LibCrt_dll_d000200.o
+LOAD LibCrt_dll_d000201.o
+LOAD LibCrt_dll_d000202.o
+LOAD LibCrt_dll_d000203.o
+LOAD LibCrt_dll_d000204.o
+LOAD LibCrt_dll_d000205.o
+LOAD LibCrt_dll_d000206.o
+LOAD LibCrt_dll_d000207.o
+LOAD LibCrt_dll_d000208.o
+LOAD LibCrt_dll_d000209.o
+LOAD LibCrt_dll_d000210.o
+LOAD LibCrt_dll_d000211.o
+LOAD LibCrt_dll_d000212.o
+LOAD LibCrt_dll_d000213.o
+LOAD LibCrt_dll_d000214.o
+LOAD LibCrt_dll_d000215.o
+LOAD LibCrt_dll_d000216.o
+LOAD LibCrt_dll_d000217.o
+LOAD LibCrt_dll_d000218.o
+LOAD LibCrt_dll_d000219.o
+LOAD LibCrt_dll_d000220.o
+LOAD LibCrt_dll_d000221.o
+LOAD LibCrt_dll_d000222.o
+LOAD LibCrt_dll_d000223.o
+LOAD LibCrt_dll_d000224.o
+LOAD LibCrt_dll_d000225.o
+LOAD LibCrt_dll_d000226.o
+LOAD LibCrt_dll_d000227.o
+LOAD LibCrt_dll_d000228.o
+LOAD LibCrt_dll_d000229.o
+LOAD LibCrt_dll_d000230.o
+LOAD LibCrt_dll_d000231.o
+LOAD LibCrt_dll_d000232.o
+LOAD LibCrt_dll_d000233.o
+LOAD LibCrt_dll_d000234.o
+LOAD LibCrt_dll_d000235.o
+LOAD LibCrt_dll_d000236.o
+LOAD LibCrt_dll_d000237.o
+LOAD LibCrt_dll_d000238.o
+LOAD LibCrt_dll_d000239.o
+LOAD LibCrt_dll_d000240.o
+LOAD LibCrt_dll_d000241.o
+LOAD LibCrt_dll_d000242.o
+LOAD LibCrt_dll_d000243.o
+LOAD LibCrt_dll_d000244.o
+LOAD LibCrt_dll_d000245.o
+LOAD LibCrt_dll_d000246.o
+LOAD LibCrt_dll_d000247.o
+LOAD LibCrt_dll_d000248.o
+LOAD LibCrt_dll_d000249.o
+LOAD LibCrt_dll_d000250.o
+LOAD LibCrt_dll_d000251.o
+LOAD LibCrt_dll_d000252.o
+LOAD LibCrt_dll_d000253.o
+LOAD LibCrt_dll_d000254.o
+LOAD LibCrt_dll_d000255.o
+LOAD LibCrt_dll_d000256.o
+LOAD LibCrt_dll_d000257.o
+LOAD LibCrt_dll_d000258.o
+LOAD LibCrt_dll_d000259.o
+LOAD LibCrt_dll_d000260.o
+LOAD LibCrt_dll_d000261.o
+LOAD LibCrt_dll_d000262.o
+LOAD LibCrt_dll_d000263.o
+LOAD LibCrt_dll_d000264.o
+LOAD LibCrt_dll_d000265.o
+LOAD LibCrt_dll_d000266.o
+LOAD LibCrt_dll_d000267.o
+LOAD LibCrt_dll_d000268.o
+LOAD LibCrt_dll_d000269.o
+LOAD LibCrt_dll_d000270.o
+LOAD LibCrt_dll_d000271.o
+LOAD LibCrt_dll_d000272.o
+LOAD LibCrt_dll_d000273.o
+LOAD LibCrt_dll_d000274.o
+LOAD LibCrt_dll_d000275.o
+LOAD dll stuff

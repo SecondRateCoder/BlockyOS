@@ -12,14 +12,14 @@ void prGUID(EFI_GUID guid){
 }
 
 BOOLEAN strcheck(char *s, char c){
-	for(UINT64 cc = 0; cc < __strlen(s); ++cc){
+	for(register UINT64 cc = 0; cc < __strlen(s); ++cc){
 		if(s[cc] == c){return TRUE;}
 	}
 	return FALSE;
 }
 
 INT64 strchecki(char *s, char c){
-	for(UINT64 cc = 0; cc < __strlen(s); ++cc){
+	for(register UINT64 cc = 0; cc < __strlen(s); ++cc){
 		if(c == s[cc]){return cc;}
 	}
 	return -1;
@@ -37,7 +37,7 @@ UINT64 *__getfcode(char *s_){
     static UINT64 hash[2];
 	__memset(hash, 0, sizeof(hash));
 	char *s = __strdup(s_);
-	for(UINT32 cc = 0; cc < __strlen(s_); ++cc){if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}}
+	for(register UINT32 cc = 0; cc < __strlen(s_); ++cc){if(s[cc] == PATHnoSEP){s[cc] = PATHSEP;}}
 	// DEBUGPRINT(L"\nGenerating Hash");
 	blake2b_state hashstate;
 	blake2b_init(&hashstate, sizeof(UINT64) * 2);
@@ -158,7 +158,7 @@ EFI_STATUS trng__(void *buffer, UINT64 size){
 char tolower(char upper){return upper - abs('A' - 'a');}
 BOOLEAN isdigit(char c){return (c >= '0') && (c <= '9');}
 char *str_tolower(char *s){
-    for(UINT32 cc = 0; cc < __strlen(s); ++cc){if(!isdigit(s[cc])){s[cc] = tolower(s[cc]);}}
+    for(register UINT32 cc = 0; cc < __strlen(s); ++cc){if(!isdigit(s[cc])){s[cc] = tolower(s[cc]);}}
     return s;
 }
 
@@ -192,7 +192,7 @@ BOOLEAN match_rec(const char *p, const char *s){
 
 GPTeNSTR *makeGPTeNSTR(char *str){
 	GPTeNSTR *out = __calloc(sizeof(GPTeNSTR), 1);
-	for(UINT64 cc = 0; cc < __min(__strlen(str), GPTeNAMELEN); ++cc){
+	for(register UINT64 cc = 0; cc < __min(__strlen(str), GPTeNAMELEN); ++cc){
 		(*out)[cc] = str[cc];
 	}
 	return out;

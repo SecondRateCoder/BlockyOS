@@ -161,7 +161,7 @@
 
 #define Write1ToClear
 
-#define enumdef(type, name)			typedef type name;	enum
+#define enumdef(type, ...)     typedef type __VA_ARGS__;  enum
 
 #define NULL	((void * )0)
 #define __typeof(T)					__typeof__(T)
@@ -179,6 +179,9 @@
 
 #define SAFEOP(A, B, CompAOp, CompA, CompBOp, CompB, Comp, OP, Alt) (((A) CompAOp (CompA)) Comp ((B) CompBOp (CompB)) ? ((A) OP (B)) : (Alt))
 #define __safediv(A, B) SAFEOP((A), (B), ||, true, !=, 0, &&, /, 1)
+
+LibAPI extern bool __sysvabi e9print(char *str, uint64_t n);
+LibAPI extern bool __sysvabi e9printc(char c);
 
 typedef struct{
 	unsigned short	Device;
