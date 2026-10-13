@@ -1021,7 +1021,7 @@ if(-not $AST){
 	Write-Log "Could not generate AST from Script"
 	return 1
 }
-(Open-Log $AST.Header.'LOG')
+(Open-Log $AST.Header.LOG)
 if($AST.Header.ContainsKey('CACHEDIR')){$Global:BuildFeatures.CACHEDIR = $AST.Header.'CACHEDIR'}
 
 # Compile all Executables

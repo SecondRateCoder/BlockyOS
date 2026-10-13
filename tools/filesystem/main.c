@@ -31,8 +31,8 @@ int main(int argc, char *argv[]){
 	init_sighandler();
 	if(argc > 1){
 		// There's a Command to Parse
-		for(register uint32_t cc = 1; cc < argc; cc++){printf("\n  %s", argv[cc]);}
-		for(register uint32_t cc = 1; cc < argc; cc++){
+		for(uint32_t cc = 1; cc < argc; cc++){printf("\n  %s", argv[cc]);}
+		for(uint32_t cc = 1; cc < argc; cc++){
 			
 			printf("\n%s", argv[cc]);
 			cmd_errout info = __shellparse(argv[cc]);

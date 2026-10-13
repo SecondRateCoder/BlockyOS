@@ -65,7 +65,7 @@ static inline VOID IoWrite8Inline(UINT16 Port, UINT8 Value){
     );}
 #ifdef _DEBUG
 extern const EFI_PHYSICAL_ADDRESS DebugPort;
-#define BUFDEFPRINT(mem, nbytes, countername)	for(register UINT64 countername = 0; countername < abs(nbytes); ++countername){IoWrite8Inline(DebugPort, ((uint8_t *)mem)[countername]);}
+#define BUFDEFPRINT(mem, nbytes, countername)	for(UINT64 countername = 0; countername < abs(nbytes); ++countername){IoWrite8Inline(DebugPort, ((uint8_t *)mem)[countername]);}
 #else
 #define BUFDEFPRINT(...)
 #endif

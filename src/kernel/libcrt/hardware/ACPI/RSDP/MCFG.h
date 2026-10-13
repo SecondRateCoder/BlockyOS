@@ -15,10 +15,10 @@ typedef struct{
 	//	Highest Addressable Bus Number
 				EndingBus;
 	uint32_t	Reserved0;
-}RSDT_MCFGConfigurationEntry_t;
+}__packed RSDT_MCFGConfigurationEntry_t;
 typedef struct{
 	SDTHeader_t	Header;
 	uint64_t	Reserved0;
 	//	(Header.Length - (8 + sizeof(SDTHeader_t)) / sizeof(RSDT_MCFGConfigurationEntry_t))
 	RSDT_MCFGConfigurationEntry_t	Table[];
-}RSDT_MCFG_t;
+}__packed RSDT_MCFG_t;

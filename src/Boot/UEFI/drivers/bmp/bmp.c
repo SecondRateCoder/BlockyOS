@@ -15,12 +15,12 @@ void FormatBMPImageData(BMPUPackedHeader_t *bmp, EFI_GRAPHICS_PIXEL_FORMAT Pixel
 	if(!formattedData){return;}
 	UINT8 *srcBytes = (UINT8 *)bmp->ImageData;
 
-	for(register UINT32 y = 0; y < absHeight; y++){
+	for(UINT32 y = 0; y < absHeight; y++){
 		// BMP is bottom-up if Height > 0, top-down if Height < 0
 		UINT32 srcY = (rawHeight > 0) ? (absHeight - 1 - y) : y;
 		UINT8 *srcRow = srcBytes + (srcY * srcRowStride);
 		UINT32 *dstRow = formattedData + (y * width);
-		for(register UINT32 x = 0; x < width; x++){
+		for(UINT32 x = 0; x < width; x++){
 			UINT8 r = 0, g = 0, b = 0, a = 0xFF;
 			if(bpp == 3){//	24-bit BGR
 				b = srcRow[x * 3 + 0];

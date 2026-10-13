@@ -37,7 +37,7 @@ void *GetLocalAPICBase(void *ACPIBase, bool *_RDST){
 	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
 		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(XSDT_MADT_t);
-		for(register uint32_t cc = 0; RemBytes != 0; ++cc){
+		for(uint32_t cc = 0; RemBytes != 0; ++cc){
 			if(Table->Table[cc].Type == XSDT_ProcessorLocalAPIC){
 				XSDT_ProcessorLocalAPIC_t *Local = (XSDT_ProcessorLocalAPIC_t *)(Table->Table + cc);
 				if(Local->ApicID == currentApicId){
@@ -52,7 +52,7 @@ void *GetLocalAPICBase(void *ACPIBase, bool *_RDST){
 	}else{
 		RSDT_MADT_t *Table = (RSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(RSDT_MADT_t);
-		for(register uint32_t cc = 0; RemBytes != 0; ++cc){
+		for(uint32_t cc = 0; RemBytes != 0; ++cc){
 			if(Table->Table[cc].Type == RSDT_ProcessorLocalAPIC){
 				RSDT_ProcessorLocalAPIC_t *Local = (RSDT_ProcessorLocalAPIC_t *)(Table->Table + cc);
 				(*_RDST) = true;

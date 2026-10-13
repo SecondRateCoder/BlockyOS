@@ -1,9 +1,436 @@
 Initializing CGCC.MAKE build process...
-Skipping C:\GitHub\BlockyOS\src\kernel\services\IO\IO.c - up to date; source=2026-10-08T17:26:00.2985261Z, stored=10/08/2026 17:26:00
-Skipping C:\GitHub\BlockyOS\src\kernel\services\hostfs\controllers\frat\frat.c - up to date; source=2026-10-10T01:04:48.0363712Z, stored=10/10/2026 01:04:48
-Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll. source=2026-10-11T23:56:38.9759676Z, stored=10/11/2026 23:39:22, delta=-2590963.024 sec
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\services\IO\IO.c. source=2026-10-08T17:26:00.2985261Z, stored=none, delta=n/a sec
+gcc -c C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.IO.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -fno-unwind-tables -fno-asynchronous-unwind-tables -mcmodel=small -fno-stack-protector -nostdinc -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -I C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/AHCI.h:1,
+                 from C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:1:
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
+   42 | #define NaNf    (__builtin_nanf(""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
+   25 | #define NaNf            (__builtin_nanf (""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
+   50 | #define SNaNf    (__builtin_nansf(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
+   26 | #define SNaNf           (__builtin_nansf (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
+   51 | #define SNaNd    (__builtin_nans(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
+   27 | #define SNaNd           (__builtin_nans (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
+   52 | #define SNaNld   (__builtin_nansl(""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
+   28 | #define SNaNld          (__builtin_nansl (""))
+      |         ^~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6:
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
+      | ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
+      | ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
+      | ^~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:6:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISRCallback.h:264:33: warning: backslash-newline at end of file
+  264 | #define IDTCallbackInit(IDT)    \
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:34:1: warning: 'naked' attribute only applies to functions [-Wattributes]
+   34 | typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
+      | ^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:14:
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:121:1: warning: 'packed' attribute ignored [-Wattributes]
+  121 | typedef uint128_t NVMeAdminCommandStruct(DirectiveRecieve, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:132:1: warning: 'packed' attribute ignored [-Wattributes]
+  132 | typedef uint128_t NVMeAdminCommandStruct(DirectiveSend, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:143:1: warning: 'packed' attribute ignored [-Wattributes]
+  143 | typedef uint128_t NVMeAdminCommandStruct(GetFeatures, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:200:1: warning: 'packed' attribute ignored [-Wattributes]
+  200 | typedef uint128_t NVMeAdminCommandStruct(GetLogPage, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:292:1: warning: 'packed' attribute ignored [-Wattributes]
+  292 | typedef uint32_t NVMeLogStruct(ChangedNamespaceList); // 4096 bytes
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/AHCI.h: In function 'AHCISearchOpenCommandSlot':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/AHCI.h:656:20: warning: comparison between pointer and integer
+  656 |         for(; slot < MS->HostCapability.NumberOfCommandSlots; ++(*slot)){
+      |                    ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/AHCI.h:658:134: warning: passing argument 1 of 'MapVirtual' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  658 |                         return MapVirtual((HBACommandHeader *)((uint64_t)Port->CommandListBaseHigh << 32) + Port->CommandListBaseLow + *slot);
+      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:5:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.h:355:31: note: expected 'void *' but argument is of type 'volatile HBACommandHeader *'
+  355 | LibAPI void *MapVirtual(void *Physical);
+      |                         ~~~~~~^~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/AHCI.h: In function 'AHCIReadBytes':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/AHCI.h:696:75: warning: passing argument 1 of 'SafeAllocatePages' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  696 |                 HBADevicePort *This = SafeAllocatePages(Controller->Ports + Device,
+      |                                                         ~~~~~~~~~~~~~~~~~~^~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:13:38: note: expected 'void *' but argument is of type 'volatile HBADevicePort *'
+   13 | LibAPI void *SafeAllocatePages(void *Physical, uint32_t Bytes, PageAllocationFlags Flags, uint8_t ProtectionKey, uint8_t Align);
+      |                                ~~~~~~^~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/AHCI.h: In function 'AHCIWriteBytes':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/AHCI.h:750:75: warning: passing argument 1 of 'SafeAllocatePages' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  750 |                 HBADevicePort *This = SafeAllocatePages(Controller->Ports + Device, sizeof(HBADevicePort),
+      |                                                         ~~~~~~~~~~~~~~~~~~^~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:13:38: note: expected 'void *' but argument is of type 'volatile HBADevicePort *'
+   13 | LibAPI void *SafeAllocatePages(void *Physical, uint32_t Bytes, PageAllocationFlags Flags, uint8_t ProtectionKey, uint8_t Align);
+      |                                ~~~~~~^~~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:2:
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h: In function 'ATAPIISR':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h:118:42: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  118 |         ATAPIInterruptStackHeader *IST = (ATAPIInterruptStackHeader *)Frame->StackHeader, *Previous = NULL;
+      |                                          ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h: In function 'UpdateATAPIInterruptStackHeader':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h:131:29: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  131 |                 ATAPI->Next = mcalloc(1, sizeof(ATAPIInterruptStackHeader));
+      |                             ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h:138:29: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  138 |                 ATAPI->Next = mcalloc(1, sizeof(ATAPIInterruptStackHeader));
+      |                             ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h: In function 'ATAPISectorSize':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h:204:83: warning: left shift count >= width of type [-Wshift-count-overflow]
+  204 |         return ((queue.Primary? _ATAPISectorSize(queue.Slave, pcmd, pctrl): 0x00) << 32) +
+      |                                                                                   ^~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h: In function '_ATAPIReadRaw':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h:252:37: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  252 |                 __outl(bmba + 0x04, (uint32_t)MapPhysical(bf));
+      |                                     ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h: In function '_ATAPIWriteRaw':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/ATAPI.h:325:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  325 |         __outl(bmba + 0x04, (uint32_t)MapPhysical(bf));
+      |                             ^
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:3:
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h: In function 'UpdateNVMeInterruptStackFrame':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:47:34: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   47 |                         SH->Next = mcalloc(11, sizeof(NVMeInterruptStackHeader));
+      |                                  ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h: In function 'NVMePollController':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:88:44: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   88 |     NVMeIdentifyController_t *Controller = mmalloc(sizeof(NVMeIdentifyController_t));
+      |                                            ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h: In function 'ConfigureNVMeController':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:107:43: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  107 |         if(dev && AllocateInterruptVector((uint8_t *)Vector)){
+      |                                           ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:130:72: warning: conversion from 'long long unsigned int' to 'unsigned char:4' changes value from '16' to '0' [-Woverflow]
+  130 |                 cntrl->ControllerConfiguration.IOCompletionQueueSize = sizeof(NVMeCompletionQueueSlot_t);
+      |                                                                        ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:131:72: warning: conversion from 'long long unsigned int' to 'unsigned char:4' changes value from '68' to '4' [-Woverflow]
+  131 |                 cntrl->ControllerConfiguration.IOSubmissionQueueSize = sizeof(NVMeSubmissionQueueSlot_t);
+      |                                                                        ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:138:51: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  138 |                 NVMeInterruptStackHeader *_temp = mcalloc(1, sizeof(NVMeInterruptStackHeader));
+      |                                                   ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:149:32: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  149 |                         ._SQ = mcalloc(32, sizeof(uint16_t)),
+      |                                ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:150:32: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  150 |                         ._CQ = mcalloc(32, sizeof(uint16_t)),
+      |                                ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:151:39: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  151 |                         .NPerCQueue = mcalloc(32, sizeof(uint32_t)),
+      |                                       ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:152:39: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  152 |                         .NPerSQueue = mcalloc(32, sizeof(uint32_t)),
+      |                                       ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:153:40: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  153 |                         .Submissions = mcalloc(32, sizeof(NVMeSubmissionQueueSlot_t)),
+      |                                        ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:154:40: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  154 |                         .Completions = mcalloc(32, sizeof(NVMeSubmissionQueueSlot_t)),
+      |                                        ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h: In function 'NVMePollNamespace':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:169:50: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  169 |         NVMeIdentifyNamespaceData_t *Namespace = mmalloc(sizeof(NVMeIdentifyNamespaceData_t));
+      |                                                  ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h: In function 'NVMeAllocateIOSubmissionQueues':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:233:34: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  233 |                 hnd->Submissions = mrealloc(hnd->Submissions, sizeof(void *) * (hnd->NSubmissions + 32));
+      |                                  ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:234:33: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  234 |                 hnd->NPerSQueue = mrealloc(hnd->NPerSQueue, sizeof(uint32_t) * (hnd->NSubmissions + 32));
+      |                                 ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:235:26: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  235 |                 hnd->_SQ = mrealloc(hnd->_SQ, sizeof(uint16_t) * (hnd->NSubmissions + 32));
+      |                          ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h: In function 'NVMeAllocateIOCompletionQueue':
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:272:34: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  272 |                 hnd->Completions = mrealloc(hnd->Completions, sizeof(void *) * (hnd->NCompletions + 32));
+      |                                  ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:273:33: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  273 |                 hnd->NPerCQueue = mrealloc(hnd->NPerCQueue, sizeof(uint32_t) * (hnd->NCompletions + 32));
+      |                                 ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/NVMe.h:274:26: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  274 |                 hnd->_CQ = mrealloc(hnd->_CQ, sizeof(uint16_t) * (hnd->NCompletions + 32));
+      |                          ^
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c: In function 'GetMassStorageLogicalBlockSize':
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:69:19: warning: comparison between pointer and integer
+   69 |         if(Handle == UINT64_MAX || Handle == 0x1){return ATAPISectorSize((*(ATAPIQueue *)Handle));}
+      |                   ^~
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:69:43: warning: comparison between pointer and integer
+   69 |         if(Handle == UINT64_MAX || Handle == 0x1){return ATAPISectorSize((*(ATAPIQueue *)Handle));}
+      |                                           ^~
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c: In function 'MassStorageRead':
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:154:22: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  154 |         void *Temp = mcalloc(1, __roundup(Bytes, LBS));
+      |                      ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c: In function 'MassStorageWrite':
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:163:22: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  163 |         void *Temp = mcalloc(1, __roundup(Bytes, LBS));
+      |                      ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c: In function 'OpenRawHandle':
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:172:21: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  172 |         rawenv re = mcalloc(1, sizeof(renv_t));
+      |                     ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c: In function 'ReadRawHandleBlocks':
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:196:21: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  196 |         void *Out = mcalloc(re->CalcBlocks, __roundup(re->RealBlockSize * BLOCKS, re->RealBlockSize));
+      |                     ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c: In function 'WriteRawHandleBlocks':
+C:/GitHub/BlockyOS/src/kernel/services/IO/IO.c:206:20: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  206 |         void *In = mcalloc(re->CalcBlocks, __roundup(re->RealBlockSize * BLOCKS, re->RealBlockSize));
+      |                    ^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_ATAPI.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:13:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h: At top level:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h:17:20: warning: inline function 'SleepS' declared but never defined
+   17 | LibAPI inline void SleepS(uint32_t seconds);
+      |                    ^~~~~~
+Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\services\IO\IO.c
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\services\hostfs\controllers\frat\frat.c. source=2026-10-12T10:28:11.9114173Z, stored=none, delta=n/a sec
+gcc -c C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.frat.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -fno-unwind-tables -fno-asynchronous-unwind-tables -mcmodel=small -fno-stack-protector -nostdinc -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -I C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:4,
+                 from C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:1:
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
+   42 | #define NaNf    (__builtin_nanf(""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
+   25 | #define NaNf            (__builtin_nanf (""))
+      |         ^~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
+   50 | #define SNaNf    (__builtin_nansf(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
+   26 | #define SNaNf           (__builtin_nansf (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
+   51 | #define SNaNd    (__builtin_nans(""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
+   27 | #define SNaNd           (__builtin_nans (""))
+      |         ^~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
+   52 | #define SNaNld   (__builtin_nansl(""))
+      |         ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
+   28 | #define SNaNld          (__builtin_nansl (""))
+      |         ^~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:6:
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
+      | ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
+      | ^~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
+   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
+      | ^~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:5,
+                 from C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:11:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISRCallback.h:264:33: warning: backslash-newline at end of file
+  264 | #define IDTCallbackInit(IDT)    \
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:34:1: warning: 'naked' attribute only applies to functions [-Wattributes]
+   34 | typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
+      | ^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:14:
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:121:1: warning: 'packed' attribute ignored [-Wattributes]
+  121 | typedef uint128_t NVMeAdminCommandStruct(DirectiveRecieve, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:132:1: warning: 'packed' attribute ignored [-Wattributes]
+  132 | typedef uint128_t NVMeAdminCommandStruct(DirectiveSend, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:143:1: warning: 'packed' attribute ignored [-Wattributes]
+  143 | typedef uint128_t NVMeAdminCommandStruct(GetFeatures, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:200:1: warning: 'packed' attribute ignored [-Wattributes]
+  200 | typedef uint128_t NVMeAdminCommandStruct(GetLogPage, PTR);
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_NVMe.h:292:1: warning: 'packed' attribute ignored [-Wattributes]
+  292 | typedef uint32_t NVMeLogStruct(ChangedNamespaceList); // 4096 bytes
+      | ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function 'getfcode':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:16:116: warning: left shift count >= width of type [-Wshift-count-overflow]
+   16 | #define FCODEHASHMASK                                                                   (UINT64_MAX & ~(UINT16_MAX << 48))
+      |                                                                                                                    ^~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:13:20: note: in expansion of macro 'FCODEHASHMASK'
+   13 |         hash[1] &= FCODEHASHMASK;
+      |                    ^~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function 'formatpart':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:96:23: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   96 |         void *block = mcalloc(confLogSectors, confBlockSize);
+      |                       ^~~~~~~
+In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/mutex.h:3,
+                 from C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:3,
+                 from C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:3:
+C:/GitHub/BlockyOS/src/kernel/libcrt/math/int.h:49:41: warning: conversion from 'long long unsigned int' to 'unsigned int' changes value from '18446744073709551615' to '4294967295' [-Woverflow]
+   49 | #define UINT64_MAX                      (0xFFFFFFFFFFFFFFFFU)
+      |                                         ^
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:105:52: note: in expansion of macro 'UINT64_MAX'
+  105 |                         .MinimumExtensionSupport = UINT64_MAX, .TotalExtensions = UINT64_MIN
+      |                                                    ^~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:118:15: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  118 |         block = mcalloc(CLUSTERMAPSECTORS_CALC(part.base, part.high, confLogSectors, confBlockSize), confBlockSize);
+      |               ^
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function 'fmount':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:190:42: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  190 |                 conf_fsroot *largeroot = mcalloc(1, sizeof(conf_fsroot));
+      |                                          ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__ffremoveh':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:16:116: warning: left shift count >= width of type [-Wshift-count-overflow]
+   16 | #define FCODEHASHMASK                                                                   (UINT64_MAX & ~(UINT16_MAX << 48))
+      |                                                                                                                    ^~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:228:20: note: in expansion of macro 'FCODEHASHMASK'
+  228 |         hash[1] &= FCODEHASHMASK;
+      |                    ^~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__ffremovelh':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:16:116: warning: left shift count >= width of type [-Wshift-count-overflow]
+   16 | #define FCODEHASHMASK                                                                   (UINT64_MAX & ~(UINT16_MAX << 48))
+      |                                                                                                                    ^~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:237:20: note: in expansion of macro 'FCODEHASHMASK'
+  237 |         hash[1] &= FCODEHASHMASK;
+      |                    ^~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__fcreate':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:16:116: warning: left shift count >= width of type [-Wshift-count-overflow]
+   16 | #define FCODEHASHMASK                                                                   (UINT64_MAX & ~(UINT16_MAX << 48))
+      |                                                                                                                    ^~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:262:43: note: in expansion of macro 'FCODEHASHMASK'
+  262 |                 fb->fcodehigh = temp[1] & FCODEHASHMASK;
+      |                                           ^~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:269:31: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  269 |                 char *_path = mcalloc(1, strlen(path) + 2);
+      |                               ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__faddr':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:290:29: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  290 |                 void *bl0 = mcalloc(1, root->root->confBlockSize);
+      |                             ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__finit':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:307:49: warning: multi-character character constant [-Wmultichar]
+  307 |                 if(i > GPTNameLength){path[i] = '\0x00';}else{
+      |                                                 ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:307:49: warning: unsigned conversion from 'int' to 'char' changes value from '7876656' to '48' [-Woverflow]
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__ffindhi':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:16:116: warning: left shift count >= width of type [-Wshift-count-overflow]
+   16 | #define FCODEHASHMASK                                                                   (UINT64_MAX & ~(UINT16_MAX << 48))
+      |                                                                                                                    ^~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:338:20: note: in expansion of macro 'FCODEHASHMASK'
+  338 |         hash[1] &= FCODEHASHMASK;
+      |                    ^~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__ffindh':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:16:116: warning: left shift count >= width of type [-Wshift-count-overflow]
+   16 | #define FCODEHASHMASK                                                                   (UINT64_MAX & ~(UINT16_MAX << 48))
+      |                                                                                                                    ^~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:351:20: note: in expansion of macro 'FCODEHASHMASK'
+  351 |         hash[1] &= FCODEHASHMASK;
+      |                    ^~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function 'floadhdir':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:405:26: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  405 |         dirhandle *out = mcalloc(1, sizeof(dirhandle));
+      |                          ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:412:45: warning: multi-character character constant [-Wmultichar]
+  412 |         if(!out->file && strcheck(args, 'fc')){
+      |                                             ^
+In file included from C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.h:5:
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/string.h:14:43: warning: unsigned conversion from 'int' to 'uint8_t' {aka 'unsigned char'} changes value from '26211' to '99' [-Woverflow]
+   14 | #define strcheck(str, c) memcheckb((str), (c), strlen(str))
+      |                                           ^~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:412:26: note: in expansion of macro 'strcheck'
+  412 |         if(!out->file && strcheck(args, 'fc')){
+      |                          ^~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__fdirrefresh':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:452:42: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  452 |                         handle->dirarray = mrealloc(handle->dirarray, re->CalcBlocks * (blockprogress + 1));
+      |                                          ^
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function 'floadh':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:474:24: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  474 |         fhandle *out = mcalloc(1, sizeof(fhandle));
+      |                        ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '_fwrite':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:577:37: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  577 |                                 blk = mcalloc(1, blkSize);
+      |                                     ^
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:583:80: warning: passing argument 5 of '__fpush1' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  583 |                 }else{__fpush1(re, handle->root, handle->file, &blkIndex, data + written);}
+      |                                                                           ~~~~~^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:377:77: note: expected 'void *' but argument is of type 'const void *'
+  377 | void __fpush1(rawenv re, conf_fsroot *root, fsblock *fb, uint64_t *i, void *buffer){
+      |                                                                       ~~~~~~^~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '_fread':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:601:17: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  601 |     void *out = mcalloc(1, nbytes);
+      |                 ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__fgetparent':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:627:97: warning: multi-character character constant [-Wmultichar]
+  627 |         for(; cc > 0x00; --cc){if(dup[cc] == FRATPATHSEP || dup[cc] == FRATPATHnoSEP){dup[cc] = '\0x00';        break;}}
+      |                                                                                                 ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:627:97: warning: unsigned conversion from 'int' to 'char' changes value from '7876656' to '48' [-Woverflow]
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__ftest':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:658:24: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  658 |         void *_block = mcalloc(1, h->root->root->confBlockSize);
+      |                        ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__fdirlist':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:688:30: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  688 |                         temp = mrealloc(temp, strlen(temp) + strlen(finfo->name) + 2);
+      |                              ^
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:692:41: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  692 |                         unhandle *out = mcalloc(1, sizeof(unhandle));
+      |                                         ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__dirr_init':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:710:25: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  710 |         dirrunner *dr = mcalloc(1, sizeof(dirrunner));
+      |                         ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:716:23: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  716 |         dr->dir_stack = mcalloc(dr->stack_size, sizeof(dirhandle*));
+      |                       ^
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:717:23: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  717 |         dr->idx_stack = mcalloc(dr->stack_size, sizeof(uint64_t));
+      |                       ^
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c: In function '__dirr_push':
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:739:31: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  739 |                 dr->dir_stack = mrealloc(dr->dir_stack, (dr->stack_size ? dr->stack_size * 2 : 8) * sizeof(dirhandle*));
+      |                               ^
+C:/GitHub/BlockyOS/src/kernel/services/hostfs/controllers/frat/frat.c:740:31: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  740 |                 dr->idx_stack = mrealloc(dr->idx_stack, (dr->stack_size ? dr->stack_size * 2 : 8) * sizeof(uint64_t));
+      |                               ^
+In file included from C:/GitHub/BlockyOS/src/kernel/services/IO/controllers/_ATAPI.h:6,
+                 from C:/GitHub/BlockyOS/src/kernel/services/IO/service.h:13:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h: At top level:
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h:17:20: warning: inline function 'SleepS' declared but never defined
+   17 | LibAPI inline void SleepS(uint32_t seconds);
+      |                    ^~~~~~
+Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\services\hostfs\controllers\frat\frat.c
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll. source=2026-10-12T23:22:16.6443323Z, stored=none, delta=n/a sec
 Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll
-Skipping C:\GitHub\BlockyOS\src\kernel\services\IO\IO.def - up to date; source=2026-10-08T16:55:10.1695868Z, stored=10/08/2026 16:55:10
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\services\IO\IO.def. source=2026-10-08T16:55:10.1695868Z, stored=none, delta=n/a sec
+Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\services\IO\IO.def
 gcc compile/cache/elf.c.IO.o compile/cache/elf.c.frat.o Build/Build-nodate/root-part/LibCrt.dll src/kernel/services/IO/IO.def -Wl,-nostdlib -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,--image-base,0x0 -Wl,-shared -Wl,-flinker-output=dyn -Wl,-Bsymbolic -Wl,--out-implib,C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll.a -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\IO\IO.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll
 Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll
 C:\GitHub\BlockyOS\Build\Build-nodate\IO\IO.dmp.log
@@ -19,7 +446,7 @@ C:\GitHub\BlockyOS\Build\Build-nodate\IO\IO.dmp.log
 [SHELL OUT]:	
 [SHELL OUT]:	>> 
 [SHELL OUT]:	>> 
-[SHELL OUT]:	0000024d7e12605b:fc	0000024d7e126061:SYSD/	0000024d7e12606a:LibIO.dll	
+[SHELL OUT]:	000001f73a5a607b:fc	000001f73a5a6081:SYSD/	000001f73a5a608a:LibIO.dll	
 [SHELL OUT]:	[	SYSD/LibIO.dll]
 [SHELL OUT]:	[0]: ""
 [SHELL]	FSFRAT.OPEN

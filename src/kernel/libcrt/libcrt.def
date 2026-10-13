@@ -215,6 +215,7 @@ EXPORTS
 	SendIPI
 	e9print
 	e9printc
+	DebugPrintf
 	isrCallback0
 	isrCallback1
 	isrCallback2

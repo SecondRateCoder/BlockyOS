@@ -127,5 +127,5 @@ if(Test-Path $UEFIBINARYBLOB){
 	Copy-Item -Path $UEFIBINARYBLOB -Destination $EMUUEFIBINARYBLOB
 }
 
-(Copy-Item (Join-Path (Get-Location) 'src/Boot/UEFI/startup.sh') (Join-Path $EMUOUT 'startup.nsh'))
-(& objdump '-x' $UEFIBINARYBLOB) >> (Join-Path $BUILDDIR 'headerxdump.log')
+# (Copy-Item (Join-Path (Get-Location) 'src/Boot/UEFI/startup.sh') (Join-Path $EMUOUT 'startup.nsh'))
+# (& objdump '-x' $UEFIBINARYBLOB) >> (Join-Path $BUILDDIR 'headerxdump.log')

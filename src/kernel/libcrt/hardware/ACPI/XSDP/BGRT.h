@@ -24,7 +24,7 @@ typedef struct{
 	uint64_t				ImageAddress;
 	uint32_t				ImageXOffset;
 	uint32_t				ImageYOffset;
-}XSDT_BGRT_t;
+}__packed XSDT_BGRT_t;
 
 typedef struct{
 	//	Must be 0x4D42 ('BM' in little-endian)

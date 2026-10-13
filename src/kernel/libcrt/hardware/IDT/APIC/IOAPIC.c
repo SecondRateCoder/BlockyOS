@@ -56,7 +56,7 @@ uint32_t ReadIoApicRegister(void *acpibase, uint32_t N, uint32_t reg){
 	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
 		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(XSDT_MADT_t);
-		for(register uint32_t cc = 0; RemBytes != 0; ++cc){
+		for(uint32_t cc = 0; RemBytes != 0; ++cc){
 			if(Table->Table[cc].Type == XSDT_IOAPIC){
 				XSDT_IOAPIC_t *Local = (XSDT_IOAPIC_t *)(Table->Table + cc);
 				if(N){N--;			break;}
@@ -68,7 +68,7 @@ uint32_t ReadIoApicRegister(void *acpibase, uint32_t N, uint32_t reg){
 	}else{
 		RSDT_MADT_t *Table = (RSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(RSDT_MADT_t);
-		for(register uint32_t cc = 0; RemBytes != 0; ++cc){
+		for(uint32_t cc = 0; RemBytes != 0; ++cc){
 			if(Table->Table[cc].Type == RSDT_ProcessorLocalAPIC){
 				RSDT_IOAPIC_t *Local = (RSDT_IOAPIC_t *)(Table->Table + cc);
 				if(N){N--;			break;}
@@ -91,7 +91,7 @@ void WriteIoApicRegister(void *acpibase, uint32_t N, uint32_t reg, uint32_t valu
 	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
 		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(XSDT_MADT_t);
-		for(register uint32_t cc = 0; RemBytes != 0; ++cc){
+		for(uint32_t cc = 0; RemBytes != 0; ++cc){
 			if(Table->Table[cc].Type == XSDT_IOAPIC){
 				XSDT_IOAPIC_t *Local = (XSDT_IOAPIC_t *)(Table->Table + cc);
 				if(N){N--;			break;}
@@ -103,7 +103,7 @@ void WriteIoApicRegister(void *acpibase, uint32_t N, uint32_t reg, uint32_t valu
 	}else{
 		RSDT_MADT_t *Table = (RSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(RSDT_MADT_t);
-		for(register uint32_t cc = 0; RemBytes != 0; ++cc){
+		for(uint32_t cc = 0; RemBytes != 0; ++cc){
 			if(Table->Table[cc].Type == RSDT_ProcessorLocalAPIC){
 				RSDT_IOAPIC_t *Local = (RSDT_IOAPIC_t *)(Table->Table + cc);
 				if(N){N--;			break;}

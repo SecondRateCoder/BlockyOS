@@ -9,6 +9,7 @@ void *__noinline VMAIState(bool w, void *ptr){
 
 bool InitaliseVMA(void *videomemory, void *acpibase, uint32_t PixelSize, uint32_t PixelWidth, uint32_t PixelHeight){
     if(!*((RawVideoMemoryAllocator *)VMAIState(false, NULL))->videomemory){return false;}
+	memset(videomemory, 0, PixelWidth * PixelHeight * PixelSize);
     VMAIState(true, InitialiseVideoMemoryAllocator(videomemory, acpibase, PixelSize, PixelWidth, PixelHeight));
     return *((RawVideoMemoryAllocator *)VMAIState(false, NULL))->videomemory;
 }
@@ -20,7 +21,7 @@ FontGlyph **gcontext = NULL;
 uint32_t ngcontext = 0;
 void SelectVideoContext(void *vm, void **Glyph, uint32_t NGlyphs){
 	RawVideoMemoryAllocator *RVMA = VMAIState(false, NULL);
-	for(register uint32_t cc = 0; cc < RVMA->TotalAllocations; ++cc){
+	for(uint32_t cc = 0; cc < RVMA->TotalAllocations; ++cc){
 		if((RVMA->MemoryTags[cc].Base == vm) || (RVMA->MemoryTags[cc].BackBuffer == vm)){
 			vmcontextW = RVMA->MemoryTags[cc].PixelWidth;	vmcontextH = RVMA->MemoryTags[cc].PixelHeight;
 			vmcontextPS = RVMA->PixelSize;

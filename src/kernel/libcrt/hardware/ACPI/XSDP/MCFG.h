@@ -13,10 +13,10 @@ typedef struct{
 	uint8_t		StartingBus, 
 				EndingBus;
 	uint32_t	Reserved0;
-}XSDT_MCFGConfigurationEntry_t;
+}__packed XSDT_MCFGConfigurationEntry_t;
 typedef struct{
 	SDTHeader_t	Header;
 	uint64_t	Reserved0;
 	//	(Header.Length - (8 + sizeof(SDTHeader_t)) / sizeof(RSDT_MCFGConfigurationEntry_t))
 	XSDT_MCFGConfigurationEntry_t	Table[];
-}XSDT_MCFG_t;
+}__packed XSDT_MCFG_t;

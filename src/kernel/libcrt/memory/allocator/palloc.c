@@ -10,7 +10,7 @@ void *ReallocatePages(void *Phys, void *Base, PageAllocationFlags Flags, uint8_t
     //  Update the Page Table Flags.
     switch(lvl){
         case 0x03: {
-            for(register uint32_t cc = 0; cc < (size / PAGE_SIZE3); ++cc){
+            for(uint32_t cc = 0; cc < (size / PAGE_SIZE3); ++cc){
                 ((PDPTEntry1GB *)pgt)[cc] = (PDPTEntry1GB){
                     .Present = true, .ProtectionKey = ProtectionKey, 
                     .PhysicalAddress = (uint64_t)NPhys + (cc * PAGE_SIZE3), 
@@ -23,7 +23,7 @@ void *ReallocatePages(void *Phys, void *Base, PageAllocationFlags Flags, uint8_t
             }
             break;
         } case 0x02: {
-            for(register uint32_t cc = 0; cc < (size / PAGE_SIZE2); ++cc){
+            for(uint32_t cc = 0; cc < (size / PAGE_SIZE2); ++cc){
                 ((PageDirectoryEntry2MB *)pgt)[cc] = (PageDirectoryEntry2MB){
                     .Present = true, .ProtectionKey = ProtectionKey, 
                     .PhysicalAddress = (uint64_t)NPhys + (cc * PAGE_SIZE3), 
@@ -36,7 +36,7 @@ void *ReallocatePages(void *Phys, void *Base, PageAllocationFlags Flags, uint8_t
             }
             break;
         } case 0x01: {
-            for(register uint32_t cc = 0; cc < (size / PAGE_SIZE); ++cc){
+            for(uint32_t cc = 0; cc < (size / PAGE_SIZE); ++cc){
                 ((PageTableEntry4KB *)pgt)[cc] = (PageTableEntry4KB){
                     .Present = true, .ProtectionKey = ProtectionKey, 
                     .PhysicalAddress = (uint64_t)NPhys + (cc * PAGE_SIZE3), 

@@ -32,7 +32,7 @@ static bool ResolveExport(LoadedPeExecutable *Import, bool OrdinalImport, UINT64
 		exportIndex = (UINT32)(Ordinal - exports->mOrdinalBase);
 		if(exportIndex >= exports->mNTableEntries){return false;}
 	}else{
-		for(register UINT32 i = 0; i < exports->mNNamePointers; ++i){
+		for(UINT32 i = 0; i < exports->mNNamePointers; ++i){
 			UINT16 index = Import->This->Fmt.exp.Ordinals[i];
 			if(index >= exports->mNTableEntries){continue;}
 			char *exportName = GetAtRVAFromSectionDataPe(
@@ -74,7 +74,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 		else{Root->Dependencies = __calloc(2, sizeof(LoadedPeExecutable *));}
 	}
 	char *fname = NULL;		{
-		for(register UINT32 cc = __strlen(file); cc > 0; --cc){if((file[cc] == '\\') || (file[cc] == '/')){fname = (file + cc + 1);	break;}}
+		for(UINT32 cc = __strlen(file); cc > 0; --cc){if((file[cc] == '\\') || (file[cc] == '/')){fname = (file + cc + 1);	break;}}
 		if(!fname){fname = file;}
 	}
 	Root->NDependencies++;
@@ -84,7 +84,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 		.EntryPoint = ImageBase + (Exe->Fmt.Opt.Pe32->mMagic == Pe32? Exe->Fmt.Opt.Pe32->mAddressOfEntryPoint: Exe->Fmt.Opt.Pe32Plus->mAddressOfEntryPoint)
 	};
 	//	Load all relevant Code/Data Sections.
-	for(register UINT32 cc = 0; cc < Exe->Fmt.Header->mNumberOfSections; ++cc){
+	for(UINT32 cc = 0; cc < Exe->Fmt.Header->mNumberOfSections; ++cc){
 		BOOLEAN SectionLoaded = false;
 		if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeCodeSection, 8) || 
 			!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeDefDataSection, 8) || 
@@ -97,11 +97,11 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 				SectionLoaded = true;
 				__memcpy(ImageBase + Offset, Temp, __roundup(Exe->Fmt.SectionTable[cc].mVirtualSize, EFI_PAGE_SIZE));
 				uefi_call_wrapper(gBS->FreePages, 0, Temp, __roundup(Exe->Fmt.SectionTable[cc].mVirtualSize, EFI_PAGE_SIZE) / EFI_PAGE_SIZE);
-				DEBUGPRINT(L"\nLoaded Section %a at Offset %p", Exe->Fmt.SectionTable[cc].mName, (UINT64)(Offset + ImageBase));
+				if(Info){DEBUGPRINT(L"\nLoaded Section %a at Offset %p", Exe->Fmt.SectionTable[cc].mName, (UINT64)(Offset + ImageBase));}
 			}
 		}else if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeImportSection, 8)){
 			//	Import Symbols.
-			for(register UINT32 ImportEntry = 0; ImportEntry < Exe->Fmt.imp.nImports; ++ImportEntry){
+			for(UINT32 ImportEntry = 0; ImportEntry < Exe->Fmt.imp.nImports; ++ImportEntry){
 				const UINT64 IATOffset = Exe->Fmt.imp.imports[ImportEntry].ImportAddressTableRVA;
 				UINT32 *IAT32 = ImageBase + IATOffset;
 				UINT64 *IAT64 = ImageBase + IATOffset;
@@ -112,7 +112,6 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 				LoadedPeExecutable *Import = NULL;
 				if(!(Import = SearchBinary(Root, LibName))){
 					//	Load the Dependency, Generate the Path.
-					UINT16 tmplen = __strlen(file);
 					char *tmp = __strdup(file);
 					if(tmp){
 						UINT64 tmplen = (UINT64)__strlen(tmp);
@@ -129,20 +128,21 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 						__free(tmp);
 					}
 				}
-				// if(Import){DEBUGPRINT(L"\nLoaded Import Library %a at %llu(%p)", LibName, Import->Base, Import->Base);}
-				else{socketfcall(this, close, 0);		return NULL;}
+				if(!Import){
+					DEBUGPRINT(L"\nFailed to open Import Library");
+					socketfcall(this, close, 0);		return NULL;
+				}
 
 				SectionLoaded = true;
 				//	Process Export Data.
 				DEBUGPRINT(L"\nProcessing Import %llu", (UINT64)ImportEntry);
-				if((Exe->Fmt.Opt.Pe32->mMagic == Pe32 && !Exe->Fmt.imp.perImport.lookups.ImportLookups32[ImportEntry]) ||
-					(Exe->Fmt.Opt.Pe32->mMagic != Pe32 && !Exe->Fmt.imp.perImport.lookups.ImportLookups64[ImportEntry])){
+				if((Exe->Fmt.Opt.Pe32->mMagic == Pe32 || Exe->Fmt.Opt.Pe32->mMagic == Pe32Plus) && !Exe->Fmt.imp.perImport.lookups.ImportLookups32[ImportEntry]){
 					DEBUGPRINT(L"\nMissing import lookup table for %a", LibName);
 					socketfcall(this, close, 0);
 					return NULL;
 				}
 				UINT32 PrintLimit = 64;
-				for(register UINT32 ImportCounter = 0; ImportCounter < Exe->Fmt.imp.nEntries[ImportEntry]; ++ImportCounter){
+				for(UINT32 ImportCounter = 0; ImportCounter < Exe->Fmt.imp.nEntries[ImportEntry]; ++ImportCounter){
 					bool OrdinalImport = Exe->Fmt.Opt.Pe32->mMagic == Pe32? 
 						Exe->Fmt.imp.perImport.lookups.ImportLookups32[ImportEntry][ImportCounter].Bits.ImportByOrdinal: 
 						Exe->Fmt.imp.perImport.lookups.ImportLookups64[ImportEntry][ImportCounter].Bits.ImportByOrdinal;
@@ -156,19 +156,20 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 					}
 					UINT64 Address = 0;
 					if(!ResolveExport(Import, OrdinalImport, ImportSym, (char *)ImportSym, &Address)){
+						socketfcall(this, close, 0);
 						if(OrdinalImport){DEBUGPRINT(L"\nUnresolved import in %a: ordinal %llu", LibName, ImportSym);}
 						else{DEBUGPRINT(L"\nUnresolved import in %a: %a", LibName, (ImportSym? (char *)ImportSym: "invalid name RVA"));}
-						socketfcall(this, close, 0);
 						return NULL;
+					}else{
+						if(Info){
+							if(PrintLimit > 1){
+								if(OrdinalImport){DEBUGPRINT(L"\nLoaded Import #%llu\t%p", ImportSym, (UINT64)Address);}
+											else{DEBUGPRINT(L"\nLoaded Import \"%a\"\t%p", ImportSym, (UINT64)Address);}
+								PrintLimit--;
+							}else if(PrintLimit){DEBUGPRINT(L"\nOmitting Additional Imports...");	PrintLimit = 0;}
+						}
+						if(Exe->Fmt.Opt.Pe32->mMagic == Pe32){IAT32[ImportCounter] = (UINT32)Address;}else{IAT64[ImportCounter] = Address;}
 					}
-					if(Info){
-						if(PrintLimit > 1){
-							if(OrdinalImport){DEBUGPRINT(L"\nLoaded Import #%llu\t%p", ImportSym, (UINT64)Address);}
-										else{DEBUGPRINT(L"\nLoaded Import \"%a\"\t%p", ImportSym, (UINT64)Address);}
-							PrintLimit--;
-						}else if(PrintLimit){DEBUGPRINT(L"\nOmitting Additional Imports...");	PrintLimit = 0;}
-					}
-					if(Exe->Fmt.Opt.Pe32->mMagic == Pe32){IAT32[ImportCounter] = (UINT32)Address;}else{IAT64[ImportCounter] = Address;}
 				}
 			}
 		}
@@ -191,7 +192,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 	EFI_GUID MemAttrGUID = {0xf4560cf6, 0x40ec, 0x4b4a, 0xa1, 0x92, 0xbf, 0x1d, 0x57, 0xd0, 0xb1, 0x89};
 	EFI_STATUS Status = uefi_call_wrapper(gBS->LocateProtocol, 0, &MemAttrGUID, NULL, (VOID **)&MemAttrProtocol);
 	if(!EFI_ERROR(Status)){
-		for(register UINT32 cc = 0; cc < Exe->Fmt.Header->mNumberOfSections; ++cc){
+		for(UINT32 cc = 0; cc < Exe->Fmt.Header->mNumberOfSections; ++cc){
 			UINT64 Attributes = 0;
 			if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeCodeSection, 8)){Attributes = EFI_MEMORY_RO;}
 			else if(!strncmpa(Exe->Fmt.SectionTable[cc].mName, PeRDefDataSection, 8)){Attributes = EFI_MEMORY_RO | EFI_MEMORY_XP;}

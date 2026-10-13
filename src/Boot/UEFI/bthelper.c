@@ -1,6 +1,32 @@
 #include "standard.h"
 #include "tools/tools.h"
 
+void SortMemoryDescriptors(void *D_, UINT64 StructSize, UINTN N){
+    if(!D_ || N < 2){return;}
+    //	Allocate a temporary buffer for swapping raw descriptor bytes
+    //	(EFI_MEMORY_DESCRIPTOR size can vary, typically 48 bytes)
+    UINT8 *Base = (UINT8 *)D_;
+
+    for(UINTN i = 1; i < N; ++i){
+        UINT8 *currentPtr = Base + (i * StructSize);
+        EFI_MEMORY_DESCRIPTOR *currentDesc = (EFI_MEMORY_DESCRIPTOR *)currentPtr;
+        UINT64 currentStart = currentDesc->PhysicalStart;
+
+        UINTN j = i;
+        while(j > 0){
+            UINT8 *prevPtr = Base + ((j - 1) * StructSize);
+            EFI_MEMORY_DESCRIPTOR *prevDesc = (EFI_MEMORY_DESCRIPTOR *)prevPtr;
+            if(prevDesc->PhysicalStart > currentStart){
+                // Shift previous descriptor forward
+                __memcpy(Base + (j * StructSize), prevPtr, StructSize);
+                j--;
+            }else{break;}
+        }
+        //	Insert current descriptor into its sorted position
+        if(j != i){__memcpy(Base + (j * StructSize), currentPtr, StructSize);}
+    }
+}
+
 EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSize, UINT32 *descVersion){
     DEBUGPRINT(L"\nGetting the Memory Map");
     EFI_STATUS status;
@@ -19,31 +45,18 @@ EFI_MEMORY_DESCRIPTOR *GetMemoryMap(UINTN *mapSize, UINTN *mapKey, UINTN *descSi
         DEBUGPRINT(L"\n%a Error", EfiStatusToString(status));
         return NULL;
     }
+
+	UINTN numItems = *mapSize / *descSize;
+	DEBUGPRINT(L"\n=== UEFI Memory Map (%llu entries) ===", numItems);
+	DEBUGPRINT(L"\nMap Size: %llu, Descriptor Size: %llu,\tVersion: %u", *mapSize, *descSize, *descVersion);
+
     status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, map, mapKey, descSize, descVersion);
     if(EFI_ERROR(status)){
 		DEBUGPRINT(L"\n%a Error", EfiStatusToString(status));
         uefi_call_wrapper(gBS->FreePool, 1, map);
         return NULL;
     }
-	// status = uefi_call_wrapper(gRT->SetVirtualAddressMap, 0, *mapSize, *descSize, *descVersion, map);
-    // if(EFI_ERROR(status)){
-	// 	DEBUGPRINT(L"\n%a Error", EfiStatusToString(status));
-    //     uefi_call_wrapper(gBS->FreePool, 1, map);
-    //     return NULL;
-    // }
-
-    UINTN numItems = *mapSize / *descSize;
-    DEBUGPRINT(L"\n=== UEFI Memory Map (%llu entries) ===", numItems);
-    DEBUGPRINT(L"\nMap Size: %llu, Descriptor Size: %llu, Map Key: %llu,\tVersion: %u", *mapSize, *descSize, *mapKey, *descVersion);
-	CHAR16 tmp[512] = {0};	
-	for(UINT64 cc = 0; cc < numItems; ++cc){
-		EFI_MEMORY_DESCRIPTOR *D = (void *)map + (*descSize * cc);
-		UnicodeSPrint(tmp, 512, L"\n[%llu:\t{%s:%llu:%llu}]", (UINT64)cc, EfiMemoryTypeToStr(D->Type), (UINT64)D->PhysicalStart, (UINT64)D->NumberOfPages);
-		__e9print(tmp, StrLen(tmp));
-		__memset(tmp, 0, sizeof(tmp));
-	}
-
-    status = uefi_call_wrapper(gBS->GetMemoryMap, 0, mapSize, map, mapKey, descSize, descVersion);
+	SortMemoryDescriptors(map, *descSize, (*mapSize / *descSize));
     return map;
 }
 
@@ -85,7 +98,7 @@ EFI_GRAPHICS_OUTPUT_MODE_INFORMATION InitialiseVideoMemory(void **VideoMemory, U
 	if(EFI_ERROR(status)){Print(L"Unable to get native mode");}else{numModes = gop->Mode->MaxMode;}
 
 	//	Query all available Modes and set the Current Mode to that which is Largest and of the RGB Mode.
-	for(register UINT32 i = 0; i < numModes; i++){
+	for(UINT32 i = 0; i < numModes; i++){
 		status = uefi_call_wrapper(gop->QueryMode, 0, gop, i, &SizeOfInfo, &info);
 		if((info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) && 
 			((gop->Mode->Info->HorizontalResolution < info->HorizontalResolution) && (gop->Mode->Info->VerticalResolution < info->VerticalResolution))
@@ -138,11 +151,11 @@ __bootinfo *gatherbootinfo(EFI_HANDLE Image){
 		
 	St = uefi_call_wrapper(gBS->ExitBootServices, 2, Image, out->memory.MemoryDescriptorMapKey);
 	if(EFI_ERROR(St)){DEBUGPRINT(L"\nFailed to exit Boot Services.\t[%a:%llu]", EfiStatusToString(St), (UINT64)St);}
-
-	for(register UINTN cc = 0 ; cc < (out->memory.MemoryDescriptorBufferSize / out->memory.MemoryDescriptorStructSize); ++cc){
+	out->memory.TotalMemorySize = 0;
+	for(UINTN cc = 0; cc < (out->memory.MemoryDescriptorBufferSize / out->memory.MemoryDescriptorStructSize); ++cc){
 		EFI_MEMORY_DESCRIPTOR *emd = (void *)out->memory.MemoryDescriptors + (cc * out->memory.MemoryDescriptorStructSize);
-		if(emd->PhysicalStart > out->memory.TotalMemorySize){
-			out->memory.TotalMemorySize = emd->PhysicalStart + (emd->NumberOfPages * EFI_PAGE_SIZE);}
+		UINT64 block_end = emd->PhysicalStart + (emd->NumberOfPages * EFI_PAGE_SIZE);
+		if(block_end > out->memory.TotalMemorySize){out->memory.TotalMemorySize = block_end;}
 	}
 	return out;
 }

@@ -131,7 +131,7 @@ volatile ISRCallbackTable __align(64) InterruptCallbacks = {
 
 bool __noinline __used AllocateInterruptVector(uint8_t *Vector){
 	if(!Vector){return false;}
-	for(register uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
+	for(uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
 		if(InterruptCallbacks[cc] == GenericISR){
 			*Vector = cc;
 			return true;
@@ -143,7 +143,7 @@ bool __noinline __used AllocateInterruptVector(uint8_t *Vector){
 
 bool QueryVectorByCallback(uint8_t *Vector, ISRCallback *CB){
 	if(!Vector || !CB){return false;}
-	for(register uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
+	for(uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
 		if(InterruptCallbacks[cc] == *CB){
 			*Vector = cc;
 			return true;

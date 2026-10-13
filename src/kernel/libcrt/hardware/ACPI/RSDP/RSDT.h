@@ -12,7 +12,7 @@ typedef struct{
 		char		OEMID[6];
 		uint8_t		Revision;
 		uint32_t	RsdtAddress;
-	}Version0;
+	}__packed Version0;
 }__packed RSDP_t;
 
 typedef char RSDT_Signature[4];

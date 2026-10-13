@@ -47,13 +47,13 @@ void InitialiseGDT(){
 }
 
 void InitialiseIDT(void *ACPI){
-	for(register uint32_t cc = 0; cc < IDTLength; ++cc){
+	for(uint32_t cc = 0; cc < IDTLength; ++cc){
 		SetIDTe(InterruptTable, cc, 0x00, (IDTEntrySegmentSelector64){0}, 0, _64BitInterruptGate, true);}
 	IDTCallbackInit(InterruptTable);
 	// sizeof(IDTEntry64);
 	IDTR64 temp = {.Base = (uint64_t)InterruptTable, .Limit = sizeof(InterruptTable) - 1};
-	__bochs();
 	_LoadIDTR(&temp);
+	__bochs();
 	InitLocalAPIC(ACPI, 0x2F, false);
 }
 
@@ -61,15 +61,16 @@ ISRCallbackDefinition(GenericIO){ISRCallbackReturn;}
 rawenv re;
 void __sysvabi __main(__bootinfo *__restrict__ bootin){
 	//* Set Up Interrupt Descriptor Table (IDT) & GDT
-	__bochs();
+	// __bochs();
 	InitialiseGDT();
 
-	__bochs();
-	InitialiseAllocationState(bootin->memory.MemoryDescriptors, bootin->memory.MemoryDescriptorStructSize, 
-		bootin->memory.MemoryDescriptorBufferSize / bootin->memory.MemoryDescriptorStructSize, bootin->memory.TotalMemorySize);
+	// __bochs();
+	const uint64_t ss = (uint64_t)bootin->memory.MemoryDescriptorStructSize, 
+		n = (uint64_t)bootin->memory.MemoryDescriptorBufferSize / (uint64_t)bootin->memory.MemoryDescriptorStructSize;
+	InitialiseAllocationState(bootin->memory.MemoryDescriptors, ss, n, bootin->memory.TotalPhysicalMemorySize, bootin->memory.TotalNonPhysicalMemorySize);
 
 	void *ACPIBase = NULL;
-	for(register uint32_t cc = 0; cc < bootin->devices.CTableLength; ++cc){
+	for(uint32_t cc = 0; cc < bootin->devices.CTableLength; ++cc){
 		if(!memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_TABLE_GUID}, sizeof(EFI_GUID)) || 
 			!memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_20_TABLE_GUID}, sizeof(EFI_GUID))
 		){ACPIBase = bootin->devices.CTable[cc].VendorTable;			break;}

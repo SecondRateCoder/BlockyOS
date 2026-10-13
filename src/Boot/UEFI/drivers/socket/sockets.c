@@ -218,8 +218,8 @@ socket_ret socketfuncprefix __froot_sckclose(socket_t * socket, UINT64 nARGbytes
 	__free(root->clusterbuffer.clusterMap);
 	__free(root->logblocks.logBlock);
 	__free(root->root);
-	__free(root);
 	__free(socket);
+	__free(root);
 	return (socket_ret){
 		.data = NULL, .nData = 0,
 		.errout = __noerr
@@ -230,8 +230,8 @@ socket_ret socketfuncprefix __froot_sckOPENchild(socket_t * socket, UINT64 nARGb
 	// bochs_breakpoint();
 	if(nARGbytes >= (sizeof(char *) * 2)){
 		va_list args;	va_start(args, nARGbytes);
-		char *path = va_arg(args, char *);16;
-		char *loadargs = va_arg(args, char *);
+		char *path = va_arg(args, char *), 
+			*loadargs = va_arg(args, char *);
 		// DEBUGPRINT(L"\n\nPath: %p:%a\nLoad-Args: %p:%a", path, path, loadargs, loadargs);
 		fsblock *tmp = __ffind((conf_fsroot *)socket->persistent, path);
 		if(tmp){
@@ -335,7 +335,7 @@ socket_ret socketfuncprefix __froot_sckinfo(struct socket_t *socket, UINT64 nArg
 			}
 		} case 7: {
 			// DEBUGPRINT(L"\nPrinting Cluster Table\n");
-			for(register UINT64 cc = 0; cc < root->clusterbuffer.nClusterItems; ++cc){
+			for(UINT64 cc = 0; cc < root->clusterbuffer.nClusterItems; ++cc){
 				if(root->clusterbuffer.clusterMap[cc].fcodehigh && root->clusterbuffer.clusterMap[cc].fcodelow){
 					if(cc){/*DEBUGPRINT(L", ");*/}
 					//	17326495997843702475:275180975602787

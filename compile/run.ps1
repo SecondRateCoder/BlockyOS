@@ -62,26 +62,26 @@ $args_qemu = @(
 	'-vga', 'std', 
 	'-cpu', 'qemu64,pmu=off', 
 	'-m', '4096',
-	'-d', 'int,cpu_reset', '-D', $debuggerlog, 
+	'-d', 'int,cpu_reset', 
 	'-no-reboot', '-no-shutdown', 
-	# '-accel', "$(if($IsLinux){'kvm'}elseif($IsMacOS){'hvf'}elseif($IsWindows){'whpx'}else{'tcg'})",
+	'-accel', "$(if($IsLinux){'kvm'}elseif($IsMacOS){'hvf'}elseif($IsWindows){'whpx'}else{'tcg'})",
 	'-machine', 'q35', '-smp', '2', 
 	'-net', 'none',
 	'-serial', 'stdio',
 	'-L', $firmwarefolder,
 	'-drive', "if=pflash,format=raw,readonly=on,file=$($ovmfcode)",
 	'-drive', "unit=0,file=$($Image),format=raw,if=none,id=maindrive", '-device', 'virtio-blk-pci,drive=maindrive',
-	# '-debugcon', "file:$($debuggerlog)", '-global', 'isa-debugcon.iobase=0x402',
-	# '-info', 'mem',
+	'-debugcon', "file:$($debuggerlog)", '-global', 'isa-debugcon.iobase=0xe9', 
+	# '-info', 'mem', 
 	'-usb', '-usbdevice', 'keyboard', '-usbdevice', 'mouse',
 	'-display', 'sdl', '-vga', 'cirrus'#, '-full-screen'
 )
 if($enablevars){$args_qemu += '-drive', "if=pflash,format=raw,file=$($ovmfvars)"}
 # if($imagetype -eq 'debug'){$args_qemu += '-s', '-S'}
 $BOCHSFILE = "
-cpu: model=corei7_ivy_bridge_3770k, ips=10000000, count=2, reset_on_triple_fault=1
+cpu: model=corei7_ivy_bridge_3770k, ips=50000000, count=2, reset_on_triple_fault=1
 boot: disk
-memory: guest=4096, host=1024
+megs: 4096
 config_interface: win32config
 display_library: sdl
 
@@ -94,12 +94,16 @@ e1000: enabled=1
 pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=e1000
 vga: extension=cirrus, update_freq=60, realtime=1
 mouse: enabled=1
+keyboard: type=mf, serial_delay=150, paste_delay=100000
 
 magic_break: enabled=1
 port_e9_hack: enabled=1, all_rings=1
 
 log: $($BOCHSLOG)
 iodebug: all_rings=1
+error: action=report
+info: action=ignore
+debug: action=ignore
 
 romimage: file=$($ovmfcode)
 vgaromimage: file=$(Join-Path $bochsbinariesfolder 'VGABIOS-lgpl-latest-cirrus.bin')

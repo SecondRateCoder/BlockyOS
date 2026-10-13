@@ -5,7 +5,7 @@ uint64_t *getfcode(char *path){
 	static uint64_t hash[2];
 	char *canonicalPath = strdup(path);
 	if(!canonicalPath){return NULL;}
-	for(register uint64_t i = 0; i < strlen(canonicalPath); ++i){if(canonicalPath[i] == '\\'){canonicalPath[i] = '/';}}
+	for(uint64_t i = 0; i < strlen(canonicalPath); ++i){if(canonicalPath[i] == '\\'){canonicalPath[i] = '/';}}
 	blake2b_state state;
 	blake2b_init(&state, sizeof(hash));
 	blake2b_update(&state, canonicalPath, strlen(canonicalPath));
@@ -54,13 +54,13 @@ bool checkdisk(rawenv re, GUID _GUID, GUID altGUID){
 partdim loadpart(rawenv re, GUID _GUID, GUID altGUID, GPTNameStr name){
 	char gptname[GPTNameLength + 1];	
 	memset(gptname, 0, GPTNameLength + 1);
-	for(register uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (name[cc] & 0xFF);}
+	for(uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (name[cc] & 0xFF);}
 	// DEBUGPRINT(L"\n[%s:%u]  >>  Loading Partition:    %a", (L"" __FILE__), __LINE__, gptname);
 	if(checkdisk(re, _GUID, altGUID)){
 		miniGPT *gpt = (miniGPT *)ReadRawHandleBlocks(re, GPTLBA, ReBlocks(re, sizeof(miniGPT)));
 		GPTentry *ge = (GPTentry *)ReadRawHandleBlocks(re, gpt->partEntryLoc, ReBlocks(re, gpt->nPartEntries * sizeof(GPTentry)));
 		
-		for(register uint32_t i = 0x00; i < gpt->nPartEntries; i++){
+		for(uint32_t i = 0x00; i < gpt->nPartEntries; i++){
 			if(!memcmp(name, ge[i].name, GPTNameSize)){
 				partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
 				mfree(gpt);
@@ -84,7 +84,7 @@ void formatpart(
 ){
 	// DEBUGDO{
 	// 	char gptname[GPTNameLength + 1];	ZeroMem(gptname, GPTNameLength + 1);
-	// 	for(register uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (name[cc] & 0xFF);}
+	// 	for(uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (name[cc] & 0xFF);}
 	// 	DEBUGPRINT(L"\n[%s:%u]  >>  Formatting Partition:    %a", (L"" __FILE__), __LINE__, gptname);
 	// }
 	partdim part = loadpart(re, _GUID, altGUID, name);
@@ -128,10 +128,10 @@ partdim queryparttablefs(miniGPT *gpt, rawenv re){
 	// DEBUGPRINT(L"\n[%s:%u]  >>  Querying Part Table", (L"" __FILE__), __LINE__);
 	// Query all Partitions for the FileSystem.
 	GPTentry *ge = (GPTentry *)ReadRawHandleBlocks(re, gpt->partEntryLoc, ReBlocks(re, gpt->nPartEntries * sizeof(GPTentry)));
-	for(register uint32_t i = 0x00; i < gpt->nPartEntries; i++){
+	for(uint32_t i = 0x00; i < gpt->nPartEntries; i++){
 		char gptname[GPTNameLength + 1];
 		memset(gptname, 0, GPTNameLength + 1);
-		for(register uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (ge[i].name[cc] & 0xFF);}
+		for(uint8_t cc = 0x00; cc < GPTNameLength; ++cc){gptname[cc] = (ge[i].name[cc] & 0xFF);}
 		// DEBUGPRINT(L"\n[%s:%u]  >>  GPT-Entry: %a{%llu:%llu -> %llu}", (L"" __FILE__), __LINE__, gptname, ge[i].sLBA, ge[i].eLBA, ge[i].eLBA - ge[i].sLBA);
 		if(queryfs(re, ge[i].sLBA)){
 			partdim out = {.base = ge[i].sLBA, .high = ge[i].eLBA};
@@ -209,7 +209,7 @@ conf_fsroot *fmount(rawenv re, GUID _GUID, GUID altGUID){
 }
 
 fsblock *allocatecluster(conf_fsroot *root){
-	for(register uint64_t i = root->lastClusterAlloc; i < root->clusterbuffer.nClusterItems; ++i){
+	for(uint64_t i = root->lastClusterAlloc; i < root->clusterbuffer.nClusterItems; ++i){
 		if(!(root->clusterbuffer.clusterMap[i].fcodelow) && !(root->clusterbuffer.clusterMap[i].fcodehigh)){
 			root->lastClusterAlloc = i;
 			return root->clusterbuffer.clusterMap + i;
@@ -235,7 +235,7 @@ void __ffremovel(conf_fsroot *root, char *path){return __ffremovelh(root, getfco
 
 void __ffremovelh(conf_fsroot *root, uint64_t hash[2]){
 	hash[1] &= FCODEHASHMASK;
-	for(register uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
+	for(uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
 		if(root->clusterbuffer.clusterMap[cc].fcodelow == hash[0] && 
 			root->clusterbuffer.clusterMap[cc].fcodehigh == hash[1]){
 				root->clusterbuffer.clusterMap[cc].fcodehigh = 0x00;
@@ -278,7 +278,7 @@ fsblock *__faddr(rawenv re, conf_fsroot *root, fsblock *family){
 	fsblock *fb = allocatecluster(root);
 	if(fb){
 		fb->index = 0x00;
-		for(register uint64_t i = 0x00; i < root->clusterbuffer.nClusterItems; ++i){
+		for(uint64_t i = 0x00; i < root->clusterbuffer.nClusterItems; ++i){
 			if(root->clusterbuffer.clusterMap[i].fcodelow == family->fcodelow && 
 				root->clusterbuffer.clusterMap[i].fcodehigh == family->fcodehigh){fb->index++;}
 		}
@@ -303,7 +303,7 @@ void __finit(rawenv re, conf_fsroot *root, fsblock *fb, char *path){
 	LBA loc = getloc(root, fb);
 	meta_fsblock *metadata = (meta_fsblock *)mcalloc(1, root->root->confBlockSize);
 	char *name = NULL;
-	for(register uint64_t i = strlen(path); i > 0; i--){
+	for(uint64_t i = strlen(path); i > 0; i--){
 		if(i > GPTNameLength){path[i] = '\0x00';}else{
 			if(path[i] == '\\' || path[i] == '/'){name = path + i++;	break;}else 
 			if(!isascii(path[i])){path[i] = 0x00;}
@@ -336,7 +336,7 @@ void __finit(rawenv re, conf_fsroot *root, fsblock *fb, char *path){
 
 fsblock *__ffindhi(conf_fsroot *root, uint64_t hash[2], uint64_t index){
 	hash[1] &= FCODEHASHMASK;
-	for(register uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
+	for(uint64_t cc = 0x00; cc < root->clusterbuffer.nClusterItems; ++cc){
 		if(root->clusterbuffer.clusterMap[cc].fcodelow == hash[0] && 
 			root->clusterbuffer.clusterMap[cc].fcodehigh == hash[1] && 
 			root->clusterbuffer.clusterMap[cc].index == index){
@@ -453,7 +453,7 @@ void __fdirrefresh(rawenv re, dirhandle *handle){
 			void *temp = ReadRawHandleBlocks(re, getloc(handle->root, fb), ReBlocks(re, handle->root->root->confBlockSize));
 			memcpy((void *)handle->dirarray + (re->CalcBlocks * blockprogress), temp, re->CalcBlocks);
 			mfree(temp);
-			for(register uint64_t cc = 0x00; cc < __safediv(re->CalcBlocks, sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = true;	break;}}
+			for(uint64_t cc = 0x00; cc < __safediv(re->CalcBlocks, sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = true;	break;}}
 			blockprogress++;
 		}else if(!fb){exit_ = true;}
 	}while(!exit_);
@@ -531,7 +531,7 @@ uint64_t __fsize(fhandle *fh){
 }
 uint64_t __dsize(dirhandle *dh){
 	uint64_t size = 0x00;
-	for(register uint64_t cc = 0x00; cc < __safediv((dh->loadedblocks * dh->root->root->confBlockSize), sizeof(diritem)); ++cc){
+	for(uint64_t cc = 0x00; cc < __safediv((dh->loadedblocks * dh->root->root->confBlockSize), sizeof(diritem)); ++cc){
 		size += (((dh->dirarray + cc)->local != 0x00) ? dh->root->root->confBlockSize: 0x00);
 	}
 	return size;
@@ -664,7 +664,7 @@ bool __ftest(rawenv re, fhandle *h){
 	_fread(re, h, h->root->root->confBlockSize, &__block);
 	if(__block){
 		// Print(L"\n");
-		for(register uint64_t cc = 0x00; cc < h->root->root->confBlockSize; ++cc){
+		for(uint64_t cc = 0x00; cc < h->root->root->confBlockSize; ++cc){
 			if(((uint8_t *)_block)[cc] != ((uint8_t *)__block)[cc]){
 				out = false;
 				// DEBUGPRINT(L"✖ %u:%u  ", ((uint8_t *)_block)[cc], ((uint8_t *)__block)[cc]);
@@ -757,7 +757,7 @@ static dirhandle *__dirr_pop(dirrunner *dr){
 
 void __dirr_free(rawenv re, dirrunner *dr){
 	if(!dr){return;}
-	for(register uint64_t cc = 0x00; cc < dr->stack_depth; ++cc){if(dr->dir_stack[cc]){if(cc > 0x00){fuloaddir(re, dr->dir_stack[cc]);}}}
+	for(uint64_t cc = 0x00; cc < dr->stack_depth; ++cc){if(dr->dir_stack[cc]){if(cc > 0x00){fuloaddir(re, dr->dir_stack[cc]);}}}
 	mfree(dr->dir_stack);
 	mfree(dr->idx_stack);
 	mfree(dr);

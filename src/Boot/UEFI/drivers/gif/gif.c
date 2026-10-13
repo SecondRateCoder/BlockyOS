@@ -182,7 +182,7 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
     
     while(*ptr != 0 && lzwSize < maxLzwBytes){
         UINT8 blockSize = *ptr++;
-        for(register UINT32 i = 0; i < blockSize && lzwSize < maxLzwBytes; i++){lzwStream[lzwSize++] = *ptr++;}
+        for(UINT32 i = 0; i < blockSize && lzwSize < maxLzwBytes; i++){lzwStream[lzwSize++] = *ptr++;}
     }
 
     //	Initialize LZW Decoder state
@@ -196,7 +196,7 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
     UINT8 pixelStack[4097];
     UINT32 stackPtr = 0;
 
-    for(register UINT32 i = 0; i < clearCode; i++){
+    for(UINT32 i = 0; i < clearCode; i++){
         prefix[i] = 0;
         suffix[i] = (UINT8)i;
     }
@@ -268,7 +268,7 @@ UINT32 *GetGIFFrame(gifDescriptionSpace_t *desc, UINT32 FrameIndex, UINT32 *_Wid
     // Map indices to 32-bit Frame Buffer according to target Pixel Format
     UINT32 *frameBuffer = (UINT32 *)__calloc(totalPixels, sizeof(UINT32));
     gifGlobalColor_t *palette = (frame->ld->LocalColorMapExists && frame->lcm) ? (gifGlobalColor_t *)frame->lcm : (gifGlobalColor_t *)desc->gcm;
-    for(register UINT32 i = 0; i < totalPixels; i++){
+    for(UINT32 i = 0; i < totalPixels; i++){
         UINT8 idx = indices[i];
         if(transparentIdx >= 0 && idx == (UINT8)transparentIdx){frameBuffer[i] = 0x00000000;}//	Transparent (Alpha = 0)
 		else if(palette){
@@ -290,7 +290,7 @@ static inline void PlotPixel_32bpp(void *fb, UINT32 PixelsPerScanLine, UINT32 x,
 	*((uint32_t*)((UINT8*)fb + (4 * PixelsPerScanLine * y) + (4 * x))) = tmp;
 }
 static inline void PlotPixels_32bpp(void *fb, UINT32 PixelsPerScanLine, UINT32 x, UINT32 y, const UINT32 *pixels, UINT32 n){
-	for(register UINT32 cc = 0; cc < n; ++cc){
+	for(UINT32 cc = 0; cc < n; ++cc){
 		PlotPixel_32bpp(fb, PixelsPerScanLine, x + cc, y, (pixels[cc] >> 24) & UINT8_MAX, 
 			(pixels[cc] >> 16) & UINT8_MAX, (pixels[cc] >> 8) & UINT8_MAX, pixels[cc] & UINT8_MAX);
 	}

@@ -137,10 +137,10 @@ void CloseGIF(gifDescriptionSpace_t *gif);
 // 					fW = currentFrame->fbw, 																		\
 // 					fH = currentFrame->fbh;																			\
 // 			/*Composite the current frame patch onto the persistent canvas at (fX, fY)*/							\
-// 			for(register UINT32 y = 0; y < fH; y++){																			\
+// 			for(UINT32 y = 0; y < fH; y++){																			\
 // 				UINT32 targetY = fY + y;																			\
 // 				if(targetY >= canvasHeight){continue;}																\
-// 				for(register UINT32 x = 0; x < fW; x++){																		\
+// 				for(UINT32 x = 0; x < fW; x++){																		\
 // 					UINT32 targetX = fX + x;																		\
 // 					if(targetX >= canvasWidth){continue;}															\
 // 					UINT32 srcPixel = framePixels[y * fW + x];														\
@@ -179,7 +179,7 @@ void CloseGIF(gifDescriptionSpace_t *gif);
 	while(true){                                                                                          	\
 		UINT32 frameIdx = FC % (GIF)->nFrames;                                                              \
 		/*	Reset persistent canvas when animation loops back to Frame 0	*/                              \
-		if(frameIdx == 0) {for(register UINT32 i = 0; i < canvasWidth * canvasHeight; i++){persistentCanvas[i] = 0;}}\
+		if(frameIdx == 0) {for(UINT32 i = 0; i < canvasWidth * canvasHeight; i++){persistentCanvas[i] = 0;}}\
 		gifFrame_t *currentFrame = &(GIF)->frames[frameIdx];                                                \
 		if (!currentFrame || !currentFrame->fb) { break; }                                                  \
 		UINT32 *framePixels = (UINT32 *)currentFrame->fb, 													\
@@ -196,10 +196,10 @@ void CloseGIF(gifDescriptionSpace_t *gif);
 			disposal = gceData->Disposal;                                                                  	\
 		}                                                                                                   \
 		/*	Composite frame patch onto persistent canvas	*/                                              \
-		for(register UINT32 y = 0; y < fH; y++){                                                                   	\
+		for(UINT32 y = 0; y < fH; y++){                                                                   	\
 			UINT32 targetY = fY + y;                                                                        \
 			if(targetY >= canvasHeight){continue;}                                                      	\
-			for(register UINT32 x = 0; x < fW; x++){                                                               	\
+			for(UINT32 x = 0; x < fW; x++){                                                               	\
 				UINT32 targetX = fX + x;                                                                    \
 				if(targetX >= canvasWidth){continue;}                                                   	\
 				UINT32 srcPixel = framePixels[y * fW + x];                                                  \
@@ -212,10 +212,10 @@ void CloseGIF(gifDescriptionSpace_t *gif);
 				 (GOP)->Mode->Info->PixelsPerScanLine);                                                     \
 		/*	Handle Disposal Method 2 (Restore to Background)	*/                                          \
 		if(disposal == 2){                                                                                	\
-			for(register UINT32 y = 0; y < fH; y++){                                                               	\
+			for(UINT32 y = 0; y < fH; y++){                                                               	\
 				UINT32 targetY = fY + y;                                                                    \
 				if(targetY >= canvasHeight){continue;}                                                  	\
-				for(register UINT32 x = 0; x < fW; x++){                                                           	\
+				for(UINT32 x = 0; x < fW; x++){                                                           	\
 					UINT32 targetX = fX + x;                                                                \
 					if(targetX >= canvasWidth){continue;}                                               	\
 					persistentCanvas[targetY * canvasWidth + targetX] = 0;                                  \

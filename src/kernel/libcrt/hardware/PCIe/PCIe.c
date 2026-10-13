@@ -172,7 +172,7 @@ MSIxTableEntry_t *PCIeGetMSIxEntry(void *acpibase, uint32_t n, uint16_t bus, uin
 }
 
 UndefinedPCIeCapability *SearchPCIeCapabilitiesN(void *acpibase, uint32_t n, uint16_t bus, uint16_t slot, uint32_t *func, PCIeCapabilitiesDeviceType type, uint32_t encounter){
-	for(register uint32_t cc = 0; cc < PCIMaxPhysicalFunctions; ++cc){
+	for(uint32_t cc = 0; cc < PCIMaxPhysicalFunctions; ++cc){
 		UndefinedPCIeCapability *out = ReadPCIeCapabilities(acpibase, n, bus, slot, cc);
 		if(!out){continue;}
 		if((out->ExtHeader.ExtCAPID == type) && !encounter){

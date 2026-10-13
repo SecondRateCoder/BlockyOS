@@ -54,7 +54,7 @@ bool AllocateSystemDescriptor(void *PhysicalBase, uint32_t Limit, uint8_t Privil
 	GDTR64 R;
 	if(ReadGDTR(&R)){
 		GDTSystemSegmentDescriptor64 *Table = (GDTSystemSegmentDescriptor64 *)R.Base;
-		for(register uint32_t cc = 0; cc < (R.Limit / sizeof(GDTDescriptor)); ++cc){
+		for(uint32_t cc = 0; cc < (R.Limit / sizeof(GDTDescriptor)); ++cc){
 			if(!((GDTDescriptor *)Table)[cc].ABSystemSegmentBit){
 				if(!((GDTSystemSegmentDescriptor64 *)((void *)Table + (cc * sizeof(GDTDescriptor))))->ABPresent){
 					*(GDTSystemSegmentDescriptor64 *)((void *)Table + (cc * sizeof(GDTDescriptor))) = (GDTSystemSegmentDescriptor64){

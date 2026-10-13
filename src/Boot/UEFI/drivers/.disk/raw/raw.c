@@ -9,7 +9,7 @@ EFI_HANDLE FindDiskHandleByGUID(EFI_GUID TargetGUID, EFI_GUID AltGUID){
 		ByProtocol, &BlkIoGuid, NULL, &nHandles, &handles);
 	// DEBUGPRINT(L"\nnHandles:	%llu", nHandles);
 	if(EFI_ERROR(status)){return NULL;}
-	for(register UINT64 i = 0; i < nHandles; i++){
+	for(UINT64 i = 0; i < nHandles; i++){
 		EFI_BLOCK_IO_PROTOCOL *blk = NULL;
 		EFI_DISK_IO_PROTOCOL  *dsk = NULL;
 		EFI_STATUS status = uefi_call_wrapper(gBS->HandleProtocol, 0, handles[i], &BlkIoGuid, (void**)&blk);
@@ -37,7 +37,7 @@ EFI_HANDLE FindDiskHandleByGUID(EFI_GUID TargetGUID, EFI_GUID AltGUID){
 			__free(hdr);
 			continue;
 		}
-		for(register UINT64 e = 0; e < hdr->nPartEntries; e++){
+		for(UINT64 e = 0; e < hdr->nPartEntries; e++){
 			GPTentry *p = (GPTentry *)(((UINT8 *)entries) + (e * hdr->partEntrySize));
 			// DEBUGDO{DEBUGPRINT(L"\n    Target-GUID={");prGUID(TargetGUID);Print(L"}    Partition-Unique-GUID={");prGUID(p->uGUID);Print(L"}    Partition-GUID={");prGUID(p->GUID);Print(L"}");}
 			if(__memcmp(&p->uGUID, &TargetGUID, sizeof(EFI_GUID)) == 0 || __memcmp(&p->GUID, &TargetGUID, sizeof(EFI_GUID)) == 0 || 

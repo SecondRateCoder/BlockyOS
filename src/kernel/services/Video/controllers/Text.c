@@ -14,9 +14,9 @@ uint64_t PrintGlyph(void *Memory, uint64_t BufferWidth, FontGlyph Glyph, void *U
     // Calculate starting position including strides
     uint8_t *PixelMem = (uint8_t *)Memory + (UnitSize * (Glyph.HorizontalStride + (Glyph.VerticalStride * BufferWidth)));
     uint32_t bytesPerRow = (Glyph.BitWidth + 7) / 8;
-    for(register uint32_t y = 0; y < Glyph.BitHeight; ++y){
+    for(uint32_t y = 0; y < Glyph.BitHeight; ++y){
         uint8_t *RowMem = PixelMem; // Save start of this row
-        for(register uint32_t x = 0; x < Glyph.BitWidth; ++x){
+        for(uint32_t x = 0; x < Glyph.BitWidth; ++x){
             uint32_t byteIdx = (y * bytesPerRow) + (x / 8);
             uint8_t bitIdx = 7 - (x % 8); // Assuming MSB-first font layout
             if((Glyph.Data[byteIdx] >> bitIdx) & 1){memcpy(RowMem, Unit, UnitSize);}
@@ -29,8 +29,8 @@ uint64_t PrintGlyph(void *Memory, uint64_t BufferWidth, FontGlyph Glyph, void *U
 }
 
 void PrintTextByGlyph(void *Memory, uint64_t *Counter, uint64_t BufferWidth, FontGlyph **GlyphTable, uint32_t TableLength, void *Unit, uint32_t UnitSize, char *Text){
-	for(register uint32_t c = 0; c < strlen(Text); ++c){
-		for(register uint32_t cc = 0; cc < TableLength; ++cc){
+	for(uint32_t c = 0; c < strlen(Text); ++c){
+		for(uint32_t cc = 0; cc < TableLength; ++cc){
 			if(Text[c] == GlyphTable[cc]->Matcher){
 				if((*Counter % BufferWidth) < (UnitSize * (GlyphTable[cc]->BitWidth / 8))){*Counter = __roundup(*Counter, BufferWidth);}
 				PrintGlyph(Memory + *Counter, BufferWidth, *(GlyphTable[cc]), Unit, UnitSize);
@@ -42,23 +42,17 @@ void PrintTextByGlyph(void *Memory, uint64_t *Counter, uint64_t BufferWidth, Fon
 
 void TextCopyF(char *stream, uint64_t *size, const char **f, va_list ls){
     if(!stream || (*size) == 0 || !f || !ls){return;}
-
     static const char sample[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     uint32_t counter = 0;
 	const char *format = *f;
     
     //	Reserve 1 byte at the end for the null terminator (size - 1)
-    for(register uint32_t cc = 0; format[cc] != '\0' && counter < ((*size) - 1); ++cc){
-        
+    for(uint32_t cc = 0; format[cc] != '\0' && counter < ((*size) - 1); ++cc){
         if(format[cc] == FormatStart){
             cc++; // Move past the start token
             if(format[cc] == '\0'){break;}
-
-            uint64_t base = 10, 
-					value = 0;
-            bool is_signed = false, 
-				negative = false;
-
+            uint64_t base = 10, value = 0;
+            bool is_signed = false, negative = false;
             //	SAFELY EXTRACT VARIADIC ARGUMENTS
             // Smaller integer types (char, short) are automatically promoted to int/unsigned int by the C compiler.
             switch(format[cc]){
@@ -68,35 +62,29 @@ void TextCopyF(char *stream, uint64_t *size, const char **f, va_list ls){
                 case FormatUInteger64:	{value = va_arg(ls, uint64_t);							break;}
                 case FormatInteger8: {
                     int8_t temp = (int8_t)va_arg(ls, int);
-                    if (temp < 0) { negative = true; value = (uint64_t)(-temp); }
-                    else { value = (uint64_t)temp; }
+                    if(temp < 0){negative = true;	value = (uint64_t)(-temp); }else{value = (uint64_t)temp;}
                     is_signed = true;
                     break;
                 } case FormatInteger16: {
                     int16_t temp = (int16_t)va_arg(ls, int);
-                    if (temp < 0) { negative = true; value = (uint64_t)(-temp); }
-                    else { value = (uint64_t)temp; }
+                    if(temp < 0){negative = true;	value = (uint64_t)(-temp);}else{value = (uint64_t)temp;}
                     is_signed = true;
                     break;
                 } case FormatInteger32: {
                     int32_t temp = va_arg(ls, int32_t);
-                    if (temp < 0) { negative = true; value = (uint64_t)(-temp); }
-                    else { value = (uint64_t)temp; }
+                    if(temp < 0){negative = true;	value = (uint64_t)(-temp);}else{value = (uint64_t)temp;}
                     is_signed = true;
                     break;
                 } case FormatInteger64: {
                     int64_t temp = va_arg(ls, int64_t);
-                    if (temp < 0) { negative = true; value = (uint64_t)(-temp); }
-                    else { value = (uint64_t)temp; }
+                    if(temp < 0){negative = true;	value = (uint64_t)(-temp);}else{value = (uint64_t)temp;}
                     is_signed = true;
                     break;
                 } case FormatString: {
                     const char *str = va_arg(ls, const char *);
-                    if (!str) str = "(null)";
+                    if(!str){str = "(null)";}
                     // Correctly track the string copy lengths
-                    while (*str && counter < ((*size) - 1)) {
-                        stream[counter++] = *str++;
-                    }
+                    while(*str && counter < ((*size) - 1)){stream[counter++] = *str++;}
                     continue; // Skip the integer rendering logic below
                 } case FormatChar: {
                     stream[counter++] = (char)va_arg(ls, int);
@@ -129,6 +117,7 @@ void TextCopyF(char *stream, uint64_t *size, const char **f, va_list ls){
 
     //	GUARANTEE NULL TERMINATION
     stream[counter] = '\0';
+	*size = counter;
     
     va_end(ls);
 

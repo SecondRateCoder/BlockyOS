@@ -38,560 +38,560 @@ LOAD Build/Build-nodate/root-part/services/LibVideo.dll
 .text           0x0000000000001000     0x6000
  *(SORT_NONE(.init))
  *(.text)
- .text          0x0000000000001000     0x5180 compile/cache/elf.c.kboot.o
+ .text          0x0000000000001000     0x51c0 compile/cache/elf.c.kboot.o
                 0x0000000000001000                InitialiseGDT
                 0x0000000000001339                InitialiseIDT
-                0x0000000000005dd4                GenericIOISR
-                0x0000000000005df1                __main
- .text          0x0000000000006180       0x1e compile/cache/elf.asm.kboot.o
-                0x0000000000006180                kboot_km
- *fill*         0x000000000000619e        0x2 
- .text          0x00000000000061a0        0x8 LibVideo_dll_d000001.o
-                0x00000000000061a0                AllocateVideoMemory
- .text          0x00000000000061a8        0x8 LibVideo_dll_d000002.o
-                0x00000000000061a8                InitaliseVMA
- .text          0x00000000000061b0        0x8 LibVideo_dll_d000003.o
-                0x00000000000061b0                SelectVideoContext
- .text          0x00000000000061b8        0x8 LibIO_dll_d000006.o
-                0x00000000000061b8                OpenRawHandle
- .text          0x00000000000061c0        0x8 LibCrt_dll_d000009.o
-                0x00000000000061c0                AllocateInterruptVector
- .text          0x00000000000061c8        0x8 LibCrt_dll_d000010.o
-                0x00000000000061c8                GetLocalAPICID
- .text          0x00000000000061d0        0x8 LibCrt_dll_d000011.o
-                0x00000000000061d0                InitLocalAPIC
- .text          0x00000000000061d8        0x8 LibCrt_dll_d000012.o
-                0x00000000000061d8                InitialiseAllocationState
- .text          0x00000000000061e0        0x8 LibCrt_dll_d000013.o
-                0x00000000000061e0                SetIDTe
- .text          0x00000000000061e8        0x8 LibCrt_dll_d000014.o
-                0x00000000000061e8                _LoadGDTR
- .text          0x00000000000061f0        0x8 LibCrt_dll_d000015.o
-                0x00000000000061f0                _LoadIDTR
- .text          0x00000000000061f8        0x8 LibCrt_dll_d000016.o
-                0x00000000000061f8                __bochs
- .text          0x0000000000006200        0x8 LibCrt_dll_d000017.o
-                0x0000000000006200                isrCallback0
- .text          0x0000000000006208        0x8 LibCrt_dll_d000018.o
-                0x0000000000006208                isrCallback1
- .text          0x0000000000006210        0x8 LibCrt_dll_d000019.o
-                0x0000000000006210                isrCallback10
- .text          0x0000000000006218        0x8 LibCrt_dll_d000020.o
-                0x0000000000006218                isrCallback100
- .text          0x0000000000006220        0x8 LibCrt_dll_d000021.o
-                0x0000000000006220                isrCallback101
- .text          0x0000000000006228        0x8 LibCrt_dll_d000022.o
-                0x0000000000006228                isrCallback102
- .text          0x0000000000006230        0x8 LibCrt_dll_d000023.o
-                0x0000000000006230                isrCallback103
- .text          0x0000000000006238        0x8 LibCrt_dll_d000024.o
-                0x0000000000006238                isrCallback104
- .text          0x0000000000006240        0x8 LibCrt_dll_d000025.o
-                0x0000000000006240                isrCallback105
- .text          0x0000000000006248        0x8 LibCrt_dll_d000026.o
-                0x0000000000006248                isrCallback106
- .text          0x0000000000006250        0x8 LibCrt_dll_d000027.o
-                0x0000000000006250                isrCallback107
- .text          0x0000000000006258        0x8 LibCrt_dll_d000028.o
-                0x0000000000006258                isrCallback108
- .text          0x0000000000006260        0x8 LibCrt_dll_d000029.o
-                0x0000000000006260                isrCallback109
- .text          0x0000000000006268        0x8 LibCrt_dll_d000030.o
-                0x0000000000006268                isrCallback11
- .text          0x0000000000006270        0x8 LibCrt_dll_d000031.o
-                0x0000000000006270                isrCallback110
- .text          0x0000000000006278        0x8 LibCrt_dll_d000032.o
-                0x0000000000006278                isrCallback111
- .text          0x0000000000006280        0x8 LibCrt_dll_d000033.o
-                0x0000000000006280                isrCallback112
- .text          0x0000000000006288        0x8 LibCrt_dll_d000034.o
-                0x0000000000006288                isrCallback113
- .text          0x0000000000006290        0x8 LibCrt_dll_d000035.o
-                0x0000000000006290                isrCallback114
- .text          0x0000000000006298        0x8 LibCrt_dll_d000036.o
-                0x0000000000006298                isrCallback115
- .text          0x00000000000062a0        0x8 LibCrt_dll_d000037.o
-                0x00000000000062a0                isrCallback116
- .text          0x00000000000062a8        0x8 LibCrt_dll_d000038.o
-                0x00000000000062a8                isrCallback117
- .text          0x00000000000062b0        0x8 LibCrt_dll_d000039.o
-                0x00000000000062b0                isrCallback118
- .text          0x00000000000062b8        0x8 LibCrt_dll_d000040.o
-                0x00000000000062b8                isrCallback119
- .text          0x00000000000062c0        0x8 LibCrt_dll_d000041.o
-                0x00000000000062c0                isrCallback12
- .text          0x00000000000062c8        0x8 LibCrt_dll_d000042.o
-                0x00000000000062c8                isrCallback120
- .text          0x00000000000062d0        0x8 LibCrt_dll_d000043.o
-                0x00000000000062d0                isrCallback121
- .text          0x00000000000062d8        0x8 LibCrt_dll_d000044.o
-                0x00000000000062d8                isrCallback122
- .text          0x00000000000062e0        0x8 LibCrt_dll_d000045.o
-                0x00000000000062e0                isrCallback123
- .text          0x00000000000062e8        0x8 LibCrt_dll_d000046.o
-                0x00000000000062e8                isrCallback124
- .text          0x00000000000062f0        0x8 LibCrt_dll_d000047.o
-                0x00000000000062f0                isrCallback125
- .text          0x00000000000062f8        0x8 LibCrt_dll_d000048.o
-                0x00000000000062f8                isrCallback126
- .text          0x0000000000006300        0x8 LibCrt_dll_d000049.o
-                0x0000000000006300                isrCallback127
- .text          0x0000000000006308        0x8 LibCrt_dll_d000050.o
-                0x0000000000006308                isrCallback128
- .text          0x0000000000006310        0x8 LibCrt_dll_d000051.o
-                0x0000000000006310                isrCallback129
- .text          0x0000000000006318        0x8 LibCrt_dll_d000052.o
-                0x0000000000006318                isrCallback13
- .text          0x0000000000006320        0x8 LibCrt_dll_d000053.o
-                0x0000000000006320                isrCallback130
- .text          0x0000000000006328        0x8 LibCrt_dll_d000054.o
-                0x0000000000006328                isrCallback131
- .text          0x0000000000006330        0x8 LibCrt_dll_d000055.o
-                0x0000000000006330                isrCallback132
- .text          0x0000000000006338        0x8 LibCrt_dll_d000056.o
-                0x0000000000006338                isrCallback133
- .text          0x0000000000006340        0x8 LibCrt_dll_d000057.o
-                0x0000000000006340                isrCallback134
- .text          0x0000000000006348        0x8 LibCrt_dll_d000058.o
-                0x0000000000006348                isrCallback135
- .text          0x0000000000006350        0x8 LibCrt_dll_d000059.o
-                0x0000000000006350                isrCallback136
- .text          0x0000000000006358        0x8 LibCrt_dll_d000060.o
-                0x0000000000006358                isrCallback137
- .text          0x0000000000006360        0x8 LibCrt_dll_d000061.o
-                0x0000000000006360                isrCallback138
- .text          0x0000000000006368        0x8 LibCrt_dll_d000062.o
-                0x0000000000006368                isrCallback139
- .text          0x0000000000006370        0x8 LibCrt_dll_d000063.o
-                0x0000000000006370                isrCallback14
- .text          0x0000000000006378        0x8 LibCrt_dll_d000064.o
-                0x0000000000006378                isrCallback140
- .text          0x0000000000006380        0x8 LibCrt_dll_d000065.o
-                0x0000000000006380                isrCallback141
- .text          0x0000000000006388        0x8 LibCrt_dll_d000066.o
-                0x0000000000006388                isrCallback142
- .text          0x0000000000006390        0x8 LibCrt_dll_d000067.o
-                0x0000000000006390                isrCallback143
- .text          0x0000000000006398        0x8 LibCrt_dll_d000068.o
-                0x0000000000006398                isrCallback144
- .text          0x00000000000063a0        0x8 LibCrt_dll_d000069.o
-                0x00000000000063a0                isrCallback145
- .text          0x00000000000063a8        0x8 LibCrt_dll_d000070.o
-                0x00000000000063a8                isrCallback146
- .text          0x00000000000063b0        0x8 LibCrt_dll_d000071.o
-                0x00000000000063b0                isrCallback147
- .text          0x00000000000063b8        0x8 LibCrt_dll_d000072.o
-                0x00000000000063b8                isrCallback148
- .text          0x00000000000063c0        0x8 LibCrt_dll_d000073.o
-                0x00000000000063c0                isrCallback149
- .text          0x00000000000063c8        0x8 LibCrt_dll_d000074.o
-                0x00000000000063c8                isrCallback15
- .text          0x00000000000063d0        0x8 LibCrt_dll_d000075.o
-                0x00000000000063d0                isrCallback150
- .text          0x00000000000063d8        0x8 LibCrt_dll_d000076.o
-                0x00000000000063d8                isrCallback151
- .text          0x00000000000063e0        0x8 LibCrt_dll_d000077.o
-                0x00000000000063e0                isrCallback152
- .text          0x00000000000063e8        0x8 LibCrt_dll_d000078.o
-                0x00000000000063e8                isrCallback153
- .text          0x00000000000063f0        0x8 LibCrt_dll_d000079.o
-                0x00000000000063f0                isrCallback154
- .text          0x00000000000063f8        0x8 LibCrt_dll_d000080.o
-                0x00000000000063f8                isrCallback155
- .text          0x0000000000006400        0x8 LibCrt_dll_d000081.o
-                0x0000000000006400                isrCallback156
- .text          0x0000000000006408        0x8 LibCrt_dll_d000082.o
-                0x0000000000006408                isrCallback157
- .text          0x0000000000006410        0x8 LibCrt_dll_d000083.o
-                0x0000000000006410                isrCallback158
- .text          0x0000000000006418        0x8 LibCrt_dll_d000084.o
-                0x0000000000006418                isrCallback159
- .text          0x0000000000006420        0x8 LibCrt_dll_d000085.o
-                0x0000000000006420                isrCallback16
- .text          0x0000000000006428        0x8 LibCrt_dll_d000086.o
-                0x0000000000006428                isrCallback160
- .text          0x0000000000006430        0x8 LibCrt_dll_d000087.o
-                0x0000000000006430                isrCallback161
- .text          0x0000000000006438        0x8 LibCrt_dll_d000088.o
-                0x0000000000006438                isrCallback162
- .text          0x0000000000006440        0x8 LibCrt_dll_d000089.o
-                0x0000000000006440                isrCallback163
- .text          0x0000000000006448        0x8 LibCrt_dll_d000090.o
-                0x0000000000006448                isrCallback164
- .text          0x0000000000006450        0x8 LibCrt_dll_d000091.o
-                0x0000000000006450                isrCallback165
- .text          0x0000000000006458        0x8 LibCrt_dll_d000092.o
-                0x0000000000006458                isrCallback166
- .text          0x0000000000006460        0x8 LibCrt_dll_d000093.o
-                0x0000000000006460                isrCallback167
- .text          0x0000000000006468        0x8 LibCrt_dll_d000094.o
-                0x0000000000006468                isrCallback168
- .text          0x0000000000006470        0x8 LibCrt_dll_d000095.o
-                0x0000000000006470                isrCallback169
- .text          0x0000000000006478        0x8 LibCrt_dll_d000096.o
-                0x0000000000006478                isrCallback17
- .text          0x0000000000006480        0x8 LibCrt_dll_d000097.o
-                0x0000000000006480                isrCallback170
- .text          0x0000000000006488        0x8 LibCrt_dll_d000098.o
-                0x0000000000006488                isrCallback171
- .text          0x0000000000006490        0x8 LibCrt_dll_d000099.o
-                0x0000000000006490                isrCallback172
- .text          0x0000000000006498        0x8 LibCrt_dll_d000100.o
-                0x0000000000006498                isrCallback173
- .text          0x00000000000064a0        0x8 LibCrt_dll_d000101.o
-                0x00000000000064a0                isrCallback174
- .text          0x00000000000064a8        0x8 LibCrt_dll_d000102.o
-                0x00000000000064a8                isrCallback175
- .text          0x00000000000064b0        0x8 LibCrt_dll_d000103.o
-                0x00000000000064b0                isrCallback176
- .text          0x00000000000064b8        0x8 LibCrt_dll_d000104.o
-                0x00000000000064b8                isrCallback177
- .text          0x00000000000064c0        0x8 LibCrt_dll_d000105.o
-                0x00000000000064c0                isrCallback178
- .text          0x00000000000064c8        0x8 LibCrt_dll_d000106.o
-                0x00000000000064c8                isrCallback179
- .text          0x00000000000064d0        0x8 LibCrt_dll_d000107.o
-                0x00000000000064d0                isrCallback18
- .text          0x00000000000064d8        0x8 LibCrt_dll_d000108.o
-                0x00000000000064d8                isrCallback180
- .text          0x00000000000064e0        0x8 LibCrt_dll_d000109.o
-                0x00000000000064e0                isrCallback181
- .text          0x00000000000064e8        0x8 LibCrt_dll_d000110.o
-                0x00000000000064e8                isrCallback182
- .text          0x00000000000064f0        0x8 LibCrt_dll_d000111.o
-                0x00000000000064f0                isrCallback183
- .text          0x00000000000064f8        0x8 LibCrt_dll_d000112.o
-                0x00000000000064f8                isrCallback184
- .text          0x0000000000006500        0x8 LibCrt_dll_d000113.o
-                0x0000000000006500                isrCallback185
- .text          0x0000000000006508        0x8 LibCrt_dll_d000114.o
-                0x0000000000006508                isrCallback186
- .text          0x0000000000006510        0x8 LibCrt_dll_d000115.o
-                0x0000000000006510                isrCallback187
- .text          0x0000000000006518        0x8 LibCrt_dll_d000116.o
-                0x0000000000006518                isrCallback188
- .text          0x0000000000006520        0x8 LibCrt_dll_d000117.o
-                0x0000000000006520                isrCallback189
- .text          0x0000000000006528        0x8 LibCrt_dll_d000118.o
-                0x0000000000006528                isrCallback19
- .text          0x0000000000006530        0x8 LibCrt_dll_d000119.o
-                0x0000000000006530                isrCallback190
- .text          0x0000000000006538        0x8 LibCrt_dll_d000120.o
-                0x0000000000006538                isrCallback191
- .text          0x0000000000006540        0x8 LibCrt_dll_d000121.o
-                0x0000000000006540                isrCallback192
- .text          0x0000000000006548        0x8 LibCrt_dll_d000122.o
-                0x0000000000006548                isrCallback193
- .text          0x0000000000006550        0x8 LibCrt_dll_d000123.o
-                0x0000000000006550                isrCallback194
- .text          0x0000000000006558        0x8 LibCrt_dll_d000124.o
-                0x0000000000006558                isrCallback195
- .text          0x0000000000006560        0x8 LibCrt_dll_d000125.o
-                0x0000000000006560                isrCallback196
- .text          0x0000000000006568        0x8 LibCrt_dll_d000126.o
-                0x0000000000006568                isrCallback197
- .text          0x0000000000006570        0x8 LibCrt_dll_d000127.o
-                0x0000000000006570                isrCallback198
- .text          0x0000000000006578        0x8 LibCrt_dll_d000128.o
-                0x0000000000006578                isrCallback199
- .text          0x0000000000006580        0x8 LibCrt_dll_d000129.o
-                0x0000000000006580                isrCallback2
- .text          0x0000000000006588        0x8 LibCrt_dll_d000130.o
-                0x0000000000006588                isrCallback20
- .text          0x0000000000006590        0x8 LibCrt_dll_d000131.o
-                0x0000000000006590                isrCallback200
- .text          0x0000000000006598        0x8 LibCrt_dll_d000132.o
-                0x0000000000006598                isrCallback201
- .text          0x00000000000065a0        0x8 LibCrt_dll_d000133.o
-                0x00000000000065a0                isrCallback202
- .text          0x00000000000065a8        0x8 LibCrt_dll_d000134.o
-                0x00000000000065a8                isrCallback203
- .text          0x00000000000065b0        0x8 LibCrt_dll_d000135.o
-                0x00000000000065b0                isrCallback204
- .text          0x00000000000065b8        0x8 LibCrt_dll_d000136.o
-                0x00000000000065b8                isrCallback205
- .text          0x00000000000065c0        0x8 LibCrt_dll_d000137.o
-                0x00000000000065c0                isrCallback206
- .text          0x00000000000065c8        0x8 LibCrt_dll_d000138.o
-                0x00000000000065c8                isrCallback207
- .text          0x00000000000065d0        0x8 LibCrt_dll_d000139.o
-                0x00000000000065d0                isrCallback208
- .text          0x00000000000065d8        0x8 LibCrt_dll_d000140.o
-                0x00000000000065d8                isrCallback209
- .text          0x00000000000065e0        0x8 LibCrt_dll_d000141.o
-                0x00000000000065e0                isrCallback21
- .text          0x00000000000065e8        0x8 LibCrt_dll_d000142.o
-                0x00000000000065e8                isrCallback210
- .text          0x00000000000065f0        0x8 LibCrt_dll_d000143.o
-                0x00000000000065f0                isrCallback211
- .text          0x00000000000065f8        0x8 LibCrt_dll_d000144.o
-                0x00000000000065f8                isrCallback212
- .text          0x0000000000006600        0x8 LibCrt_dll_d000145.o
-                0x0000000000006600                isrCallback213
- .text          0x0000000000006608        0x8 LibCrt_dll_d000146.o
-                0x0000000000006608                isrCallback214
- .text          0x0000000000006610        0x8 LibCrt_dll_d000147.o
-                0x0000000000006610                isrCallback215
- .text          0x0000000000006618        0x8 LibCrt_dll_d000148.o
-                0x0000000000006618                isrCallback216
- .text          0x0000000000006620        0x8 LibCrt_dll_d000149.o
-                0x0000000000006620                isrCallback217
- .text          0x0000000000006628        0x8 LibCrt_dll_d000150.o
-                0x0000000000006628                isrCallback218
- .text          0x0000000000006630        0x8 LibCrt_dll_d000151.o
-                0x0000000000006630                isrCallback219
- .text          0x0000000000006638        0x8 LibCrt_dll_d000152.o
-                0x0000000000006638                isrCallback22
- .text          0x0000000000006640        0x8 LibCrt_dll_d000153.o
-                0x0000000000006640                isrCallback220
- .text          0x0000000000006648        0x8 LibCrt_dll_d000154.o
-                0x0000000000006648                isrCallback221
- .text          0x0000000000006650        0x8 LibCrt_dll_d000155.o
-                0x0000000000006650                isrCallback222
- .text          0x0000000000006658        0x8 LibCrt_dll_d000156.o
-                0x0000000000006658                isrCallback223
- .text          0x0000000000006660        0x8 LibCrt_dll_d000157.o
-                0x0000000000006660                isrCallback224
- .text          0x0000000000006668        0x8 LibCrt_dll_d000158.o
-                0x0000000000006668                isrCallback225
- .text          0x0000000000006670        0x8 LibCrt_dll_d000159.o
-                0x0000000000006670                isrCallback226
- .text          0x0000000000006678        0x8 LibCrt_dll_d000160.o
-                0x0000000000006678                isrCallback227
- .text          0x0000000000006680        0x8 LibCrt_dll_d000161.o
-                0x0000000000006680                isrCallback228
- .text          0x0000000000006688        0x8 LibCrt_dll_d000162.o
-                0x0000000000006688                isrCallback229
- .text          0x0000000000006690        0x8 LibCrt_dll_d000163.o
-                0x0000000000006690                isrCallback23
- .text          0x0000000000006698        0x8 LibCrt_dll_d000164.o
-                0x0000000000006698                isrCallback230
- .text          0x00000000000066a0        0x8 LibCrt_dll_d000165.o
-                0x00000000000066a0                isrCallback231
- .text          0x00000000000066a8        0x8 LibCrt_dll_d000166.o
-                0x00000000000066a8                isrCallback232
- .text          0x00000000000066b0        0x8 LibCrt_dll_d000167.o
-                0x00000000000066b0                isrCallback233
- .text          0x00000000000066b8        0x8 LibCrt_dll_d000168.o
-                0x00000000000066b8                isrCallback234
- .text          0x00000000000066c0        0x8 LibCrt_dll_d000169.o
-                0x00000000000066c0                isrCallback235
- .text          0x00000000000066c8        0x8 LibCrt_dll_d000170.o
-                0x00000000000066c8                isrCallback236
- .text          0x00000000000066d0        0x8 LibCrt_dll_d000171.o
-                0x00000000000066d0                isrCallback237
- .text          0x00000000000066d8        0x8 LibCrt_dll_d000172.o
-                0x00000000000066d8                isrCallback238
- .text          0x00000000000066e0        0x8 LibCrt_dll_d000173.o
-                0x00000000000066e0                isrCallback239
- .text          0x00000000000066e8        0x8 LibCrt_dll_d000174.o
-                0x00000000000066e8                isrCallback24
- .text          0x00000000000066f0        0x8 LibCrt_dll_d000175.o
-                0x00000000000066f0                isrCallback240
- .text          0x00000000000066f8        0x8 LibCrt_dll_d000176.o
-                0x00000000000066f8                isrCallback241
- .text          0x0000000000006700        0x8 LibCrt_dll_d000177.o
-                0x0000000000006700                isrCallback242
- .text          0x0000000000006708        0x8 LibCrt_dll_d000178.o
-                0x0000000000006708                isrCallback243
- .text          0x0000000000006710        0x8 LibCrt_dll_d000179.o
-                0x0000000000006710                isrCallback244
- .text          0x0000000000006718        0x8 LibCrt_dll_d000180.o
-                0x0000000000006718                isrCallback245
- .text          0x0000000000006720        0x8 LibCrt_dll_d000181.o
-                0x0000000000006720                isrCallback246
- .text          0x0000000000006728        0x8 LibCrt_dll_d000182.o
-                0x0000000000006728                isrCallback247
- .text          0x0000000000006730        0x8 LibCrt_dll_d000183.o
-                0x0000000000006730                isrCallback248
- .text          0x0000000000006738        0x8 LibCrt_dll_d000184.o
-                0x0000000000006738                isrCallback249
- .text          0x0000000000006740        0x8 LibCrt_dll_d000185.o
-                0x0000000000006740                isrCallback25
- .text          0x0000000000006748        0x8 LibCrt_dll_d000186.o
-                0x0000000000006748                isrCallback250
- .text          0x0000000000006750        0x8 LibCrt_dll_d000187.o
-                0x0000000000006750                isrCallback251
- .text          0x0000000000006758        0x8 LibCrt_dll_d000188.o
-                0x0000000000006758                isrCallback252
- .text          0x0000000000006760        0x8 LibCrt_dll_d000189.o
-                0x0000000000006760                isrCallback253
- .text          0x0000000000006768        0x8 LibCrt_dll_d000190.o
-                0x0000000000006768                isrCallback254
- .text          0x0000000000006770        0x8 LibCrt_dll_d000191.o
-                0x0000000000006770                isrCallback255
- .text          0x0000000000006778        0x8 LibCrt_dll_d000192.o
-                0x0000000000006778                isrCallback26
- .text          0x0000000000006780        0x8 LibCrt_dll_d000193.o
-                0x0000000000006780                isrCallback27
- .text          0x0000000000006788        0x8 LibCrt_dll_d000194.o
-                0x0000000000006788                isrCallback28
- .text          0x0000000000006790        0x8 LibCrt_dll_d000195.o
-                0x0000000000006790                isrCallback29
- .text          0x0000000000006798        0x8 LibCrt_dll_d000196.o
-                0x0000000000006798                isrCallback3
- .text          0x00000000000067a0        0x8 LibCrt_dll_d000197.o
-                0x00000000000067a0                isrCallback30
- .text          0x00000000000067a8        0x8 LibCrt_dll_d000198.o
-                0x00000000000067a8                isrCallback31
- .text          0x00000000000067b0        0x8 LibCrt_dll_d000199.o
-                0x00000000000067b0                isrCallback32
- .text          0x00000000000067b8        0x8 LibCrt_dll_d000200.o
-                0x00000000000067b8                isrCallback33
- .text          0x00000000000067c0        0x8 LibCrt_dll_d000201.o
-                0x00000000000067c0                isrCallback34
- .text          0x00000000000067c8        0x8 LibCrt_dll_d000202.o
-                0x00000000000067c8                isrCallback35
- .text          0x00000000000067d0        0x8 LibCrt_dll_d000203.o
-                0x00000000000067d0                isrCallback36
- .text          0x00000000000067d8        0x8 LibCrt_dll_d000204.o
-                0x00000000000067d8                isrCallback37
- .text          0x00000000000067e0        0x8 LibCrt_dll_d000205.o
-                0x00000000000067e0                isrCallback38
- .text          0x00000000000067e8        0x8 LibCrt_dll_d000206.o
-                0x00000000000067e8                isrCallback39
- .text          0x00000000000067f0        0x8 LibCrt_dll_d000207.o
-                0x00000000000067f0                isrCallback4
- .text          0x00000000000067f8        0x8 LibCrt_dll_d000208.o
-                0x00000000000067f8                isrCallback40
- .text          0x0000000000006800        0x8 LibCrt_dll_d000209.o
-                0x0000000000006800                isrCallback41
- .text          0x0000000000006808        0x8 LibCrt_dll_d000210.o
-                0x0000000000006808                isrCallback42
- .text          0x0000000000006810        0x8 LibCrt_dll_d000211.o
-                0x0000000000006810                isrCallback43
- .text          0x0000000000006818        0x8 LibCrt_dll_d000212.o
-                0x0000000000006818                isrCallback44
- .text          0x0000000000006820        0x8 LibCrt_dll_d000213.o
-                0x0000000000006820                isrCallback45
- .text          0x0000000000006828        0x8 LibCrt_dll_d000214.o
-                0x0000000000006828                isrCallback46
- .text          0x0000000000006830        0x8 LibCrt_dll_d000215.o
-                0x0000000000006830                isrCallback47
- .text          0x0000000000006838        0x8 LibCrt_dll_d000216.o
-                0x0000000000006838                isrCallback48
- .text          0x0000000000006840        0x8 LibCrt_dll_d000217.o
-                0x0000000000006840                isrCallback49
- .text          0x0000000000006848        0x8 LibCrt_dll_d000218.o
-                0x0000000000006848                isrCallback5
- .text          0x0000000000006850        0x8 LibCrt_dll_d000219.o
-                0x0000000000006850                isrCallback50
- .text          0x0000000000006858        0x8 LibCrt_dll_d000220.o
-                0x0000000000006858                isrCallback51
- .text          0x0000000000006860        0x8 LibCrt_dll_d000221.o
-                0x0000000000006860                isrCallback52
- .text          0x0000000000006868        0x8 LibCrt_dll_d000222.o
-                0x0000000000006868                isrCallback53
- .text          0x0000000000006870        0x8 LibCrt_dll_d000223.o
-                0x0000000000006870                isrCallback54
- .text          0x0000000000006878        0x8 LibCrt_dll_d000224.o
-                0x0000000000006878                isrCallback55
- .text          0x0000000000006880        0x8 LibCrt_dll_d000225.o
-                0x0000000000006880                isrCallback56
- .text          0x0000000000006888        0x8 LibCrt_dll_d000226.o
-                0x0000000000006888                isrCallback57
- .text          0x0000000000006890        0x8 LibCrt_dll_d000227.o
-                0x0000000000006890                isrCallback58
- .text          0x0000000000006898        0x8 LibCrt_dll_d000228.o
-                0x0000000000006898                isrCallback59
- .text          0x00000000000068a0        0x8 LibCrt_dll_d000229.o
-                0x00000000000068a0                isrCallback6
- .text          0x00000000000068a8        0x8 LibCrt_dll_d000230.o
-                0x00000000000068a8                isrCallback60
- .text          0x00000000000068b0        0x8 LibCrt_dll_d000231.o
-                0x00000000000068b0                isrCallback61
- .text          0x00000000000068b8        0x8 LibCrt_dll_d000232.o
-                0x00000000000068b8                isrCallback62
- .text          0x00000000000068c0        0x8 LibCrt_dll_d000233.o
-                0x00000000000068c0                isrCallback63
- .text          0x00000000000068c8        0x8 LibCrt_dll_d000234.o
-                0x00000000000068c8                isrCallback64
- .text          0x00000000000068d0        0x8 LibCrt_dll_d000235.o
-                0x00000000000068d0                isrCallback65
- .text          0x00000000000068d8        0x8 LibCrt_dll_d000236.o
-                0x00000000000068d8                isrCallback66
- .text          0x00000000000068e0        0x8 LibCrt_dll_d000237.o
-                0x00000000000068e0                isrCallback67
- .text          0x00000000000068e8        0x8 LibCrt_dll_d000238.o
-                0x00000000000068e8                isrCallback68
- .text          0x00000000000068f0        0x8 LibCrt_dll_d000239.o
-                0x00000000000068f0                isrCallback69
- .text          0x00000000000068f8        0x8 LibCrt_dll_d000240.o
-                0x00000000000068f8                isrCallback7
- .text          0x0000000000006900        0x8 LibCrt_dll_d000241.o
-                0x0000000000006900                isrCallback70
- .text          0x0000000000006908        0x8 LibCrt_dll_d000242.o
-                0x0000000000006908                isrCallback71
- .text          0x0000000000006910        0x8 LibCrt_dll_d000243.o
-                0x0000000000006910                isrCallback72
- .text          0x0000000000006918        0x8 LibCrt_dll_d000244.o
-                0x0000000000006918                isrCallback73
- .text          0x0000000000006920        0x8 LibCrt_dll_d000245.o
-                0x0000000000006920                isrCallback74
- .text          0x0000000000006928        0x8 LibCrt_dll_d000246.o
-                0x0000000000006928                isrCallback75
- .text          0x0000000000006930        0x8 LibCrt_dll_d000247.o
-                0x0000000000006930                isrCallback76
- .text          0x0000000000006938        0x8 LibCrt_dll_d000248.o
-                0x0000000000006938                isrCallback77
- .text          0x0000000000006940        0x8 LibCrt_dll_d000249.o
-                0x0000000000006940                isrCallback78
- .text          0x0000000000006948        0x8 LibCrt_dll_d000250.o
-                0x0000000000006948                isrCallback79
- .text          0x0000000000006950        0x8 LibCrt_dll_d000251.o
-                0x0000000000006950                isrCallback8
- .text          0x0000000000006958        0x8 LibCrt_dll_d000252.o
-                0x0000000000006958                isrCallback80
- .text          0x0000000000006960        0x8 LibCrt_dll_d000253.o
-                0x0000000000006960                isrCallback81
- .text          0x0000000000006968        0x8 LibCrt_dll_d000254.o
-                0x0000000000006968                isrCallback82
- .text          0x0000000000006970        0x8 LibCrt_dll_d000255.o
-                0x0000000000006970                isrCallback83
- .text          0x0000000000006978        0x8 LibCrt_dll_d000256.o
-                0x0000000000006978                isrCallback84
- .text          0x0000000000006980        0x8 LibCrt_dll_d000257.o
-                0x0000000000006980                isrCallback85
- .text          0x0000000000006988        0x8 LibCrt_dll_d000258.o
-                0x0000000000006988                isrCallback86
- .text          0x0000000000006990        0x8 LibCrt_dll_d000259.o
-                0x0000000000006990                isrCallback87
- .text          0x0000000000006998        0x8 LibCrt_dll_d000260.o
-                0x0000000000006998                isrCallback88
- .text          0x00000000000069a0        0x8 LibCrt_dll_d000261.o
-                0x00000000000069a0                isrCallback89
- .text          0x00000000000069a8        0x8 LibCrt_dll_d000262.o
-                0x00000000000069a8                isrCallback9
- .text          0x00000000000069b0        0x8 LibCrt_dll_d000263.o
-                0x00000000000069b0                isrCallback90
- .text          0x00000000000069b8        0x8 LibCrt_dll_d000264.o
-                0x00000000000069b8                isrCallback91
- .text          0x00000000000069c0        0x8 LibCrt_dll_d000265.o
-                0x00000000000069c0                isrCallback92
- .text          0x00000000000069c8        0x8 LibCrt_dll_d000266.o
-                0x00000000000069c8                isrCallback93
- .text          0x00000000000069d0        0x8 LibCrt_dll_d000267.o
-                0x00000000000069d0                isrCallback94
- .text          0x00000000000069d8        0x8 LibCrt_dll_d000268.o
-                0x00000000000069d8                isrCallback95
- .text          0x00000000000069e0        0x8 LibCrt_dll_d000269.o
-                0x00000000000069e0                isrCallback96
- .text          0x00000000000069e8        0x8 LibCrt_dll_d000270.o
-                0x00000000000069e8                isrCallback97
- .text          0x00000000000069f0        0x8 LibCrt_dll_d000271.o
-                0x00000000000069f0                isrCallback98
- .text          0x00000000000069f8        0x8 LibCrt_dll_d000272.o
-                0x00000000000069f8                isrCallback99
- .text          0x0000000000006a00        0x8 LibCrt_dll_d000273.o
-                0x0000000000006a00                memcmp
- .text          0x0000000000006a08        0x8 LibCrt_dll_d000274.o
-                0x0000000000006a08                memset
+                0x0000000000005dda                GenericIOISR
+                0x0000000000005df7                __main
+ .text          0x00000000000061c0       0x1e compile/cache/elf.asm.kboot.o
+                0x00000000000061c0                kboot_km
+ *fill*         0x00000000000061de        0x2 
+ .text          0x00000000000061e0        0x8 LibVideo_dll_d000001.o
+                0x00000000000061e0                AllocateVideoMemory
+ .text          0x00000000000061e8        0x8 LibVideo_dll_d000002.o
+                0x00000000000061e8                InitaliseVMA
+ .text          0x00000000000061f0        0x8 LibVideo_dll_d000003.o
+                0x00000000000061f0                SelectVideoContext
+ .text          0x00000000000061f8        0x8 LibIO_dll_d000006.o
+                0x00000000000061f8                OpenRawHandle
+ .text          0x0000000000006200        0x8 LibCrt_dll_d000009.o
+                0x0000000000006200                AllocateInterruptVector
+ .text          0x0000000000006208        0x8 LibCrt_dll_d000010.o
+                0x0000000000006208                GetLocalAPICID
+ .text          0x0000000000006210        0x8 LibCrt_dll_d000011.o
+                0x0000000000006210                InitLocalAPIC
+ .text          0x0000000000006218        0x8 LibCrt_dll_d000012.o
+                0x0000000000006218                InitialiseAllocationState
+ .text          0x0000000000006220        0x8 LibCrt_dll_d000013.o
+                0x0000000000006220                SetIDTe
+ .text          0x0000000000006228        0x8 LibCrt_dll_d000014.o
+                0x0000000000006228                _LoadGDTR
+ .text          0x0000000000006230        0x8 LibCrt_dll_d000015.o
+                0x0000000000006230                _LoadIDTR
+ .text          0x0000000000006238        0x8 LibCrt_dll_d000016.o
+                0x0000000000006238                __bochs
+ .text          0x0000000000006240        0x8 LibCrt_dll_d000017.o
+                0x0000000000006240                isrCallback0
+ .text          0x0000000000006248        0x8 LibCrt_dll_d000018.o
+                0x0000000000006248                isrCallback1
+ .text          0x0000000000006250        0x8 LibCrt_dll_d000019.o
+                0x0000000000006250                isrCallback10
+ .text          0x0000000000006258        0x8 LibCrt_dll_d000020.o
+                0x0000000000006258                isrCallback100
+ .text          0x0000000000006260        0x8 LibCrt_dll_d000021.o
+                0x0000000000006260                isrCallback101
+ .text          0x0000000000006268        0x8 LibCrt_dll_d000022.o
+                0x0000000000006268                isrCallback102
+ .text          0x0000000000006270        0x8 LibCrt_dll_d000023.o
+                0x0000000000006270                isrCallback103
+ .text          0x0000000000006278        0x8 LibCrt_dll_d000024.o
+                0x0000000000006278                isrCallback104
+ .text          0x0000000000006280        0x8 LibCrt_dll_d000025.o
+                0x0000000000006280                isrCallback105
+ .text          0x0000000000006288        0x8 LibCrt_dll_d000026.o
+                0x0000000000006288                isrCallback106
+ .text          0x0000000000006290        0x8 LibCrt_dll_d000027.o
+                0x0000000000006290                isrCallback107
+ .text          0x0000000000006298        0x8 LibCrt_dll_d000028.o
+                0x0000000000006298                isrCallback108
+ .text          0x00000000000062a0        0x8 LibCrt_dll_d000029.o
+                0x00000000000062a0                isrCallback109
+ .text          0x00000000000062a8        0x8 LibCrt_dll_d000030.o
+                0x00000000000062a8                isrCallback11
+ .text          0x00000000000062b0        0x8 LibCrt_dll_d000031.o
+                0x00000000000062b0                isrCallback110
+ .text          0x00000000000062b8        0x8 LibCrt_dll_d000032.o
+                0x00000000000062b8                isrCallback111
+ .text          0x00000000000062c0        0x8 LibCrt_dll_d000033.o
+                0x00000000000062c0                isrCallback112
+ .text          0x00000000000062c8        0x8 LibCrt_dll_d000034.o
+                0x00000000000062c8                isrCallback113
+ .text          0x00000000000062d0        0x8 LibCrt_dll_d000035.o
+                0x00000000000062d0                isrCallback114
+ .text          0x00000000000062d8        0x8 LibCrt_dll_d000036.o
+                0x00000000000062d8                isrCallback115
+ .text          0x00000000000062e0        0x8 LibCrt_dll_d000037.o
+                0x00000000000062e0                isrCallback116
+ .text          0x00000000000062e8        0x8 LibCrt_dll_d000038.o
+                0x00000000000062e8                isrCallback117
+ .text          0x00000000000062f0        0x8 LibCrt_dll_d000039.o
+                0x00000000000062f0                isrCallback118
+ .text          0x00000000000062f8        0x8 LibCrt_dll_d000040.o
+                0x00000000000062f8                isrCallback119
+ .text          0x0000000000006300        0x8 LibCrt_dll_d000041.o
+                0x0000000000006300                isrCallback12
+ .text          0x0000000000006308        0x8 LibCrt_dll_d000042.o
+                0x0000000000006308                isrCallback120
+ .text          0x0000000000006310        0x8 LibCrt_dll_d000043.o
+                0x0000000000006310                isrCallback121
+ .text          0x0000000000006318        0x8 LibCrt_dll_d000044.o
+                0x0000000000006318                isrCallback122
+ .text          0x0000000000006320        0x8 LibCrt_dll_d000045.o
+                0x0000000000006320                isrCallback123
+ .text          0x0000000000006328        0x8 LibCrt_dll_d000046.o
+                0x0000000000006328                isrCallback124
+ .text          0x0000000000006330        0x8 LibCrt_dll_d000047.o
+                0x0000000000006330                isrCallback125
+ .text          0x0000000000006338        0x8 LibCrt_dll_d000048.o
+                0x0000000000006338                isrCallback126
+ .text          0x0000000000006340        0x8 LibCrt_dll_d000049.o
+                0x0000000000006340                isrCallback127
+ .text          0x0000000000006348        0x8 LibCrt_dll_d000050.o
+                0x0000000000006348                isrCallback128
+ .text          0x0000000000006350        0x8 LibCrt_dll_d000051.o
+                0x0000000000006350                isrCallback129
+ .text          0x0000000000006358        0x8 LibCrt_dll_d000052.o
+                0x0000000000006358                isrCallback13
+ .text          0x0000000000006360        0x8 LibCrt_dll_d000053.o
+                0x0000000000006360                isrCallback130
+ .text          0x0000000000006368        0x8 LibCrt_dll_d000054.o
+                0x0000000000006368                isrCallback131
+ .text          0x0000000000006370        0x8 LibCrt_dll_d000055.o
+                0x0000000000006370                isrCallback132
+ .text          0x0000000000006378        0x8 LibCrt_dll_d000056.o
+                0x0000000000006378                isrCallback133
+ .text          0x0000000000006380        0x8 LibCrt_dll_d000057.o
+                0x0000000000006380                isrCallback134
+ .text          0x0000000000006388        0x8 LibCrt_dll_d000058.o
+                0x0000000000006388                isrCallback135
+ .text          0x0000000000006390        0x8 LibCrt_dll_d000059.o
+                0x0000000000006390                isrCallback136
+ .text          0x0000000000006398        0x8 LibCrt_dll_d000060.o
+                0x0000000000006398                isrCallback137
+ .text          0x00000000000063a0        0x8 LibCrt_dll_d000061.o
+                0x00000000000063a0                isrCallback138
+ .text          0x00000000000063a8        0x8 LibCrt_dll_d000062.o
+                0x00000000000063a8                isrCallback139
+ .text          0x00000000000063b0        0x8 LibCrt_dll_d000063.o
+                0x00000000000063b0                isrCallback14
+ .text          0x00000000000063b8        0x8 LibCrt_dll_d000064.o
+                0x00000000000063b8                isrCallback140
+ .text          0x00000000000063c0        0x8 LibCrt_dll_d000065.o
+                0x00000000000063c0                isrCallback141
+ .text          0x00000000000063c8        0x8 LibCrt_dll_d000066.o
+                0x00000000000063c8                isrCallback142
+ .text          0x00000000000063d0        0x8 LibCrt_dll_d000067.o
+                0x00000000000063d0                isrCallback143
+ .text          0x00000000000063d8        0x8 LibCrt_dll_d000068.o
+                0x00000000000063d8                isrCallback144
+ .text          0x00000000000063e0        0x8 LibCrt_dll_d000069.o
+                0x00000000000063e0                isrCallback145
+ .text          0x00000000000063e8        0x8 LibCrt_dll_d000070.o
+                0x00000000000063e8                isrCallback146
+ .text          0x00000000000063f0        0x8 LibCrt_dll_d000071.o
+                0x00000000000063f0                isrCallback147
+ .text          0x00000000000063f8        0x8 LibCrt_dll_d000072.o
+                0x00000000000063f8                isrCallback148
+ .text          0x0000000000006400        0x8 LibCrt_dll_d000073.o
+                0x0000000000006400                isrCallback149
+ .text          0x0000000000006408        0x8 LibCrt_dll_d000074.o
+                0x0000000000006408                isrCallback15
+ .text          0x0000000000006410        0x8 LibCrt_dll_d000075.o
+                0x0000000000006410                isrCallback150
+ .text          0x0000000000006418        0x8 LibCrt_dll_d000076.o
+                0x0000000000006418                isrCallback151
+ .text          0x0000000000006420        0x8 LibCrt_dll_d000077.o
+                0x0000000000006420                isrCallback152
+ .text          0x0000000000006428        0x8 LibCrt_dll_d000078.o
+                0x0000000000006428                isrCallback153
+ .text          0x0000000000006430        0x8 LibCrt_dll_d000079.o
+                0x0000000000006430                isrCallback154
+ .text          0x0000000000006438        0x8 LibCrt_dll_d000080.o
+                0x0000000000006438                isrCallback155
+ .text          0x0000000000006440        0x8 LibCrt_dll_d000081.o
+                0x0000000000006440                isrCallback156
+ .text          0x0000000000006448        0x8 LibCrt_dll_d000082.o
+                0x0000000000006448                isrCallback157
+ .text          0x0000000000006450        0x8 LibCrt_dll_d000083.o
+                0x0000000000006450                isrCallback158
+ .text          0x0000000000006458        0x8 LibCrt_dll_d000084.o
+                0x0000000000006458                isrCallback159
+ .text          0x0000000000006460        0x8 LibCrt_dll_d000085.o
+                0x0000000000006460                isrCallback16
+ .text          0x0000000000006468        0x8 LibCrt_dll_d000086.o
+                0x0000000000006468                isrCallback160
+ .text          0x0000000000006470        0x8 LibCrt_dll_d000087.o
+                0x0000000000006470                isrCallback161
+ .text          0x0000000000006478        0x8 LibCrt_dll_d000088.o
+                0x0000000000006478                isrCallback162
+ .text          0x0000000000006480        0x8 LibCrt_dll_d000089.o
+                0x0000000000006480                isrCallback163
+ .text          0x0000000000006488        0x8 LibCrt_dll_d000090.o
+                0x0000000000006488                isrCallback164
+ .text          0x0000000000006490        0x8 LibCrt_dll_d000091.o
+                0x0000000000006490                isrCallback165
+ .text          0x0000000000006498        0x8 LibCrt_dll_d000092.o
+                0x0000000000006498                isrCallback166
+ .text          0x00000000000064a0        0x8 LibCrt_dll_d000093.o
+                0x00000000000064a0                isrCallback167
+ .text          0x00000000000064a8        0x8 LibCrt_dll_d000094.o
+                0x00000000000064a8                isrCallback168
+ .text          0x00000000000064b0        0x8 LibCrt_dll_d000095.o
+                0x00000000000064b0                isrCallback169
+ .text          0x00000000000064b8        0x8 LibCrt_dll_d000096.o
+                0x00000000000064b8                isrCallback17
+ .text          0x00000000000064c0        0x8 LibCrt_dll_d000097.o
+                0x00000000000064c0                isrCallback170
+ .text          0x00000000000064c8        0x8 LibCrt_dll_d000098.o
+                0x00000000000064c8                isrCallback171
+ .text          0x00000000000064d0        0x8 LibCrt_dll_d000099.o
+                0x00000000000064d0                isrCallback172
+ .text          0x00000000000064d8        0x8 LibCrt_dll_d000100.o
+                0x00000000000064d8                isrCallback173
+ .text          0x00000000000064e0        0x8 LibCrt_dll_d000101.o
+                0x00000000000064e0                isrCallback174
+ .text          0x00000000000064e8        0x8 LibCrt_dll_d000102.o
+                0x00000000000064e8                isrCallback175
+ .text          0x00000000000064f0        0x8 LibCrt_dll_d000103.o
+                0x00000000000064f0                isrCallback176
+ .text          0x00000000000064f8        0x8 LibCrt_dll_d000104.o
+                0x00000000000064f8                isrCallback177
+ .text          0x0000000000006500        0x8 LibCrt_dll_d000105.o
+                0x0000000000006500                isrCallback178
+ .text          0x0000000000006508        0x8 LibCrt_dll_d000106.o
+                0x0000000000006508                isrCallback179
+ .text          0x0000000000006510        0x8 LibCrt_dll_d000107.o
+                0x0000000000006510                isrCallback18
+ .text          0x0000000000006518        0x8 LibCrt_dll_d000108.o
+                0x0000000000006518                isrCallback180
+ .text          0x0000000000006520        0x8 LibCrt_dll_d000109.o
+                0x0000000000006520                isrCallback181
+ .text          0x0000000000006528        0x8 LibCrt_dll_d000110.o
+                0x0000000000006528                isrCallback182
+ .text          0x0000000000006530        0x8 LibCrt_dll_d000111.o
+                0x0000000000006530                isrCallback183
+ .text          0x0000000000006538        0x8 LibCrt_dll_d000112.o
+                0x0000000000006538                isrCallback184
+ .text          0x0000000000006540        0x8 LibCrt_dll_d000113.o
+                0x0000000000006540                isrCallback185
+ .text          0x0000000000006548        0x8 LibCrt_dll_d000114.o
+                0x0000000000006548                isrCallback186
+ .text          0x0000000000006550        0x8 LibCrt_dll_d000115.o
+                0x0000000000006550                isrCallback187
+ .text          0x0000000000006558        0x8 LibCrt_dll_d000116.o
+                0x0000000000006558                isrCallback188
+ .text          0x0000000000006560        0x8 LibCrt_dll_d000117.o
+                0x0000000000006560                isrCallback189
+ .text          0x0000000000006568        0x8 LibCrt_dll_d000118.o
+                0x0000000000006568                isrCallback19
+ .text          0x0000000000006570        0x8 LibCrt_dll_d000119.o
+                0x0000000000006570                isrCallback190
+ .text          0x0000000000006578        0x8 LibCrt_dll_d000120.o
+                0x0000000000006578                isrCallback191
+ .text          0x0000000000006580        0x8 LibCrt_dll_d000121.o
+                0x0000000000006580                isrCallback192
+ .text          0x0000000000006588        0x8 LibCrt_dll_d000122.o
+                0x0000000000006588                isrCallback193
+ .text          0x0000000000006590        0x8 LibCrt_dll_d000123.o
+                0x0000000000006590                isrCallback194
+ .text          0x0000000000006598        0x8 LibCrt_dll_d000124.o
+                0x0000000000006598                isrCallback195
+ .text          0x00000000000065a0        0x8 LibCrt_dll_d000125.o
+                0x00000000000065a0                isrCallback196
+ .text          0x00000000000065a8        0x8 LibCrt_dll_d000126.o
+                0x00000000000065a8                isrCallback197
+ .text          0x00000000000065b0        0x8 LibCrt_dll_d000127.o
+                0x00000000000065b0                isrCallback198
+ .text          0x00000000000065b8        0x8 LibCrt_dll_d000128.o
+                0x00000000000065b8                isrCallback199
+ .text          0x00000000000065c0        0x8 LibCrt_dll_d000129.o
+                0x00000000000065c0                isrCallback2
+ .text          0x00000000000065c8        0x8 LibCrt_dll_d000130.o
+                0x00000000000065c8                isrCallback20
+ .text          0x00000000000065d0        0x8 LibCrt_dll_d000131.o
+                0x00000000000065d0                isrCallback200
+ .text          0x00000000000065d8        0x8 LibCrt_dll_d000132.o
+                0x00000000000065d8                isrCallback201
+ .text          0x00000000000065e0        0x8 LibCrt_dll_d000133.o
+                0x00000000000065e0                isrCallback202
+ .text          0x00000000000065e8        0x8 LibCrt_dll_d000134.o
+                0x00000000000065e8                isrCallback203
+ .text          0x00000000000065f0        0x8 LibCrt_dll_d000135.o
+                0x00000000000065f0                isrCallback204
+ .text          0x00000000000065f8        0x8 LibCrt_dll_d000136.o
+                0x00000000000065f8                isrCallback205
+ .text          0x0000000000006600        0x8 LibCrt_dll_d000137.o
+                0x0000000000006600                isrCallback206
+ .text          0x0000000000006608        0x8 LibCrt_dll_d000138.o
+                0x0000000000006608                isrCallback207
+ .text          0x0000000000006610        0x8 LibCrt_dll_d000139.o
+                0x0000000000006610                isrCallback208
+ .text          0x0000000000006618        0x8 LibCrt_dll_d000140.o
+                0x0000000000006618                isrCallback209
+ .text          0x0000000000006620        0x8 LibCrt_dll_d000141.o
+                0x0000000000006620                isrCallback21
+ .text          0x0000000000006628        0x8 LibCrt_dll_d000142.o
+                0x0000000000006628                isrCallback210
+ .text          0x0000000000006630        0x8 LibCrt_dll_d000143.o
+                0x0000000000006630                isrCallback211
+ .text          0x0000000000006638        0x8 LibCrt_dll_d000144.o
+                0x0000000000006638                isrCallback212
+ .text          0x0000000000006640        0x8 LibCrt_dll_d000145.o
+                0x0000000000006640                isrCallback213
+ .text          0x0000000000006648        0x8 LibCrt_dll_d000146.o
+                0x0000000000006648                isrCallback214
+ .text          0x0000000000006650        0x8 LibCrt_dll_d000147.o
+                0x0000000000006650                isrCallback215
+ .text          0x0000000000006658        0x8 LibCrt_dll_d000148.o
+                0x0000000000006658                isrCallback216
+ .text          0x0000000000006660        0x8 LibCrt_dll_d000149.o
+                0x0000000000006660                isrCallback217
+ .text          0x0000000000006668        0x8 LibCrt_dll_d000150.o
+                0x0000000000006668                isrCallback218
+ .text          0x0000000000006670        0x8 LibCrt_dll_d000151.o
+                0x0000000000006670                isrCallback219
+ .text          0x0000000000006678        0x8 LibCrt_dll_d000152.o
+                0x0000000000006678                isrCallback22
+ .text          0x0000000000006680        0x8 LibCrt_dll_d000153.o
+                0x0000000000006680                isrCallback220
+ .text          0x0000000000006688        0x8 LibCrt_dll_d000154.o
+                0x0000000000006688                isrCallback221
+ .text          0x0000000000006690        0x8 LibCrt_dll_d000155.o
+                0x0000000000006690                isrCallback222
+ .text          0x0000000000006698        0x8 LibCrt_dll_d000156.o
+                0x0000000000006698                isrCallback223
+ .text          0x00000000000066a0        0x8 LibCrt_dll_d000157.o
+                0x00000000000066a0                isrCallback224
+ .text          0x00000000000066a8        0x8 LibCrt_dll_d000158.o
+                0x00000000000066a8                isrCallback225
+ .text          0x00000000000066b0        0x8 LibCrt_dll_d000159.o
+                0x00000000000066b0                isrCallback226
+ .text          0x00000000000066b8        0x8 LibCrt_dll_d000160.o
+                0x00000000000066b8                isrCallback227
+ .text          0x00000000000066c0        0x8 LibCrt_dll_d000161.o
+                0x00000000000066c0                isrCallback228
+ .text          0x00000000000066c8        0x8 LibCrt_dll_d000162.o
+                0x00000000000066c8                isrCallback229
+ .text          0x00000000000066d0        0x8 LibCrt_dll_d000163.o
+                0x00000000000066d0                isrCallback23
+ .text          0x00000000000066d8        0x8 LibCrt_dll_d000164.o
+                0x00000000000066d8                isrCallback230
+ .text          0x00000000000066e0        0x8 LibCrt_dll_d000165.o
+                0x00000000000066e0                isrCallback231
+ .text          0x00000000000066e8        0x8 LibCrt_dll_d000166.o
+                0x00000000000066e8                isrCallback232
+ .text          0x00000000000066f0        0x8 LibCrt_dll_d000167.o
+                0x00000000000066f0                isrCallback233
+ .text          0x00000000000066f8        0x8 LibCrt_dll_d000168.o
+                0x00000000000066f8                isrCallback234
+ .text          0x0000000000006700        0x8 LibCrt_dll_d000169.o
+                0x0000000000006700                isrCallback235
+ .text          0x0000000000006708        0x8 LibCrt_dll_d000170.o
+                0x0000000000006708                isrCallback236
+ .text          0x0000000000006710        0x8 LibCrt_dll_d000171.o
+                0x0000000000006710                isrCallback237
+ .text          0x0000000000006718        0x8 LibCrt_dll_d000172.o
+                0x0000000000006718                isrCallback238
+ .text          0x0000000000006720        0x8 LibCrt_dll_d000173.o
+                0x0000000000006720                isrCallback239
+ .text          0x0000000000006728        0x8 LibCrt_dll_d000174.o
+                0x0000000000006728                isrCallback24
+ .text          0x0000000000006730        0x8 LibCrt_dll_d000175.o
+                0x0000000000006730                isrCallback240
+ .text          0x0000000000006738        0x8 LibCrt_dll_d000176.o
+                0x0000000000006738                isrCallback241
+ .text          0x0000000000006740        0x8 LibCrt_dll_d000177.o
+                0x0000000000006740                isrCallback242
+ .text          0x0000000000006748        0x8 LibCrt_dll_d000178.o
+                0x0000000000006748                isrCallback243
+ .text          0x0000000000006750        0x8 LibCrt_dll_d000179.o
+                0x0000000000006750                isrCallback244
+ .text          0x0000000000006758        0x8 LibCrt_dll_d000180.o
+                0x0000000000006758                isrCallback245
+ .text          0x0000000000006760        0x8 LibCrt_dll_d000181.o
+                0x0000000000006760                isrCallback246
+ .text          0x0000000000006768        0x8 LibCrt_dll_d000182.o
+                0x0000000000006768                isrCallback247
+ .text          0x0000000000006770        0x8 LibCrt_dll_d000183.o
+                0x0000000000006770                isrCallback248
+ .text          0x0000000000006778        0x8 LibCrt_dll_d000184.o
+                0x0000000000006778                isrCallback249
+ .text          0x0000000000006780        0x8 LibCrt_dll_d000185.o
+                0x0000000000006780                isrCallback25
+ .text          0x0000000000006788        0x8 LibCrt_dll_d000186.o
+                0x0000000000006788                isrCallback250
+ .text          0x0000000000006790        0x8 LibCrt_dll_d000187.o
+                0x0000000000006790                isrCallback251
+ .text          0x0000000000006798        0x8 LibCrt_dll_d000188.o
+                0x0000000000006798                isrCallback252
+ .text          0x00000000000067a0        0x8 LibCrt_dll_d000189.o
+                0x00000000000067a0                isrCallback253
+ .text          0x00000000000067a8        0x8 LibCrt_dll_d000190.o
+                0x00000000000067a8                isrCallback254
+ .text          0x00000000000067b0        0x8 LibCrt_dll_d000191.o
+                0x00000000000067b0                isrCallback255
+ .text          0x00000000000067b8        0x8 LibCrt_dll_d000192.o
+                0x00000000000067b8                isrCallback26
+ .text          0x00000000000067c0        0x8 LibCrt_dll_d000193.o
+                0x00000000000067c0                isrCallback27
+ .text          0x00000000000067c8        0x8 LibCrt_dll_d000194.o
+                0x00000000000067c8                isrCallback28
+ .text          0x00000000000067d0        0x8 LibCrt_dll_d000195.o
+                0x00000000000067d0                isrCallback29
+ .text          0x00000000000067d8        0x8 LibCrt_dll_d000196.o
+                0x00000000000067d8                isrCallback3
+ .text          0x00000000000067e0        0x8 LibCrt_dll_d000197.o
+                0x00000000000067e0                isrCallback30
+ .text          0x00000000000067e8        0x8 LibCrt_dll_d000198.o
+                0x00000000000067e8                isrCallback31
+ .text          0x00000000000067f0        0x8 LibCrt_dll_d000199.o
+                0x00000000000067f0                isrCallback32
+ .text          0x00000000000067f8        0x8 LibCrt_dll_d000200.o
+                0x00000000000067f8                isrCallback33
+ .text          0x0000000000006800        0x8 LibCrt_dll_d000201.o
+                0x0000000000006800                isrCallback34
+ .text          0x0000000000006808        0x8 LibCrt_dll_d000202.o
+                0x0000000000006808                isrCallback35
+ .text          0x0000000000006810        0x8 LibCrt_dll_d000203.o
+                0x0000000000006810                isrCallback36
+ .text          0x0000000000006818        0x8 LibCrt_dll_d000204.o
+                0x0000000000006818                isrCallback37
+ .text          0x0000000000006820        0x8 LibCrt_dll_d000205.o
+                0x0000000000006820                isrCallback38
+ .text          0x0000000000006828        0x8 LibCrt_dll_d000206.o
+                0x0000000000006828                isrCallback39
+ .text          0x0000000000006830        0x8 LibCrt_dll_d000207.o
+                0x0000000000006830                isrCallback4
+ .text          0x0000000000006838        0x8 LibCrt_dll_d000208.o
+                0x0000000000006838                isrCallback40
+ .text          0x0000000000006840        0x8 LibCrt_dll_d000209.o
+                0x0000000000006840                isrCallback41
+ .text          0x0000000000006848        0x8 LibCrt_dll_d000210.o
+                0x0000000000006848                isrCallback42
+ .text          0x0000000000006850        0x8 LibCrt_dll_d000211.o
+                0x0000000000006850                isrCallback43
+ .text          0x0000000000006858        0x8 LibCrt_dll_d000212.o
+                0x0000000000006858                isrCallback44
+ .text          0x0000000000006860        0x8 LibCrt_dll_d000213.o
+                0x0000000000006860                isrCallback45
+ .text          0x0000000000006868        0x8 LibCrt_dll_d000214.o
+                0x0000000000006868                isrCallback46
+ .text          0x0000000000006870        0x8 LibCrt_dll_d000215.o
+                0x0000000000006870                isrCallback47
+ .text          0x0000000000006878        0x8 LibCrt_dll_d000216.o
+                0x0000000000006878                isrCallback48
+ .text          0x0000000000006880        0x8 LibCrt_dll_d000217.o
+                0x0000000000006880                isrCallback49
+ .text          0x0000000000006888        0x8 LibCrt_dll_d000218.o
+                0x0000000000006888                isrCallback5
+ .text          0x0000000000006890        0x8 LibCrt_dll_d000219.o
+                0x0000000000006890                isrCallback50
+ .text          0x0000000000006898        0x8 LibCrt_dll_d000220.o
+                0x0000000000006898                isrCallback51
+ .text          0x00000000000068a0        0x8 LibCrt_dll_d000221.o
+                0x00000000000068a0                isrCallback52
+ .text          0x00000000000068a8        0x8 LibCrt_dll_d000222.o
+                0x00000000000068a8                isrCallback53
+ .text          0x00000000000068b0        0x8 LibCrt_dll_d000223.o
+                0x00000000000068b0                isrCallback54
+ .text          0x00000000000068b8        0x8 LibCrt_dll_d000224.o
+                0x00000000000068b8                isrCallback55
+ .text          0x00000000000068c0        0x8 LibCrt_dll_d000225.o
+                0x00000000000068c0                isrCallback56
+ .text          0x00000000000068c8        0x8 LibCrt_dll_d000226.o
+                0x00000000000068c8                isrCallback57
+ .text          0x00000000000068d0        0x8 LibCrt_dll_d000227.o
+                0x00000000000068d0                isrCallback58
+ .text          0x00000000000068d8        0x8 LibCrt_dll_d000228.o
+                0x00000000000068d8                isrCallback59
+ .text          0x00000000000068e0        0x8 LibCrt_dll_d000229.o
+                0x00000000000068e0                isrCallback6
+ .text          0x00000000000068e8        0x8 LibCrt_dll_d000230.o
+                0x00000000000068e8                isrCallback60
+ .text          0x00000000000068f0        0x8 LibCrt_dll_d000231.o
+                0x00000000000068f0                isrCallback61
+ .text          0x00000000000068f8        0x8 LibCrt_dll_d000232.o
+                0x00000000000068f8                isrCallback62
+ .text          0x0000000000006900        0x8 LibCrt_dll_d000233.o
+                0x0000000000006900                isrCallback63
+ .text          0x0000000000006908        0x8 LibCrt_dll_d000234.o
+                0x0000000000006908                isrCallback64
+ .text          0x0000000000006910        0x8 LibCrt_dll_d000235.o
+                0x0000000000006910                isrCallback65
+ .text          0x0000000000006918        0x8 LibCrt_dll_d000236.o
+                0x0000000000006918                isrCallback66
+ .text          0x0000000000006920        0x8 LibCrt_dll_d000237.o
+                0x0000000000006920                isrCallback67
+ .text          0x0000000000006928        0x8 LibCrt_dll_d000238.o
+                0x0000000000006928                isrCallback68
+ .text          0x0000000000006930        0x8 LibCrt_dll_d000239.o
+                0x0000000000006930                isrCallback69
+ .text          0x0000000000006938        0x8 LibCrt_dll_d000240.o
+                0x0000000000006938                isrCallback7
+ .text          0x0000000000006940        0x8 LibCrt_dll_d000241.o
+                0x0000000000006940                isrCallback70
+ .text          0x0000000000006948        0x8 LibCrt_dll_d000242.o
+                0x0000000000006948                isrCallback71
+ .text          0x0000000000006950        0x8 LibCrt_dll_d000243.o
+                0x0000000000006950                isrCallback72
+ .text          0x0000000000006958        0x8 LibCrt_dll_d000244.o
+                0x0000000000006958                isrCallback73
+ .text          0x0000000000006960        0x8 LibCrt_dll_d000245.o
+                0x0000000000006960                isrCallback74
+ .text          0x0000000000006968        0x8 LibCrt_dll_d000246.o
+                0x0000000000006968                isrCallback75
+ .text          0x0000000000006970        0x8 LibCrt_dll_d000247.o
+                0x0000000000006970                isrCallback76
+ .text          0x0000000000006978        0x8 LibCrt_dll_d000248.o
+                0x0000000000006978                isrCallback77
+ .text          0x0000000000006980        0x8 LibCrt_dll_d000249.o
+                0x0000000000006980                isrCallback78
+ .text          0x0000000000006988        0x8 LibCrt_dll_d000250.o
+                0x0000000000006988                isrCallback79
+ .text          0x0000000000006990        0x8 LibCrt_dll_d000251.o
+                0x0000000000006990                isrCallback8
+ .text          0x0000000000006998        0x8 LibCrt_dll_d000252.o
+                0x0000000000006998                isrCallback80
+ .text          0x00000000000069a0        0x8 LibCrt_dll_d000253.o
+                0x00000000000069a0                isrCallback81
+ .text          0x00000000000069a8        0x8 LibCrt_dll_d000254.o
+                0x00000000000069a8                isrCallback82
+ .text          0x00000000000069b0        0x8 LibCrt_dll_d000255.o
+                0x00000000000069b0                isrCallback83
+ .text          0x00000000000069b8        0x8 LibCrt_dll_d000256.o
+                0x00000000000069b8                isrCallback84
+ .text          0x00000000000069c0        0x8 LibCrt_dll_d000257.o
+                0x00000000000069c0                isrCallback85
+ .text          0x00000000000069c8        0x8 LibCrt_dll_d000258.o
+                0x00000000000069c8                isrCallback86
+ .text          0x00000000000069d0        0x8 LibCrt_dll_d000259.o
+                0x00000000000069d0                isrCallback87
+ .text          0x00000000000069d8        0x8 LibCrt_dll_d000260.o
+                0x00000000000069d8                isrCallback88
+ .text          0x00000000000069e0        0x8 LibCrt_dll_d000261.o
+                0x00000000000069e0                isrCallback89
+ .text          0x00000000000069e8        0x8 LibCrt_dll_d000262.o
+                0x00000000000069e8                isrCallback9
+ .text          0x00000000000069f0        0x8 LibCrt_dll_d000263.o
+                0x00000000000069f0                isrCallback90
+ .text          0x00000000000069f8        0x8 LibCrt_dll_d000264.o
+                0x00000000000069f8                isrCallback91
+ .text          0x0000000000006a00        0x8 LibCrt_dll_d000265.o
+                0x0000000000006a00                isrCallback92
+ .text          0x0000000000006a08        0x8 LibCrt_dll_d000266.o
+                0x0000000000006a08                isrCallback93
+ .text          0x0000000000006a10        0x8 LibCrt_dll_d000267.o
+                0x0000000000006a10                isrCallback94
+ .text          0x0000000000006a18        0x8 LibCrt_dll_d000268.o
+                0x0000000000006a18                isrCallback95
+ .text          0x0000000000006a20        0x8 LibCrt_dll_d000269.o
+                0x0000000000006a20                isrCallback96
+ .text          0x0000000000006a28        0x8 LibCrt_dll_d000270.o
+                0x0000000000006a28                isrCallback97
+ .text          0x0000000000006a30        0x8 LibCrt_dll_d000271.o
+                0x0000000000006a30                isrCallback98
+ .text          0x0000000000006a38        0x8 LibCrt_dll_d000272.o
+                0x0000000000006a38                isrCallback99
+ .text          0x0000000000006a40        0x8 LibCrt_dll_d000273.o
+                0x0000000000006a40                memcmp
+ .text          0x0000000000006a48        0x8 LibCrt_dll_d000274.o
+                0x0000000000006a48                memset
  *(SORT_BY_NAME(.text$*))
  *(.text.*)
  *(.gnu.linkonce.t.*)
  *(.glue_7t)
  *(.glue_7)
-                0x0000000000006a10                . = ALIGN (0x8)
+                0x0000000000006a50                . = ALIGN (0x8)
  *(SORT_NONE(.fini))
  *(.gcc_exc)
                 [!provide]                        PROVIDE (etext = .)
@@ -678,7 +678,7 @@ LOAD Build/Build-nodate/root-part/services/LibVideo.dll
 
 .xdata          0x000000000000a000     0x1000
  *(.xdata*)
- .xdata         0x000000000000a000       0x28 compile/cache/elf.c.kboot.o
+ .xdata         0x000000000000a000       0x24 compile/cache/elf.c.kboot.o
 
 .bss            0x000000000000b000    0x190a0
                 0x000000000000b000                __bss_start__ = .

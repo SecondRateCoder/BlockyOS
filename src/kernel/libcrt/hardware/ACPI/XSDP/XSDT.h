@@ -21,7 +21,7 @@ typedef struct{
 		uint64_t		XsdtAddress;
 		uint8_t			ExtendedChecksum;
 		uint8_t			reserved[3];
-	}Version1;
+	}__packed Version1;
 }__packed XSDP_t;
 
 typedef char XSDT_Signature[4];

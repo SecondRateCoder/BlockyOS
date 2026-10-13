@@ -177,16 +177,17 @@
 #define ReadPTR(base, type, offset, value)	\
 	(value) = *((type *)((base) + (offset)));
 
+#define ARRSIZE(ARR)	(sizeof(ARR) / sizeof(*(ARR)))
+
 #define SAFEOP(A, B, CompAOp, CompA, CompBOp, CompB, Comp, OP, Alt) (((A) CompAOp (CompA)) Comp ((B) CompBOp (CompB)) ? ((A) OP (B)) : (Alt))
 #define __safediv(A, B) SAFEOP((A), (B), ||, true, !=, 0, &&, /, 1)
 
-LibAPI extern bool __sysvabi e9print(char *str, uint64_t n);
+LibAPI extern bool __sysvabi e9print(char *str, unsigned long long n);
 LibAPI extern bool __sysvabi e9printc(char c);
 
 typedef struct{
 	unsigned short	Device;
-	unsigned char	Parent;
-	unsigned char	Local;
+	unsigned short	Parent;
 }__packed GenericReference;
 typedef unsigned char		GenericChecksum[2];
 

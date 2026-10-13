@@ -159,7 +159,7 @@ CommonMutex ConfigureUHCIController(void *acpibase, uint32_t IOAPIC, uint32_t N,
 		//	We allocate in the Lower 32-bits of Memory.
 		void *FrameList = AllocateAlignedPagesFromRange(NULL, UINT32_MAX, FrameListSize, ReadWritable | SupervisorMode, 0x00, PAGE_SIZE)/*, 
 				*PFrameList = MapPhysical(FrameList)*/;
-		for(register uint32_t i = 0; i < 1024; i++){((uint32_t *)FrameList)[i] = 1;}//	Set Terminate bit
+		for(uint32_t i = 0; i < 1024; i++){((uint32_t *)FrameList)[i] = 1;}//	Set Terminate bit
 		UHCIWriteRegister(acpibase, N, UHCIFrameListBaseAddress, (uint32_t)(uintptr_t)FrameList);
 
 		R = UHCIReadRegister(acpibase, N, UHCIInterruptEnable);

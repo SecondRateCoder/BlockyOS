@@ -1,7 +1,7 @@
 
-cpu: model=corei7_ivy_bridge_3770k, ips=10000000, count=2, reset_on_triple_fault=1
+cpu: model=corei7_ivy_bridge_3770k, ips=50000000, count=2, reset_on_triple_fault=1
 boot: disk
-memory: guest=4096, host=1024
+megs: 4096
 config_interface: win32config
 display_library: sdl
 
@@ -14,12 +14,16 @@ e1000: enabled=1
 pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=e1000
 vga: extension=cirrus, update_freq=60, realtime=1
 mouse: enabled=1
+keyboard: type=mf, serial_delay=150, paste_delay=100000
 
 magic_break: enabled=1
 port_e9_hack: enabled=1, all_rings=1
 
 log: C:\GitHub\BlockyOS\Build\Build-nodate\bochs.log
 iodebug: all_rings=1
+error: action=report
+info: action=ignore
+debug: action=ignore
 
 romimage: file=C:\GitHub\BlockyOS\compile\toolchain\uefi\debug\OVMF_CODE.fd
 vgaromimage: file=C:\msys64\mingw64\share\bochs\VGABIOS-lgpl-latest-cirrus.bin

@@ -262,9 +262,14 @@ typedef struct{
 	uint64_t	L3		: 9;
 	uint64_t	L4		: 9;
 	uint64_t	L5		: 9;
-	uint64_t			: 7;
+	//	Alis for 0/1 Bits
+	uint64_t	L0		: 7;
 }__packed VirtualAddress;
 
+#define InitPageCoordinate(VA)	(PageCoordinate){	\
+	.EnableL1 = true, .EnableL2 = true, .EnableL3 = true, .EnableL4 = true, .EnableL5 = IsLA57Enabled(), 	\
+	.L1 = (VA).L1, .L2 = (VA).L2, .L3 = (VA).L3, .L4 = (VA).L4, .L5 = (VA).L5}
+#define InitVirtualAddress(PC)	(VirtualAddress){.L0 = 0, .L1 = (PC).L1, .L2 = (PC).L2, .L3 = (PC).L3, .L4 = (PC).L4, .L5 = (PC).L5}
 typedef struct{
 	uint64_t	L1			: 9, 
 				EnableL1	: 1;
@@ -289,7 +294,12 @@ typedef struct{
 #define PAGE_SIZE					nKB(4)
 #define LowestLocal					0
 
-enumdef(uint8_t, PageAllocationType){PAFNoFree = 0x1, PAFNoTouch, PAFCachable = 0x2, PAFUsed = 0x4};
+enumdef(uint8_t, PageAllocationType){
+	PATUnfreeable = 0x1, PATUntouchableRegion, PATUsedRegion = 0x4, 
+	//	The entry describes a Non-Physical Region
+	PATSubDescriptorMapping = 0x8, 
+	PATNonPhysicalDescriptor = 0x10
+};
 
 enumdef(uint32_t, PageAllocationFlags){
 	ReadOnly = 0x0, ReadWritable = 0x1, 
@@ -303,14 +313,27 @@ enumdef(uint32_t, PageAllocationFlags){
 //	Each Bit Corresponds to 32 bytes
 //	.5% of each Gigabyte is used for the PageAllocationTable
 //	.5% of all Page Levels are used to map each block.
+
+#define InvalidSubDescriptorIndex	(UINT32_MAX)
 typedef volatile struct{
-	GenericReference	Parent;
-	PageAllocationType	Type;
-	//	Have a uint16_t worth of Padding
-	PageCoordinate		Coordinate;
-	//	Determines the N Entries till the Tip of the Chain.
-	uint16_t			Local;
-}PageAllocationState;
+	//	The Physical Memory for the Range.
+	uint64_t			Physical;
+	//	The Index of the SubDescriptor array that maps allocations within the range.
+	uint32_t			SubDescriptorIndex;
+	//	This is the NoPages that 
+	uint32_t			PageLimit;
+	//	The type for the Memory.
+	uint16_t			EfiMemoryType;
+}MemoryRangeDescriptor;
+typedef volatile struct{
+	//	This subdescriptor is the Last in the Table
+	uint16_t			EndOfList	: 1;
+	//	The subdescriptor points to usable Entry/PageCoord
+	uint16_t			Valid		: 1;
+	uint16_t			NoPages		: 14;
+	PageCoordinate		CoordBaseIndex;
+	PageAllocationType	AllocationType;
+}MemoryRangeSubDescriptor;
 
 LibAPI uint32_t GetMaxPhysicalAddressBits(void);
 
@@ -324,7 +347,7 @@ LibAPI bool RepointVirtualAddress(void *Virtual, void *NewPhysical);
 LibAPI void *WalkPageTreeByPhysical(void *Physical, uint32_t *Level);
 LibAPI void *WalkPageTree(uint32_t *Level, PageCoordinate Coordinate);
 
-LibAPI extern bool __sysvabi IsLA57Supported(void);
+LibAPI extern bool __sysvabi IsLA57Supported();
 LibAPI extern void __sysvabi EnableLA57(void);
 LibAPI extern bool __sysvabi IsLA57Enabled(void);
 enumdef(uint32_t, GetPageTableMode){_1To1MappingMode = 0x00, _StoredPageTableMode = 0x01, _UpdatePageTableMode = 0x01, _CPUStall = 0x02};
@@ -337,6 +360,6 @@ LibAPI uint64_t TotalMappedMemory(void *ptr);
 LibAPI void FreePages(void *Virtual);
 LibAPI void *MapVirtual(void *Physical);
 LibAPI void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey);
-LibAPI bool InitialiseAllocationState(void *D_, const uint64_t StructSize, const uint64_t N, const uint64_t TotalMemory);
 LibAPI void *AllocatePagesFromRange(void *Base, uint64_t Limit, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey);
 LibAPI void *AllocateAlignedPagesFromRange(void *Base, uint64_t Limit, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey, uint32_t Align);
+LibAPI bool InitialiseAllocationState(void *D_, const uint64_t StructSize, uint64_t N, const uint64_t TotalPhysicalMemory);

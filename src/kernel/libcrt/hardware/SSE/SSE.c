@@ -117,12 +117,12 @@ RegisterOpFunction(Mul, Vector, Ymm)
 bool AllocateSSERegister(xmmRegister *out){
 	enableSSE();
 	if(!out){return false;}
-	for(register uint32_t cc = 0; cc < NSSEStores; ++cc){
+	for(uint32_t cc = 0; cc < NSSEStores; ++cc){
 		if(Stores[cc].Enabled){
-			for(register uint32_t byteIdx = 0; byteIdx < registerBitmapLength; ++byteIdx){
+			for(uint32_t byteIdx = 0; byteIdx < registerBitmapLength; ++byteIdx){
 				uint8_t currentByte = Stores[cc].registerBitmap[byteIdx];
 				if(currentByte == 0xFF){continue;}
-				for(register uint32_t bitIdx = 0; bitIdx < 8; ++bitIdx){
+				for(uint32_t bitIdx = 0; bitIdx < 8; ++bitIdx){
 					if(!(currentByte & (1 << bitIdx))){
 						uint16_t regID = (byteIdx * 8) + bitIdx;
 						if(regID >= NXmmRegisters){return false;}
@@ -151,7 +151,7 @@ bool pushStore(uint32_t *N){
 	enableSSE();
 	if(!N){return false;}
 
-	for(register uint32_t cc = 0; cc < NSSEStores; ++cc){
+	for(uint32_t cc = 0; cc < NSSEStores; ++cc){
 		if(!Stores[cc].Enabled){
 			*N = cc;
 			Stores[cc].Enabled = true;
