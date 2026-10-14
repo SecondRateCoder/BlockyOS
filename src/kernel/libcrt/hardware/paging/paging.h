@@ -354,8 +354,8 @@ enumdef(uint32_t, GetPageTableMode){_1To1MappingMode = 0x00, _StoredPageTableMod
 LibAPI extern void *__sysvabi GetPageTable(bool *Level5, GetPageTableMode Mode, void *OptionalPageTableVirtual);
 LibAPI extern uint32_t __sysvabi LoadPageTree(void *PagingTree, void(*PTR)(void), uint64_t DataSegment, uint64_t CodeSegment, bool64_t Level5);
 LibAPI uint64_t TotalMemorySize(void);
-LibAPI bool MemoryIsMapped(void *Ptr);
 LibAPI uint64_t TotalMappedMemory(void *ptr);
+LibAPI bool MemoryIsMapped(void *ptr);
 
 LibAPI void FreePages(void *Virtual);
 LibAPI void *MapVirtual(void *Physical);

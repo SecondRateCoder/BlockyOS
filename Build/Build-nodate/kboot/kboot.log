@@ -1,5 +1,5 @@
 Initializing CGCC.MAKE build process...
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\kboot\kboot.c. source=2026-10-12T23:17:51.1244796Z, stored=none, delta=n/a sec
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\kboot\kboot.c. source=2026-10-14T00:04:12.8597952Z, stored=none, delta=n/a sec
 gcc -c C:/GitHub/BlockyOS/src/kernel/kboot/kboot.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.kboot.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -mcmodel=small -fPIE -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -I C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/
 In file included from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:7,
                  from C:/GitHub/BlockyOS/src/kernel/kboot/kboot.h:3,
@@ -10,9 +10,15 @@ C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:29:9: warning: '__safediv' redefi
 In file included from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/x86_64/efibind.h:100,
                  from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efi.h:48,
                  from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:3:
-C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:181:9: note: this is the location of the previous definition
-  181 | #define __safediv(A, B) SAFEOP((A), (B), ||, true, !=, 0, &&, /, 1)
+C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:183:9: note: this is the location of the previous definition
+  183 | #define __safediv(A, B) SAFEOP((A), (B), ||, true, !=, 0, &&, /, 1)
       |         ^~~~~~~~~
+C:/GitHub/BlockyOS/src/Boot/UEFI/tools/tools.h:35:9: warning: 'ARRSIZE' redefined
+   35 | #define ARRSIZE(ARR) (sizeof(ARR) / sizeof(ARR[0]))
+      |         ^~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/def.h:180:9: note: this is the location of the previous definition
+  180 | #define ARRSIZE(ARR)    (sizeof(ARR) / sizeof(*(ARR)))
+      |         ^~~~~~~
 In file included from C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/struct.h:8,
                  from C:/GitHub/BlockyOS/src/Boot/UEFI/standard.h:8:
 C:/GitHub/BlockyOS/src/Boot/UEFI/drivers/executable/enum.h:5:9: warning: 'flagcheck' redefined
@@ -146,10 +152,10 @@ nasm -s -O0 -f win64 -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -I C:/GitH
 Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\kboot\kboot.asm
 Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\CoreBootstrap.dll. source=2026-10-10T23:11:21.3433492Z, stored=none, delta=n/a sec
 Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\CoreBootstrap.dll
-Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-12T23:22:16.6443323Z, stored=10/12/2026 23:22:16
-Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll. source=2026-10-12T23:22:19.6976872Z, stored=none, delta=n/a sec
+Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-14T00:04:22.6970411Z, stored=10/14/2026 00:04:22
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll. source=2026-10-14T00:04:25.0348912Z, stored=none, delta=n/a sec
 Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll
-Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll. source=2026-10-12T23:22:21.0262212Z, stored=none, delta=n/a sec
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll. source=2026-10-14T00:04:26.0820184Z, stored=none, delta=n/a sec
 Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll
 gcc compile/cache/elf.c.kboot.o compile/cache/elf.asm.kboot.o Build/Build-nodate/root-part/CoreBootstrap.dll Build/Build-nodate/root-part/LibCrt.dll Build/Build-nodate/root-part/services/LibIO.dll Build/Build-nodate/root-part/services/LibVideo.dll -Wl,-nostdlib -Wl,--disable-runtime-pseudo-reloc -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,-e,kboot_km -Wl,-pie -Wl,--image-base,0x0 -Wl,-Bsymbolic -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\kboot\kboot.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe
 Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe
@@ -166,7 +172,7 @@ C:\GitHub\BlockyOS\Build\Build-nodate\kboot\kboot.dmp.log
 [SHELL OUT]:	
 [SHELL OUT]:	>> 
 [SHELL OUT]:	>> 
-[SHELL OUT]:	0000013eeb3e607b:fc	0000013eeb3e6081:SYSD/	0000013eeb3e608a:kboot.exe	
+[SHELL OUT]:	0000028f3c955e6b:fc	0000028f3c955e71:SYSD/	0000028f3c955e7a:kboot.exe	
 [SHELL OUT]:	[	SYSD/kboot.exe]
 [SHELL OUT]:	[0]: ""
 [SHELL]	FSFRAT.OPEN

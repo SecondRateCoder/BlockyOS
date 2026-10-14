@@ -1,137 +1,8 @@
 Initializing CGCC.MAKE build process...
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\services\Video\Video.c. source=2026-10-12T10:55:42.2143344Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/services/Video/Video.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.Video.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -fno-unwind-tables -fno-asynchronous-unwind-tables -mcmodel=small -fno-stack-protector -nostdinc -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/RawRegion.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/services/Video/Video.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISRCallback.h:264:33: warning: backslash-newline at end of file
-  264 | #define IDTCallbackInit(IDT)    \
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:34:1: warning: 'naked' attribute only applies to functions [-Wattributes]
-   34 | typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
-      | ^~~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/RawRegion.h:12:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.h:14:58: warning: 'struct LocalAPICTimerEvent' declared inside parameter list will not be visible outside of this definition or declaration
-   14 | typedef void * __sysvabi(*LocalAPICTimerCallback)(struct LocalAPICTimerEvent *this, uint32_t CurrentTick, void *persistent, void *call);
-      |                                                          ^~~~~~~~~~~~~~~~~~~
-C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/RawRegion.h: In function 'InitialiseVideoMemoryAllocator':
-C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/RawRegion.h:65:41: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-   65 |         RawVideoMemoryAllocator *RVMA = mcalloc(1, sizeof(RawVideoMemoryAllocator));
-      |                                         ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/RawRegion.h: In function 'RequestVideoMemory':
-C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/RawRegion.h:89:25: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-   89 |         HND->MemoryTags = mrealloc(HND->MemoryTags, sizeof(VmaTag) * (HND->TotalAllocations++));
-      |                         ^
-C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/RawRegion.h:91:31: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-   91 |                 .BackBuffer = mcalloc((*W) * (*H), sizeof(Pixel)),
-      |                               ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/RawRegion.h:92:25: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-   92 |                 .Base = mcalloc((*W) * (*H), sizeof(Pixel)),
-      |                         ^~~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.h:5:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h: At top level:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h:17:20: warning: inline function 'SleepS' declared but never defined
-   17 | LibAPI inline void SleepS(uint32_t seconds);
-      |                    ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\services\Video\Video.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\services\Video\controllers\Text.c. source=2026-10-12T12:02:46.1305620Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/Text.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.Text.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -fno-unwind-tables -fno-asynchronous-unwind-tables -mcmodel=small -fno-stack-protector -nostdinc -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/
-C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/Text.c:1:9: warning: '#pragma once' in main file [-Wpragma-once-outside-header]
-    1 | #pragma once
-      |         ^~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/string.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/Text.c:4:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/services/Video/controllers/Text.c:5:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISRCallback.h:264:33: warning: backslash-newline at end of file
-  264 | #define IDTCallbackInit(IDT)    \
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:34:1: warning: 'naked' attribute only applies to functions [-Wattributes]
-   34 | typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
-      | ^~~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\services\Video\controllers\Text.c
-Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-12T23:22:16.6443323Z, stored=10/12/2026 23:22:16
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\services\Video\Video.def. source=2026-10-08T22:57:48.1675041Z, stored=none, delta=n/a sec
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\services\Video\Video.def
+Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\Video.c - up to date; source=2026-10-12T10:55:42.2143344Z, stored=10/12/2026 10:55:42
+Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\controllers\Text.c - up to date; source=2026-10-12T12:02:46.1305620Z, stored=10/12/2026 12:02:46
+Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-14T00:04:22.6970411Z, stored=10/14/2026 00:04:22
+Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\Video.def - up to date; source=2026-10-08T22:57:48.1675041Z, stored=10/08/2026 22:57:48
 gcc compile/cache/elf.c.Video.o compile/cache/elf.c.Text.o Build/Build-nodate/root-part/LibCrt.dll src/kernel/services/Video/Video.def -Wl,-nostdlib -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,--image-base,0x0 -Wl,-shared -Wl,-flinker-output=dyn -Wl,-Bsymbolic -Wl,--out-implib,C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll.a -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\Video\Video.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll
 Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll
 C:\GitHub\BlockyOS\Build\Build-nodate\Video\Video.dmp.log
@@ -147,7 +18,7 @@ C:\GitHub\BlockyOS\Build\Build-nodate\Video\Video.dmp.log
 [SHELL OUT]:	
 [SHELL OUT]:	>> 
 [SHELL OUT]:	>> 
-[SHELL OUT]:	0000023bef2d607b:fc	0000023bef2d6081:SYSD/	0000023bef2d608a:LibVideo.dll	
+[SHELL OUT]:	0000028614b15e6b:fc	0000028614b15e71:SYSD/	0000028614b15e7a:LibVideo.dll	
 [SHELL OUT]:	[	SYSD/LibVideo.dll]
 [SHELL OUT]:	[0]: ""
 [SHELL]	FSFRAT.OPEN

@@ -67,7 +67,7 @@ void __sysvabi __main(__bootinfo *__restrict__ bootin){
 	// __bochs();
 	const uint64_t ss = (uint64_t)bootin->memory.MemoryDescriptorStructSize, 
 		n = (uint64_t)bootin->memory.MemoryDescriptorBufferSize / (uint64_t)bootin->memory.MemoryDescriptorStructSize;
-	InitialiseAllocationState(bootin->memory.MemoryDescriptors, ss, n, bootin->memory.TotalPhysicalMemorySize, bootin->memory.TotalNonPhysicalMemorySize);
+	InitialiseAllocationState(bootin->memory.MemoryDescriptors, ss, n, bootin->memory.TotalMemorySize);
 
 	void *ACPIBase = NULL;
 	for(uint32_t cc = 0; cc < bootin->devices.CTableLength; ++cc){

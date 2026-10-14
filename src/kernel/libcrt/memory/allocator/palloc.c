@@ -58,7 +58,6 @@ void __noinline __visibilitydefault FreeAlignedPages(void *Page){FreePages((void
 void *AllocateAlignedPages(void *Phys, uint64_t size, PageAllocationFlags Flags, uint8_t ProtectionKey, uint8_t Align){
     return AllocateAlignedPagesFromRange(Phys, UINT64_MAX, size, Flags, ProtectionKey, Align);
 }
-
 void *ReallocateAlignedPages(void *Phys, void *ptr, PageAllocationFlags Flags, uint8_t ProtectionKey, uint64_t size, uint8_t Align){
     void *PTR = ReallocatePages(Phys, ptr, Flags, ProtectionKey, __roundup(size + sizeof(uint64_t), Align));
 	*((uint64_t *)__roundup((uint64_t)PTR, Align)) = (uint64_t)PTR;

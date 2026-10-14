@@ -116,27 +116,3 @@ void *WalkPageTree(uint32_t *Level, PageCoordinate Coordinate){
 		(*Level)--;
 	}
 }
-
-// bool RepointVirtualAddress(void *Virtual, void *NewPhysical){
-//     uint32_t level = 1;
-//     // WalkPageTreeByVirtual returns a pointer to the L1 page table entry when level is set/reached, 
-//     // or we can locate it using the existing page walk utilities.
-//     // Let's use the coordinate walker to find the exact L1 entry:
-//     VirtualAddress VA = *((VirtualAddress *)&Virtual);
-//     uint32_t walkLevel = IsLA57Enabled()? 5: 4;
-    
-//     PageCoordinate coord = InitPageCoordinate(VA);
-// 	coord.EnableL5 = (walkLevel == 5);
-
-//     PageTableEntry4KB *entry = (PageTableEntry4KB *)WalkPageTree(&walkLevel, coord);
-// 	//	Virtual address is not mapped or entry is invalid
-//     if(!entry || !entry->Present){return false;}
-
-//     // Update the physical address frame (shifting right by 12 bits)
-//     entry->PhysicalAddress = (uint64_t)NewPhysical >> 12;
-
-//     // Invalidate the TLB for this virtual address so the CPU reloads the translation
-//     InvalidatePage(Virtual);
-
-//     return true;
-// }
