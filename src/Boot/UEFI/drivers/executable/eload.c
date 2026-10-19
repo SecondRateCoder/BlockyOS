@@ -63,7 +63,7 @@ static LoadedPeExecutable *LoadBinary(const char *file, bool Info, uint32_t Info
 	ExpandedPeExecutable *Exe = ExpandPeExecutableFormat(this);
 	if(Info){PrintPeExecutableFormat(Exe, InfoMax);}
 	void *ImageBase = NULL;
-	uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, EfiRuntimeServicesData, 
+	uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, KernelBinarySpace, 
 		__roundup((Exe->Fmt.Opt.Pe32->mMagic == Pe32? Exe->Fmt.Opt.Pe32->mSizeOfImage: Exe->Fmt.Opt.Pe32Plus->mSizeOfImage), EFI_PAGE_SIZE) / EFI_PAGE_SIZE, &ImageBase);
 	__memset(ImageBase, 0, __roundup((Exe->Fmt.Opt.Pe32->mMagic == Pe32? Exe->Fmt.Opt.Pe32->mSizeOfImage: Exe->Fmt.Opt.Pe32Plus->mSizeOfImage), EFI_PAGE_SIZE));
 	DEBUGPRINT(L"\nAllocated Executable %a at Address %p", file, ImageBase);

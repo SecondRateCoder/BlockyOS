@@ -175,17 +175,16 @@ enumdef(uint32_t, LocalAPICRegisters){
 typedef struct{
 	uint32_t		TaskPrioriySubClass	:	4, 
 					TaskPrioriyClass	:	4;
-	uint32_t							:	24;
+	uint32_t		Reserved1			:	24;
 }__packed LocalAPICTaskPriorityRegister_t;
 typedef struct{
 	uint32_t		ProcessorPrioritySubClass	:	4, 
 					ProcessorPriorityClass		:	4;
-	uint32_t									:	24;
+	uint32_t		Reserved2					:	24;
 }__packed LocalAPICProcessPriorityRegister_t;
 typedef struct{
 	uint32_t		VectorNumber				: 8;
-	uint32_t									: 3;
-	uint32_t									: 1;
+	uint32_t		Reserved1					: 4;
 	uint32_t		InterruptPending			: 1;
 	uint32_t		Polarity					: 1;
 	uint32_t		RemoteIRREnabled			: 1;
@@ -210,7 +209,7 @@ typedef struct{
 	uint32_t		DestinationMode						: 1;
 	//	 Cleared when the interrupt has been accepted by the target.
 	uint32_t		DeliveryStatus						: 1;
-	uint32_t											: 1;
+	uint32_t		Reserved1							: 1;
 	uint32_t		InitialisationInterruptSetEnable	: 1;
 	uint32_t		InitialisationInterruptSetDisable	: 1;
 	//	If this is > 0 then the destination field in 0x310 is ignored.

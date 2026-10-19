@@ -36,7 +36,7 @@ typedef struct{
 	//	0 = Max Size is 32 bytes
 	//	1 = Max Size is 64 bytes
 	uint16_t		MaxPacketSize	: 1;
-	uint16_t						: 8;
+	uint16_t		Reserved1		: 8;
 }__packed UHCICommandRegister_t;
 typedef struct{
 	uint16_t		InterruptPending				: 1;
@@ -45,14 +45,14 @@ typedef struct{
 	uint16_t		HostSystemError					: 1;
 	uint16_t		HostControllerProcessingError	: 1;
 	uint16_t		HostControllerHalted			: 1;
-	uint16_t										: 10;
+	uint16_t		Reserved1						: 10;
 }__packed UHCIStatusRegister_t;
 typedef struct{
 	uint16_t		ErrorInterruptEnable			: 1;
 	uint16_t		ResumeInterruptEnable			: 1;
 	uint16_t		InterruptOnTransferComplete		: 1;
 	uint16_t		ShortPacketInterruptEnable		: 1;
-	uint16_t										: 12;
+	uint16_t		Reserved1						: 12;
 }__packed UHCIInterruptEnableRegister_t;
 typedef struct{
 	uint16_t				ConnectStatus			: 1;
@@ -66,14 +66,14 @@ typedef struct{
 	uint16_t				PortReset			: 1;
 	uint16_t										: 2;
 	uint16_t				PortSuspended			: 1;
-	uint16_t										: 3;
+	uint16_t				Reserved1				: 3;
 }__packed UHCIPortStatusControl_t;
 
 enumdef(uint8_t, UHCIFrameListEntryType){TransferDescriptor = 0x00, QueueHead = 0x01};
 typedef struct{
 	uint32_t		EmptyFrame						: 1;
 	uint32_t		MemoryStructureType				: 1;
-	uint32_t										: 2;
+	uint32_t		Reserved1						: 2;
 	uint32_t		PhysicalPointer					: 28;
 }__packed UHCIFrameListEntry_t;
 //	For this Driver HorizontalPointer is for persistent Requests, whilst
@@ -90,12 +90,12 @@ typedef struct{
 		uint32_t	MemoryStructureType				: 1;
 		//	This tells the Controller to point to the Entry pointed to here.
 		uint32_t	ToNext							: 1;
-		uint32_t									: 1;
+		uint32_t	Reserved1						: 1;
 		uint32_t	PhysicalPointer					: 28;
 	}__packed		NextDescriptor;
 	struct{
 		uint32_t	TransferLength					: 11;
-		uint32_t									: 5;
+		uint32_t	Reserved1						: 5;
 		uint32_t	BitStuffError					: 1;
 		uint32_t	TimeoutCRC						: 1;
 		uint32_t	NonAcknowledged					: 1;
@@ -109,14 +109,14 @@ typedef struct{
 		uint32_t	ErrorCounter					: 2;
 		//	 Continue execution from horizontal QH pointer.
 		uint32_t	ShortPacketDetect				: 1;
-		uint32_t									: 3;
+		uint32_t	Reserved2						: 3;
 	}__packed		Status;
 	struct{
 		uint32_t	PacketType						: 8;
 		uint32_t	Device							: 6;
 		uint32_t	Endpoint						: 4;	
 		uint32_t	DataToggle						: 1;	
-		uint32_t									: 1;	
+		uint32_t	Reserved3						: 1;	
 		uint32_t	MaximumLength					: 11;
 	}__packed		PacketHeader;
 	uint32_t		PhysicalBufferAddress;

@@ -14,7 +14,7 @@ void *MapPhysical(void *Virtual){
 	PDPTTable *L3;
 	PageDirectory *L2;
 	PageTable *L1;
-	VirtualAddress Virt = *((VirtualAddress *)&Virtual);
+	VirtualAddress Virt = *(VirtualAddress *)&Virtual;
 	if(Level5){
 		PML5Table *L5 = (PML5Table *)MapVirtual(PT);
 		if(!((*L5)[Virt.L5].Present)){return NULL;}
@@ -50,7 +50,7 @@ void *WalkPageTreeByPhysical(void *Physical, uint32_t *Level){
 }
 
 void *WalkPageTreeByVirtual(void *Virtual, uint32_t *Level){
-	VirtualAddress VA = *((VirtualAddress *)Virtual);
+	VirtualAddress VA = *(VirtualAddress *)&Virtual;
 	(*Level) = IsLA57Enabled()? 5: 4;
 	PageCoordinate Temp = InitPageCoordinate(VA);
 	Temp.EnableL5 = (*Level == 5);
@@ -74,45 +74,57 @@ void *WalkPageTree(uint32_t *Level, PageCoordinate Coordinate){
 		switch(*Level){
 			case 5: {
 				if(!(IsLA57Enabled())){break;}
-				if(!Coordinate.EnableL5){return Temp;}else{
+				if(Coordinate.EnableL5){
 					PML5Table *L5 = Temp;
 					if(L5Support){
 						if(Coordinate.L5 >= PagingTableLength){return NULL;}
-						Temp = (void *)MapVirtual((void *)(L5[Coordinate.L5]->PhysicalAddress << 12));
+						Temp = (void *)MapVirtual((void *)((*L5)[Coordinate.L5].PhysicalAddress << 12));
 					}
-				}
+				}else{return Temp;}
 				break;
 			} case 4: {
-				if(!Coordinate.EnableL4){return Temp;}else{
+				if(Coordinate.EnableL4){
 					PML4Table *L4 = Temp;
 					if(Coordinate.L4 >= PagingTableLength){return NULL;}
-					Temp = (void *)MapVirtual((void *)(L4[Coordinate.L4]->PhysicalAddress << 12));
-				}
+					Temp = (void *)MapVirtual((void *)((*L4)[Coordinate.L4].PhysicalAddress << 12));
+				}else{return Temp;}
 				break;
 			} case 3: {
-				if(!Coordinate.EnableL3){return Temp;}else{
+				if(Coordinate.EnableL3){
 					PDPTTable *L3 = Temp;
 					if(Coordinate.L3 >= PagingTableLength){return NULL;}
 					if(L3->directories[Coordinate.L3].PageSize){return L3->directories + Coordinate.L3;}
 					Temp = (void *)MapVirtual((void *)(L3->directories[Coordinate.L3].PhysicalAddress << 12));
-				}
+				}else{return Temp;}
 				break;
 			} case 2: {
-				if(!Coordinate.EnableL2){return Temp;}else{
+				if(Coordinate.EnableL2){
 					PageDirectory *L2 = Temp;
 					if(Coordinate.L2 >= PagingTableLength){return NULL;}
 					if(L2->tables[Coordinate.L2].PageSize){return L2->tables + Coordinate.L2;}
 					Temp = (void *)MapVirtual((void *)(L2->tables[Coordinate.L2].PhysicalAddress << 12));
-				}
+				}else{return Temp;}
 				break;
 			} case 1: {
-				if(!Coordinate.EnableL1){return Temp;}else{
+				if(Coordinate.EnableL1){
 					PageTable *L1 = Temp;
 					if(Coordinate.L1 >= PagingTableLength){return NULL;}
 					return MapVirtual(L1 + Coordinate.L1);
-				}
+				}else{return Temp;}
 			} default: {return NULL;}
 		}
 		(*Level)--;
 	}
+	return NULL;
+}
+
+bool _1GPageSupport(void){
+    uint32_t eax, ebx, ecx, edx;
+
+    // First confirm the extended leaf exists
+    __asm__ volatile("cpuid" : "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx) : "a"(0x80000000), "c"(0));
+    if(eax < 0x80000001) return false;
+
+    __asm__ volatile("cpuid" : "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx) : "a"(0x80000001), "c"(0));
+    return (edx >> 26) & 1;
 }

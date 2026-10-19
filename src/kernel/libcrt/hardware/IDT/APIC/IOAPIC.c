@@ -4,6 +4,7 @@
 //  All accesses must be done on 4 byte boundaries. 
 //  The address register uses the bottom 8 bits for register select.
 void *MapAPIC(void *physical){
+	EnableInputAddress(true, true);
 	return (MapVirtual(physical) != 0)? AllocatePages(physical, PAGE_SIZE, 
 		(GlobalEnable | ReadWritable | SupervisorMode | PageLevelWriteThroughEnable), 0x0): 
 		MapVirtual(physical);

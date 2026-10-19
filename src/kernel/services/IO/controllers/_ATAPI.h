@@ -67,7 +67,7 @@ enumdef(uint8_t, ATAPICommandByte){
 	ATAPI_SET_AHEAD = 0xA7, ATAPI_READ_AHEAD = ATAPI_SET_AHEAD, 
 	ATAPI_READ12 = 0xA8, 
 	ATAPI_WRITE12 = 0xAA, 
-	ATAPI_READ_MEDIA_SERIAL_NUMBER = 0xAB, ATAPI_SERVICE_ACTION_IN = 0x01, 
+	ATAPI_READ_MEDIA_SERIAL_NUMBER = 0xAB, ATAPI_SERVICE_ACTION_IN = 0xAB, 
 	ATAPI_GET_PERFORMANCE = 0xAC, 
 	ATAPI_READ_DISC_STRUCTURE = 0xAD, 
 	ATAPI_SECURITY_PROTOCOL_OUT = 0xB5, 
@@ -83,20 +83,21 @@ typedef volatile struct{
 	ATAPICommandByte    Command;
 	uint8_t             Payload[11];
 }__packed ATAPICommand;
+_Static_assert(sizeof(ATAPICommand) == 12, "ATAPI packet must be 12 bytes");
 typedef struct{
-	//	1: Native, 0: Compatibility
-	uint8_t		PrimaryChannelMode		: 1;
-	//	1: Native, 0: Compatibility
-	uint8_t		SecondaryChannelMode	: 1;
-	uint8_t								: 4;
-	uint8_t		BusMasterDMASupported	: 1;
-}__packed	ATAPI_PCIProgIF;
+    uint8_t PrimaryNative       : 1;
+    uint8_t PrimaryCanSwitch    : 1;
+    uint8_t SecondaryNative     : 1;
+    uint8_t SecondaryCanSwitch  : 1;
+    uint8_t Reserved1           : 3;
+    uint8_t BusMasterDMA        : 1;
+}__packed ATAPI_PCIProgIF;
 typedef struct {
 	// Must be 32-bit aligned
 	uint32_t	PhysicalAddress; 
 	// Note: A value of 0 indicates 65,536 bytes
 	uint16_t	Bytes;       
-	uint16_t 					: 15;
+	uint16_t 	Reserved1		: 15;
 	uint16_t	EndOfTable		: 1;
 } __attribute__((packed)) PRDTEntry;
 
@@ -105,11 +106,11 @@ typedef struct{
 	uint64_t	Secondary				: 1;
 	uint64_t	Primary					: 1;
 	uint64_t	Slave					: 1;
-	uint64_t							: 61;
+	uint64_t	Reserved1				: 61;
 }__packed ATAPIQueue;
 
-typedef struct{
+typedef struct ATAPIInterruptStackHeader{
 	CommonMutex							Mutex;
 	struct ATAPIInterruptStackHeader	*Next;
 	ATAPIQueue							Queue;
-}__packed ATAPIInterruptStackHeader;
+}ATAPIInterruptStackHeader;

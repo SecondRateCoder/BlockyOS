@@ -7,6 +7,10 @@
 #include "tools/tools.h"
 #include "drivers/executable/struct.h"
 
+#ifndef KernelBinarySpace
+	#undef KernelBinarySpace
+#endif
+#define KernelBinarySpace	(0x80000010ULL)
 #define BOOT_OPTION_ATTR (LOAD_OPTION_ACTIVE)
 
 #define KERNELEXE "SystemBoot\\kboot.apexe"
@@ -58,9 +62,9 @@ typedef struct {
 
 #define SetPixel(Bf, A, R, G, B, Fmt) do { \
     UINT8 *p = (UINT8 *)(Bf); \
-    p[0] = (UINT8)(Fmt == PixelRedGreenBlueReserved8BitPerColor ? R : (Fmt == PixelBlueGreenRedReserved8BitPerColor ? B : 0)); \
+    p[0] = (UINT8)(Fmt == PixelRedGreenBlueReserved8BitPerColor? R: (Fmt == PixelBlueGreenRedReserved8BitPerColor ? B: 0)); \
     p[1] = (UINT8)(G); \
-    p[2] = (UINT8)(Fmt == PixelRedGreenBlueReserved8BitPerColor ? B : (Fmt == PixelBlueGreenRedReserved8BitPerColor ? R : 0)); \
+    p[2] = (UINT8)(Fmt == PixelRedGreenBlueReserved8BitPerColor? B: (Fmt == PixelBlueGreenRedReserved8BitPerColor ? R: 0)); \
     p[3] = (UINT8)(A); \
 } while(0)
 

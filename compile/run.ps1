@@ -60,39 +60,38 @@ $ovmfvars = Join-Path $firmwarefolder 'OVMF_VARS.fd'
 
 $args_qemu = @(
 	'-vga', 'std', 
-	'-cpu', 'qemu64,pmu=off', 
+	'-cpu', 'Skylake-Server,pmu=off', 
 	'-m', '4096',
-	'-d', 'int,cpu_reset', 
-	'-no-reboot', '-no-shutdown', 
+	'-d', 'int,cpu_reset', '-no-reboot', '-no-shutdown', 
 	'-accel', "$(if($IsLinux){'kvm'}elseif($IsMacOS){'hvf'}elseif($IsWindows){'whpx'}else{'tcg'})",
 	'-machine', 'q35', '-smp', '2', 
 	'-net', 'none',
 	'-serial', 'stdio',
 	'-L', $firmwarefolder,
 	'-drive', "if=pflash,format=raw,readonly=on,file=$($ovmfcode)",
-	'-drive', "unit=0,file=$($Image),format=raw,if=none,id=maindrive", '-device', 'virtio-blk-pci,drive=maindrive',
+	'-drive', "unit=0,file=$($Image),format=raw,if=none,id=maindrive", 
 	'-debugcon', "file:$($debuggerlog)", '-global', 'isa-debugcon.iobase=0xe9', 
-	# '-info', 'mem', 
+	'-device', 'virtio-blk-pci,drive=maindrive',
+	'-device', $(if($IsLinux){'virtio-gpu-pci,hostmem=256M,blob=true'}else{'virtio-gpu-pci'}), 
 	'-usb', '-usbdevice', 'keyboard', '-usbdevice', 'mouse',
-	'-display', 'sdl', '-vga', 'cirrus'#, '-full-screen'
+	'-display', 'sdl,gl=on'
 )
 if($enablevars){$args_qemu += '-drive', "if=pflash,format=raw,file=$($ovmfvars)"}
 # if($imagetype -eq 'debug'){$args_qemu += '-s', '-S'}
 $BOCHSFILE = "
-cpu: model=corei7_ivy_bridge_3770k, ips=50000000, count=2, reset_on_triple_fault=1
+cpu: model=corei7_skylake_x, ips=50000000, count=2, reset_on_triple_fault=1, ignore_bad_msrs=1
 boot: disk
 megs: 4096
 config_interface: win32config
 display_library: sdl
 
-cpu: ignore_bad_msrs=1
 magic_break: enabled=1
 
 sound: driver=default
 speaker: enabled=1, mode=sound
 e1000: enabled=1
-pci: enabled=1, chipset=i440fx, slot1=cirrus, slot2=e1000
-vga: extension=cirrus, update_freq=60, realtime=1
+pci: enabled=1, chipset=i440fx, slot1=pcivga, slot2=e1000
+vga: extension=vbe, update_freq=10, realtime=1, vbe_memsize=32
 mouse: enabled=1
 keyboard: type=mf, serial_delay=150, paste_delay=100000
 
@@ -106,7 +105,7 @@ info: action=ignore
 debug: action=ignore
 
 romimage: file=$($ovmfcode)
-vgaromimage: file=$(Join-Path $bochsbinariesfolder 'VGABIOS-lgpl-latest-cirrus.bin')
+vgaromimage: file=$(Join-Path $bochsbinariesfolder 'VGABIOS-lgpl-latest.bin')
 ata0: enabled=1, ioaddr1=0x1F0, ioaddr2=0x3F0, irq=14
 ata0-master: type=disk, path=`"$($Image)`", mode=flat, status=inserted, translation=lba
 "

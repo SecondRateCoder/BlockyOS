@@ -36,7 +36,7 @@ typedef struct{
 	uint16_t	DeviceType				: 4;
 	uint16_t	SlotImplementedDevice	: 1;
 	uint16_t	InterruptMessageNumber	: 5;
-	uint16_t							: 2;
+	uint16_t	Reserved1: 2;
 }__packed PCIeCapabilitiesRegister;
 typedef struct{
 	uint32_t	MaxPayloadSize				: 3;
@@ -49,10 +49,10 @@ typedef struct{
 	uint32_t	EndpointL0AcceptableLatency	: 3;
 	//	Defines the maximum delay the device can tolerate when exiting the L1s low-power link state back to L1.
 	uint32_t	EndpointL1AcceptableLatency	: 3;
-	uint32_t								: 3;
+	uint32_t	Reserved1					: 3;
 	//	Set to 1 if the device supports modern PCIe error reporting rules and Advanced Error Reporting
 	uint32_t	AdvancedErrorReporting		: 1;
-	uint32_t								: 2;
+	uint32_t	Reserved2					: 2;
 	//	Contains the maximum power allocation set by the upstream slot.
 	uint32_t	CapturedSlotPowerLimitValue	: 8;
 	//	Contains the maximum power allocation set by the upstream slot.
@@ -102,7 +102,7 @@ typedef struct{
 	uint32_t DataLinkLayerLinkActiveReporting	: 1;
 	uint32_t LinkBandwidthNotificationCapable	: 1;
 	uint32_t ASPMOptionalityCompliance			: 1;
-	uint32_t 									: 1;
+	uint32_t Reserved1							: 1;
 	uint32_t PortNumber							: 8;
 }__packed PCIeLinkCapabilitiesRegister;
 typedef struct{
@@ -117,12 +117,12 @@ typedef struct{
 	uint16_t HardwareAutonomousWidthDisable		: 1;
 	uint16_t LinkBandwidthManagementIntEnable	: 1;
 	uint16_t LinkAutonomousBandwidthIntEnable	: 1;
-	uint16_t 									: 4;
+	uint16_t Reserved2							: 4;
 }__packed PCIeLinkControlRegister;
 typedef struct{
 	uint16_t CurrentLinkSpeed				: 4;
 	uint16_t NegotiatedLinkWidth			: 6;
-	uint16_t								: 1;
+	uint16_t Reserved1						: 1;
 	uint16_t LinkTraining					: 1;
 	uint16_t SlotClockConfiguration			: 1;
 	uint16_t DataLinkLayerLinkActive		: 1;
@@ -138,7 +138,7 @@ typedef struct{
 
 typedef struct{
 	uint16_t CRSSoftwareVisibility	: 1;
-	uint16_t 						: 15;
+	uint16_t Reserved1				: 15;
 }__packed PCIeRootCapabilitiesRegister;
 typedef struct{
 	uint16_t SystemErrorOnCorrectableEnable	: 1;
@@ -146,13 +146,13 @@ typedef struct{
 	uint16_t SystemErrorOnFatalEnable		: 1;
 	uint16_t PMEInterruptEnable				: 1;
 	uint16_t CRSSoftwareVisibilityEnable	: 1;
-	uint16_t 								: 11;
+	uint16_t Reserved1						: 11;
 }__packed PCIeRootControlRegister;
 typedef struct{
 	uint32_t PMERequesterID	: 16;
 	uint32_t PMEStatus		: 1;
 	uint32_t PMEPending		: 1;
-	uint32_t 				: 14;
+	uint32_t Reserved1		: 14;
 }__packed PCIeRootStatusRegister;
 typedef struct{
 	PCIeRootCapabilitiesRegister	Capabilities;
@@ -186,7 +186,7 @@ typedef struct{
 	uint16_t PowerControllerControl				: 1;
 	uint16_t ElectromechanicalInterlockControl	: 1;
 	uint16_t DataLinkLayerStateChangedEnable	: 1;
-	uint16_t									: 3;
+	uint16_t Reserved1							: 3;
 }__packed PCIeSlotControlRegister;
 typedef struct{
 	uint16_t AttentionButtonPressed				: 1;
@@ -198,7 +198,7 @@ typedef struct{
 	uint16_t PresenceDetectState				: 1;
 	uint16_t ElectromechanicalInterlockStatus	: 1;
 	uint16_t DataLinkLayerStateChanged			: 1;
-	uint16_t									: 7;
+	uint16_t Reserved1							: 7;
 }__packed PCIeSlotStatusRegister;
 typedef struct{
 	PCIeSlotCapabilitiesRegister	Capabilities;
@@ -235,9 +235,9 @@ typedef struct{
 	//	Peform link equalization. Applies during link retraining at 8 GT/s+.
 	uint32_t	LinkEqualisation				: 1;
 	uint32_t	LinkEqualisationInterruptEnable	: 1;
-	uint32_t									: 7;
+	uint32_t	Reserved1						: 7;
 	uint32_t	LowerSKPOSGenerationVectorEnable: 1;
-	uint32_t									: 22;
+	uint32_t	Reserved2						: 22;
 }PCIeExtendedCapabilitiesLinkControl3;
 typedef struct{
 	PCIeExtendedCapabilitiesHeader			Header;
@@ -249,7 +249,7 @@ typedef struct{
 typedef struct{
 	uint32_t VFMigrationCapable				: 1;
 	uint32_t ARICapableHierarchyPreserved	: 1;
-	uint32_t 								: 19;
+	uint32_t Reserved1						: 19;
 	uint32_t VFMigrationInterruptMessageNum	: 11;
 }__packed PCIeSRIOVCapabilitiesRegister;
 typedef struct{
@@ -262,7 +262,7 @@ typedef struct{
 }__packed PCIeSRIOVControlRegister;
 typedef struct{
 	uint16_t VFMigrationStatus	: 1;
-	uint16_t					: 15;
+	uint16_t Reserved1			: 15;
 }__packed PCIeSRIOVStatusRegister;
 typedef struct{
 	PCIeSRIOVCapabilitiesRegister	Capabilities;
@@ -300,7 +300,7 @@ typedef struct{
 typedef struct{
 	//	N - 1
 	uint16_t	TableSize				: 11;
-	uint16_t							: 3;
+	uint16_t	Reserved1				: 3;
 	uint16_t	InterruptDisable		: 1;
 	uint16_t	MSIxEnable				: 1;
 }__packed PCIeMSIxCapabilityMessageControlRegister;
@@ -311,7 +311,7 @@ typedef struct{
 }__packed PCIeMSIxCapabilityTableControlRegister;
 typedef struct{
 	//	N - 1
-	uint32_t	PBABARIndex	: 3;
+	uint32_t	PBABARIndex		: 3;
 	uint32_t	PBAByteOffset	: 29;
 }__packed PCIeMSIxCapabilityPendingBitArrayRegister;
 typedef struct{
@@ -322,10 +322,10 @@ typedef struct{
 }__packed PCIeMSIxCapability_t;
 
 typedef struct{
-	uint32_t						: 2;
+	uint32_t	Reserved1			: 2;
 	uint32_t	LogicalAddressMode	: 1;
 	uint32_t	RedirectionHint		: 1;
-	uint32_t						: 8;
+	uint32_t	Reserved2			: 8;
 	uint32_t	DestinationID		: 8;
 	//	0x0FEE, or the High 12 Bits of the LocalAPIC Base Address.
 	uint32_t	Signature			: 12;
@@ -333,14 +333,14 @@ typedef struct{
 typedef struct{
 	uint64_t	Vector		: 8;
 	uint64_t	DeliveryMode: 3;
-	uint64_t				: 3;
+	uint64_t	Reserved1	: 3;
 	uint64_t	Level		: 1;
 	uint64_t	TriggerMode	: 1;
-	uint64_t				: 48;
+	uint64_t	Reserved2	: 48;
 }__packed MSIxTableEntryMessageDataRegister;
 typedef struct{
 	uint32_t	Masked		: 1;
-	uint32_t				: 31;
+	uint32_t	Reserved1	: 31;
 }__packed MSIxTableEntryVectorControlRegister;
 typedef struct{
 	MSIxTableEntryMessageAddressRegister	MessageAddressLow;

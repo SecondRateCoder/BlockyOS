@@ -32,7 +32,7 @@ typedef union{
 		uint64_t	PinPolarity						: 1;
 		uint64_t	RemoteInterruptRequestRegister	: 1;
 		uint64_t	InterruptDisable				: 1;
-		uint64_t									: 40;
+		uint64_t	Reserved1						: 40;
 		uint64_t	DestinationAPICID				: 8;
 	}Register;
 }__packed IOAPICInterruptRegister;
@@ -40,9 +40,9 @@ typedef union{
 typedef struct{
 	uint32_t	Version		: 8;
 	//	Max - 1
-	uint32_t				: 8;
+	uint32_t	Reserved1	: 8;
 	uint32_t	MaxIRQNumber: 8;
-	uint32_t				: 8;
+	uint32_t	Reserved2	: 8;
 }__packed IOAPICVersionRegister;
 
 LibAPI uint32_t ReadIoApicRegister(void *acpibase, uint32_t N, uint32_t reg);

@@ -1,0 +1,304 @@
+
+Initialising Memory	Uninitialised	StructSize:48	N:113	TotalMemory:6442450944
+Initialising Page Table
+Requirements:	254 Pages	Attributes: 1000000000000000000000000000000000000000000000101011000000000000	TypeRequirements: 7, 3, 4, 1, 14, 
+[0]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x0	NoPages: 135}
+Non-Continuous Pages: 1048576	655360
+[1]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x87000	NoPages: 1}
+Non-Continuous Pages: 1048576	655360
+[2]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x88000	NoPages: 24}
+Non-Continuous Pages: 1048576	655360
+[3]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x100000	NoPages: 1792}
+Candidate Details	ElapsedPages:1792	NEntries:0	(Possible Candidate)
+[4]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x800000	NoPages: 8}
+[5]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x808000	NoPages: 3}
+Additional Candidate 6 did not meet Type Requirements
+[6]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x80b000	NoPages: 1}
+[7]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x80c000	NoPages: 6}
+Additional Candidate 8 did not meet Attribute Requirements
+[8]:	Type: 6(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x812000	NoPages: 1}
+[9]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x813000	NoPages: 1}
+Additional Candidate 10 did not meet Type Requirements
+[10]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x814000	NoPages: 236}
+[11]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x900000	NoPages: 3712}
+[12]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x1780000	NoPages: 501725}
+[13]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7bf5d000	NoPages: 32}
+[14]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7bf7d000	NoPages: 3432}
+[15]:	Type: 6(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x7cce5000	NoPages: 4096}
+[16]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7dce5000	NoPages: 4}
+[17]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7dce9000	NoPages: 9}
+[18]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7dcf2000	NoPages: 14}
+[19]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7dd00000	NoPages: 19}
+[20]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7dd13000	NoPages: 13}
+[21]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7dd20000	NoPages: 98}
+[22]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7dd82000	NoPages: 2700}
+[23]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e80e000	NoPages: 2}
+[24]:	Type: 1(Usable){Attr: 0b1111	Phys: 0x7e810000	NoPages: 58}
+Additional Candidate 25 did not meet Type Requirements
+[25]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e84a000	NoPages: 32}
+[26]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7e86a000	NoPages: 19}
+Additional Candidate 29 did not meet Type Requirements
+[27]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e87d000	NoPages: 1}
+Additional Candidate 29 did not meet Type Requirements
+[28]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7e87e000	NoPages: 1}
+Additional Candidate 29 did not meet Type Requirements
+[29]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e87f000	NoPages: 2}
+[30]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e881000	NoPages: 71}
+Additional Candidate 31 did not meet Type Requirements
+[31]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e8c8000	NoPages: 4}
+[32]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e8cc000	NoPages: 6}
+Additional Candidate 33 did not meet Type Requirements
+[33]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e8d2000	NoPages: 1}
+[34]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e8d3000	NoPages: 103}
+Candidate Details	ElapsedPages:326	NEntries:7	(Possible Candidate)
+[35]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7e93a000	NoPages: 21}
+Candidate Details	ElapsedPages:289	NEntries:8	(Possible Candidate)
+[36]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e94f000	NoPages: 22}
+Candidate Details	ElapsedPages:268	NEntries:7	(Possible Candidate)
+[37]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7e965000	NoPages: 26}
+[38]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e97f000	NoPages: 16}
+[39]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7e98f000	NoPages: 54}
+[40]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e9c5000	NoPages: 6}
+[41]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7e9cb000	NoPages: 78}
+Candidate Details	ElapsedPages:268	NEntries:6	(Possible Candidate)
+[42]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ea19000	NoPages: 3}
+Candidate Details	ElapsedPages:257	NEntries:9	(Possible Candidate)
+[43]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ea1c000	NoPages: 63}
+Candidate Details	ElapsedPages:254	NEntries:9	(Possible Candidate)
+[44]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ea5b000	NoPages: 5}
+Candidate Details	ElapsedPages:254	NEntries:13	(Possible Candidate)
+[45]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ea60000	NoPages: 74}
+[46]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eaaa000	NoPages: 7}
+[47]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eab1000	NoPages: 38}
+[48]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ead7000	NoPages: 8}
+[49]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eadf000	NoPages: 15}
+[50]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eaee000	NoPages: 4}
+[51]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eaf2000	NoPages: 40}
+[52]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eb1a000	NoPages: 8}
+[53]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eb22000	NoPages: 22}
+[54]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eb38000	NoPages: 4}
+[55]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eb3c000	NoPages: 27}
+[56]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eb57000	NoPages: 2}
+[57]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eb59000	NoPages: 40}
+[58]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eb81000	NoPages: 5}
+[59]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eb86000	NoPages: 36}
+[60]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ebaa000	NoPages: 3}
+[61]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ebad000	NoPages: 51}
+[62]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ebe0000	NoPages: 5}
+[63]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ebe5000	NoPages: 27}
+[64]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ec00000	NoPages: 512}
+[65]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee00000	NoPages: 8}
+[66]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ee08000	NoPages: 1}
+[67]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee09000	NoPages: 9}
+[68]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ee12000	NoPages: 10}
+[69]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee1c000	NoPages: 67}
+[70]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ee5f000	NoPages: 2}
+[71]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee61000	NoPages: 12}
+[72]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ee6d000	NoPages: 2}
+Candidate Details	ElapsedPages:254	NEntries:13	(Possible Candidate)
+[73]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee6f000	NoPages: 5}
+[74]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ee74000	NoPages: 6}
+[75]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee7a000	NoPages: 28}
+[76]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ee96000	NoPages: 4}
+[77]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee9a000	NoPages: 38}
+[78]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eec0000	NoPages: 14}
+[79]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eece000	NoPages: 22}
+[80]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eee4000	NoPages: 4}
+[81]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eee8000	NoPages: 73}
+[82]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ef31000	NoPages: 10}
+[83]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ef3b000	NoPages: 45}
+[84]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ef68000	NoPages: 3}
+[85]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ef6b000	NoPages: 4}
+[86]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ef6f000	NoPages: 26}
+[87]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ef89000	NoPages: 13}
+[88]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ef96000	NoPages: 1024}
+[89]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7f396000	NoPages: 48}
+[90]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7f3c6000	NoPages: 4}
+[91]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7f3ca000	NoPages: 1}
+[92]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7f3cb000	NoPages: 1314}
+[93]:	Type: 6(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x7f8ed000	NoPages: 256}
+[94]:	Type: 5(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x7f9ed000	NoPages: 256}
+[95]:	Type: 0(  ??  ){Attr: 0b1111	Phys: 0x7faed000	NoPages: 128}
+[96]:	Type: 9(  ??  ){Attr: 0b1111	Phys: 0x7fb6d000	NoPages: 18}
+[97]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x7fb7f000	NoPages: 128}
+[98]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fbff000	NoPages: 513}
+[99]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7fe00000	NoPages: 74}
+Additional Candidate 108 did not meet Attribute Requirements
+[100]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fe4a000	NoPages: 32}
+Additional Candidate 108 did not meet Attribute Requirements
+[101]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7fe6a000	NoPages: 51}
+Additional Candidate 108 did not meet Attribute Requirements
+[102]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fe9d000	NoPages: 3}
+Additional Candidate 108 did not meet Attribute Requirements
+[103]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7fea0000	NoPages: 1}
+Additional Candidate 108 did not meet Attribute Requirements
+[104]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fea1000	NoPages: 1}
+Additional Candidate 108 did not meet Attribute Requirements
+[105]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7fea2000	NoPages: 1}
+Additional Candidate 108 did not meet Attribute Requirements
+[106]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fea3000	NoPages: 26}
+Additional Candidate 108 did not meet Attribute Requirements
+[107]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7febd000	NoPages: 47}
+Additional Candidate 108 did not meet Attribute Requirements
+[108]:	Type: 6(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x7feec000	NoPages: 132}
+[109]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x7ff70000	NoPages: 144}
+[110]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x100000000	NoPages: 524288}
+[111]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x100000000	NoPages: 524288}
+[112]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x100000000	NoPages: 524288}
+Valid Candidate: 0x7ee6d000, TotalPages: 254
+Requirements:	771 Pages	Attributes: 1000000000000000000000000000000000000000000000101011000000000000	TypeRequirements: 7, 3, 4, 1, 14, 
+[0]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x0	NoPages: 135}
+Non-Continuous Pages: 1048576	655360
+[1]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x87000	NoPages: 1}
+Non-Continuous Pages: 1048576	655360
+[2]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x88000	NoPages: 24}
+Non-Continuous Pages: 1048576	655360
+[3]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x100000	NoPages: 1792}
+Candidate Details	ElapsedPages:1792	NEntries:0	(Possible Candidate)
+[4]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x800000	NoPages: 8}
+[5]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x808000	NoPages: 3}
+Additional Candidate 6 did not meet Type Requirements
+[6]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x80b000	NoPages: 1}
+[7]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x80c000	NoPages: 6}
+Additional Candidate 8 did not meet Attribute Requirements
+[8]:	Type: 6(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x812000	NoPages: 1}
+[9]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x813000	NoPages: 1}
+Additional Candidate 10 did not meet Type Requirements
+[10]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x814000	NoPages: 236}
+[11]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x900000	NoPages: 3712}
+[12]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x1780000	NoPages: 501725}
+[13]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7bf5d000	NoPages: 32}
+[14]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7bf7d000	NoPages: 3432}
+[15]:	Type: 6(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x7cce5000	NoPages: 4096}
+[16]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7dce5000	NoPages: 4}
+[17]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7dce9000	NoPages: 9}
+[18]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7dcf2000	NoPages: 14}
+[19]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7dd00000	NoPages: 19}
+[20]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7dd13000	NoPages: 13}
+[21]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7dd20000	NoPages: 98}
+[22]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7dd82000	NoPages: 2700}
+[23]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e80e000	NoPages: 2}
+[24]:	Type: 1(Usable){Attr: 0b1111	Phys: 0x7e810000	NoPages: 58}
+Additional Candidate 25 did not meet Type Requirements
+[25]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e84a000	NoPages: 32}
+[26]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7e86a000	NoPages: 19}
+Additional Candidate 29 did not meet Type Requirements
+[27]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e87d000	NoPages: 1}
+Additional Candidate 29 did not meet Type Requirements
+[28]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7e87e000	NoPages: 1}
+Additional Candidate 29 did not meet Type Requirements
+[29]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e87f000	NoPages: 2}
+[30]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e881000	NoPages: 71}
+Additional Candidate 31 did not meet Type Requirements
+[31]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e8c8000	NoPages: 4}
+[32]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e8cc000	NoPages: 6}
+Additional Candidate 33 did not meet Type Requirements
+[33]:	Type: 2(  ??  ){Attr: 0b1111	Phys: 0x7e8d2000	NoPages: 1}
+[34]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e8d3000	NoPages: 103}
+Candidate Details	ElapsedPages:781	NEntries:27	(Possible Candidate)
+[35]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7e93a000	NoPages: 21}
+[36]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e94f000	NoPages: 22}
+[37]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7e965000	NoPages: 26}
+[38]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e97f000	NoPages: 16}
+[39]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7e98f000	NoPages: 54}
+[40]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7e9c5000	NoPages: 6}
+[41]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7e9cb000	NoPages: 78}
+[42]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ea19000	NoPages: 3}
+[43]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ea1c000	NoPages: 63}
+[44]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ea5b000	NoPages: 5}
+[45]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ea60000	NoPages: 74}
+[46]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eaaa000	NoPages: 7}
+[47]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eab1000	NoPages: 38}
+[48]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ead7000	NoPages: 8}
+[49]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eadf000	NoPages: 15}
+[50]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eaee000	NoPages: 4}
+[51]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eaf2000	NoPages: 40}
+[52]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eb1a000	NoPages: 8}
+[53]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eb22000	NoPages: 22}
+[54]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eb38000	NoPages: 4}
+[55]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eb3c000	NoPages: 27}
+[56]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eb57000	NoPages: 2}
+Candidate Details	ElapsedPages:776	NEntries:13	(Possible Candidate)
+[57]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eb59000	NoPages: 40}
+Candidate Details	ElapsedPages:774	NEntries:12	(Possible Candidate)
+[58]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7eb81000	NoPages: 5}
+Additional Candidate 72 did not meet Type Requirements
+[59]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7eb86000	NoPages: 36}
+Additional Candidate 72 did not meet Type Requirements
+[60]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ebaa000	NoPages: 3}
+Additional Candidate 72 did not meet Type Requirements
+[61]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ebad000	NoPages: 51}
+Additional Candidate 72 did not meet Type Requirements
+[62]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ebe0000	NoPages: 5}
+Additional Candidate 72 did not meet Type Requirements
+[63]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ebe5000	NoPages: 27}
+Additional Candidate 72 did not meet Type Requirements
+[64]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ec00000	NoPages: 512}
+Additional Candidate 72 did not meet Type Requirements
+[65]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee00000	NoPages: 8}
+Additional Candidate 72 did not meet Type Requirements
+[66]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ee08000	NoPages: 1}
+Additional Candidate 72 did not meet Type Requirements
+[67]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee09000	NoPages: 9}
+Additional Candidate 72 did not meet Type Requirements
+[68]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ee12000	NoPages: 10}
+Additional Candidate 72 did not meet Type Requirements
+[69]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee1c000	NoPages: 67}
+Additional Candidate 72 did not meet Type Requirements
+[70]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ee5f000	NoPages: 2}
+Additional Candidate 72 did not meet Type Requirements
+[71]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ee61000	NoPages: 12}
+Additional Candidate 72 did not meet Type Requirements
+[72]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7ee6d000	NoPages: 2}
+[73]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7ee6f000	NoPages: 5}
+[74]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7ee74000	NoPages: 6}
+[75]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7ee7a000	NoPages: 28}
+[76]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7ee96000	NoPages: 4}
+[77]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7ee9a000	NoPages: 38}
+[78]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7eec0000	NoPages: 14}
+[79]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7eece000	NoPages: 22}
+[80]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7eee4000	NoPages: 4}
+[81]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7eee8000	NoPages: 73}
+[82]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7ef31000	NoPages: 10}
+[83]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7ef3b000	NoPages: 45}
+[84]:	Type: 2147483664(  ??  ){Attr: 0b1111	Phys: 0x7ef68000	NoPages: 3}
+[85]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ef6b000	NoPages: 4}
+[86]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ef6f000	NoPages: 26}
+[87]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7ef89000	NoPages: 13}
+[88]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7ef96000	NoPages: 1024}
+[89]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7f396000	NoPages: 48}
+[90]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7f3c6000	NoPages: 4}
+[91]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7f3ca000	NoPages: 1}
+[92]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7f3cb000	NoPages: 1314}
+[93]:	Type: 6(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x7f8ed000	NoPages: 256}
+[94]:	Type: 5(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x7f9ed000	NoPages: 256}
+[95]:	Type: 0(  ??  ){Attr: 0b1111	Phys: 0x7faed000	NoPages: 128}
+[96]:	Type: 9(  ??  ){Attr: 0b1111	Phys: 0x7fb6d000	NoPages: 18}
+[97]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x7fb7f000	NoPages: 128}
+[98]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fbff000	NoPages: 513}
+Additional Candidate 108 did not meet Attribute Requirements
+[99]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7fe00000	NoPages: 74}
+Additional Candidate 108 did not meet Attribute Requirements
+[100]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fe4a000	NoPages: 32}
+Additional Candidate 108 did not meet Attribute Requirements
+[101]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7fe6a000	NoPages: 51}
+Additional Candidate 108 did not meet Attribute Requirements
+[102]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fe9d000	NoPages: 3}
+Additional Candidate 108 did not meet Attribute Requirements
+[103]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x7fea0000	NoPages: 1}
+Additional Candidate 108 did not meet Attribute Requirements
+[104]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fea1000	NoPages: 1}
+Additional Candidate 108 did not meet Attribute Requirements
+[105]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7fea2000	NoPages: 1}
+Additional Candidate 108 did not meet Attribute Requirements
+[106]:	Type: 4(Usable){Attr: 0b1111	Phys: 0x7fea3000	NoPages: 26}
+Additional Candidate 108 did not meet Attribute Requirements
+[107]:	Type: 3(Usable){Attr: 0b1111	Phys: 0x7febd000	NoPages: 47}
+Additional Candidate 108 did not meet Attribute Requirements
+[108]:	Type: 6(  ??  ){Attr: 0b1000000000000000000000000000000000000000000000000000000000001111	Phys: 0x7feec000	NoPages: 132}
+[109]:	Type: 10(  ??  ){Attr: 0b1111	Phys: 0x7ff70000	NoPages: 144}
+[110]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x100000000	NoPages: 524288}
+[111]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x100000000	NoPages: 524288}
+[112]:	Type: 7(Usable){Attr: 0b1111	Phys: 0x100000000	NoPages: 524288}
+Valid Candidate: 0x7eb59000, TotalPages: 774
+Descriptor Pool: 0x7eb59000	0 Pages

@@ -26,3 +26,10 @@ e9print:
 .finish:
 	mov eax, 1
 	ret
+
+
+global __halt
+__halt:
+.loop:
+	hlt
+	jmp .loop

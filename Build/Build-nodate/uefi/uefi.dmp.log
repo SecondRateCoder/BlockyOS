@@ -20133,7 +20133,7 @@ Disassembly of section .text:
    18cbb:	48 8b 00             	mov    (%rax),%rax
    18cbe:	48 8b 40 28          	mov    0x28(%rax),%rax
    18cc2:	49 89 d0             	mov    %rdx,%r8
-   18cc5:	ba 06 00 00 00       	mov    $0x6,%edx
+   18cc5:	ba 10 00 00 80       	mov    $0x80000010,%edx
    18cca:	be 00 00 00 00       	mov    $0x0,%esi
    18ccf:	48 89 c7             	mov    %rax,%rdi
    18cd2:	e8 bc 11 01 00       	call   29e93 <efi_call4>

@@ -30,7 +30,7 @@ typedef struct{
 }__packed MemorySpaceBAR;
 typedef struct{
 	uint32_t	IsIOSpace				: 1;
-	uint32_t							: 1;
+	uint32_t	Reserved1				: 1;
 	uint32_t	_4ByteAlignedAddress	: 30;
 }__packed IOSpaceBAR;
 typedef union{
@@ -40,7 +40,7 @@ typedef union{
 typedef struct{
 	//	Will return 0, after BIST execution, if the test completed successfully.
 	uint8_t			CompletionCode	: 4;
-	uint8_t							: 2;
+	uint8_t			Reserved1		: 2;
 	//	When set to 1 the BIST is invoked. 
 	//	This bit is reset when BIST completes. 
 	//	If BIST does not complete after 2 seconds the device should be failed by system software.
@@ -53,7 +53,7 @@ typedef struct{
 	uint32_t		FunctionNumber	: 3;
 	uint32_t		DeviceNumber	: 5;
 	uint32_t		BusNumber		: 8;
-	uint32_t						: 7;
+	uint32_t		Reserved1		: 7;
 	uint32_t		Enable			: 1;
 }__packed PCIConfigRegister;
 typedef struct{
@@ -74,7 +74,7 @@ typedef struct{
 	//		otherwise, when an error is detected, the device will set bit 15 of the Status register (Detected Parity Error Status Bit), 
 	//		but will not assert the PERR# (Parity Error) pin and will continue operation as normal.
 	uint16_t		ParityErrorResponse	: 1;
-	const uint16_t						: 1;
+	const uint16_t	Reserved1			: 1;
 	//	If set to 1 the SERR# driver is enabled; otherwise, the driver is disabled.
 	uint16_t		SERREnable			: 1;
 	//	If set to 1 indicates a device is allowed to generate fast back-to-back transactions; 
@@ -82,10 +82,10 @@ typedef struct{
 	const uint16_t	FastBackToBackEnable: 1;
 	//	If set to 1 the assertion of the devices INTx# signal is disabled; otherwise, assertion of the signal is enabled.
 	uint16_t		InterruptDisable	: 1;
-	uint16_t							: 5;
+	uint16_t		Reserved2			: 5;
 }__packed PCICommandRegister;
 typedef struct{
-	uint16_t							: 3;
+	uint16_t				Reserved1				: 3;
 	//	Represents the state of the device's INTx# signal. 
 	//		If set to 1 and bit 10 of the Command register (Interrupt Disable bit) is set to 0 the signal will be asserted; 
 	//		otherwise, the signal will be ignored.

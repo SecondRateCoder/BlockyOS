@@ -39,8 +39,8 @@ typedef struct{
 	uint16_t		CommandID;
 }NVMeAdminCommandStruct(Abort, 10);
 typedef struct{
-	uint32_t		ImmediateAbortNotPerformed	: 1;
-	uint32_t									: 31;
+	uint32_t	ImmediateAbortNotPerformed	: 1;
+	uint32_t	Reserved1					: 31;
 }NVMeAdminCompletionStruct(Abort, 0);
 #define NVMeAdminAbortCommandListExceeded		0x03
 
@@ -76,10 +76,10 @@ enumdef(uint8_t, NVMeAsynchronousEventInformationOneShotStatus){
 };
 typedef struct{
 	uint32_t	AsynchronousEventType	: 3;
-	uint32_t							: 5;
+	uint32_t	Reserved1				: 5;
 	uint32_t	AsynchronousEventID		: 8;
 	uint32_t	LogPageID				: 8;
-	uint32_t							: 8;
+	uint32_t	Reserved2				: 8;
 	uint32_t	EventSpecificParameter;
 }NVMeAdminCompletionStruct(AsynchronousEventRequest, 0_1);
 
@@ -87,21 +87,21 @@ enumdef(uint8_t, NVMeControllerDataQueueSelect){CreateControllerQueue, DeleteCon
 enumdef(uint8_t, NVMeControllerDataQueueManagementOp){UserDataMigrationQueue = 0x00};
 typedef struct{
 	uint32_t	ManagementOp			: 8;
-	uint32_t							: 8;
+	uint32_t	Reserved1				: 8;
 	uint16_t	SelectSpecific			: 16;
 
 	//	If set to ‘1’, then the Controller Data Queue is physically contiguous and PRP Entry 1 (PRP1) is the address of a contiguous physical buffer. 
 	//	If cleared to ‘0’, then the Controller Data Queue is not physically contiguous and PRP Entry 1 (PRP1) is a PRP List pointer.
 	uint32_t	PhysicallyContiguous	: 1;
-	uint32_t							: 15;
+	uint32_t	Reserved2				: 15;
 	uint32_t	QueueTypeSpecific		: 16;
 	uint32_t	QueueDWORDSize;
 }NVMeAdminCommandStruct(CreateControllerDataQueue, 10);
 typedef struct{
 	uint32_t	ManagementOp			: 8;
-	uint32_t							: 8;
+	uint32_t	Reserved1				: 8;
 	uint16_t	SelectSpecific			: 16;
-	uint32_t							: 16;
+	uint32_t	Reserved2				: 16;
 	uint32_t	QueueID					: 16;
 }NVMeAdminCommandStruct(DeleteControllerDataQueue, 10);
 //	The submission Queue, PhysicalRegion0 points to a Data Region
@@ -112,7 +112,7 @@ enumdef(uint8_t, NVMeDeviceSelfTestCode){
 };
 typedef struct{
 	uint32_t	SelfTestCode			: 4;
-	uint32_t							: 28;
+	uint32_t	Reserved1				: 28;
 	uint32_t	RSV[4];
 	uint32_t	SelfTestParameter;
 }NVMeAdminCommandStruct(DeviceSelfTest, 10);
@@ -163,16 +163,16 @@ enumdef(uint8_t, NVMeGetFeaturesFeatureID){
 typedef struct{
 	uint32_t	FeatureID		: 8;
 	uint32_t	AttributeSelect	: 4;
-	uint32_t					: 20;
+	uint32_t	Reserved1		: 20;
 	uint32_t	RSV[4];
 	uint32_t	UUIDIndex		: 7;
-	uint32_t					: 25;
+	uint32_t	Reserved2		: 25;
 }NVMeAdminCommandStruct(GetFeatures, 10);
 typedef struct{
 	uint32_t	Saveable		: 1;
 	uint32_t	NamespaceScope	: 1;
 	uint32_t	Changeable		: 1;
-	uint32_t					: 29;
+	uint32_t	Reserved1		: 29;
 }NVMeAdminCompletionStruct(GetFeatures, 2);
 
 enumdef(uint8_t, NVMeGetLogPageLogPageID){
@@ -208,7 +208,7 @@ typedef struct{
 	uint32_t	LowLogPageOffset, 
 				HighLogPageOffset;
 	uint32_t	UUIDIndex		: 7;
-	uint32_t					: 16;
+	uint32_t	Reserved1		: 16;
 	//	If this bit is set to ‘1’, then the Log Page Offset Lower field and the Log Page Offset 
 	//		Upper field specify the index into the list of data structures in the log page to be returned. 
 	//	If this bit is cleared to ‘0’, then the Log Page Offset Lower field and 
@@ -223,7 +223,7 @@ typedef struct{
 typedef struct{
 	uint32_t	GetLogPageSupport	: 1;
 	uint32_t	IndexOffsetSupport	: 1;
-	uint32_t						: 14;
+	uint32_t	Reserved2			: 14;
 	uint32_t	LIDSpecificParameter: 16;
 }NVMeLogStruct(Support), NVMeLogSupportTable[NVMeLIDTableLength];
 
@@ -280,9 +280,9 @@ typedef struct{
 typedef struct{
     struct{
         uint8_t	ActiveSlot	: 3;
-        uint8_t				: 1;
+        uint8_t	Reserved1	: 1;
         uint8_t	PendingSlot	: 3;
-        uint8_t				: 1;
+        uint8_t	Reserved2	: 1;
     }ActiveFirmwareInfo;
     uint8_t		Reserved0[7];
     uint64_t	FirmwareRevisionSlot[7]; // Up to 7 slots, 8 ASCII chars each
@@ -300,7 +300,7 @@ typedef struct{
 	uint32_t	NamespaceCapabilityChange	: 1;
 	uint32_t	NamespaceInventoryChange	: 1;
 	uint32_t	ControllerCapabilityChange	: 1;
-	uint32_t								: 9;
+	uint32_t	Reserved1					: 9;
 	//	Command Submission and Execution Relaxations
 	uint32_t	CSER						: 2;
 	//	Command Submission and Execution
@@ -312,7 +312,7 @@ typedef struct{
 	uint32_t	EnduranceGroupScope			: 1;
 	uint32_t	DomainScope					: 1;
 	uint32_t	NVMSubsystemScope			: 1;
-	uint32_t								: 6;
+	uint32_t	Reserved2					: 6;
 	// uint32_t	CommandScope				: 12;
 }NVMeLogStruct(CommandsSupportandEffectsEntry);
 
@@ -403,7 +403,7 @@ typedef struct{
 	uint32_t	QueueSize			: 16;
 	uint32_t	PhysicallyContiguous: 1;
 	uint32_t	InterruptsEnabled	: 1;
-	uint32_t						: 14;
+	uint32_t	Reserved1			: 14;
 	uint32_t	InterruptVector		: 16;
 }NVMeAdminCommandStruct(CreateIOCompletionQueue, 10);
 
@@ -414,21 +414,21 @@ typedef struct{
 	uint32_t	QueueSize			: 16;
 	uint32_t	PhysicallyContiguous: 1;
 	uint32_t	QueuePriority		: 2;
-	uint32_t						: 13;
+	uint32_t	Reserved1			: 13;
 	//	This field specifies the identifier of the I/O Completion Queue to 
 	//		utilize for any command completions entries associated with this Submission Queue.
 	uint32_t	CompletionQueueID	: 16;
 	uint32_t	NVMSetID			: 16;
-	uint32_t						: 16;
+	uint32_t	Reserved2			: 16;
 }NVMeAdminCommandStruct(CreateIOSubmissionQueue, 10);
 
 typedef struct{
 	uint32_t	QueueID				: 16;
-	uint32_t						: 16;
+	uint32_t	Reserved1			: 16;
 }NVMeAdminCommandStruct(DeleteIOCompletionQueue, 10);
 typedef struct{
 	uint32_t	QueueID				: 16;
-	uint32_t						: 16;
+	uint32_t	Reserved1			: 16;
 }NVMeAdminCommandStruct(DeleteIOSubmissionQueue, 10);
 
 // 4-byte LBA Format Descriptor (16 entries in Identify Namespace, offset 128)
@@ -687,14 +687,14 @@ typedef const volatile struct{
 	//	1		Vendor Specific (VS): Vendor Specific arbitration mechanism.
 	//	0		Weighted Round Robin with Urgent Priority Class WRRUPC(Weighted Round Robin with Urgent Priority Class arbitration mechanism).
 	uint64_t		ArbitrationMechanism		: 2;
-	uint64_t									: 5;
+	uint64_t		Reserved1					: 5;
 	//	This field is in 500 millisecond units.
 	uint64_t		WorstCaseTimeout			: 8;
 	//	This field indicates the stride between doorbell registers.
 	//	The stride is specified as (2 ^ (2 + DSTRD)) in bytes.
 	uint64_t		DoorbellStride				: 4;
 	uint64_t		NVMCommandSetSupport		: 1;
-	uint64_t									: 5;
+	uint64_t		Reserved2					: 5;
 	uint64_t		IOCommandSetSupport			: 1;
 	uint64_t		NoIOCommandSetSupport		: 1;
 	uint64_t		BootPartitionSupport		: 1;
@@ -710,11 +710,11 @@ typedef const volatile struct{
 	//	0b01:	The controller supports the Controller Ready With Media mode.
 	uint64_t		ControllerReadyModes		: 2;
 	uint64_t		ShutdownEnhancement			: 1;
-	uint64_t									: 2;
+	uint64_t		Reserved3					: 2;
 }__packed NVMeControllerCapabilitiesRegister;
 typedef volatile struct{
 	uint32_t		Enable									: 1;
-	uint32_t												: 3;
+	uint32_t		Reserved1								: 3;
 	//	Set to 111b
 	uint32_t		IOCommandSetSelected					: 3;
 	uint32_t		MemoryPageSize							: 4;
@@ -723,7 +723,7 @@ typedef volatile struct{
 	uint32_t		IOSubmissionQueueSize					: 4;
 	uint32_t		IOCompletionQueueSize					: 4;
 	uint32_t		ControllerReadyIndependentofMediaMode	: 1;
-	uint32_t												: 7;
+	uint32_t		Reserved2								: 7;
 }__packed NVMeControllerConfigurationRegister;
 typedef const volatile struct{
 	uint32_t		TertiaryVersion				: 8;
@@ -742,33 +742,33 @@ typedef volatile struct{
 	//		Shutdown and this bit remains set to ‘1’ until an NVM Subsystem Reset occurs.
 	//	If this bit is cleared to ‘0’, then CSTS.SHST is reporting the state of a controller shutdown.
 	const uint32_t			ShutdownType				: 1;
-	uint32_t											: 24;
+	uint32_t				Reserved1					: 24;
 }__packed NVMeControllerStatus;
 typedef volatile struct{
 	uint32_t				AdminSubmissionQueueSize	: 12;
-	uint32_t											: 4;
+	uint32_t				Reserved1					: 4;
 	uint32_t				AdminCompletionQueueSize	: 12;
-	uint32_t											: 4;
+	uint32_t				Reserved2					: 4;
 }__packed NVMeControllerAdminQueueAttributes;
 //	Enabled by  CAP.CMB
 typedef const volatile struct{
-	uint32_t			BARIndex					: 3;
+	uint32_t	BARIndex					: 3;
 	//	Controls whether Memory Restrictions will be propagated.
-	uint32_t			MixedMemorySupport			: 1;
+	uint32_t	MixedMemorySupport			: 1;
 	//	If unset then Queues are forced to be contiguous.
-	uint32_t			ContiguousQueueEnforcement	: 1;
+	uint32_t	ContiguousQueueEnforcement	: 1;
 	//	If unset then Configuration Data has to either be in device Memory or Host Memory, 
 	//	If set then Configuration Data can be in either.
-	uint32_t			MixedDataEnforcement		: 1;
+	uint32_t	MixedDataEnforcement		: 1;
 	//	If set then Pointers can point to Device Memory.
-	uint32_t			HostOnlyMemoryEnforcement	: 1;
+	uint32_t	HostOnlyMemoryEnforcement	: 1;
 	//	If this bit is cleared to ‘0’, 
 	//		then the I/O Submission Queues and I/O Completion Queues contained in the Controller Memory Buffer are aligned 
 	//		as defined by the PRP1 field of a Create I/O Submission Queue command.
-	uint32_t			DwordAlignmentEnforcement	: 1;
-	uint32_t										: 4;
+	uint32_t	DwordAlignmentEnforcement	: 1;
+	uint32_t	Reserved1					: 4;
 	//	This is the Offset from the Base Memory that points to the Controller Buffer Memory.
-	uint32_t				Offset					: 20;
+	uint32_t	Offset						: 20;
 }__packed NVMeControllerMemoryBufferLocation;
 enumdef(uint8_t, NVMeControllerMemoryBufferGranularity){
 	_4KiB = 0x0, _64KiB = 0x1, _1MiB = 0x2, _16MiB = 0x3, 
@@ -781,14 +781,14 @@ typedef const volatile struct{
 	uint32_t	ListStoreSupport				: 1;
 	uint32_t	WriteSupport					: 1;
 	uint32_t	ReadSupport						: 1;
-	uint32_t									: 4;
+	uint32_t	Reserved1						: 4;
 	uint32_t	Granularity						: 4;
 	uint32_t	Size							: 20;
 }__packed NVMeControllerMemoryBufferSize;
 typedef volatile struct{
 	uint64_t	CapabilitiesRegisterEnable		: 1;
 	uint64_t	ControllerMemorySpaceEnable		: 1;
-	uint64_t									: 10;
+	uint64_t	Reserved1						: 10;
 	uint64_t	ControllerBaseAddrressHighSig	: 52;
 }__packed NVMeControllerMemorySpaceControl;
 typedef volatile struct{
@@ -816,14 +816,14 @@ typedef volatile struct{
 			NVMeControllerMemorySpaceControl			MemorySpaceControl;
 			uint32_t									UNUSED1;
 			uint32_t									ControllerBaseAddressInvalid	: 1;
-			uint32_t																	: 31;
+			uint32_t									Reserved1						: 31;
 			uint32_t									UNUSED2;
 			//	0x00		Bytes/second
 			//	0x01		1KiB/second
 			//	0x02		1MiB/second
 			//	0x03		1GiB/second
 			uint32_t									SustainedWriteThrouputUnits		: 4; 
-			uint32_t																	: 4;
+			uint32_t									Reserved2						: 4;
 			uint32_t									SustainedWriteThroughput		: 24;
 		};
 	}Vendor;
@@ -840,7 +840,7 @@ typedef struct{
 			}OperationBits;
 		};
 		uint8_t			FuseOperationType	: 2;
-		uint8_t								: 4;
+		uint8_t			Reserved1			: 4;
 		uint8_t			PageType			: 2;
 		uint16_t		CommandID;
 	}__packed			OperationDWORD;

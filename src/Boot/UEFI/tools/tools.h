@@ -9,6 +9,8 @@
 // #include "kernel/libcrt/math/math.h"
 #include "Boot/UEFI/drivers/crypto/blake2/ref/blake2.h"
 
+#define KernelBinarySpace	(0x80000010ULL)
+
 #ifdef _DEBUG
 #define DEBUGPRINT		Print
 #else

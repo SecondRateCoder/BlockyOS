@@ -116,7 +116,7 @@
             },
             "cwd": "${cwd}"
         }, {
-            "name": "(bochs)Debug Kernel",
+            "name": "(Bochs)Debug Kernel",
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}\\compile\\intermid.ps1",

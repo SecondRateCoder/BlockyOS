@@ -167,10 +167,10 @@
 #define __typeof(T)					__typeof__(T)
 #define __offsetof(TYPE, MEMBER)	__builtin_offsetof (TYPE, MEMBER)
 
-#define nKB(n)						((n) * 1024)
-#define nMB(n)						(nKB(n) * 1024)
-#define nGB(n)						(nMB(n) * 1024)
-#define nTB(n)						(nGB(n) * 1024)
+#define nKB(n)						((n) * 1024ULL)
+#define nMB(n)						(nKB(n) * 1024ULL)
+#define nGB(n)						(nMB(n) * 1024ULL)
+#define nTB(n)						(nGB(n) * 1024ULL)
 
 #define WritePTR(base, type, offset, value)	\
 	*((type *)((base) + (offset))) = (type)(value);
@@ -179,7 +179,7 @@
 
 #define ARRSIZE(ARR)	(sizeof(ARR) / sizeof(*(ARR)))
 
-#define SAFEOP(A, B, CompAOp, CompA, CompBOp, CompB, Comp, OP, Alt) (((A) CompAOp (CompA)) Comp ((B) CompBOp (CompB)) ? ((A) OP (B)) : (Alt))
+#define SAFEOP(A, B, CompAOp, CompA, CompBOp, CompB, Comp, OP, Alt) (((A) CompAOp (CompA)) Comp ((B) CompBOp (CompB))? ((A) OP (B)): (Alt))
 #define __safediv(A, B) SAFEOP((A), (B), ||, true, !=, 0, &&, /, 1)
 
 LibAPI extern bool __sysvabi e9print(char *str, unsigned long long n);
@@ -273,20 +273,21 @@ enumdef(unsigned long, CPUIDFeatures){
 #define va_copy(d,s)	__builtin_va_copy(d,s)
 
 extern void __bochs(void);
-
+extern __noreturn void __halt(void);
+#define __chalt(op)	while(op){;}
 typedef struct{
-	unsigned long long	Breakpoint0Detected				: 1;
-	unsigned long long	Breakpoint1Detected				: 1;
-	unsigned long long	Breakpoint2Detected				: 1;
-	unsigned long long	Breakpoint3Detected				: 1;
-	unsigned long long									: 7;
-	unsigned long long	BusLockTrapExcpetion			: 1;
-	unsigned long long	SMM_ICEMode						: 1;
-	unsigned long long	DebugRegisterAccessDetected		: 1;
-	unsigned long long	SingleStepTrigger				: 1;
-	unsigned long long	TaskSwitchTrigger				: 1;
-	unsigned long long	RTMTransactionTrigger			: 1;
-	unsigned long long									: 47;
+	unsigned long long	Breakpoint0Detected			: 1;
+	unsigned long long	Breakpoint1Detected			: 1;
+	unsigned long long	Breakpoint2Detected			: 1;
+	unsigned long long	Breakpoint3Detected			: 1;
+	unsigned long long	Reserved1					: 7;
+	unsigned long long	BusLockTrapExcpetion		: 1;
+	unsigned long long	SMM_ICEMode					: 1;
+	unsigned long long	DebugRegisterAccessDetected	: 1;
+	unsigned long long	SingleStepTrigger			: 1;
+	unsigned long long	TaskSwitchTrigger			: 1;
+	unsigned long long	RTMTransactionTrigger		: 1;
+	unsigned long long	Reserved2					: 47;
 }__packed DR6;
 
 enumdef(unsigned char, DR7BreakpointCondition){InstructionExecution = 0b00, 
@@ -304,12 +305,12 @@ typedef struct{
 	unsigned long long	GlobalBreakpoint3Enable			: 1;
 	unsigned long long	LocalExactBreakpointEnable		: 1;
 	unsigned long long	GlobalEaxctBreakpointEnable		: 1;
-	unsigned long long									: 1;
+	unsigned long long	Reserved1						: 1;
 	//	INT 1 (#DB exception, default)
 	//	Break to ICE/SMM
 	unsigned long long	BreakpointAction				: 1;
 	unsigned long long	DebugRegisterProtect			: 1;
-	unsigned long long									: 2;
+	unsigned long long	Reserved2						: 2;
 	unsigned long long	Breakpoint0Condition			: 2;
 	unsigned long long	Breakpoint0Length				: 2;
 	unsigned long long	Breakpoint1Condition			: 2;
@@ -322,5 +323,5 @@ typedef struct{
 	unsigned long long	Breakpoint1ProcessorTraceLog	: 1;
 	unsigned long long	Breakpoint2ProcessorTraceLog	: 1;
 	unsigned long long	Breakpoint3ProcessorTraceLog	: 1;
-	unsigned long long									: 28;
+	unsigned long long	Reserved3						: 28;
 }__packed DR7;

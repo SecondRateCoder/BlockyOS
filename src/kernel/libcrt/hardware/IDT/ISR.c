@@ -4,6 +4,8 @@
 #include "kernel/libcrt/hardware/GDT/GDT.h"
 #include "kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h"
 
+#include "kernel/libcrt/SimpleOutput/SimpleOutput.h"
+
 ISRCallbackDefinition(Generic);
 ISRCallbackDefinition(DivideError);
 ISRCallbackDefinition(DebugException);
@@ -53,8 +55,8 @@ ISRCallbackDefinition(ControlProtectionException);
 //	0x20		PIT Interrupt
 //	For each Controller/Device, an Interrupt is Allocated.
 //	0x21-...	MassStorageController#N Interrupt
-volatile ISRCallbackTable __align(64) InterruptCallbacks = {
-	DebugExceptionISR, NonMaskableExtISR, 
+volatile ISRCallbackTable __align(4096) InterruptCallbacks = {
+	DivideErrorISR, DebugExceptionISR, NonMaskableExtISR, 
 	BreakpointISR, OverflowISR, 
 	BoundRangeExceptionISR, InvalidOpcodeISR, 
 	UnavailableDeviceISR, DoubleFaultISR, 
@@ -221,15 +223,16 @@ bool AllocateIST(uint8_t *IST, IDTEntrySegmentSelector64 *sselector){
 				GDTSystemSegmentDescriptor64 *SS = (GDTSystemSegmentDescriptor64 *)(R.Base + (_GDT * sizeof(GDTDescriptor)));
 				if(SS->ABType == TSS64BitAvailable){
 					TSS_t *_TSS = (void *)(((uint64_t)SS->BaseHigh << 24) + SS->BaseLow);
-					if(_TSS){_TSS = SafeAllocatePages(_TSS, sizeof(TSS_t), (ReadWritable | SupervisorMode), 0x00, 0x20);}else{
+					if(_TSS){EnableInputAddress(true, true);
+						_TSS = SafeAllocatePages(_TSS, sizeof(TSS_t), (ReadWritable | SupervisorMode), 0x00, 0x20);
+					}else{
 						_TSS = AllocatePages(NULL, sizeof(TSS_t), (ReadWritable | SupervisorMode), 0x00);
 						uint64_t Phys = (uint64_t)MapPhysical(_TSS);
-						SS->BaseHigh = (uint64_t)_TSS >> 24;
-						SS->BaseLow = (uint64_t)_TSS & 0xFFFFFF;
+						SS->BaseHigh = (uint64_t)Phys >> 24;
+						SS->BaseLow = (uint64_t)Phys & 0xFFFFFF;
 					}
 					(*IST) = 8;
 					while((*IST)--){
-						uint32_t LevelTemp = 5;
 						//	If unmapped, then we Allocate and Use it.
 						if(!_TSS->IST[(*IST)]){
 							sselector->Segment = _GDT;
@@ -251,6 +254,7 @@ ISRCallbackDefinition(Generic){__bochs();	ISRCallbackReturn;}
 ISRCallbackDefinition(DivideError){
 	Frame->RAX = UINT64_MAX;
 	Frame->RDX = UINT64_MAX;
+	DebugPrintf("\nFail at 0x%0z", Frame->RIP);
 	ISRCallbackReturn;
 }
 

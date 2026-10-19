@@ -105,6 +105,6 @@ for($i = 0; $i -lt $MAX; $i++){
 
 Add-Content -Path $HDR -Value "#define IDTCallbackInit(IDT)`t\"
 for($i = 0; $i -lt $MAX; $i++){
-	Add-Content -Path $HDR -Value "`t(IDT)[$($i)].OffsetHigh = ((uint64_t)isrCallback$($i) >> 16) & 0xFFFFFFFFFF;`t\"
+	Add-Content -Path $HDR -Value "`t(IDT)[$($i)].OffsetHigh = ((uint64_t)isrCallback$($i) >> 16) & 0xFFFFFFFF;`t\"
 	Add-Content -Path $HDR -Value "`t(IDT)[$($i)].OffsetLow = (uint64_t)isrCallback$($i) & UINT16_MAX;`t`t`t`t\"
 }

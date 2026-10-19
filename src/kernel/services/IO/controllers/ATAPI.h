@@ -5,7 +5,7 @@ void ATAPIGetPorts(PCIDevice *device, uint32_t *nativemode, uint32_t *pcommand, 
 	if(device){
 		if(device->HeaderType.Type != PCIGeneralDevice){return;}
 		ATAPI_PCIProgIF pf = *((ATAPI_PCIProgIF *)(&device->DeviceCode.ProgIF));
-		if(pf.PrimaryChannelMode){
+		if(pf.PrimaryNative){
 			if(pcommand){*pcommand = *((uint32_t *)&((PCIHeader0x0 *)device)->BAR[0]);}
 			if(pcontrol){*pcontrol = *((uint32_t *)&((PCIHeader0x0 *)device)->BAR[1]);}
 			if(scommand){*scommand = *((uint32_t *)&((PCIHeader0x0 *)device)->BAR[2]);}

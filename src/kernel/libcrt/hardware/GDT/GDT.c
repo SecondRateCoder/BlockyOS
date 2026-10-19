@@ -2,9 +2,6 @@
 #include "kernel/libcrt/hardware/paging/paging.h"
 #include "kernel/libcrt/memory/allocator/malloc.h"
 
-extern bool __sysvabi _LoadGDTR(GDTR64 *Register);
-extern bool __sysvabi _ReadGDTR(GDTR64 *Register);
-
 //	We assume a Virtual Base was used, we replace with a Physical Base.
 //	We dont trust the Input Pointer and 
 bool LoadGDTR(GDTR64 *Register){

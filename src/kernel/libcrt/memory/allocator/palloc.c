@@ -17,7 +17,7 @@ void *ReallocatePages(void *Phys, void *Base, PageAllocationFlags Flags, uint8_t
                     .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
                     .PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
                     .ExecuteDisable = !__check(Flags, ExecuteEnable), 
-                    .UserSupervisor = __check(Flags, SupervisorMode), 
+                    .UserMode = __check(Flags, SupervisorMode), 
                     .ReadWrite = __check(Flags, ReadWritable), 
                 };
             }
@@ -30,7 +30,7 @@ void *ReallocatePages(void *Phys, void *Base, PageAllocationFlags Flags, uint8_t
                     .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
                     .PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
                     .ExecuteDisable = !__check(Flags, ExecuteEnable), 
-                    .UserSupervisor = __check(Flags, SupervisorMode), 
+                    .UserMode = __check(Flags, SupervisorMode), 
                     .ReadWrite = __check(Flags, ReadWritable), 
                 };
             }
@@ -43,7 +43,7 @@ void *ReallocatePages(void *Phys, void *Base, PageAllocationFlags Flags, uint8_t
                     .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
                     .PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
                     .ExecuteDisable = !__check(Flags, ExecuteEnable), 
-                    .UserSupervisor = __check(Flags, SupervisorMode), 
+                    .UserMode = __check(Flags, SupervisorMode), 
                     .ReadWrite = __check(Flags, ReadWritable), 
                 };
             }

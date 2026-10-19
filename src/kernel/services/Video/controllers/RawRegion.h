@@ -63,6 +63,7 @@ RawVideoMemoryAllocator *InitialiseVideoMemoryAllocator(void *videomemory,
 	void *acpibase, uint32_t PixelSize, uint32_t PixelWidth, uint32_t PixelHeight
 ){
 	RawVideoMemoryAllocator *RVMA = mcalloc(1, sizeof(RawVideoMemoryAllocator));
+	EnableInputAddress(true, true);
 	*RVMA = (RawVideoMemoryAllocator){
 		.videomemory = SafeAllocatePages(videomemory, 
 			sizeof(Pixel) * PixelWidth * PixelHeight, (ReadWritable | SupervisorMode), 0x00, 0x20), 

@@ -209,6 +209,7 @@ EXPORTS
 	__fixsfsi
 	__truncdfsf2
 	__bochs
+	__halt
 	strdup
 	SetIDTe
 	BootCore
@@ -216,6 +217,8 @@ EXPORTS
 	e9print
 	e9printc
 	DebugPrintf
+	EnableInputAddress
+	_1GPageSupport
 	isrCallback0
 	isrCallback1
 	isrCallback2

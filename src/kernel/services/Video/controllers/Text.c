@@ -53,6 +53,11 @@ void TextCopyF(char *stream, uint64_t *size, const char **f, va_list ls){
             if(format[cc] == '\0'){break;}
             uint64_t base = 10, value = 0;
             bool is_signed = false, negative = false;
+			switch(format[cc]){
+				case FormatHex:		{base = 16;	cc++;	break;}
+				case FormatInteger:	{base = 10;	cc++;	break;}
+				case FormatBinary:	{base = 2;	cc++;	break;}
+			}
             //	SAFELY EXTRACT VARIADIC ARGUMENTS
             // Smaller integer types (char, short) are automatically promoted to int/unsigned int by the C compiler.
             switch(format[cc]){

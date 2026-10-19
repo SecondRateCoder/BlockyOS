@@ -64,7 +64,7 @@ typedef volatile struct {
     uint64_t FGranularity        : 1;  // Bit 55      : Granularity (0=Byte, 1=4KB)
     
     uint64_t BaseHigh            : 8;  // Bits 56..63 : Base Address [31:24]
-} __packed GDTDescriptor;
+}__packed GDTDescriptor;
 
 enumdef(uint8_t, GDSSFlags){
 	Granularity1Byte = 0x0, Granularity4KB = 0x1, 
@@ -92,12 +92,12 @@ typedef volatile union{
         
         // Flags Nibble (Bits 52..55)
         uint64_t FAvailable			: 1;  // Bit 52      : AVL
-        uint64_t 					: 2;  // Bits 53..54 : Reserved (Must be 0 for TSS)
+        uint64_t Reserved1			: 2;  // Bits 53..54 : Reserved (Must be 0 for TSS)
         uint64_t FGranularity		: 1;  // Bit 55      : Granularity (0=Byte, 1=4KB)
 
         // --- Upper 64 Bits (Descriptor High) ---
         uint64_t BaseHigh			: 40; // Bits 64..95 : Base [63:24]
-        uint64_t 					: 32; // Bits 96..127: Reserved (Must be 0)
+        uint64_t Reserved2			: 32; // Bits 96..127: Reserved (Must be 0)
     };
 } __packed GDTSystemSegmentDescriptor64;
 

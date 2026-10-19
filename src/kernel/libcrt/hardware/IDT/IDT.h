@@ -55,23 +55,23 @@ typedef volatile struct{
 	uint64_t	OffsetLow					: 16;
 	uint64_t	SegmentSelector				: 16;
 	uint64_t	InterruptStackTableOffset	: 3;
-	uint64_t								: 5;
+	uint64_t	Reserved1					: 5;
 	uint64_t	GateType					: 4;
-	uint64_t								: 1;
+	uint64_t	Reserved2					: 1;
 	uint64_t	DescriptorPrivilegeLevel	: 2;
 	uint64_t	PresentEntry				: 1;
 	uint64_t	OffsetMid					: 16;
 	uint64_t	OffsetHigh					: 32;
-	uint64_t								: 32;
+	uint64_t	Reserved3					: 32;
 }__packed IDTEntry64, IDTTable64[IDTLength];
 
 typedef volatile struct{
 	uint64_t	OffsetLow					: 16;
 	uint64_t	SegmentSelector				: 16;
 	uint64_t	InterruptStackTableOffset	: 3;
-	uint64_t								: 5;
+	uint64_t	Reserved1					: 5;
 	uint64_t	GateType					: 4;
-	uint64_t								: 1;
+	uint64_t	Reserved2					: 1;
 	uint64_t	DescriptorPrivilegeLevel	: 2;
 	uint64_t	PresentEntry				: 1;
 	uint64_t	OffsetHigh					: 16;

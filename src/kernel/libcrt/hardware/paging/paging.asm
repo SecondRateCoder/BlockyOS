@@ -27,21 +27,23 @@ EnableLA57:
 
 global IsLA57Supported
 IsLA57Supported:
-	mov rax, 7
+	push rbx
+	mov  eax, 7
+	xor  ecx, ecx
 	cpuid
-	mov eax, ecx
-	shr eax, 16
-	; nand eax, true
-	and eax, true
+	mov  eax, ecx
+	shr  eax, 16
+	and  eax, 1
+	pop  rbx
 	ret
 
 global LoadPageTree
 ;	typedef void PageTreeFunction()
-;	eax(return) LoadPageTree(rdi(PageTree *), rsi(Function Pointer), rdx(Data Segment), rcx(Code Segment), r8(Level5 Table))
+;	eax(return) LoadPageTree(rdi(PageTree *), rsi(Data Segment), rdx(Code Segment), rcx(Level5 Table))
 LoadPageTree:
 	;	Check for whether we need to load Level5 Paging
-	call IsLA57Supported
-	cmp rax, r8
+	call IsLA57Enabled
+	cmp rax, rcx
 	je .Load
 	jg .ErrorExpectsLevel5
 	mov eax, ErrorExpectsLevel4Code
@@ -50,16 +52,23 @@ LoadPageTree:
 	mov eax, ErrorExpectsLevel5Code
 	ret
 .Load:
+	cli
 	mov rax, rdi
+	and rax, 0xFFFFFFFFFFFFF000
 	mov cr3, rax
-
-	mov rax, rdx
+	
+	mov rax, rsi
 	mov ds, ax
+	mov ss, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
-
-	jmp rsi
+	
+	pop rax
+	push qword rdx
+	push rax
+	mov rax, 1
+	retfq
 
 ; extern MapPTVirtual
 global GetPageTable

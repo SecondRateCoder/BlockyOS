@@ -191,7 +191,7 @@ pushSSE:
 	;	Check for rounded Memory
 	mov rdx, 0
 	mov rax, rdi
-	mov rcx, 0x16
+	mov rcx, 16
 	div rcx
 	cmp rdx, 0
 	je .alignedMemory

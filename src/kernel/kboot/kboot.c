@@ -1,5 +1,6 @@
 #include "kboot.h"
 #include "kdefs.h"
+#include "kernel/libcrt/SimpleOutput/SimpleOutput.h"
 
 //  Non-Overwritable Memory:    
 //      EfiRuntimeServicesCode, EfiRuntimeServicesData, 
@@ -13,28 +14,52 @@
 //      EfiBootServicesCode, EfiBootServicesData, 
 //      EfiConventionalMemory
 
-IDTTable64 InterruptTable;
-static volatile GDTSystemSegmentDescriptor64 GDTTable[(GDTTableDefaultLength / 2)] = {0};
-static volatile TSS_t tss;
+IDTTable64 __linkersection(.bss) InterruptTable;
+static volatile __linkersection(.bss) GDTSystemSegmentDescriptor64 GDTTable[(GDTTableDefaultLength / 2)] = {0};
+static volatile __linkersection(.bss) TSS_t tss;
 
 void InitialiseGDT(){
     ((GDTDescriptor *)GDTTable)[0] = (GDTDescriptor){0};
     ((GDTDescriptor *)GDTTable)[1] = (GDTDescriptor){
 		.ABPresent = true, .ABPriviledgeLevel = 0x00, .ABSystemSegmentBit = true,
         .ABExecutableBit = true, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
-        .FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true,
-		
+        .FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true, 
 		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
     };
     ((GDTDescriptor *)GDTTable)[2] = (GDTDescriptor){
 		.ABPresent = true, .ABPriviledgeLevel = 0x00, .ABSystemSegmentBit = true,
         .ABExecutableBit = false, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
-        .FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true,
-		
+        .FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true, 
         .BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
     };
 
-    *((GDTSystemSegmentDescriptor64 *)((GDTDescriptor *)GDTTable + 3)) = (GDTSystemSegmentDescriptor64){
+	((GDTDescriptor *)GDTTable)[3] = (GDTDescriptor){
+		.ABPresent = true, .ABPriviledgeLevel = 0x03, .ABSystemSegmentBit = true,
+		.ABExecutableBit = true, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
+		.FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true, 
+		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+	};
+	((GDTDescriptor *)GDTTable)[4] = (GDTDescriptor){
+		.ABPresent = true, .ABPriviledgeLevel = 0x03, .ABSystemSegmentBit = true,
+		.ABExecutableBit = false, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
+		.FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true, 
+		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+	};
+
+	((GDTDescriptor *)GDTTable)[5] = (GDTDescriptor){
+		.ABPresent = true, .ABPriviledgeLevel = 0x03, .ABSystemSegmentBit = true,
+		.ABExecutableBit = true, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
+		.FLongModeBit = false, .F32BitModeBit = false, .FGranularity = true, 
+		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+	};
+	((GDTDescriptor *)GDTTable)[6] = (GDTDescriptor){
+		.ABPresent = true, .ABPriviledgeLevel = 0x03, .ABSystemSegmentBit = true,
+		.ABExecutableBit = false, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
+		.FLongModeBit = false, .F32BitModeBit = false, .FGranularity = true, 
+		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+	};
+	
+    *((GDTSystemSegmentDescriptor64 *)((GDTDescriptor *)GDTTable + 7)) = (GDTSystemSegmentDescriptor64){
         .ABPresent = true, .ABPriviledgeLevel = 0x00, .ABSystemSegmentBit = false, .ABType = TSS64BitAvailable, .FGranularity = false, 
 
         .BaseLow = (uint64_t)&tss & 0xFFFFFF, .BaseHigh = ((uint64_t)&tss >> 24) & 0xFFFFFF, 
@@ -42,28 +67,31 @@ void InitialiseGDT(){
     };
     tss = (TSS_t){.io_map_base = sizeof(TSS_t), .IST = {0}, .RSP = {0}};
 
-    GDTR64 Tmp = {.Base = (UINT64)GDTTable, .Limit = (sizeof(GDTDescriptor) * 3 + sizeof(GDTSystemSegmentDescriptor64)) - 1};
+    GDTR64 Tmp = {.Base = (UINT64)GDTTable, .Limit = ((sizeof(GDTDescriptor) * 5) + sizeof(GDTSystemSegmentDescriptor64)) - 1};
     _LoadGDTR(&Tmp);
 }
 
-void InitialiseIDT(void *ACPI){
+void InitialiseIDT(){
 	for(uint32_t cc = 0; cc < IDTLength; ++cc){
-		SetIDTe(InterruptTable, cc, 0x00, (IDTEntrySegmentSelector64){0}, 0, _64BitInterruptGate, true);}
+		SetIDTe(InterruptTable, cc, 0x00, (IDTEntrySegmentSelector64){.LocalDescriptor = false, .PriviledgeLevel = 0x00, .Segment = 0x08}, 0, _64BitInterruptGate, true);}
 	IDTCallbackInit(InterruptTable);
 	// sizeof(IDTEntry64);
 	IDTR64 temp = {.Base = (uint64_t)InterruptTable, .Limit = sizeof(InterruptTable) - 1};
 	_LoadIDTR(&temp);
-	__bochs();
-	InitLocalAPIC(ACPI, 0x2F, false);
 }
 
 ISRCallbackDefinition(GenericIO){ISRCallbackReturn;}
 rawenv re;
 void __sysvabi __main(__bootinfo *__restrict__ bootin){
-	//* Set Up Interrupt Descriptor Table (IDT) & GDT
+	//* Set Up Temprary Page Table, Interrupt Descriptor Table (IDT) & GDT
+	
 	// __bochs();
 	InitialiseGDT();
-
+	InitialiseIDT();
+	if(!_1GPageSupport()){DebugPrintf("1GB Pages not Supported");	__halt();}
+	// InitialiseTemporaryPageTable(bootin->memory.TotalMemorySize);
+	// DebugPrintf("Successfully Initialised");
+	
 	// __bochs();
 	const uint64_t ss = (uint64_t)bootin->memory.MemoryDescriptorStructSize, 
 		n = (uint64_t)bootin->memory.MemoryDescriptorBufferSize / (uint64_t)bootin->memory.MemoryDescriptorStructSize;
@@ -75,8 +103,7 @@ void __sysvabi __main(__bootinfo *__restrict__ bootin){
 			!memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_20_TABLE_GUID}, sizeof(EFI_GUID))
 		){ACPIBase = bootin->devices.CTable[cc].VendorTable;			break;}
 	}
-
-	InitialiseIDT(ACPIBase);
+	InitLocalAPIC(ACPIBase, 0x2F, false);
 	
 	__bochs();
 	InitaliseVMA(bootin->Video.videomemory, ACPIBase, 

@@ -90,14 +90,14 @@ typedef volatile struct{
 	uint32_t Write1ToClear	HBAReset				: 1;
 	uint32_t 				InterruptEnable			: 1;
 	const uint32_t			MSI_SingleMessageRevert	: 1;
-	uint32_t										: 28;
+	uint32_t				Reserved1				: 28;
 	//	If CAP.SupportsAHCIModeOnly is '0', then GHC.AE shall be read-write and shall have a reset value of '0'. 
 	//	If CAP.SupportsAHCIModeOnly is '1', then AE shall be read-only and shall have a reset value of '1'
 	uint32_t				AHCIEnable				: 1;
 }__packed HBAGlobalHostControlRegister;
 typedef volatile struct{
 	uint32_t	Enable				: 1;
-	uint32_t						: 2;
+	uint32_t	Reserved1			: 2;
 	//	Specifies the interrupt used by the CCC feature. This interrupt must be marked as unused in the Ports Implemented (PI) register by the corresponding bit being set to ‘0’. 
 	//	Thus, the CCC interrupt corresponds to the interrupt for an unimplemented port on the controller. 
 	//	When a CCC interrupt occurs, the IS.IPS[INT] bit shall be asserted to ‘1’. This field also specifies the interrupt vector used for MSI.
@@ -108,10 +108,10 @@ typedef volatile struct{
 }__packed HBACommandCompletionCoalescingControl;
 typedef volatile struct{
 	uint32_t Write1ToClear	MessageRecieved		: 1;
-	uint32_t									: 7;
+	uint32_t				Reserved1			: 7;
 	uint32_t				TransmitMessage		: 1;
 	uint32_t				Reset				: 1;
-	uint32_t									: 6;
+	uint32_t				Reserved2			: 6;
 	uint32_t				LEDMessageType		: 1;
 	uint32_t				SAFTEMessageType	: 1;
 	uint32_t				SES2MessageType		: 1;
@@ -120,7 +120,7 @@ typedef volatile struct{
 	uint32_t				TransmitOnly		: 1;
 	uint32_t				HardwareActivityLED	: 1;
 	uint32_t				PortMultiplierEnable: 1;
-	uint32_t									: 4;
+	uint32_t				Reserved3			: 4;
 }__packed HBAEnclosureManagementControl;
 
 //	A controller can support up to 32 ports. 
@@ -185,7 +185,7 @@ typedef volatile struct{
 	// Clear busy upon R_OK
 	uint8_t		ClearBusy				: 1;		
 	// Reserved
-	uint8_t  							: 1;		
+	uint8_t  	Reserved1				: 1;		
 	// Port multiplier port
 	uint8_t		PortMultiplier			: 4;		
 	// Physical region descriptor table length in entries
@@ -206,7 +206,7 @@ typedef struct{
 		//	Byte count, 4M max
 		uint32_t	DataByteCount				: 22;
 		//	Reserved
-		uint32_t								: 9;
+		uint32_t	Reserved2					: 9;
 		//	Interrupt on completion
 		uint32_t	CompletionInterruptEnable	: 1;
 	}DWORD3;
@@ -344,9 +344,9 @@ typedef struct{
 	struct{
 		AHCIFrameInformationStructureType	Type;
 		uint8_t								PortMultiplier	: 4;
-		uint8_t												: 2;
+		uint8_t								Reserved1		: 2;
 		uint8_t								Interrupt		: 1;
-		uint8_t												: 1;
+		uint8_t								Reserved2		: 1;
 		uint8_t								Status;
 		uint8_t								Error;
 	}DWORD0;
@@ -375,7 +375,7 @@ typedef struct{
 typedef struct{
 	AHCIFrameInformationStructureType		Type;
 	uint8_t									PortMultiplier	: 4;
-	uint8_t													: 4;
+	uint8_t									Reserved1		: 4;
 	uint16_t  								Reserved;
 	uint32_t 								Payload[];
 }__packed AHCIBidirectionalData;
@@ -385,11 +385,11 @@ typedef struct{
 	struct{
 		AHCIFrameInformationStructureType	Type;
 		uint8_t								PortMultiplier	: 4;
-		uint8_t												: 1;
+		uint8_t								Reserved1		: 1;
 		//	Device to Host.
 		uint8_t								Direction		: 1;
 		uint8_t								Interrupt		: 1;
-		uint8_t												: 1;
+		uint8_t								Reserved2		: 1;
 		uint8_t								Status;
 		uint8_t								Error;
 	}DWORD0;
@@ -419,7 +419,7 @@ typedef struct{
 	struct{
 		AHCIFrameInformationStructureType	Type;
 		uint8_t								PortMultiplier	: 4;
-		uint8_t												: 1;
+		uint8_t								Reserved1		: 1;
 		uint8_t								Direction		: 1;
 		uint8_t								Interrupt		: 1;
 		//	Auto-activate. Specifies if DMA Activate FIS is needed.
@@ -428,13 +428,13 @@ typedef struct{
 	}DWORD0;
 	//	DMA Buffer Identifier. Used to Identify DMA buffer in host memory.
 	//	SATA Spec says host specific and not in Spec. Trying AHCI spec might work.
-	uint64_t							DMABufferID;
-	uint32_t							Reserved;
+	uint64_t								DMABufferID;
+	uint32_t								Reserved;
 	//	Aligned to 4 bytes.
-	uint32_t							PayloadOffset;
+	uint32_t								PayloadOffset;
 	//	Aligned to 2 Bytes.
-	uint32_t							PayloadSize;
-	uint32_t							Reserved1;
+	uint32_t								PayloadSize;
+	uint32_t								Reserved1;
 }__packed AHCIDeviceToHostDirectMemoryAccess;
 
 typedef struct{
@@ -583,6 +583,7 @@ AHCIConfigureReturn ConfigureAHCIController(void *acpibase, bool *DeviceEnable, 
 	HBAMemorySpace *Space = NULL;
 	if(Header->HeaderType.Type == PCIGeneralDevice){
 		PCIHeader0x0 *_0x0 = (PCIHeader0x0 *)Header;
+		EnableInputAddress(true, true);
 		Space = SafeAllocatePages((void *)(((uint64_t)*(uint32_t *)(_0x0->BAR + 5) << 32) + (uint64_t)PCIeGetBar(_0x0, 4)), sizeof(HBAMemorySpace), (ReadWritable | SupervisorMode), 0x0, 0x20);
 		// if((Space->HostCapability.NumberOfPorts + 1) > NVectors){return (AHCIConfigureReturn){.Data = Space->HostCapability.NumberOfPorts, .Flags = NotEnoughVectors};}
 		if(!Space->HostCapability.SupportsAHCIModeOnly){Space->GlobalHostControl.AHCIEnable = 0x1;}
@@ -592,6 +593,7 @@ AHCIConfigureReturn ConfigureAHCIController(void *acpibase, bool *DeviceEnable, 
 		//	We let the Integer overflow
 		uint32_t cc = UINT32_MAX, Vector;
 		if(MSIx){
+			EnableInputAddress(true, true);
 			MSIxTableEntry_t *MSIxTable = SafeAllocatePages((void *)(PCIGetBar(_0x0, MSIx->TableControl.MSIxBARIndex) + MSIx->TableControl.MSIxByteOffset), 
 				sizeof(MSIxTableEntry_t) * (MSIx->MessageControl.TableSize + 1), (ReadWritable | SupervisorMode), 0x0, 0x20);
 			// NVectors = Space->HostCapability.NumberOfPorts + 1;
@@ -663,9 +665,11 @@ HBACommandHeader *AHCISearchOpenCommandSlot(HBAMemorySpace *MS, HBADevicePort *P
 ATAIdentifyData *AHCIGetDriveInfo(HBAMemorySpace *MS, HBADevicePort *Port){
 	static ATAIdentifyData Out = {0};
 	HBACommandHeader *Slot = AHCISearchOpenCommandSlot(MS, Port, NULL);
+	EnableInputAddress(true, true);
 	HBACommandTableEntry *Table = SafeAllocatePages((void *)Slot->CommandTableBase, 
 		sizeof(HBACommandTableEntry), (ReadWritable | SupervisorMode), 0x00, 0x20);
     //	Set up the Host-to-Device Register FIS for IDENTIFY DEVICE (0xEC)
+	EnableInputAddress(true, true);
     AHCIHostToDeviceRegister *cfis = SafeAllocatePages(&Table->CommandFISStruct, 
 		sizeof(AHCIHostToDeviceRegister), (ReadWritable | SupervisorMode), 0x00, 0x20);
     memset(cfis, 0, sizeof(AHCIHostToDeviceRegister));
@@ -693,6 +697,7 @@ uint32_t AHCIReadBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Pos
 	}
 	if(Device > Controller->HostCapability.NumberOfPorts){return Bytes;}
 	if(!__check(Controller->PortImplementedBitmask >> Device, true)){return Bytes;}else{
+		EnableInputAddress(true, true);
 		HBADevicePort *This = SafeAllocatePages(Controller->Ports + Device, 
             sizeof(HBADevicePort), (ReadWritable | SupervisorMode), 0x00, 0x20);
 		uint32_t slot = 0;
@@ -704,6 +709,7 @@ uint32_t AHCIReadBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Pos
 		CMDHeader->CommandFISDWORDLength = sizeof(AHCIHostToDeviceRegister) / sizeof(uint32_t);
 		CMDHeader->PRDTableLength = (uint16_t)((Bytes - 1) >> 4) + 1;
 		CMDHeader->WriteFlag = false;
+		EnableInputAddress(true, true);
 		HBACommandTableEntry *Table = SafeAllocatePages((void *)CMDHeader->CommandTableBase, 
 		    sizeof(HBACommandTableEntry), (ReadWritable | SupervisorMode), 0x00, 0x20);
 		for(uint32_t cc = 0; cc < CMDHeader->PRDTableLength; ++cc){
@@ -712,6 +718,7 @@ uint32_t AHCIReadBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Pos
 			Table->Table[cc].DWORD3.DataByteCount = __min(AHCI_TRANSFERBLOCKSIZE - 1, Bytes);
 			Bytes = Bytes > AHCI_TRANSFERBLOCKSIZE? Bytes - AHCI_TRANSFERBLOCKSIZE: 0;
 		}
+		EnableInputAddress(true, true);
 		*((AHCIHostToDeviceRegister *)SafeAllocatePages(Table->CommandFISStruct, sizeof(AHCIHostToDeviceRegister), 
 			(ReadWritable | SupervisorMode), 0x00, 0x20)) = (AHCIHostToDeviceRegister){
 				.DWORD0 = {
@@ -747,6 +754,7 @@ uint32_t AHCIWriteBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Po
 	}
 	if(Device > Controller->HostCapability.NumberOfPorts){return Bytes;}
 	if(!__check(Controller->PortImplementedBitmask >> Device, true)){return Bytes;}else{
+		EnableInputAddress(true, true);
 		HBADevicePort *This = SafeAllocatePages(Controller->Ports + Device, sizeof(HBADevicePort), 
 			(ReadWritable | SupervisorMode), 0x00, 0x20);
 		uint32_t slot = 0;
@@ -758,6 +766,7 @@ uint32_t AHCIWriteBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Po
 		CMDHeader->CommandFISDWORDLength = sizeof(AHCIHostToDeviceRegister) / sizeof(uint32_t);
 		CMDHeader->PRDTableLength = (uint16_t)((Bytes - 1) >> 4) + 1;
 		CMDHeader->WriteFlag = true;
+		EnableInputAddress(true, true);
 		HBACommandTableEntry *Table = SafeAllocatePages((void *)CMDHeader->CommandTableBase, 
 			sizeof(HBACommandTableEntry), (ReadWritable | SupervisorMode), 0x00, 0x20);
 		for(uint32_t cc = 0; cc < CMDHeader->PRDTableLength; ++cc){
@@ -766,6 +775,7 @@ uint32_t AHCIWriteBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Po
 			Table->Table[cc].DWORD3.DataByteCount = __min(AHCI_TRANSFERBLOCKSIZE - 1, Bytes);
 			Bytes = Bytes > AHCI_TRANSFERBLOCKSIZE? Bytes - AHCI_TRANSFERBLOCKSIZE: 0;
 		}
+		EnableInputAddress(true, true);
 		*((AHCIHostToDeviceRegister *)SafeAllocatePages(Table->CommandFISStruct, 
             sizeof(AHCIHostToDeviceRegister), (ReadWritable | SupervisorMode), 0x00, 0x20)) = (AHCIHostToDeviceRegister){
 				.DWORD0 = {

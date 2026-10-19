@@ -35,7 +35,7 @@ enumdef(char, TextCopyFFormat){
 	FormatStart = '%', FormatIntegerBase = '.', 
 	FormatUInteger8 = 'u', FormatUInteger16 = 'h', FormatUInteger32 = 'l', FormatUInteger64 = 'z', 
 	FormatInteger8 = 'o', FormatInteger16 = 'e', FormatInteger32 = 'r', FormatInteger64 = 'i', 
-	FormatString = 's', FormatChar = 'c'
+	FormatString = 's', FormatChar = 'c', FormatHex = '0', FormatInteger = '1', FormatBinary = '2'
 };
 
 void TextCopyF(char *stream, uint64_t *size, const char **f, va_list ls);

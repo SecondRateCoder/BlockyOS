@@ -108,6 +108,7 @@ void *BootCore(void *ACPIBase, uint8_t ApicID, uint8_t *InterruptVector, void *C
 	//	Initialise the Memory at Location
 	void *Tmp = NULL;
 	*InterruptVector = 0;
+	EnableInputAddress(true, true);
 	while(!(Tmp = AllocatePages((void *)(*InterruptVector * PAGE_SIZE), CodeLength, (ReadWritable | SupervisorMode | ExecuteEnable), 0x00))){InterruptVector++;}
 	memcpy(Tmp, Code, CodeLength);
     //	Send INIT IPI (Assert)

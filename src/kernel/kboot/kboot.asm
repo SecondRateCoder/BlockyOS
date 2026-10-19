@@ -9,6 +9,7 @@ section .text
 ;				bootin = {STACKADDR, STACKSIZE, ...}
 global kboot_km
 kboot_km:
+	cli
     ; call __bochs
     mov rax, 0
     mov eax, dword [rdi + 8]

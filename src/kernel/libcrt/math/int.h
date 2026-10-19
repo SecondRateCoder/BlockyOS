@@ -46,10 +46,10 @@ typedef signed long long    __align(8)	int64_t, intptr_t;
 typedef unsigned long long	uint64_t, uintptr_t;
 typedef signed long long	int64_t, intptr_t;
 #endif
-#define UINT64_MAX			(0xFFFFFFFFFFFFFFFFU)
-#define UINT64_MIN			(0x0U)
-#define INT64_MAX			(0x7FFFFFFFFFFFFFFFU)
-#define INT64_MIN			(0xFFFFFFFFFFFFFFFFU)
+#define UINT64_MAX			(0xFFFFFFFFFFFFFFFFULL)
+#define UINT64_MIN			(0x0ULL)
+#define INT64_MAX			(0x7FFFFFFFFFFFFFFFULL)
+#define INT64_MIN			(0xFFFFFFFFFFFFFFFFULL)
 #define uqword				uint64_t
 #define qword				int64_t
 

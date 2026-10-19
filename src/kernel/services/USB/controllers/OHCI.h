@@ -74,7 +74,7 @@ typedef struct{
 	//	This bit is used by HCD to enable or disable the remote wakeup
 	//		feature upon the detection of upstream resume signaling
 	uint32_t	RemoteWakeupEnable				: 1;
-	uint32_t									: 21;
+	uint32_t	Reserved1						: 21;
 }OHCIRegisterStruct(HcControl);
 typedef struct{
 	//	This bit is set by HCD to initiate a software reset of HC.
@@ -84,11 +84,11 @@ typedef struct{
 	uint32_t	ControlListFilled		: 1;
 	uint32_t	BulkListFilled			: 1;
 	uint32_t	OwnershipChangeRequest	: 1;
-	uint32_t							: 12;
+	uint32_t	Reserved1				: 12;
 	//	These bits are incremented on each scheduling overrun error. 
 	//	It is initialized to 00b and wraps around at 11b.
 	uint32_t	SchedulingOverrunCount	: 2;
-	uint32_t							: 14;
+	uint32_t	Reserved2				: 14;
 }OHCIRegisterStruct(HcCommandStatus);
 typedef struct{
 	uint32_t	SchedulingOverrunEnable		: 1;
@@ -98,7 +98,7 @@ typedef struct{
 	uint32_t	UnrecoverableErrorEnable	: 1;
 	uint32_t	FrameNumberOverflowEnable	: 1;
 	uint32_t	RootHubStatusChangeEnable	: 1;
-	uint32_t								: 23;
+	uint32_t	Reserved1					: 23;
 	uint32_t	OwnershipChangeEnable		: 1;
 	//	A '1' written to this field enables interrupt generation 
 	//	due to events specified in the other bits of this register.
@@ -112,7 +112,7 @@ typedef struct{
 	uint32_t	UnrecoverableErrorDisable	: 1;
 	uint32_t	FrameNumberOverflowDisable	: 1;
 	uint32_t	RootHubStatusChangeDisable	: 1;
-	uint32_t								: 23;
+	uint32_t	Reserved1					: 23;
 	uint32_t	OwnershipChangeDisable		: 1;
 	//	A '1' written to this field enables interrupt generation 
 	//	due to events specified in the other bits of this register.
@@ -126,11 +126,11 @@ typedef struct{
 	uint32_t	UnrecoverableError	: 1;
 	uint32_t	FrameNumberOverflow	: 1;
 	uint32_t	RootHubStatusChange	: 1;
-	uint32_t						: 23;
+	uint32_t	Reserved1			: 23;
 	uint32_t	OwnershipChange		: 1;
 	//	A '1' written to this field enables interrupt generation 
 	//	due to events specified in the other bits of this register.
-	uint32_t						: 1;
+	uint32_t	Reserved2			: 1;
 }OHCIRegisterStruct(HcInterruptStatus);
 //	The HcHCCA register contains the physical address of the Host Controller Communication Area.
 typedef uint32_t OHCIRegisterStruct(HcHCCA);
@@ -149,7 +149,7 @@ typedef uint32_t OHCIRegisterStruct(HcDoneHead);
 typedef struct{
 	//	This specifies the interval between two consecutive SOFs in bit times.
 	uint32_t	FrameInterval		: 14;
-	uint32_t						: 2;
+	uint32_t	Reserved1			: 2;
 	//	This field specifies a value which is loaded into the Largest 
 	//		Data Packet Counter at the beginning of each frame.
 	uint32_t	FSLargestDataPacket	: 15;
@@ -158,7 +158,7 @@ typedef struct{
 typedef struct{
 	//	This counter is decremented at each bit time.
 	uint32_t	FrameRemaining		: 14;
-	uint32_t						: 17;
+	uint32_t	Reserved1			: 17;
 	//	This bit is loaded from the FrameIntervalToggle field of 
 	//		HcFmInterval whenever FrameRemaining reaches 0.
 	uint32_t	FrameRemainingToggle: 1;
@@ -166,17 +166,17 @@ typedef struct{
 typedef struct{
 	//	his is incremented when HcFmRemaining is re-loaded.
 	uint32_t	FrameNumber			: 16;
-	uint32_t						: 16;
+	uint32_t	Reserved1			: 16;
 }OHCIRegisterStruct(HcFrameNumber);
 typedef struct{
 	uint32_t	PeriodicStart		: 14;
-	uint32_t						: 18;
+	uint32_t	Reserved1			: 18;
 }OHCIRegisterStruct(HcPeriodicStart);
 typedef struct{
 	//	This field contains a value which is compared to the FrameRemaining field prior to initiating a Low Speed transaction. 
 	//	The transaction is started only if FrameRemaining >= this field
 	uint32_t	LSThreshold			: 12;
-	uint32_t						: 20;
+	uint32_t	Reserved1			: 20;
 }OHCIRegisterStruct(HcLSThreshold);
 
 typedef struct{
@@ -186,7 +186,7 @@ typedef struct{
 	uint32_t	DeviceType					: 1;
 	uint32_t	OverCurrentProtectionMode	: 1;
 	uint32_t	NoOverCurrentProtection		: 1;
-	uint32_t								: 10;
+	uint32_t	Reserved1					: 10;
 	//	This byte specifies the duration HCD has to wait before
 	//		accessing a powered-on port of the Root Hub.
 	//	The duration is calculated as POTPGT * 2 ms.
@@ -199,11 +199,11 @@ typedef struct{
 typedef struct{
 	uint32_t	LocalPowerStatus			: 1;
 	uint32_t	OverCurrentIndicator		: 1;
-	uint32_t								: 13;
+	uint32_t	Reserved1					: 13;
 	uint32_t	DeviceRemoteWakeupEnable	: 1;
 	uint32_t	LocalPowerStatusChange		: 1;
 	uint32_t	OverCurrentIndicatorChange	: 1;
-	uint32_t								: 13;
+	uint32_t	Reserved2					: 13;
 	uint32_t	ClearRemoteWakeupEnable		: 1;
 }OHCIRegisterStruct(HcRootHubStatus);
 typedef struct{
@@ -216,16 +216,16 @@ typedef struct{
 	//	1 = overcurrent condition detected.
 	uint32_t	PortOverCurrentIndicator		: 1;
 	uint32_t	PortResetStatus					: 1;
-	uint32_t									: 3;
+	uint32_t	Reserved1						: 3;
 	uint32_t	PortPowerStatus					: 1;
 	uint32_t	LowSpeedDeviceAttached			: 1;
-	uint32_t									: 6;
+	uint32_t	Reserved2						: 6;
 	uint32_t	ConnectStatusChange				: 1;
 	uint32_t	PortEnableStatusChange			: 1;
 	uint32_t	PortSuspendStatusChange			: 1;
 	uint32_t	PortOverCurrentIndicatorChange	: 1;
 	uint32_t	PortResetStatusChange			: 1;
-	uint32_t									: 11;
+	uint32_t	Reserved3						: 11;
 }OHCIRegisterStruct(HcRootHubPortStatus);
 
 enumdef(uint8_t, OHCIEndpointDescriptorDataFlow){
@@ -242,17 +242,17 @@ typedef struct{
 	uint32_t	Skip						: 1;
 	uint32_t	IsochronousTransfers		: 1;
 	uint32_t	MaximumPacketSize			: 10;
-	uint32_t								: 5;
+	uint32_t	Reserved1					: 5;
 	uint32_t	TransferDescriptorQueueTail;
 	uint32_t	QueueHalted					: 1;
 	uint32_t	Carry						: 1;
-	uint32_t								: 2;
+	uint32_t	Reserved2					: 2;
 	//	Shift assignment down by 4
 	uint32_t	TransferDescriptorQueueHead	: 28;
 	uint32_t	NextEndpointDescriptor;
 }__packed OHCIEndpointDescriptor_t;
 typedef struct{
-	uint32_t								: 16;
+	uint32_t	Reserved1					: 16;
 	//	The last packet may be smaller than the buffer size without causing an error 
 	uint32_t	PreviousPacketErrorDisable	: 1;
 	//	00b: SETUP

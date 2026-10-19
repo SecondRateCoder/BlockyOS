@@ -6,7 +6,7 @@
 #include "compile/toolchain/gnu-efi-build/x86_64/include/efi/efi.h"
 #include "compile/toolchain/gnu-efi-build/x86_64/include/efi/efilib.h"
 
-#define PagingTableLength				(512)
+#define PagingTableLength				(512ULL)
 #define DIRECT_MAP_BASE					0xFFFF800000000000ULL
 // #define PHYS_TO_VIRT(phys) ((void *)((uint64_t)(phys) + DIRECT_MAP_BASE))
 #define SearchPageTableAddress(Table, Address)		\
@@ -20,7 +20,7 @@ typedef volatile struct{
 	//	0 = Read-only, 1 = Read/Write
     uint64_t ReadWrite				: 1;  
 	//	0 = Supervisor (Kernel), 1 = User
-    uint64_t UserSupervisor			: 1;  
+    uint64_t UserMode			: 1;  
 	//	Cache write-through policy
     uint64_t PageLevelWriteThrough	: 1; 
 	//	1 = Disable caching for table
@@ -31,7 +31,7 @@ typedef volatile struct{
 	//! Custom Flag
     uint64_t PageInMemory			: 1;   
 	//	Must be 0
-    uint64_t 						: 1;  
+    uint64_t Reserved1				: 1;  
 	//	Free for OS use
     uint64_t Available2				: 4;  
 	//	Physical address of PML4 (4KB aligned)
@@ -50,7 +50,7 @@ typedef volatile struct{
 	//	0 = Read-only, 1 = Read/Write
     uint64_t ReadWrite				: 1;  
 	//	0 = Supervisor (Kernel), 1 = User
-    uint64_t UserSupervisor			: 1;  
+    uint64_t UserMode			: 1;  
 	//	Cache write-through policy
     uint64_t PageLevelWriteThrough	: 1;  
 	//	1 = Disable caching for table
@@ -78,7 +78,7 @@ typedef volatile struct{
 	//	0 = Read-only, 1 = Read/Write
     uint64_t ReadWrite				: 1;  
 	//	0 = Supervisor, 1 = User
-    uint64_t UserSupervisor			: 1;  
+    uint64_t UserMode			: 1;  
 	//	Cache write-through
     uint64_t PageLevelWriteThrough	: 1;  
 	//	Cache disable
@@ -91,7 +91,7 @@ typedef volatile struct{
 	//	MUST BE 0 (Points to Page Directory)
     uint64_t PageSize				: 1;  
 	//	Free for OS use
-    uint64_t Available2				: 4;  
+    uint64_t Reserved2				: 4;  
 	//	Physical address of PD (4KB aligned)
     uint64_t PhysicalAddress		: 40; 
 	//	Free for OS use
@@ -105,7 +105,7 @@ typedef volatile struct{
 	//	0 = Read-only, 1 = Read/Write
     uint64_t ReadWrite				: 1;  
 	//	0 = Supervisor, 1 = User
-    uint64_t UserSupervisor			: 1;  
+    uint64_t UserMode				: 1;  
 	//	Cache write-through
     uint64_t PageLevelWriteThrough	: 1;  
 	//	Cache disable
@@ -125,11 +125,11 @@ typedef volatile struct{
 	//	PAT bit for 1GB pages
     uint64_t PageAttributeTable		: 1;  
 	//	Reserved (Must be 0)
-    uint64_t 						: 17; 
+    uint64_t Reserved1				: 17; 
 	//	Physical base address (1GB aligned)
     uint64_t PhysicalAddress		: 22; 
 	//	Free for OS use
-    uint64_t Available2				: 7;  
+    uint64_t Reserved2				: 7;  
 	//	Memory Protection Keys (PKRU)
     uint64_t ProtectionKey			: 4;  
 	//	NX Bit
@@ -142,7 +142,7 @@ typedef volatile struct{
 	//	0 = Read-only, 1 = Read/Write
     uint64_t ReadWrite				: 1;  
 	//	0 = Supervisor, 1 = User
-    uint64_t UserSupervisor			: 1;  
+    uint64_t UserMode			: 1;  
 	//	Cache write-through
     uint64_t PageLevelWriteThrough	: 1;  
 	//	Cache disable
@@ -159,7 +159,7 @@ typedef volatile struct{
 	//	Physical address of PT (4KB aligned)
     uint64_t PhysicalAddress		: 40; 
 	//	Free for OS use
-    uint64_t Available3				: 11; 
+    uint64_t Reserved2				: 11; 
 	//	NX Bit
     uint64_t ExecuteDisable			: 1;  
 }__packed PageDirectoryEntry;
@@ -169,7 +169,7 @@ typedef volatile struct{
 	//	0 = Read-only, 1 = Read/Write
     uint64_t ReadWrite				: 1;  
 	//	0 = Supervisor, 1 = User
-    uint64_t UserSupervisor			: 1;  
+    uint64_t UserMode			: 1;  
 	//	Cache write-through
     uint64_t PageLevelWriteThrough	: 1;  
 	//	Cache disable
@@ -189,11 +189,11 @@ typedef volatile struct{
 	//	PAT bit for 2MB pages
     uint64_t PageAttributeTable		: 1;  
 	//	Reserved (Must be 0)
-    uint64_t 						: 8;  
+    uint64_t Reserved1				: 8;  
 	//	Physical base address (2MB aligned)
     uint64_t PhysicalAddress		: 31; 
 	//	Free for OS use
-    uint64_t Available2				: 7;  
+    uint64_t Reserved2				: 7;  
 	//	Memory Protection Keys
     uint64_t ProtectionKey			: 4;  
 	//	NX Bit
@@ -208,7 +208,7 @@ typedef volatile struct{
 	//	0 = Read-only, 1 = Read/Write
     uint64_t ReadWrite				: 1;  
 	//	0 = Supervisor, 1 = User
-    uint64_t UserSupervisor			: 1;  
+    uint64_t UserMode			: 1;  
 	//	Cache write-through
     uint64_t PageLevelWriteThrough	: 1;  
 	//	Cache disable
@@ -228,7 +228,7 @@ typedef volatile struct{
 	//	Physical frame address (4KB aligned)
     uint64_t PhysicalAddress		: 40; 
 	//	Free for OS use
-    uint64_t Available2				: 7;  
+    uint64_t Reserved2				: 7;  
 	//	Protection Keys
     uint64_t ProtectionKey			: 4;  
 	//	NX Bit
@@ -262,7 +262,7 @@ typedef struct{
 	uint64_t	L3		: 9;
 	uint64_t	L4		: 9;
 	uint64_t	L5		: 9;
-	//	Alis for 0/1 Bits
+	//	Alias for 0/1 Bits
 	uint64_t	L0		: 7;
 }__packed VirtualAddress;
 
@@ -289,16 +289,19 @@ typedef struct{
 }/*__packed*/ PageCoordinate;
 
 
-#define PAGE_SIZE3					nGB(1)
-#define PAGE_SIZE2					nMB(2)
-#define PAGE_SIZE					nKB(4)
-#define LowestLocal					0
+#define PAGE_SIZE3			nGB(1)
+#define PAGE_SIZE2			nMB(2)
+#define PAGE_SIZE			nKB(4)
+#define PAGE_SHIFT			(12)
+#define PAGE_SHIFT2			(21)
+#define PAGE_SHIFT3			(30)
+#define KernelBinarySpace	(0x80000010ULL)
 
 enumdef(uint8_t, PageAllocationType){
 	PATUnfreeable = 0x1, PATUntouchableRegion, PATUsedRegion = 0x4, 
 	//	The entry describes a Non-Physical Region
-	PATSubDescriptorMapping = 0x8, 
-	PATNonPhysicalDescriptor = 0x10
+	PATSubDescriptorMapping = 0x8, PATPageTableMapping = 0x10, 
+	PATNonPhysicalDescriptor = 0x20
 };
 
 enumdef(uint32_t, PageAllocationFlags){
@@ -335,30 +338,51 @@ typedef volatile struct{
 	PageAllocationType	AllocationType;
 }MemoryRangeSubDescriptor;
 
+typedef struct{
+	void					*PhysicalBase;
+	uint64_t				PhysicalLimit;
+	PageAllocationFlags		Type;
+}__packed SimpleMemoryRangeDescriptor_t;
+
+#define SetPagePhysicalAddress(Page, Address)	{(Page).PhysicalAddress = (uint64_t)(Address) & ((1ULL << (GetMaxPhysicalAddressBits() + 1)) - 1);}
+
+/*
+	Memory will work like this, 
+		A Page Table going from 0 to MAX that Identity Maps Memory
+		A Page Table Virtually Mapped from MAX to INFINITY that maps Memory by Flags, it is dynamic.
+		It will point Physical Addresses within the 0 to MAX range but will technically be outside said range.
+*/
+
+LibAPI void *GeneratePageTable(SimpleMemoryRangeDescriptor_t *Descriptors, uint32_t N);
+
+LibAPI bool _1GPageSupport(void);
 LibAPI uint32_t GetMaxPhysicalAddressBits(void);
+
+LibAPI bool EnableInputAddress(bool toggle, bool w);
 
 LibAPI void InvalidatePage(void *Virtual);
 LibAPI void InvalidatePages(void *Virtual, uint64_t Bytes);
 
 // LibAPI void *__sysvabi MapPTVirtual(void *Physical);
+LibAPI void *MapVirtual(void *Physical);
 LibAPI void *MapPhysical(void *Virtual);
 LibAPI void *WalkPageTreeByVirtual(void *Virtual, uint32_t *Level);
 LibAPI bool RepointVirtualAddress(void *Virtual, void *NewPhysical);
 LibAPI void *WalkPageTreeByPhysical(void *Physical, uint32_t *Level);
 LibAPI void *WalkPageTree(uint32_t *Level, PageCoordinate Coordinate);
 
-LibAPI extern bool __sysvabi IsLA57Supported();
 LibAPI extern void __sysvabi EnableLA57(void);
 LibAPI extern bool __sysvabi IsLA57Enabled(void);
+LibAPI extern bool __sysvabi IsLA57Supported();
 enumdef(uint32_t, GetPageTableMode){_1To1MappingMode = 0x00, _StoredPageTableMode = 0x01, _UpdatePageTableMode = 0x01, _CPUStall = 0x02};
 LibAPI extern void *__sysvabi GetPageTable(bool *Level5, GetPageTableMode Mode, void *OptionalPageTableVirtual);
-LibAPI extern uint32_t __sysvabi LoadPageTree(void *PagingTree, void(*PTR)(void), uint64_t DataSegment, uint64_t CodeSegment, bool64_t Level5);
+LibAPI extern uint32_t __sysvabi LoadPageTree(void *PagingTree, uint64_t DataSegment, uint64_t CodeSegment, bool64_t Level5);
+
 LibAPI uint64_t TotalMemorySize(void);
 LibAPI uint64_t TotalMappedMemory(void *ptr);
 LibAPI bool MemoryIsMapped(void *ptr);
 
 LibAPI void FreePages(void *Virtual);
-LibAPI void *MapVirtual(void *Physical);
 LibAPI void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey);
 LibAPI void *AllocatePagesFromRange(void *Base, uint64_t Limit, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey);
 LibAPI void *AllocateAlignedPagesFromRange(void *Base, uint64_t Limit, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey, uint32_t Align);

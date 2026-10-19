@@ -22,12 +22,12 @@ typedef struct{
 	//	Resets the controller without affecting connected devices.
 	uint32_t	LightHostControllerReset			: 1;
 	uint32_t	AsyncScheduleParkModeCount			: 2;
-	uint32_t										: 1;
+	uint32_t	Reserved1							: 1;
 	uint32_t	AsyncScheduleParkModeEnable			: 1;
-	uint32_t										: 4;
+	uint32_t	Reserved2							: 4;
 	//	Number of micro frames to process between interrupts.
 	uint32_t	InterruptThreshold					: 8;
-	uint32_t										: 8;
+	uint32_t	Reserved3							: 8;
 }__packed EHCICommandRegister_t;
 typedef struct{
 	uint32_t	USBTransferInterrupt		: 1;
@@ -36,12 +36,12 @@ typedef struct{
 	uint32_t	FrameListRollover			: 1;
 	uint32_t	HostSystemError				: 1;
 	uint32_t	DoorbellInterrupt			: 1;
-	uint32_t								: 6;
+	uint32_t	Reserved1					: 6;
 	uint32_t	Halted						: 1;
 	uint32_t	Reclamation					: 1;
 	uint32_t	PeriodicScheduleStatus		: 1;
 	uint32_t	AsyncScheduleStatus			: 1;
-	uint32_t								: 16;
+	uint32_t	Reserved1					: 16;
 }__packed EHCIStatusRegister_t;
 typedef struct{
 	uint32_t	USBTransferInterruptEnable		: 1;
@@ -50,7 +50,7 @@ typedef struct{
 	uint32_t	FrameListRolloverInterruptEnable: 1;
 	uint32_t	HostSystemErrorInterruptEnable	: 1;
 	uint32_t	AsyncAdvanceInterruptEnable		: 1;
-	uint32_t									: 26;
+	uint32_t	Reserved1						: 26;
 }__packed EHCIInterruptEnableRegister_t;
 typedef struct{
 	uint32_t	Connected						: 1;
@@ -62,7 +62,7 @@ typedef struct{
 	uint32_t	ForcePortResume					: 1;
 	uint32_t	Suspend							: 1;
 	uint32_t	PortReset						: 1;
-	uint32_t									: 1;
+	uint32_t	Reserved1						: 1;
 	uint32_t	LineStatus						: 2;
 	uint32_t	PortPower						: 1;
 	//	0 = Local
@@ -76,7 +76,7 @@ typedef struct{
 	uint32_t	WakeOnConnectEnable				: 1;
 	uint32_t	WakeOnDisconnectEnable			: 1;
 	uint32_t	WakeOnOvercurrentEnable			: 1;
-	uint32_t									: 7;
+	uint32_t	Reserved1						: 7;
 }__packed EHCIPortStatusControlRegister_t;
 typedef struct{
 	EHCICommandRegister_t			Command;
@@ -97,7 +97,7 @@ enumdef(uint8_t, EHCIHorizontalPointerNextQueueType){
 typedef struct{
 	uint32_t	Terminate		: 1;
 	uint32_t	NextQueueType	: 2;
-	uint32_t					: 2;
+	uint32_t	Reserved1		: 2;
 	uint32_t	NextQueueHead	: 27;
 }__packed EHCIHorizontalLinkPointer_t;
 typedef struct{

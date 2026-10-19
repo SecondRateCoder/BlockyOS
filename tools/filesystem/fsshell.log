@@ -1,5 +1,5 @@
 
-[286:    :9:    :3:    :1:    :4:    :28]
+[291:    :9:    :1:    :1:    :27:    :35]
 >> 
 e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0 
 [0]: ""
@@ -7,7 +7,7 @@ e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 
 
 >> 
 create -la fc -p SYSD/ -n kboot.exe 
-0000028f3c955e6b:fc	0000028f3c955e71:SYSD/	0000028f3c955e7a:kboot.exe	
+0000015e85e261eb:fc	0000015e85e261f1:SYSD/	0000015e85e261fa:kboot.exe	
 [	SYSD/kboot.exe]
 [0]: ""
 >> 

@@ -35,7 +35,7 @@ typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
 typedef ISRCallback ISRCallbackTable[IDTLength];
 extern volatile ISRCallbackTable __align(64) InterruptCallbacks;
 
-#define ISRCallbackReturn			WriteAPICRegister(Frame->LocalAPIC, LAR_EndOfInterrupt, (uint32_t)0x00);		return NULL
+#define ISRCallbackReturn			__bochs();	WriteAPICRegister(Frame->LocalAPIC, LAR_EndOfInterrupt, (uint32_t)0x00);		return NULL
 #define ISRCallbackDefinition(NAME)	void *__naked __sysvabi NAME##ISR(InterruptStackFrame *Frame)
 
 LibAPI void *ISRGetStackHeader(uint32_t Vector);
