@@ -6,13 +6,13 @@ Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\RNG\RNG.asm - up to date;
 Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\RNG\RNG.c - up to date; source=2026-10-08T17:10:04.9158927Z, stored=10/08/2026 17:10:04
 Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\GDT\GDT.asm - up to date; source=2026-10-15T16:34:54.1532807Z, stored=10/15/2026 16:34:54
 Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\GDT\GDT.c - up to date; source=2026-10-15T16:08:42.0909240Z, stored=10/15/2026 16:08:42
-Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\paging.asm - up to date; source=2026-10-18T21:25:37.1042799Z, stored=10/18/2026 21:25:37
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\paging.asm - up to date; source=2026-10-20T23:35:38.3692019Z, stored=10/20/2026 23:35:38
 Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\paging.c - up to date; source=2026-10-18T21:18:54.5624449Z, stored=10/18/2026 21:18:54
 Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\SSE\SSE.asm - up to date; source=2026-10-15T15:42:31.3697827Z, stored=10/15/2026 15:42:31
 Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\SSE\SSE.c - up to date; source=2026-10-12T10:28:11.8604257Z, stored=10/12/2026 10:28:11
 Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\memory\memory.c - up to date; source=2026-10-15T15:44:22.4034104Z, stored=10/15/2026 15:44:22
 Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\memory\string.c - up to date; source=2026-10-08T17:16:06.3353562Z, stored=10/08/2026 17:16:06
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\palloc.c. source=2026-10-19T00:27:15.5424439Z, stored=none, delta=n/a sec
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\palloc.c. source=2026-10-21T01:03:01.9103712Z, stored=10/20/2026 23:56:37, delta=n/a sec
 gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.palloc.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
 In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
                  from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.h:4,
@@ -42,161 +42,192 @@ C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the locati
    28 | #define SNaNld          (__builtin_nansl (""))
       |         ^~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'TotalMappedMemory':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:23:56: warning: comparison between pointer and integer
-   23 |         MemoryRangeSubDescriptor *SubDescriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE)) &&     \
-      |                                                        ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:70:25: note: in expansion of macro 'GetSubDescriptor'
-   70 |                         GetSubDescriptor(SubDescriptor, Physical, IS){return SubDescriptor->NoPages * PAGE_SIZE;}
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:23:74: warning: comparison between pointer and integer
+   23 |         MemoryRangeSubDescriptor *SubDescriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE)) &&   \
+      |                                                                          ^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:102:25: note: in expansion of macro 'GetSubDescriptor'
+  102 |                         GetSubDescriptor(SubDescriptor, Physical, IS){return SubDescriptor->NoPages * PAGE_SIZE;}
       |                         ^~~~~~~~~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'QueryCandidatePool':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:177:41: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  177 |                 bool Usable = memcheckl(TypeRequirements, D->Type, TypeRequirementBufferSize) && ((AttrMask & D->Attribute) == 0);
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:232:41: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  232 |                 bool Usable = memcheckl(TypeRequirements, D->Type, TypeRequirementBufferSize) && ((AttrMask & D->Attribute) == 0);
       |                                         ^~~~~~~~~~~~~~~~
 In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:2:
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:191:52: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  191 |                                 Usable = memcheckl(TypeRequirements, D2->Type, TypeRequirementBufferSize) && ((AttrMask & D2->Attribute) == 0);
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:244:52: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  244 |                                 Usable = memcheckl(TypeRequirements, D2->Type, TypeRequirementBufferSize) && ((AttrMask & D2->Attribute) == 0);
       |                                                    ^~~~~~~~~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'InstantiatePageTable':
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:381:44: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  381 |                 EFI_MEMORY_DESCRIPTOR *D = D_;
+      |                                            ^~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:446:46: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  446 |                 EFI_MEMORY_DESCRIPTOR *Tmp = D_;        {
+      |                                              ^~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:465:76: warning: passing argument 2 of 'WalkEmulatedPageTree' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  465 |                                         void *E = WalkEmulatedPageTree(PC, PT, &Lvl);
+      |                                                                            ^~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:109:69: note: expected 'void *' but argument is of type 'volatile PDPTTable *'
+  109 | static __inline void *WalkEmulatedPageTree(PageCoordinate PC, void *PT, uint32_t *Lvl){
+      |                                                               ~~~~~~^~
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'InitialiseAllocationState':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:443:30: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  443 |                 if(memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))){
-      |                              ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:556:39: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  556 |                 int Class = memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))? 1:
+      |                                       ^~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:449:36: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  449 |                 }else if(memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))){
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:556:93: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  556 |                 int Class = memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))? 1:
+      |                                                                                             ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
+   15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
+      |                       ~~~~~~^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:557:36: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  557 |                         (memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
       |                                    ^~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:455:36: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  455 |                 }else if(memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))){
-      |                                    ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:557:90: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  557 |                         (memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
+      |                                                                                          ^~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:461:36: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  461 |                 }else if(memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))){
-      |                                    ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:598:41: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  598 |                 bool Usable = memcheckl(TypeMask1, D->Type, sizeof(TypeMask1)) && ((AttributeMask& D->Attribute) == 0);
+      |                                         ^~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:509:30: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  509 |                 if(memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))){
-      |                              ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:621:47: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  621 |                         int Class = memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))? 1:
+      |                                               ^~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:517:36: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  517 |                 }else if(memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))){
-      |                                    ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:621:101: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  621 |                         int Class = memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))? 1:
+      |                                                                                                     ^~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:524:36: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  524 |                 }else if(memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))){
-      |                                    ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:622:44: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  622 |                                 (memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
+      |                                            ^~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:531:36: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  531 |                 }else if(memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))){
-      |                                    ^~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:622:98: warning: passing argument 1 of 'memcheckl' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  622 |                                 (memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
+      |                                                                                                  ^~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:15:29: note: expected 'void *' but argument is of type 'const EFI_MEMORY_TYPE *'
    15 | LibAPI bool memcheckl(void *p, uint32_t l, uint64_t n);
       |                       ~~~~~~^
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'QueryFreeMemory':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:50: warning: comparison between pointer and integer
-   18 |         MemoryRangeDescriptor *Descriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL;     \
-      |                                                  ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:550:17: note: in expansion of macro 'GetDescriptor'
-  550 |                 GetDescriptor(D, Physical, IS);
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:68: warning: comparison between pointer and integer
+   18 |         MemoryRangeDescriptor *Descriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL): NULL;    \
+      |                                                                    ^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:658:17: note: in expansion of macro 'GetDescriptor'
+  658 |                 GetDescriptor(D, Physical, IS);
       |                 ^~~~~~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'ReAllocateSubDescriptorTable':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:628:66: warning: passing argument 1 of 'MapPhysical' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  628 |                 *OldPhysical = MapPhysical(IState->SubDescriptors[IState->CurrentSubDescriptorPool]);
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:736:66: warning: passing argument 1 of 'MapPhysical' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  736 |                 *OldPhysical = MapPhysical(IState->SubDescriptors[IState->CurrentSubDescriptorPool]);
       |                                            ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.h:368:32: note: expected 'void *' but argument is of type 'volatile MemoryRangeSubDescriptor *'
-  368 | LibAPI void *MapPhysical(void *Virtual);
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.h:361:32: note: expected 'void *' but argument is of type 'volatile MemoryRangeSubDescriptor *'
+  361 | LibAPI void *MapPhysical(void *Virtual);
       |                          ~~~~~~^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:50: warning: comparison between pointer and integer
-   18 |         MemoryRangeDescriptor *Descriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL;     \
-      |                                                  ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:631:17: note: in expansion of macro 'GetDescriptor'
-  631 |                 GetDescriptor(OldD, OldPhysical, IState);
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:68: warning: comparison between pointer and integer
+   18 |         MemoryRangeDescriptor *Descriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL): NULL;    \
+      |                                                                    ^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:739:17: note: in expansion of macro 'GetDescriptor'
+  739 |                 GetDescriptor(OldD, OldPhysical, IState);
       |                 ^~~~~~~~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:635:48: warning: passing argument 2 of 'memcpy' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  635 |         memcpy(Physical, IState->SubDescriptors[IState->CurrentSubDescriptorPool], IState->TotalSubDescriptors * sizeof(MemoryRangeSubDescriptor));
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:743:48: warning: passing argument 2 of 'memcpy' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  743 |         memcpy(Physical, IState->SubDescriptors[IState->CurrentSubDescriptorPool], IState->TotalSubDescriptors * sizeof(MemoryRangeSubDescriptor));
       |                          ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:8:66: note: expected 'const void * restrict' but argument is of type 'volatile MemoryRangeSubDescriptor *'
     8 | LibAPI void *memcpy(void *__restrict dst, const void *__restrict src, uint64_t len);
       |                                           ~~~~~~~~~~~~~~~~~~~~~~~^~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:50: warning: comparison between pointer and integer
-   18 |         MemoryRangeDescriptor *Descriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL;     \
-      |                                                  ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:636:9: note: in expansion of macro 'GetDescriptor'
-  636 |         GetDescriptor(D, Physical, IState);
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:68: warning: comparison between pointer and integer
+   18 |         MemoryRangeDescriptor *Descriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL): NULL;    \
+      |                                                                    ^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:744:9: note: in expansion of macro 'GetDescriptor'
+  744 |         GetDescriptor(D, Physical, IState);
       |         ^~~~~~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'AllocatePagesFromRange':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:691:44: warning: comparison between pointer and integer
-  691 |         while(MemoryIsMapped(Base) && Base < Limit){Base += PAGE_SIZE;}
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:799:44: warning: comparison between pointer and integer
+  799 |         while(MemoryIsMapped(Base) && Base < Limit){Base += PAGE_SIZE;}
       |                                            ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:692:17: warning: comparison between pointer and integer
-  692 |         if(Base >= Limit){return NULL;}else{return AllocatePages(Base, NBytes, Flags, ProtectionKey);}
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:800:17: warning: comparison between pointer and integer
+  800 |         if(Base >= Limit){return NULL;}else{return AllocatePages(Base, NBytes, Flags, ProtectionKey);}
       |                 ^~
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'AllocatePages':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:50: warning: comparison between pointer and integer
-   18 |         MemoryRangeDescriptor *Descriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL;     \
-      |                                                  ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:700:25: note: in expansion of macro 'GetDescriptor'
-  700 |                         GetDescriptor(D, Base, IS){
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:68: warning: comparison between pointer and integer
+   18 |         MemoryRangeDescriptor *Descriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL): NULL;    \
+      |                                                                    ^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:808:25: note: in expansion of macro 'GetDescriptor'
+  808 |                         GetDescriptor(D, Base, IS){
       |                         ^~~~~~~~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:23:56: warning: comparison between pointer and integer
-   23 |         MemoryRangeSubDescriptor *SubDescriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE)) &&     \
-      |                                                        ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:701:33: note: in expansion of macro 'GetSubDescriptor'
-  701 |                                 GetSubDescriptor(SD, Base, IS){
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:23:74: warning: comparison between pointer and integer
+   23 |         MemoryRangeSubDescriptor *SubDescriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE)) &&   \
+      |                                                                          ^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:809:33: note: in expansion of macro 'GetSubDescriptor'
+  809 |                                 GetSubDescriptor(SD, Base, IS){
       |                                 ^~~~~~~~~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'MapVirtual':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:23:56: warning: comparison between pointer and integer
-   23 |         MemoryRangeSubDescriptor *SubDescriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE)) &&     \
-      |                                                        ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:740:25: note: in expansion of macro 'GetSubDescriptor'
-  740 |                         GetSubDescriptor(SD, Physical, IS){
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:23:74: warning: comparison between pointer and integer
+   23 |         MemoryRangeSubDescriptor *SubDescriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE)) &&   \
+      |                                                                          ^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:848:25: note: in expansion of macro 'GetSubDescriptor'
+  848 |                         GetSubDescriptor(SD, Physical, IS){
       |                         ^~~~~~~~~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'RepointVirtualAddress':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:785:43: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  785 |         InternalAllocationState *IState = GetIState();
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:893:43: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  893 |         InternalAllocationState *IState = GetIState();
       |                                           ^~~~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:50: warning: comparison between pointer and integer
-   18 |         MemoryRangeDescriptor *Descriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL;     \
-      |                                                  ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:788:17: note: in expansion of macro 'GetDescriptor'
-  788 |                 GetDescriptor(D, NewPhysical, IState){
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:18:68: warning: comparison between pointer and integer
+   18 |         MemoryRangeDescriptor *Descriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL): NULL;    \
+      |                                                                    ^
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:896:17: note: in expansion of macro 'GetDescriptor'
+  896 |                 GetDescriptor(D, NewPhysical, IState){
       |                 ^~~~~~~~~~~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: At top level:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:75:15: warning: 'always_inline' function might not be inlinable unless also declared 'inline' [-Wattributes]
-   75 | bool __inline MemoryIsMapped(void *ptr){return (TotalMappedMemory(ptr) != 0);}
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:304:40: warning: 'always_inline' function might not be inlinable unless also declared 'inline' [-Wattributes]
+  304 | static __inline EFI_MEMORY_DESCRIPTOR *QueryContiguousDescriptors(const void *D_, const uint32_t StructSize, uint64_t *TotalEntries, uint64_t *ElapsedPages, const uint64_t N){
+      |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:267:22: warning: 'always_inline' function might not be inlinable unless also declared 'inline' [-Wattributes]
+  267 | static __inline void InitialiseTemporaryPageTable(uint64_t TotalMemorySize){
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:222:40: warning: 'always_inline' function might not be inlinable unless also declared 'inline' [-Wattributes]
+  222 | static __inline EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
+      |                                        ^~~~~~~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:109:23: warning: 'always_inline' function might not be inlinable unless also declared 'inline' [-Wattributes]
+  109 | static __inline void *WalkEmulatedPageTree(PageCoordinate PC, void *PT, uint32_t *Lvl){
+      |                       ^~~~~~~~~~~~~~~~~~~~
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:107:15: warning: 'always_inline' function might not be inlinable unless also declared 'inline' [-Wattributes]
+  107 | bool __inline MemoryIsMapped(void *ptr){return (TotalMappedMemory(ptr) != 0);}
       |               ^~~~~~~~~~~~~~
 In file included from C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efilib.h:50,
                  from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.h:7:
 C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c: In function 'UpdateAllocationTableByPhysical':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:663:101: warning: 'PageAllocationType' {aka 'unsigned char'} is promoted to 'int' when passed through '...'
-  663 |                                 GetSubDescriptor(SD, Physical, IS){SD->AllocationType &= va_arg(ls, PageAllocationType);}else{out = false;}}
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:771:101: warning: 'PageAllocationType' {aka 'unsigned char'} is promoted to 'int' when passed through '...'
+  771 |                                 GetSubDescriptor(SD, Physical, IS){SD->AllocationType &= va_arg(ls, PageAllocationType);}else{out = false;}}
 C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efistdarg.h:42:40: note: in definition of macro 'va_arg'
    42 | #define va_arg(v,l) __builtin_va_arg(v,l)
       |                                        ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:663:101: note: (so you should pass 'int' not 'PageAllocationType' {aka 'unsigned char'} to 'va_arg')
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:771:101: note: (so you should pass 'int' not 'PageAllocationType' {aka 'unsigned char'} to 'va_arg')
 C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efistdarg.h:42:40: note: in definition of macro 'va_arg'
    42 | #define va_arg(v,l) __builtin_va_arg(v,l)
       |                                        ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:663:101: note: if this code is reached, the program will abort
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:771:101: note: if this code is reached, the program will abort
 C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efistdarg.h:42:40: note: in definition of macro 'va_arg'
    42 | #define va_arg(v,l) __builtin_va_arg(v,l)
       |                                        ^
@@ -205,264 +236,25 @@ C:/GitHub/BlockyOS/src/kernel/libcrt/math/bool.h:5:17: warning: '_Bool' is promo
 C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efistdarg.h:42:40: note: in definition of macro 'va_arg'
    42 | #define va_arg(v,l) __builtin_va_arg(v,l)
       |                                        ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:665:91: note: in expansion of macro 'bool'
-  665 |                                 GetSubDescriptor(SD, Physical, IS){SD->Valid = va_arg(ls, bool);}else{out = false;}}
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:773:91: note: in expansion of macro 'bool'
+  773 |                                 GetSubDescriptor(SD, Physical, IS){SD->Valid = va_arg(ls, bool);}else{out = false;}}
       |                                                                                           ^~~~
 C:/GitHub/BlockyOS/src/kernel/libcrt/math/bool.h:5:17: note: if this code is reached, the program will abort
 C:/GitHub/BlockyOS/compile/toolchain/gnu-efi-build/x86_64/include/efi/efistdarg.h:42:40: note: in definition of macro 'va_arg'
    42 | #define va_arg(v,l) __builtin_va_arg(v,l)
       |                                        ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:665:91: note: in expansion of macro 'bool'
-  665 |                                 GetSubDescriptor(SD, Physical, IS){SD->Valid = va_arg(ls, bool);}else{out = false;}}
+C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/palloc.c:773:91: note: in expansion of macro 'bool'
+  773 |                                 GetSubDescriptor(SD, Physical, IS){SD->Valid = va_arg(ls, bool);}else{out = false;}}
       |                                                                                           ^~~~
 Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\paging\palloc.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\palloc.c. source=2026-10-17T12:10:31.5518926Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/palloc.c -o C:/GitHub/BlockyOS/compile/cache/c.palloc(1).o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.h:4,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/palloc.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\palloc.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\mmalloc.c. source=2026-10-12T10:28:11.9114173Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.mmalloc.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.h:4,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c: In function 'fragmemory':
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:109:28: warning: passing argument 1 of 'fixmdarray' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  109 |                 fixmdarray(mp, ndescs);
-      |                            ^~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:61:39: note: expected 'mempool_t * restrict' but argument is of type 'volatile mempool_t *'
-   61 | void fixmdarray(mempool_t *__restrict mp, size_t *__restrict ndescs){
-      |                 ~~~~~~~~~~~~~~~~~~~~~~^~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:109:32: warning: passing argument 2 of 'fixmdarray' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  109 |                 fixmdarray(mp, ndescs);
-      |                                ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:61:62: note: expected 'size_t * restrict' {aka 'long long unsigned int * restrict'} but argument is of type 'volatile size_t *' {aka 'volatile long long unsigned int *'}
-   61 | void fixmdarray(mempool_t *__restrict mp, size_t *__restrict ndescs){
-      |                                           ~~~~~~~~~~~~~~~~~~~^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c: In function 'fusememory':
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:180:35: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  180 |                 memdesc_t *temp = chainstart, *next = NULL;
-      |                                   ^~~~~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:196:28: warning: passing argument 1 of 'fixmdarray' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  196 |                 fixmdarray(mp, ndescs);
-      |                            ^~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:61:39: note: expected 'mempool_t * restrict' but argument is of type 'volatile mempool_t *'
-   61 | void fixmdarray(mempool_t *__restrict mp, size_t *__restrict ndescs){
-      |                 ~~~~~~~~~~~~~~~~~~~~~~^~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:196:32: warning: passing argument 2 of 'fixmdarray' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  196 |                 fixmdarray(mp, ndescs);
-      |                                ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:61:62: note: expected 'size_t * restrict' {aka 'long long unsigned int * restrict'} but argument is of type 'volatile size_t *' {aka 'volatile long long unsigned int *'}
-   61 | void fixmdarray(mempool_t *__restrict mp, size_t *__restrict ndescs){
-      |                                           ~~~~~~~~~~~~~~~~~~~^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c: In function 'mrealloc':
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:222:24: warning: passing argument 1 of 'memcpy' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  222 |                 memcpy(out, ptr, __min(originalsize, new));
-      |                        ^~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:3:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:8:38: note: expected 'void * restrict' but argument is of type 'volatile void *'
-    8 | LibAPI void *memcpy(void *__restrict dst, const void *__restrict src, uint64_t len);
-      |                     ~~~~~~~~~~~~~~~~~^~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:222:29: warning: passing argument 2 of 'memcpy' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  222 |                 memcpy(out, ptr, __min(originalsize, new));
-      |                             ^~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:8:66: note: expected 'const void * restrict' but argument is of type 'volatile void *'
-    8 | LibAPI void *memcpy(void *__restrict dst, const void *__restrict src, uint64_t len);
-      |                                           ~~~~~~~~~~~~~~~~~~~~~~~^~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:223:23: warning: passing argument 1 of 'mfree' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  223 |                 mfree(ptr);
-      |                       ^~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:51: note: expected 'void *' but argument is of type 'volatile void *'
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c: In function 'mmalloczero':
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:241:16: warning: passing argument 1 of 'memset' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  241 |         memset(out, 0, nbytes);
-      |                ^~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:11:27: note: expected 'void *' but argument is of type 'volatile void *'
-   11 | LibAPI void *memset(void *buffer, int val, uint64_t len);
-      |                     ~~~~~~^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c: In function 'mclone':
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:260:29: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  260 |                 void *out = mmalloczero(size);
-      |                             ^~~~~~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c: In function 'mclone_s':
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:295:21: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  295 |         void *out = mmalloczero(target);
-      |                     ^~~~~~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c: In function 'mmalloc':
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:329:69: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  329 |                                                         void *out = mmalloc(nbytes);
-      |                                                                     ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c: In function 'mtest':
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:396:21: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  396 |         ml_t *out = mcalloc(ntries, sizeof(ml_t));
-      |                     ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:404:31: warning: passing argument 1 of 'mfree' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  404 |                         mfree(temp);
-      |                               ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:351:29: note: expected 'void *' but argument is of type 'volatile void *'
-  351 | void mfree(void *__restrict ptr){
-      |            ~~~~~~~~~~~~~~~~~^~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:405:39: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  405 |                 }else{out[ntries].ptr = temp;}
-      |                                       ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c: In function 'mdump':
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:413:25: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  413 |         memdesc_t *md = mcalloc(astate->pools[pool].nDescriptors, sizeof(memdesc_t));
-      |                         ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/mmalloc.c:415:31: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  415 |                 void *clone = mcalloc(astate->pools[pool].nDescriptors, sizeof(memdesc_t));
-      |                               ^~~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\mmalloc.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\math\math.c. source=2026-09-12T00:53:16.5524318Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.math.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\math\math.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IO\IO.asm. source=2026-10-07T16:34:14.6442712Z, stored=none, delta=n/a sec
-nasm -s -O0 -f win64 -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IO/IO.asm -o C:/GitHub/BlockyOS/compile/cache/elf.asm.IO.o
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IO\IO.asm
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\IDT.c. source=2026-10-09T21:10:25.1048108Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/IDT.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.IDT.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/IDT.c:2:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/IDT.c:4:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\IDT.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\IDT.asm. source=2026-10-08T22:29:27.9444712Z, stored=none, delta=n/a sec
-nasm -s -O0 -f win64 -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/IDT.asm -o C:/GitHub/BlockyOS/compile/cache/elf.asm.IDT.o
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\IDT.asm
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\ISR.asm. source=2026-10-09T08:03:14.9366955Z, stored=none, delta=n/a sec
-nasm -s -O0 -f win64 -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.asm -o C:/GitHub/BlockyOS/compile/cache/elf.asm.ISR.o
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\ISR.asm
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\ISR.c. source=2026-10-19T00:12:59.4768263Z, stored=none, delta=n/a sec
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\palloc.c - up to date; source=2026-10-17T12:10:31.5518926Z, stored=10/17/2026 12:10:31
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\memory\allocator\mmalloc.c - up to date; source=2026-10-12T10:28:11.9114173Z, stored=10/12/2026 10:28:11
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\math\math.c - up to date; source=2026-09-12T00:53:16.5524318Z, stored=09/12/2026 00:53:16
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IO\IO.asm - up to date; source=2026-10-07T16:34:14.6442712Z, stored=10/07/2026 16:34:14
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\IDT.c - up to date; source=2026-10-09T21:10:25.1048108Z, stored=10/09/2026 21:10:25
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\IDT.asm - up to date; source=2026-10-08T22:29:27.9444712Z, stored=10/08/2026 22:29:27
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\ISR.asm - up to date; source=2026-10-09T08:03:14.9366955Z, stored=10/09/2026 08:03:14
+Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\ISR.c. source=2026-10-21T00:06:39.1517197Z, stored=10/19/2026 00:12:59, delta=n/a sec
 gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.ISR.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
 In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
                  from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
@@ -529,606 +321,21 @@ C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/IDT.h:84:6: note: in a call to
    84 | void SetIDTe(IDTTable64 Table, uint32_t N, uint64_t hndlr,
       |      ^~~~~~~
 Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\ISR.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\ACPI\ACPI.c. source=2026-10-12T17:31:01.6491695Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.ACPI.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/paging/paging.h:4,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c:4:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/DSDT.h:6:9: note: '#pragma message: DSDT will be properly handled further into the Boot Process, we dont need/want it right now.'
-    6 | #pragma message "DSDT will be properly handled further into the Boot Process, we dont need/want it right now."
-      |         ^~~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c:7:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/SSDT.h:6:9: note: '#pragma message: SSDT will be properly handled further into the Boot Process, we dont need/want it right now.'
-    6 | #pragma message "SSDT will be properly handled further into the Boot Process, we dont need/want it right now."
-      |         ^~~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c:11:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/XSDP/DSDT.h:6:9: note: '#pragma message: DSDT will be properly handled further into the Boot Process, we dont need/want it right now.'
-    6 | #pragma message "DSDT will be properly handled further into the Boot Process, we dont need/want it right now."
-      |         ^~~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c:14:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/XSDP/SSDT.h:6:9: note: '#pragma message: SSDT will be properly handled further into the Boot Process, we dont need/want it right now.'
-    6 | #pragma message "SSDT will be properly handled further into the Boot Process, we dont need/want it right now."
-      |         ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c: In function '_SearchTable':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c:58:57: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-   58 |                         SDTHeader_t *Entry = MapVirtual((void *)(Table->Pointers[cc]));
-      |                                                         ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c: At top level:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.c:25:18: warning: 'always_inline' function might not be inlinable unless also declared 'inline' [-Wattributes]
-   25 | uint8_t __inline GetACPIRevision(void *ACPIBase){
-      |                  ^~~~~~~~~~~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\ACPI\ACPI.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\APIC.c. source=2026-08-31T17:22:17.1088393Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/APIC.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.APIC.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/APIC.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/APIC.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\APIC.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\IOAPIC.c. source=2026-10-14T22:10:01.4229129Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/IOAPIC.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.IOAPIC.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/IOAPIC.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/IOAPIC.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/IOAPIC.c: In function 'ReadIoApicRegister':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/IOAPIC.c:76:60: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-   76 |                                 return _ReadIoApic(MapAPIC((void *)Local->IOApicAddress), reg);
-      |                                                            ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/IOAPIC.c: In function 'WriteIoApicRegister':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/IOAPIC.c:111:54: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-  111 |                                 _WriteIoApic(MapAPIC((void *)Local->IOApicAddress), reg, value);
-      |                                                      ^
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\IOAPIC.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\LocalAPIC.c. source=2026-10-14T22:10:36.8078930Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.LocalAPIC.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.c:3:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISRCallback.h:264:33: warning: backslash-newline at end of file
-  264 | #define IDTCallbackInit(IDT)    \
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:34:1: warning: 'naked' attribute only applies to functions [-Wattributes]
-   34 | typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
-      | ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h:17:20: warning: inline function 'SleepS' declared but never defined
-   17 | LibAPI inline void SleepS(uint32_t seconds);
-      |                    ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\LocalAPIC.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\LocalAPICTimer.c. source=2026-10-11T22:44:39.2077434Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.LocalAPICTimer.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.h:1,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.h:3:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISRCallback.h:264:33: warning: backslash-newline at end of file
-  264 | #define IDTCallbackInit(IDT)    \
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:34:1: warning: 'naked' attribute only applies to functions [-Wattributes]
-   34 | typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
-      | ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.h:14:58: warning: 'struct LocalAPICTimerEvent' declared inside parameter list will not be visible outside of this definition or declaration
-   14 | typedef void * __sysvabi(*LocalAPICTimerCallback)(struct LocalAPICTimerEvent *this, uint32_t CurrentTick, void *persistent, void *call);
-      |                                                          ^~~~~~~~~~~~~~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c: In function 'AddTimerEvent':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c:23:35: warning: assignment discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-   23 |         if(!TimerTable->Next){ptr = mcalloc(1, sizeof(LocalAPICTimerEvent));}
-      |                                   ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c: In function 'APICTimerEventHandlerISR':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c:35:39: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-   35 |         LocalAPICTimerEvent *ETable = (LocalAPICTimerEvent *)Frame->StackHeader;
-      |                                       ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c:52:22: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-   52 |         void *Temp = mcalloc(1, sizeof(LocalAPICTimerEvent));
-      |                      ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c: In function 'InitializeAndCalibrateAPICTimer':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.c:95:37: warning: initialization discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
-   95 |         LocalAPICTimerEvent *temp = mcalloc(1, sizeof(LocalAPICTimerEvent));
-      |                                     ^~~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPICTimer.h:5:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h: At top level:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h:17:20: warning: inline function 'SleepS' declared but never defined
-   17 | LibAPI inline void SleepS(uint32_t seconds);
-      |                    ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\LocalAPICTimer.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\hardware.c. source=2026-10-12T10:28:11.8554171Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/hardware.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.hardware.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MADT.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/APIC/LocalAPIC.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PIT.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/hardware.c:43:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/RSDT.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISRCallback.h:264:33: warning: backslash-newline at end of file
-  264 | #define IDTCallbackInit(IDT)    \
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/IDT/ISR.h:34:1: warning: 'naked' attribute only applies to functions [-Wattributes]
-   34 | typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
-      | ^~~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/hardware.c: In function 'SleepMS':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/hardware.c:93:33: warning: comparison between pointer and integer
-   93 |                 while(pit_ticks < target_ticks){__asm__ volatile("hlt");}
-      |                                 ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/hardware.c:97:25: warning: comparison between pointer and integer
-   97 |         while(pit_ticks >= start_ticks || pit_ticks < target_ticks){__asm__ volatile("hlt");}
-      |                         ^~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/hardware.c:97:53: warning: comparison between pointer and integer
-   97 |         while(pit_ticks >= start_ticks || pit_ticks < target_ticks){__asm__ volatile("hlt");}
-      |                                                     ^
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\hardware.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2b-ref.c. source=2026-08-31T20:05:16.6578387Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2b-ref.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.blake2b-ref.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/string.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2b-ref.c:21:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2b-ref.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2bp-ref.c. source=2026-08-31T20:05:20.6816175Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2bp-ref.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.blake2bp-ref.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/string.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2bp-ref.c:22:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2bp-ref.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2s-ref.c. source=2026-08-31T20:05:24.7027041Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2s-ref.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.blake2s-ref.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/string.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2s-ref.c:21:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2s-ref.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2sp-ref.c. source=2026-08-31T20:05:27.6610089Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2sp-ref.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.blake2sp-ref.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/string.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2sp-ref.c:21:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2sp-ref.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2xb-ref.c. source=2026-09-01T14:03:25.3444410Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2xb-ref.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.blake2xb-ref.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/string.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2xb-ref.c:23:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2xb-ref.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2xs-ref.c. source=2026-08-31T17:22:17.0728377Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2xs-ref.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.blake2xs-ref.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/string.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/BLAKE2/blake2xs-ref.c:22:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2xs-ref.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\PCIe\PCIe.c. source=2026-10-12T10:28:11.9034161Z, stored=none, delta=n/a sec
-gcc -c C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.c -o C:/GitHub/BlockyOS/compile/cache/elf.c.PCIe.o -nostdlib -O0 --std=c99 -ffreestanding -m64 -mno-red-zone -fno-stack-check -fno-stack-protector -fno-builtin -funsigned-bitfields -fvisibility=default -funsigned-char -fsso-struct=little-endian -fno-leading-underscore -fdiagnostics-color=always -fdiagnostics-urls=always -fno-diagnostics-show-highlight-colors -fomit-frame-pointer -foptimize-crc -foptimize-strlen -finline-atomics -fno-inline -fPIC -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -msoft-float -mcmodel=small -fno-stack-protector -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/math/math.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/memory/memory.h:3,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MCFG.h:5,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCI.h:7,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.h:7,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.c:1:
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:42:9: warning: 'NaNf' redefined
-   42 | #define NaNf    (__builtin_nanf(""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:25:9: note: this is the location of the previous definition
-   25 | #define NaNf            (__builtin_nanf (""))
-      |         ^~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:50:9: warning: 'SNaNf' redefined
-   50 | #define SNaNf    (__builtin_nansf(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:26:9: note: this is the location of the previous definition
-   26 | #define SNaNf           (__builtin_nansf (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:51:9: warning: 'SNaNd' redefined
-   51 | #define SNaNd    (__builtin_nans(""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:27:9: note: this is the location of the previous definition
-   27 | #define SNaNd           (__builtin_nans (""))
-      |         ^~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:52:9: warning: 'SNaNld' redefined
-   52 | #define SNaNld   (__builtin_nansl(""))
-      |         ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/math/float.h:28:9: note: this is the location of the previous definition
-   28 | #define SNaNld          (__builtin_nansl (""))
-      |         ^~~~~~
-In file included from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/ACPI.h:6,
-                 from C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/ACPI/RSDP/MCFG.h:6:
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:91:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   91 | LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:92:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   92 | LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/memory/allocator/malloc.h:95:1: warning: 'restrict' attribute directive ignored [-Wattributes]
-   95 | LibAPI void mfree(void *__attribute__((restrict)) ptr);
-      | ^~~~~~
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.c: In function 'GetPCIeConfigurationBase':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.c:24:51: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-   24 |                         if(!(Virtual = MapVirtual((void *)E->ConfigurationBaseAddress))){
-      |                                                   ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.c:26:64: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-   26 |                                 Virtual = AllocateAlignedPages((void *)E->ConfigurationBaseAddress, nMB(E->EndingBus - E->StartingBus + 1),
-      |                                                                ^
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.c: In function 'PCIeResolveBar':
-C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/PCIe/PCIe.c:77:110: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-   77 |                         out = AllocateAlignedPages(((PCIHeader0x0 *)Device)->BAR[BAR].MSBAR.IsIOSpace? NULL: (void *)(((PCIHeader0x0 *)Device)->BAR[BAR].MSBAR._16ByteAlignedAddress), PCIeBARSize(Device, BAR),
-      |                                                                                                              ^
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\PCIe\PCIe.c
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\SSE\UTILS.asm. source=2026-10-15T15:47:56.7033952Z, stored=none, delta=n/a sec
-nasm -s -O0 -f win64 -I C:/GitHub/BlockyOS/src -I C:/GitHub/BlockyOS/ C:/GitHub/BlockyOS/src/kernel/libcrt/hardware/SSE/UTILS.asm -o C:/GitHub/BlockyOS/compile/cache/elf.asm.UTILS.o
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\SSE\UTILS.asm
-Stale source detected for C:\GitHub\BlockyOS\src\kernel\libcrt\libcrt.def. source=2026-10-18T16:11:45.9463452Z, stored=none, delta=n/a sec
-Compiled and updated timestamp for C:\GitHub\BlockyOS\src\kernel\libcrt\libcrt.def
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\ACPI\ACPI.c - up to date; source=2026-10-12T17:31:01.6491695Z, stored=10/12/2026 17:31:01
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\APIC.c - up to date; source=2026-08-31T17:22:17.1088393Z, stored=08/31/2026 17:22:17
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\IOAPIC.c - up to date; source=2026-10-14T22:10:01.4229129Z, stored=10/14/2026 22:10:01
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\LocalAPIC.c - up to date; source=2026-10-14T22:10:36.8078930Z, stored=10/14/2026 22:10:36
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\IDT\APIC\LocalAPICTimer.c - up to date; source=2026-10-11T22:44:39.2077434Z, stored=10/11/2026 22:44:39
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\hardware.c - up to date; source=2026-10-12T10:28:11.8554171Z, stored=10/12/2026 10:28:11
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2b-ref.c - up to date; source=2026-08-31T20:05:16.6578387Z, stored=08/31/2026 20:05:16
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2bp-ref.c - up to date; source=2026-08-31T20:05:20.6816175Z, stored=08/31/2026 20:05:20
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2s-ref.c - up to date; source=2026-08-31T20:05:24.7027041Z, stored=08/31/2026 20:05:24
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2sp-ref.c - up to date; source=2026-08-31T20:05:27.6610089Z, stored=08/31/2026 20:05:27
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2xb-ref.c - up to date; source=2026-09-01T14:03:25.3444410Z, stored=09/01/2026 14:03:25
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\BLAKE2\blake2xs-ref.c - up to date; source=2026-08-31T17:22:17.0728377Z, stored=08/31/2026 17:22:17
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\PCIe\PCIe.c - up to date; source=2026-10-12T10:28:11.9034161Z, stored=10/12/2026 10:28:11
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\hardware\SSE\UTILS.asm - up to date; source=2026-10-15T15:47:56.7033952Z, stored=10/15/2026 15:47:56
+Skipping C:\GitHub\BlockyOS\src\kernel\libcrt\libcrt.def - up to date; source=2026-10-20T18:57:00.7012930Z, stored=10/20/2026 18:57:00
 gcc compile/cache/elf.c.SimpleOutput.o compile/cache/elf.asm.std.o compile/cache/elf.asm.float.o compile/cache/elf.asm.RNG.o compile/cache/elf.c.RNG.o compile/cache/elf.asm.GDT.o compile/cache/elf.c.GDT.o compile/cache/elf.asm.paging.o compile/cache/elf.c.paging.o compile/cache/elf.asm.SSE.o compile/cache/elf.c.SSE.o compile/cache/elf.c.memory.o compile/cache/elf.c.string.o compile/cache/elf.c.palloc.o compile/cache/c.palloc(1).o compile/cache/elf.c.mmalloc.o compile/cache/elf.c.math.o compile/cache/elf.asm.IO.o compile/cache/elf.c.IDT.o compile/cache/elf.asm.IDT.o compile/cache/elf.asm.ISR.o compile/cache/elf.c.ISR.o compile/cache/elf.c.ACPI.o compile/cache/elf.c.APIC.o compile/cache/elf.c.IOAPIC.o compile/cache/elf.c.LocalAPIC.o compile/cache/elf.c.LocalAPICTimer.o compile/cache/elf.c.hardware.o compile/cache/elf.c.blake2b-ref.o compile/cache/elf.c.blake2bp-ref.o compile/cache/elf.c.blake2s-ref.o compile/cache/elf.c.blake2sp-ref.o compile/cache/elf.c.blake2xb-ref.o compile/cache/elf.c.blake2xs-ref.o compile/cache/elf.c.PCIe.o compile/cache/elf.asm.UTILS.o src/kernel/libcrt/libcrt.def -Wl,-nostdlib -Wl,--image-base,0x0 -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,-shared -Wl,-Bsymbolic -Wl,-flinker-output=dyn -Wl,--out-implib,C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll.a -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\libcrt\libcrt.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll
 Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/LibCrt.dll
 C:\GitHub\BlockyOS\Build\Build-nodate\libcrt\libcrt.dmp.log
@@ -1144,7 +351,7 @@ C:\GitHub\BlockyOS\Build\Build-nodate\libcrt\libcrt.dmp.log
 [SHELL OUT]:	
 [SHELL OUT]:	>> 
 [SHELL OUT]:	>> 
-[SHELL OUT]:	000001fbbc7e61eb:fc	000001fbbc7e61f1:SYSD/	000001fbbc7e61fa:LibCrt.dll	
+[SHELL OUT]:	0000011efbed60cb:fc	0000011efbed60d1:SYSD/	0000011efbed60da:LibCrt.dll	
 [SHELL OUT]:	[	SYSD/LibCrt.dll]
 [SHELL OUT]:	[0]: ""
 [SHELL]	FSFRAT.OPEN

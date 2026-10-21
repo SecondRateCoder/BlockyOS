@@ -13,16 +13,16 @@ static const uint64_t		AttributeMask = EFI_MEMORY_WP | EFI_MEMORY_RP | EFI_MEMOR
 
 #define GetEfiMemoryDescriptor(Desc, Ptr, N, StructSize)	EFI_MEMORY_DESCRIPTOR *Desc = (EFI_MEMORY_DESCRIPTOR *)((void *)(Ptr) + ((N) * (StructSize)))
 #define QueryPhysicalAddress(Adr, IState)			\
-	if((IState) && (IState)->MemoryMaxPages && ((IState)->MemoryMaxPages > ((uint64_t)(Adr) / PAGE_SIZE)))
+	if((IState) && (IState)->Ready && (IState)->MemoryMaxPages && ((IState)->MemoryMaxPages > ((uint64_t)(Adr) / PAGE_SIZE)))
 #define GetDescriptor(Descriptor, Adr, IState)	\
-	MemoryRangeDescriptor *Descriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL;	\
+	MemoryRangeDescriptor *Descriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL): NULL;	\
 	if(Descriptor)
 //	We need the Entry correspondng epecifically to this entry
 #define GetSubDescriptor(SubDescriptor, Adr, IState)\
 	uint64_t SubDescriptor##Offset = 0;	\
-	MemoryRangeSubDescriptor *SubDescriptor = (Adr < ((IState)->MemoryMaxPages * PAGE_SIZE)) &&	\
+	MemoryRangeSubDescriptor *SubDescriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE)) &&	\
 		(IState)->Descriptors[(IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]].SubDescriptorIndex != InvalidSubDescriptorIndex?	\
-		((IState)->SubDescriptors[(IState)->CurrentSubDescriptorPool] + (IState)->Descriptors[(IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]].SubDescriptorIndex): NULL;		\
+		((IState)->SubDescriptors[(IState)->CurrentSubDescriptorPool] + (IState)->Descriptors[(IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]].SubDescriptorIndex): NULL): NULL;		\
 		{uint64_t SubDescriptor##cc = 0, SubDescriptor##CopyAdr = (uint64_t)Adr - (IState)->Descriptors[(IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]].Physical;	\
 			while(!SubDescriptor[SubDescriptor##cc].EndOfList && SubDescriptor##CopyAdr){	\
 				if((SubDescriptor[SubDescriptor##cc].NoPages * PAGE_SIZE) > SubDescriptor##CopyAdr){SubDescriptor##CopyAdr -= (SubDescriptor[SubDescriptor##cc].NoPages * PAGE_SIZE);}	\
@@ -44,8 +44,9 @@ typedef struct{
 							CurrentSubDescriptorPool, 
 							MemoryMaxPages;
 	uint32_t				LastAllocation;
-	bool					NonIdentityMappedState;
-	//	Describes the Upper Echelons of Page Allocations.
+	bool					Ready;
+	//	Describes the Upper Echelons of Page Allocations: the first virtual address above the duplicate region.
+	VirtualAddress			LastPageTableAlloc;
 }InternalAllocationState;
 
 //	State decays on each call
@@ -54,6 +55,37 @@ bool EnableInputAddress(bool toggle, bool w){
 	bool tmp = _toggle;
 	if(w){_toggle = toggle;}
 	return tmp;
+}
+
+void AddPageCoordinate(PageCoordinate *pc, uint64_t bytes){
+    // Convert bytes to 4KB pages (since L1 tracks 4KB units)
+    // Ensure bytes are page-aligned or handle remainder if needed
+    if(!bytes){return;}
+    // Accumulate into L1 with standard carry propagation
+    uint64_t total = pc->L1 + (bytes / PAGE_SIZE);
+    pc->L1 = total % PagingTableLength;
+    uint64_t carry = total / PagingTableLength;
+    // Propagate carry up the hierarchy
+    if(carry){
+        total = pc->L2 + carry;
+        pc->L2 = total % PagingTableLength;
+        carry = total / PagingTableLength;
+    }else if (carry){pc->L2 += carry;}
+    if(carry){
+        total = pc->L3 + carry;
+        pc->L3 = total % PagingTableLength;
+        carry = total / PagingTableLength;
+    }
+	if(carry){
+        total = pc->L4 + carry;
+        pc->L4 = total % PagingTableLength;
+        carry = total / PagingTableLength;
+    }
+    if(carry){
+        total = pc->L5 + carry;
+        pc->L5 = total % PagingTableLength;
+        carry = total / PagingTableLength;
+    }
 }
 
 static volatile InternalAllocationState *GetIState(){
@@ -74,83 +106,106 @@ uint64_t TotalMappedMemory(void *ptr){
 }
 bool __inline MemoryIsMapped(void *ptr){return (TotalMappedMemory(ptr) != 0);}
 
+static __inline void *WalkEmulatedPageTree(PageCoordinate PC, void *PT, uint32_t *Lvl){
+	const uint64_t Addr4K = 0x000FFFFFFFFFF000ULL;
+	const uint32_t Idx[6] = {0, PC.L1, PC.L2, PC.L3, PC.L4, PC.L5};
+	const bool En[6] = {false, PC.EnableL1, PC.EnableL2, PC.EnableL3, PC.EnableL4, PC.EnableL5};
+	volatile uint64_t *T = (volatile uint64_t *)PT;
+	uint32_t L = *Lvl;
+	if((L < 1) || (L > 5)){return NULL;}
+
+	for(; L; --L){
+		if(!En[L]){break;}
+		volatile uint64_t *E = T + Idx[L];
+		if(!(*E)){*Lvl = L;	return NULL;}
+		//	Bit 0 clear but entry non-zero: skeleton leaf. Bit 7 is PS at levels 3 and 2 (at level 1 it is PAT).
+		if(!((*E) & 1) || (L == 1) || ((L <= 3) && ((*E) & (1ULL << 7)))){*Lvl = L;	return (void *)E;}
+		//	Tables are reached through MapVirtual, like the rest of palloc.c (identity today).
+		T = (volatile uint64_t *)((void *)((*E) & Addr4K));
+	}
+	*Lvl = L;
+	return (void *)T;
+}
 
 bool UpdatePageTable(void *Virtual, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey){
+	bool L5Enabled = IsLA57Enabled();
+	void *PageTable = GetPageTable(&L5Enabled, _StoredPageTableMode, NULL);
 	while(NBytes){
-		uint32_t Level = 5;
-		void *PT = WalkPageTreeByVirtual(Virtual, &Level);
-		if(!PT){DebugPrintf("\nFailed to get PT");}else{
-			switch(Level){
-				case 5: {
-					PML5Entry *L3 = (PML5Entry *)PT;
-					L3->PageInMemory = true;
-					L3->Present = true;
-					L3->ExecuteDisable = !__check(Flags, ExecuteEnable);
-					L3->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
-					L3->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
-					L3->ReadWrite = __check(Flags, ReadWritable);
-					L3->UserMode = __check(Flags, SupervisorMode);
-					InvalidatePage(Virtual);
-					Virtual += PAGE_SIZE;
-					NBytes -= PAGE_SIZE;
-					break;
-				} case 4: {
-					PML4Entry *L4 = (PML4Entry *)PT;
-					L4->PageInMemory = true;
-					L4->Present = true;
-					L4->ExecuteDisable = !__check(Flags, ExecuteEnable);
-					L4->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
-					L4->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
-					L4->ReadWrite = __check(Flags, ReadWritable);
-					L4->UserMode = __check(Flags, SupervisorMode);
-					InvalidatePage(Virtual);
-					Virtual += PAGE_SIZE;
-					NBytes -= PAGE_SIZE;
-					break;
-				} case 3: {
-					PDPTEntry1GB *L3 = (PDPTEntry1GB *)PT;
-					L3->PageInMemory = true;
-					L3->Present = true;
-					L3->ExecuteDisable = !__check(Flags, ExecuteEnable);
-					L3->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
-					L3->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
-					L3->ReadWrite = __check(Flags, ReadWritable);
-					L3->UserMode = __check(Flags, SupervisorMode);
-					L3->ProtectionKey = ProtectionKey;
-					InvalidatePage(Virtual);
-					Virtual += PAGE_SIZE3;
-					NBytes -= PAGE_SIZE3;
-					break;
-				} case 2: {
-					PageDirectoryEntry2MB *L2 = (PageDirectoryEntry2MB *)PT;
-					L2->PageInMemory = true;
-					L2->Present = true;
-					L2->ExecuteDisable = !__check(Flags, ExecuteEnable);
-					L2->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
-					L2->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
-					L2->ReadWrite = __check(Flags, ReadWritable);
-					L2->UserMode = __check(Flags, SupervisorMode);
-					L2->ProtectionKey = ProtectionKey;
-					InvalidatePage(Virtual);
-					Virtual += PAGE_SIZE2;
-					NBytes -= PAGE_SIZE2;
-					break;
-				} case 1: {
-					PageTableEntry4KB *L1 = (PageTableEntry4KB *)PT;
-					L1->PageInMemory = true;
-					L1->Present = true;
-					L1->ExecuteDisable = !__check(Flags, ExecuteEnable);
-					L1->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
-					L1->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
-					L1->ReadWrite = __check(Flags, ReadWritable);
-					L1->UserMode = __check(Flags, SupervisorMode);
-					L1->ProtectionKey = ProtectionKey;
-					InvalidatePage(Virtual);
-					Virtual += PAGE_SIZE;
-					NBytes -= PAGE_SIZE;
-					break;
-				} default: return false;
-			}
+		//	Level in: top level. Level out: the level of the leaf found (3: 1GB, 2: 2MB, 1: 4KB).
+		uint32_t Level = IsLA57Enabled()? 5: 4;
+		void *PT = WalkEmulatedPageTree(*(PageCoordinate *)&Virtual, PageTable, &Level);
+		//	Nothing mapped here: fail instead of looping forever (NBytes never shrank on this path before).
+		if(!PT){DebugPrintf("\nFailed to get PT");	return false;}
+		switch(Level){
+			case 5: {
+				PML5Entry *L5 = (PML5Entry *)PT;
+				L5->PageInMemory = true;
+				L5->Present = true;
+				L5->ExecuteDisable = !__check(Flags, ExecuteEnable);
+				L5->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
+				L5->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
+				L5->ReadWrite = __check(Flags, ReadWritable);
+				L5->UserMode = __check(Flags, UserMode);
+				InvalidatePage(Virtual);
+				Virtual += PAGE_SIZE;
+				NBytes -= PAGE_SIZE;
+				break;
+			} case 4: {
+				PML4Entry *L4 = (PML4Entry *)PT;
+				L4->PageInMemory = true;
+				L4->Present = true;
+				L4->ExecuteDisable = !__check(Flags, ExecuteEnable);
+				L4->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
+				L4->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
+				L4->ReadWrite = __check(Flags, ReadWritable);
+				L4->UserMode = __check(Flags, UserMode);
+				InvalidatePage(Virtual);
+				Virtual += PAGE_SIZE;
+				NBytes -= PAGE_SIZE;
+				break;
+			} case 3: {
+				PDPTEntry1GB *L3 = (PDPTEntry1GB *)PT;
+				L3->PageInMemory = true;
+				L3->Present = true;
+				L3->ExecuteDisable = !__check(Flags, ExecuteEnable);
+				L3->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
+				L3->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
+				L3->ReadWrite = __check(Flags, ReadWritable);
+				L3->UserMode = __check(Flags, UserMode);
+				L3->ProtectionKey = ProtectionKey;
+				InvalidatePage(Virtual);
+				Virtual += PAGE_SIZE3;
+				NBytes -= PAGE_SIZE3;
+				break;
+			} case 2: {
+				PageDirectoryEntry2MB *L2 = (PageDirectoryEntry2MB *)PT;
+				L2->PageInMemory = true;
+				L2->Present = true;
+				L2->ExecuteDisable = !__check(Flags, ExecuteEnable);
+				L2->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
+				L2->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
+				L2->ReadWrite = __check(Flags, ReadWritable);
+				L2->UserMode = __check(Flags, UserMode);
+				L2->ProtectionKey = ProtectionKey;
+				InvalidatePage(Virtual);
+				Virtual += PAGE_SIZE2;
+				NBytes -= PAGE_SIZE2;
+				break;
+			} case 1: {
+				PageTableEntry4KB *L1 = (PageTableEntry4KB *)PT;
+				L1->PageInMemory = true;
+				L1->Present = true;
+				L1->ExecuteDisable = !__check(Flags, ExecuteEnable);
+				L1->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
+				L1->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
+				L1->ReadWrite = __check(Flags, ReadWritable);
+				L1->UserMode = __check(Flags, UserMode);
+				L1->ProtectionKey = ProtectionKey;
+				InvalidatePage(Virtual);
+				Virtual += PAGE_SIZE;
+				NBytes -= PAGE_SIZE;
+				break;
+			} default: {return false;}
 		}
 	}
 	return true;
@@ -164,7 +219,7 @@ void *GeneratePageTable(SimpleMemoryRangeDescriptor_t *Descriptors, uint32_t N){
 	return NULL;
 }
 
-EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
+static __inline EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
 	const void *D_, const uint32_t StructSize, uint64_t *TotalPages, const uint64_t N, const uint64_t RequiredPages, 
 	const EFI_MEMORY_TYPE *TypeRequirements, const uint64_t TypeRequirementBufferSize, const uint64_t AttrMask
 ){
@@ -175,8 +230,6 @@ EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
 	for(uint64_t cc = 0; cc < N; ++cc){
 		GetEfiMemoryDescriptor(D, D_, cc, StructSize);
 		bool Usable = memcheckl(TypeRequirements, D->Type, TypeRequirementBufferSize) && ((AttrMask & D->Attribute) == 0);
-		DebugPrintf("\n[%z]:\tType: %z(%s){Attr: 0b%2z\tPhys: 0x%0z\tNoPages: %z}", (uint64_t)cc, (uint64_t)D->Type, 
-			(Usable? "Usable": "  ??  "), D->Attribute, D->PhysicalStart, D->NumberOfPages);
 		if(Usable){
 			uint64_t RemainingPages = (uint64_t)RequiredPages, ElapsedPages = 0, cc_ = cc, Address = D->PhysicalStart;
 			//	Check that the Next Entry is contiguous, since D2 starts as D, then cc_ == 0 will always go through
@@ -203,7 +256,7 @@ EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
 			}
 		}
 	}
-	if((Candidate == -1) || (NCandidateEntries == UINT64_MAX) || (CandidateElapsedPages == UINT64_MAX)){DebugPrintf("\nFailed to find valid Candidate");}
+	if((Candidate == -1) || (NCandidateEntries == UINT64_MAX) || (CandidateElapsedPages == UINT64_MAX)){DebugPrintf("\nFailed to find valid Candidate");	*TotalPages = 0;	return NULL;}
 	GetEfiMemoryDescriptor(D, D_, Candidate, StructSize);
 	memset((void *)(D->PhysicalStart), 0, CandidateElapsedPages * PAGE_SIZE);
 	DebugPrintf("\nValid Candidate: 0x%0z, TotalPages: %1z", D->PhysicalStart, CandidateElapsedPages);
@@ -211,7 +264,7 @@ EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
 	return D;
 }
 
-void InitialiseTemporaryPageTable(uint64_t TotalMemorySize){
+static __inline void InitialiseTemporaryPageTable(uint64_t TotalMemorySize){
 	static __linkersection(.bss) __align(4096) PML5Table       L5;
 	static __linkersection(.bss) __align(4096) PML4Table       L4;
 	static __linkersection(.bss) __align(4096) PDPTEntry1GB    L3[PagingTableLength];
@@ -247,180 +300,239 @@ void InitialiseTemporaryPageTable(uint64_t TotalMemorySize){
     LoadPageTree((void *)(_L5? (void *)&L5: (void *)&L4), 0x10, 0x08, (bool64_t)_L5);
 	return;
 }
-EFI_MEMORY_DESCRIPTOR *QueryContiguousDescriptors(const void *D_, const uint32_t StructSize, uint64_t *TotalEntries, uint64_t *ElapsedPages, const uint64_t N){
+
+static __inline EFI_MEMORY_DESCRIPTOR *QueryContiguousDescriptors(const void *D_, const uint32_t StructSize, uint64_t *TotalEntries, uint64_t *ElapsedPages, const uint64_t N){
 	int64_t _CurrentType = -1;
 	(*TotalEntries) = 0;
 	(*ElapsedPages) = 0;
+	if(!N){return NULL;}
 	GetEfiMemoryDescriptor(D, D_, 0, StructSize);
 	uint64_t cc_ = 0, Address = D->PhysicalStart;
 	//	Check that the Next Entry is contiguous, since D2 starts as D, then cc_ == 0 will always go through
 	_CurrentType = D->Type;
 	for(; cc_ < N; ++cc_){
 		GetEfiMemoryDescriptor(D2, D_, cc_, StructSize);
-		if(D2->PhysicalStart != Address){return D;}
+		if(D2->PhysicalStart != Address){break;}
 		Address = D2->PhysicalStart + (D2->NumberOfPages * PAGE_SIZE);
-		if(D2->Type == _CurrentType){(*TotalEntries)++;		(*ElapsedPages)++;}else{return D;}
+		if(D2->Type == _CurrentType){(*TotalEntries)++;		(*ElapsedPages) += D2->NumberOfPages;}else{
+			DebugPrintf("\nContiguous Descriptors 0x%0z -> 0x%0z, %z Pages", D2, D2 + *TotalEntries, *ElapsedPages);	break;}
 	}
-	return NULL;
+	DebugPrintf("\nContiguous Descriptors 0x%0z -> 0x%0z, %z Pages", D, D + *TotalEntries, *ElapsedPages);
+	return D;
 }
-
-//	Identity:	virt == phys over [0, IdentityBytes), 1GB pages, RW + executable.
-//				IdentityBytes = max(RAM, 4GB) rounded up to 1GB (so the LAPIC/IOAPIC/HPET hole is reachable).
-//	Duplicate:	virt == IdentityBytes + phys. Leaves point at the right frames and carry the permissions of
-//				the EFI type, but are not present; UpdatePageTable/AllocatePages switch them on.
-//				Types that must never be mapped get no leaf at all.
-extern VirtualAddress InstantiatePageTable(const void *D_, const uint64_t StructSize, const uint64_t N, const uint64_t TotalMemoryPages){
-	VirtualAddress Out = {0};
-	if(!_1GPageSupport()){return Out;}
+VirtualAddress InstantiatePageTable(const void *D_, const uint64_t StructSize, const uint64_t N, const uint64_t TotalMemoryPages){
+	if(!_1GPageSupport()){DebugPrintf("\nThe CPU does not support 1G Pages, cannot Continue Execution");	__chalt(true);}
 	InitialiseTemporaryPageTable(TotalMemoryPages * PAGE_SIZE);
-
-	const uint64_t S4K = 1ULL << PAGE_SHIFT, S2M = 1ULL << PAGE_SHIFT2, S1G = 1ULL << PAGE_SHIFT3, S512G = 512ULL << PAGE_SHIFT3, 
-		Addr4K = 0x000FFFFFFFFFF000ULL, Addr2M = 0x000FFFFFFFE00000ULL, Addr1G = 0x000FFFFFC0000000ULL, 
-		//	Raw entry bits (same layout as the structs in paging.h; PageInMemory is bit 6 in table entries, bit 9 in leaves)
-		fP = 1ULL << 0, fRW = 1ULL << 1, fPWT = 1ULL << 3, fPCD = 1ULL << 4, fTbl = 1ULL << 6, fPS = 1ULL << 7, fLeaf = 1ULL << 9, fNX = 1ULL << 63;
-	//	false: duplicate leaves stay non-present until UpdatePageTable/AllocatePages enables them.
-	const bool L5 = IsLA57Enabled(), Live = false;
-	uint32_t PhysBits = GetMaxPhysicalAddressBits(), EferLow, EferHigh;
-	if(PhysBits > 52){PhysBits = 52;}
-	const uint64_t MaxPhys = 1ULL << PhysBits;
-	//	XD bits are reserved (and fault) unless EFER.NXE is set.
-	__asm__ volatile("rdmsr" : "=a"(EferLow), "=d"(EferHigh) : "c"(0xC0000080U));
-	const bool NX = (EferLow >> 11) & 1;
-
-	//	Identity sizing, everything rounded up.
-	uint64_t IdentityBytes = TotalMemoryPages * PAGE_SIZE;
-	if(IdentityBytes < (4 * S1G)){IdentityBytes = 4 * S1G;}
-	IdentityBytes = (__roundup(IdentityBytes, S1G) / S1G) * S1G;
-	const uint64_t IdentityGB = IdentityBytes / S1G,								//	1GB leaf entries
-					IdentityPDPT = __roundup(IdentityGB, PagingTableLength) / PagingTableLength,	//	PDPT tables == PML4 entries
-					IdentityPML4 = L5? (__roundup(IdentityPDPT, PagingTableLength) / PagingTableLength): 1;	//	PML4 tables == PML5 entries
-	if((!L5 && IdentityPDPT > PagingTableLength) || (L5 && IdentityPML4 > PagingTableLength)){return Out;}
-
-	//	Duplicate sizing: the highest address any descriptor reaches, then a worst case table count.
-	uint64_t Top = 0xFEC00000ULL + 0x400000ULL;
-	for(uint64_t cc = 0; cc < N; ++cc){
-		GetEfiMemoryDescriptor(D, D_, cc, StructSize);
-		uint64_t End = D->PhysicalStart + (D->NumberOfPages * S4K);
-		if((End <= MaxPhys) && (End > Top)){Top = End;}
-	}
-	const uint64_t Dup = IdentityBytes;
-	if(!L5 && ((Dup + Top) > (1ULL << 47))){return Out;}
-	uint64_t DupPages = 4 + (((__roundup(Top, S512G) / S512G) + 2) * 2) + ((__roundup(Top, S1G) / S1G) + 2) + (2 * N), 
-		PoolPages = (L5? 1: 0) + IdentityPML4 + IdentityPDPT + DupPages + 8;
-
-	//	Claim a contiguous pool (QueryCandidatePool zeroes it).
-	uint64_t CandidatePages = 0;
-	EFI_MEMORY_DESCRIPTOR *Candidate = QueryCandidatePool(D_, StructSize, &CandidatePages, N, PoolPages, TypeMask1, sizeof(TypeMask1), AttributeMask);
-	if(!Candidate || (CandidatePages < PoolPages)){return Out;}
-	const uint64_t PT = Candidate->PhysicalStart, L4Off = L5? S4K: 0, L3Off = L4Off + (IdentityPML4 * S4K);
-
-	//	Identity tables, laid out as [PML5][PML4 tables][PDPT tables]. Entry g of a level points at table g of the next.
-	if(L5){
-		PML5Table *T5 = (PML5Table *)PT;
-		for(uint64_t e = 0; e < IdentityPML4; ++e){
-			(*T5)[e] = (PML5Entry){
-				.Present = true, .ReadWrite = true, .UserMode = false, .PageLevelWriteThrough = false, .PageLevelCacheDisable = false, 
-				.PageInMemory = true, .ExecuteDisable = false, .PhysicalAddress = (PT + L4Off + (e * S4K)) >> PAGE_SHIFT
-			};
-		}
-	}
-	for(uint64_t t = 0; t < IdentityPML4; ++t){
-		PML4Table *T4 = (PML4Table *)(PT + L4Off + (t * S4K));
-		uint64_t Entries = __min(PagingTableLength, IdentityPDPT - (t * PagingTableLength));
-		for(uint64_t e = 0; e < Entries; ++e){
-			(*T4)[e] = (PML4Entry){
-				.Present = true, .ReadWrite = true, .UserMode = false, .PageLevelWriteThrough = false, .PageLevelCacheDisable = false, 
-				.PageInMemory = true, .ExecuteDisable = false, .PhysicalAddress = (PT + L3Off + (((t * PagingTableLength) + e) * S4K)) >> PAGE_SHIFT
-			};
-		}
-	}
-	for(uint64_t t = 0; t < IdentityPDPT; ++t){
-		PDPTTable *T3 = (PDPTTable *)(PT + L3Off + (t * S4K));
-		uint64_t Entries = __min(PagingTableLength, IdentityGB - (t * PagingTableLength));
-		for(uint64_t e = 0; e < Entries; ++e){
-			T3->pages1GB[e] = (PDPTEntry1GB){
-				.Present = true, .ReadWrite = true, .UserMode = false, .PageLevelWriteThrough = false, .PageLevelCacheDisable = false, 
-				.PageSize = true, .Global = false, .Dirty = false, .PageInMemory = true, .PageAttributeTable = false, 
-				.PhysicalAddress = (t * PagingTableLength) + e, .ProtectionKey = 0x00, .ExecuteDisable = false
-			};
-		}
-	}
-
-	//	Duplicate region. It shares the root with the identity map; extra tables come from the rest of the pool.
-	//	cc == N is a synthetic entry for the platform MMIO window (IOAPIC/HPET/LAPIC), which is usually not in the EFI map.
-	const uint64_t Root = L5? PT: (PT + L4Off), End = PT + (CandidatePages * S4K);
-	uint64_t Next = PT + L3Off + (IdentityPDPT * S4K);
-	for(uint64_t cc = 0; cc <= N; ++cc){
-		uint64_t Phys, Bytes;
-		bool Write = false, Exec = false, UC = false;
-		if(cc == N){Phys = 0xFEC00000ULL;	Bytes = 0x400000ULL;	Write = true;	UC = true;
-		}else{
-			GetEfiMemoryDescriptor(D, D_, cc, StructSize);
-			Phys = D->PhysicalStart;	Bytes = D->NumberOfPages * S4K;
-			switch((uint32_t)D->Type){
-				//	.text/.data/.bss share one allocation: RWX until the linker script exports section bounds.
-				case (uint32_t)KernelBinarySpace:
-					Write = true;	Exec = true;	break;
-				case EfiLoaderCode: case EfiBootServicesCode: case EfiRuntimeServicesCode:
-					Exec = true;	break;
-				case EfiLoaderData: case EfiBootServicesData: case EfiRuntimeServicesData: case EfiConventionalMemory: 
-				case EfiACPIReclaimMemory: case EfiACPIMemoryNVS: case EfiPersistentMemory:
-					Write = true;	break;
-				case EfiMemoryMappedIO:
-					Write = true;	UC = true;	break;
-				//	Reserved, Unusable, MMIOPortSpace, Unaccepted, PalCode and anything else: never mapped.
-				default:
-					Bytes = 0;	break;
+	//	We Identity Map to L3 Entries
+	//	Post-Identity Mapping
+	//	Identity Mapping
+	uint64_t TotalL3 = __roundupt(TotalMemoryPages * PAGE_SIZE, PAGE_SIZE3) / PAGE_SIZE3, 
+	//	Number of Tables
+			TotalL4 = __roundupt(TotalL3, PagingTableLength) / PagingTableLength, 
+			TotalL5 = IsLA57Enabled()? (__roundupt(TotalL4, PagingTableLength) / PagingTableLength): 0, 
+			CandidatePages = 0, TotalPages = ((__roundup(TotalL3, PagingTableLength) / PagingTableLength) + TotalL4 + TotalL5);
+	void *RootPageTable = NULL;	{
+		//	Number of GBs
+		EFI_MEMORY_DESCRIPTOR *Candidate = QueryCandidatePool(D_, StructSize, 
+			&CandidatePages, N, TotalPages, TypeMask1, sizeof(TypeMask1), AttributeMask);
+		if(Candidate){
+			uint64_t cc = 0;
+			while(CandidatePages){
+				GetEfiMemoryDescriptor(D, Candidate, cc, StructSize);
+				CandidatePages -= D->NumberOfPages;
+				//	Simply Mark as allocated
+				D->Type = KernelBinarySpace;
+				cc++;
+			}
+		}else{DebugPrintf("\nInvalid Page Table Candidate");	return (VirtualAddress){0};}
+		uint64_t Offset = 0;
+		void *PT = (void *)(Candidate->PhysicalStart);
+		for(uint64_t cc = 0; cc < TotalL5; ++cc){
+			PML5Table *L5 = PT + Offset;
+			Offset += sizeof(PML5Table);
+			for(uint64_t cc_ = 0; cc_ < PagingTableLength; ++cc_){
+				(*L5)[cc_] = (PML5Entry){.Accessed = false, .ExecuteDisable = false, .PageInMemory = false, .PageLevelCacheDisable = false, 
+					.PageLevelWriteThrough = false, .PhysicalAddress = 0, .Present = true, .ReadWrite = true, .UserMode = false};
+				SetPagePhysicalAddress((*L5)[cc_], ((uint64_t)PT + (sizeof(PML5Table) * TotalL5) + (sizeof(PML4Table) * (cc_ % TotalL4))) >> PAGE_SHIFT);
 			}
 		}
-		if((Phys + Bytes) > MaxPhys){Bytes = 0;}
-		const uint64_t Flags = (Live? (fP | fLeaf): 0) | (Write? fRW: 0) | ((!Exec && NX)? fNX: 0) | (UC? (fPWT | fPCD): 0);
-		uint64_t V = Dup + Phys, P = Phys;
-		while(Bytes){
-			//	Largest page that fits at this position. Leaf is the level that holds the leaf entry (3: 1GB, 2: 2MB, 1: 4KB).
-			uint32_t Leaf = 1;
-			uint64_t Step = S4K;
-			if(!((V | P) & (S1G - 1)) && (Bytes >= S1G)){Leaf = 3;	Step = S1G;}
-			else if(!((V | P) & (S2M - 1)) && (Bytes >= S2M)){Leaf = 2;	Step = S2M;}
-
-			volatile uint64_t *T = (volatile uint64_t *)Root;
-			bool Covered = false;
-			for(uint32_t Level = L5? 5: 4; Level > Leaf; --Level){
-				volatile uint64_t *E = T + ((V >> (PAGE_SHIFT + (9 * (Level - 1)))) & 0x1FF);
-				//	An entry is empty only when it is entirely zero: non-present skeleton leaves are not empty.
-				if(!(*E)){
-					if((Next + S4K) > End){return Out;}
-					memset((void *)Next, 0, S4K);
-					*E = Next | fP | fRW | fTbl;
-					Next += S4K;
-				}else if((*E) & fPS){Covered = true;	break;}
-				T = (volatile uint64_t *)((*E) & Addr4K);
+		for(uint64_t cc = 0; cc < TotalL4; ++cc){
+			PML4Table *L4 = PT + Offset;
+			Offset += sizeof(PML4Table);
+			for(uint64_t cc_ = 0; cc_ < PagingTableLength; ++cc_){
+				(*L4)[cc_] = (PML4Entry){.Accessed = false, .ExecuteDisable = false, .PageInMemory = false, .PageLevelCacheDisable = false, 
+					.PageLevelWriteThrough = false, .PhysicalAddress = 0, .Present = true, .ReadWrite = true, .UserMode = false};
+				SetPagePhysicalAddress((*L4)[cc_], ((uint64_t)PT + (sizeof(PML5Table) * TotalL5) + (sizeof(PML4Table) * TotalL4) + (sizeof(PDPTTable) * (cc_ % TotalL3))) >> PAGE_SHIFT);
 			}
-			if(!Covered){
-				volatile uint64_t *E = T + ((V >> (PAGE_SHIFT + (9 * (Leaf - 1)))) & 0x1FF);
-				if(!(*E)){*E = (P & ((Leaf == 3)? Addr1G: ((Leaf == 2)? Addr2M: Addr4K))) | Flags | ((Leaf > 1)? fPS: 0);}
-			}
-			V += Step;	P += Step;	Bytes -= Step;
 		}
+		for(uint64_t cc = 0; cc < TotalL3; ++cc){
+			PDPTTable *L3 = PT + Offset;
+			Offset += sizeof(PDPTTable);
+			for(uint64_t cc_ = 0; cc_ < PagingTableLength; ++cc_){
+				L3->pages1GB[cc_] = (PDPTEntry1GB){.Accessed = false, .Dirty = false, .ExecuteDisable = false, .Global = false, .PageAttributeTable = false, 
+					.PageInMemory = true, .PageLevelCacheDisable = false, .PageLevelWriteThrough = false, .PageSize = true, .PhysicalAddress = 0, 
+					.Present = true, .ProtectionKey = 0x00, .ReadWrite = true, .UserMode = false};
+				SetPagePhysicalAddress(L3->pages1GB[cc_], (cc_ % TotalMemoryPages));
+			}
+		}
+		RootPageTable = PT;
+	}	{
+		//	Paging that reflects EFI_MEMORY_DESCRIPTOR Type Requirements.
+		EFI_MEMORY_DESCRIPTOR *D = D_;
+		uint64_t TotalEntries = 0, Entries = 0, Pages = 0, CandidatePages = 0;
+		uint64_t NL4 = 0, NL3 = 0, NL2 = 0, NL1 = 0;
+		PageCoordinate PC = {.EnableL1 = false, .EnableL2 = false, .EnableL3 = false, .EnableL4 = true, 
+			.EnableL5 = IsLA57Enabled(), .L1 = 0x00, .L2 = 0x00, .L3 = TotalL3, .L4 = TotalL4, .L5 = TotalL5};
+		while(D = QueryContiguousDescriptors(D + 1, StructSize, &Entries, &Pages, N - TotalEntries)){
+			TotalEntries += Entries;
+			//	Map w/ 4kB Pages.
+			//	We assume Memory is NEVER >512gB
+			//	This is the Upper Limit of the Current Code.
+			if(Pages < (PAGE_SIZE2 / 4)){NL1++;}else if(Pages < (PAGE_SIZE3 / 4)){NL2++;}else{NL3++;}
+			if(NL1 == PagingTableLength){AddPageCoordinate(&PC, PAGE_SIZE2);					NL2++;}
+			if(NL2 == PagingTableLength){AddPageCoordinate(&PC, PAGE_SIZE3);					NL3++;}
+			if(NL3 == PagingTableLength){AddPageCoordinate(&PC, PAGE_SIZE3 * PagingTableLength);NL4++;}
+		}
+		NL4 = __roundup(NL4, PagingTableLength) / PagingTableLength;
+		NL3 = __roundup(NL3, PagingTableLength) / PagingTableLength;
+		NL2 = __roundup(NL2, PagingTableLength) / PagingTableLength;
+		NL1 = __roundup(NL1, PagingTableLength) / PagingTableLength;
+		
+		EFI_MEMORY_DESCRIPTOR *Candidate = QueryCandidatePool(D_, StructSize, &CandidatePages, 
+			N, NL4 + NL3 + NL2 + NL1, TypeMask1, sizeof(TypeMask1), AttributeMask);
+		if(Candidate){
+			uint64_t cc = 0;
+			while(CandidatePages){
+				GetEfiMemoryDescriptor(D, Candidate, cc, StructSize);
+				CandidatePages -= D->NumberOfPages;
+				D->Type = KernelBinarySpace;
+				cc++;
+			}
+		}else{DebugPrintf("\nInvalid Duplicate Page Table Candidate");	return (VirtualAddress){0};}
+		//	Full of L3 Entries
+		PDPTTable *PT = (PDPTTable *)(Candidate->PhysicalStart);	{
+			uint32_t Lvl = IsLA57Enabled()? 5: 4;
+			uint64_t _CandidatePages = 0;
+			DebugPrintf("\nGetting Page at [%l(%u):%l(%u):%l(%u):%l(%u):%l(%u)]", PC.L5, PC.EnableL5, 
+				PC.L4, PC.EnableL4, PC.L5, PC.EnableL5, PC.L5, PC.EnableL5, PC.L5, PC.EnableL5);
+			void *Page = WalkEmulatedPageTree(PC, RootPageTable, &Lvl);
+			//	Since we; at MAX support 512GB, we will at most only need to allocate an extra PDPT Table for the NEXT Page Table.
+			switch(Lvl){
+				case 5: {
+					EFI_MEMORY_DESCRIPTOR *Tmp = QueryCandidatePool(D_, StructSize, &_CandidatePages, N, 1, TypeMask1, sizeof(TypeMask1), AttributeMask);	{
+						uint64_t cc_ = 0;
+						while(_CandidatePages){GetEfiMemoryDescriptor(D, Tmp, cc_, StructSize);	Tmp->Type = KernelBinarySpace;	cc_++;	_CandidatePages -= Tmp->NumberOfPages;}
+					}
+					PML5Entry *L5 = Page;	*L5 = (PML5Entry){
+						.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
+						.PhysicalAddress = 0x00, .Present = true, .ReadWrite = true, .UserMode = false, .PageLevelWriteThrough = false};
+					SetPagePhysicalAddress(*L5, (uint64_t)Tmp->PhysicalStart >> PAGE_SHIFT);
+					*(PML4Entry *)(Tmp->PhysicalStart) = (PML4Entry){
+						.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
+						.PhysicalAddress = 0x00, .Present = true, .ReadWrite = true, .UserMode = false, .PageLevelWriteThrough = false};
+					SetPagePhysicalAddress(*(PML4Entry *)(Tmp->PhysicalStart), (uint64_t)PT >> PAGE_SHIFT);
+					PC.L4 = 0;
+					break;
+				} case 3: case 4: {
+					PML4Entry *L4 = Page;	*L4 = (PML4Entry){
+						.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
+						.PhysicalAddress = 0x00, .Present = true, .ReadWrite = true, .UserMode = false, .PageLevelWriteThrough = false};
+					SetPagePhysicalAddress(*L4, (uint64_t)PT >> PAGE_SHIFT);
+					PC.L3 = 0;
+					break;
+				} default: {DebugPrintf("\nInvalid Page Table Entry %z", (uint64_t)Lvl);	return (VirtualAddress){0};}
+			}
+		}
+		EFI_MEMORY_DESCRIPTOR *Tmp = D_;	{
+			uint64_t TotalEntries = 0, Entries = 0, Pages = 0;
+			while(Tmp = QueryContiguousDescriptors(Tmp + 1, StructSize, &Entries, &Pages, N - TotalEntries)){
+				TotalEntries += Entries;
+				PageAllocationFlags Flags = 0;
+				switch(Tmp->Type){
+					default:						{Flags = ReadWritable;}
+					case EfiUnusableMemory: 
+					case EfiMaxMemoryType: 
+					case EfiUnacceptedMemoryType:	{continue;}
+					case EfiReservedMemoryType:		{Flags = GlobalEnable | ReadOnly | SupervisorMode;	break;}
+					case EfiMemoryMappedIOPortSpace:
+					case EfiMemoryMappedIO:			{Flags = PageLevelWriteThroughEnable | PageLevelCacheEnable | ReadWritable;	break;}
+				}
+				while(Pages){
+					uint32_t Lvl = IsLA57Enabled()? 5: 4;
+					bool Repeat = false;
+					DebugPrintf("\nGetting Page at [%l(%u):%l(%u):%l(%u):%l(%u):%l(%u)]", PC.L5, PC.EnableL5, 
+						PC.L4, PC.EnableL4, PC.L5, PC.EnableL5, PC.L5, PC.EnableL5, PC.L5, PC.EnableL5);
+					void *E = WalkEmulatedPageTree(PC, PT, &Lvl);
+					do{
+						Repeat = false;
+						switch(Lvl){
+							case 3: {
+								if(Pages < (PAGE_SIZE3 / 8)){
+									if(PC.L2 == (PagingTableLength - 1)){
+										PDPTEntryDirectory *L3 = E;	*L3 = (PDPTEntryDirectory){
+											.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageSize = false, 
+											.PhysicalAddress = 0x00, .Present = true, .ReadWrite = __check(Flags, ReadWritable), .UserMode = false, 
+											.PageLevelCacheDisable = __check(Flags, PageLevelCacheEnable), .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable)};
+										E = (void *)__roundupt((uint64_t)E, PAGE_SIZE);		SetPagePhysicalAddress(*L3, (uint64_t)E >> PAGE_SHIFT);
+									}
+									PC.EnableL3 = true;
+									Repeat = true;
+								}else{
+									PDPTEntry1GB *L3 = E;	*L3 = (PDPTEntry1GB){
+										.Accessed = false, .Dirty = false, .ExecuteDisable = false, .Global = __check(Flags, GlobalEnable), 
+										.PageAttributeTable = false, .PageInMemory = true, .PageSize = true, .PhysicalAddress = 0, 
+										.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), .ReadWrite = __check(Flags, ReadWritable), 
+										.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), .Present = true, .ProtectionKey = 0x00, .UserMode = false};
+									SetPagePhysicalAddress(*L3, Tmp->PhysicalStart >> PAGE_SHIFT3);
+									if(Pages < PAGE_SIZE2){Pages = 0;}else{Pages -= PAGE_SIZE2;}
+									AddPageCoordinate(&PC, PAGE_SIZE3);
+								}
+								PC.EnableL3 = true;
+								break;
+							} case 2: {
+								if(Pages < (PAGE_SIZE2 / 8)){
+									if(PC.L2 == (PagingTableLength - 1)){
+										PageDirectoryEntry *L2 = E;	*L2 = (PageDirectoryEntry){
+											.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), .PageSize = false, 
+											.PhysicalAddress = 0x00, .Present = true, .ReadWrite = __check(Flags, ReadWritable), .UserMode = false, .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable)};
+										E = (void *)__roundupt((uint64_t)E, PAGE_SIZE);		SetPagePhysicalAddress(*L2, (uint64_t)E >> PAGE_SHIFT);
+									}
+									PC.EnableL2 = true;
+									Repeat = true;
+								}else{
+									PageDirectoryEntry2MB *L2 = E;	*L2 = (PageDirectoryEntry2MB){
+										.Accessed = false, .Dirty = false, .ExecuteDisable = false, .Global = __check(Flags, GlobalEnable), .PageAttributeTable = false, .PageInMemory = true, 
+										.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
+										.PageSize = true, .PhysicalAddress = 0, .Present = true, .ProtectionKey = 0x00, .ReadWrite = __check(Flags, ReadWritable), .UserMode = false};
+									SetPagePhysicalAddress(*L2, Tmp->PhysicalStart >> PAGE_SHIFT2);
+									if(Pages < PAGE_SIZE){Pages = 0;}else{Pages -= PAGE_SIZE;}
+									AddPageCoordinate(&PC, PAGE_SIZE2);
+								}
+								PC.EnableL2 = true;
+								break;
+							} case 1: {
+								PageTableEntry4KB *L1 = E;	*L1 = (PageTableEntry4KB){
+									.Accessed = false, .Dirty = false, .ExecuteDisable = false, .Global = __check(Flags, GlobalEnable), .PageAttributeTable = false, .PageInMemory = true, 
+									.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
+									.PhysicalAddress = Tmp->PhysicalStart, .Present = true, .ProtectionKey = 0x00, .ReadWrite = __check(Flags, ReadWritable), .UserMode = false};
+								SetPagePhysicalAddress(*L1, Tmp->PhysicalStart >> PAGE_SHIFT);
+								PC.EnableL1 = true;
+								Pages--;
+								AddPageCoordinate(&PC, PAGE_SIZE);
+								break;
+							}
+						}
+					}while(Repeat);
+				}
+			}
+		}
+		// __bochs();
+		bool _L5 = IsLA57Enabled();
+		InvalidatePages(NULL, TotalMemoryPages * PAGE_SIZE);
+		LoadPageTree(RootPageTable, 0x10, 0x08, (bool64_t)_L5);
+		GetPageTable(&_L5, _UpdatePageTableMode, RootPageTable);
+		return InitVirtualAddress(PC);
 	}
-
-	//	Hand the pool to the allocator's "in use" class. Descriptors are walked by StructSize, not by
-	//	sizeof(EFI_MEMORY_DESCRIPTOR): the firmware's stride is usually larger.
-	for(uint64_t cc = 0, Remaining = CandidatePages; Remaining; ++cc){
-		EFI_MEMORY_DESCRIPTOR *C = (EFI_MEMORY_DESCRIPTOR *)((uint8_t *)Candidate + (cc * StructSize));
-		C->Type = KernelBinarySpace;
-		Remaining = (C->NumberOfPages >= Remaining)? 0: (Remaining - C->NumberOfPages);
-	}
-
-	//	paging.asm returns 1 on success, 0 or 2 if the LA57 state did not match.
-	__bochs();
-	if(LoadPageTree((void *)Root, 0x10, 0x08, (bool64_t)L5) != 1){return Out;}
-	bool _L5 = L5;
-	GetPageTable(&_L5, _UpdatePageTableMode, (void *)Root);	//	Physical == identity address.
-
-	//	First virtual address above the duplicate: where IState->LastPageTableAlloc continues.
-	*(uint64_t *)&Out = Dup + Top;
-	return Out;
 }
 
 //	Heavily relies of UEFI's 1:1 Mapping Mode
@@ -437,40 +549,27 @@ bool InitialiseAllocationState(void *D_, const uint64_t StructSize, uint64_t N, 
 					PhysToIndexAllocation = (TotalMemory / PAGE_SIZE) * sizeof(uint16_t);
 	//	Non-Usable Persistent Memory.
 	
-	int64_t				TypeContiguous0 = -1, TypeContiguous1 = -1, TypeContiguous2 = -1, TypeContiguous3 = -1;
+	//	End address of the last piece seen for each class (TypeMask0..3); -1 = none yet.
+	int64_t				TypeEnd[4] = {-1, -1, -1, -1};
 	for(uint64_t cc = 0; cc < N; ++cc){
 		GetEfiMemoryDescriptor(D, D_, cc, StructSize);
-		if(memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))){
-			if(TypeContiguous0 == -1){TypeContiguous0 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}
-			else if(TypeContiguous0 != D->PhysicalStart){
-				TypeContiguous0 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);
-				SubDescriptorAllocation += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
-				DescriptorAllocation += sizeof(MemoryRangeDescriptor);}
-		}else if(memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))){
-			if(TypeContiguous1 == -1){TypeContiguous1 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}
-			else if(TypeContiguous1 != D->PhysicalStart){
-				TypeContiguous0 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);
-				SubDescriptorAllocation += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
-				DescriptorAllocation += sizeof(MemoryRangeDescriptor);}
-		}else if(memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))){
-			if(TypeContiguous2 == -1){TypeContiguous2 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}
-			else if(TypeContiguous2 != D->PhysicalStart){
-				TypeContiguous0 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);
-				SubDescriptorAllocation += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
-				DescriptorAllocation += sizeof(MemoryRangeDescriptor);}
-		}else if(memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))){
-			if(TypeContiguous3 == -1){TypeContiguous3 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}
-			else if(TypeContiguous3 != D->PhysicalStart){
-				TypeContiguous0 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);
-				SubDescriptorAllocation += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
-				DescriptorAllocation += sizeof(MemoryRangeDescriptor);}
-		}else{continue;}
+		int Class = memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))? 1: 
+			(memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
+		if(Class < 0){continue;}
+		//	A new Descriptor starts whenever this piece is not contiguous with the previous piece of its class.
+		if(TypeEnd[Class] != (int64_t)D->PhysicalStart){DescriptorAllocation += sizeof(MemoryRangeDescriptor);}
+		TypeEnd[Class] = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);
+		SubDescriptorAllocation += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
 	}
 	uint64_t TotalRequiredPages = (SubDescriptorAllocation + PhysToIndexAllocation + DescriptorAllocation + sizeof(uint64_t));
 	TotalRequiredPages = __roundup(TotalRequiredPages, PAGE_SIZE) / PAGE_SIZE;
 
 	uint64_t ElapsedPages = 0;
 	VirtualAddress VA = {0};
+	//	Base of the duplicate region. Must match InstantiatePageTable: max(RAM, 4GB) rounded up to 1GB.
+	uint64_t DupBase = (TotalMemory / PAGE_SIZE) * PAGE_SIZE;
+	if(DupBase < (4ULL << PAGE_SHIFT3)){DupBase = 4ULL << PAGE_SHIFT3;}
+	DupBase = (__roundup(DupBase, 1ULL << PAGE_SHIFT3) / (1ULL << PAGE_SHIFT3)) * (1ULL << PAGE_SHIFT3);
 	volatile InternalAllocationState *IState = GetIState();
 	DebugPrintf("\nInitialising Page Table");	{
 		//	Temporarily Initialise Minimal Paging Dependencies.
@@ -478,68 +577,77 @@ bool InitialiseAllocationState(void *D_, const uint64_t StructSize, uint64_t N, 
 		void *PT = GetPageTable(&_L, _1To1MappingMode, NULL);
 		(GetPageTable(&_L, _UpdatePageTableMode, PT));
 		VA = InstantiatePageTable(D_, StructSize, N, TotalMemory / PAGE_SIZE);
+		if(!(*(uint64_t *)&VA)){DebugPrintf("\nFailed to Instantiate the Page Table");	return false;}
 	}
-	EFI_MEMORY_DESCRIPTOR *Candidate = QueryCandidatePool(D_, StructSize, &ElapsedPages, N, TotalRequiredPages, TypeMask1, sizeof(TypeMask1), AttributeMask);	{
+	EFI_MEMORY_DESCRIPTOR *Candidate = QueryCandidatePool(D_, StructSize, &ElapsedPages, N, TotalRequiredPages, TypeMask1, sizeof(TypeMask1), AttributeMask);
+	if(!Candidate){return false;}
+	{
+		//	Walk by StructSize (the firmware's stride), and shrink the SAME counter that the loop tests.
 		uint64_t cc = 0, _ElapsedPages = ElapsedPages;
 		while(_ElapsedPages){
-			Candidate[cc].Type = KernelBinarySpace;
-			if(Candidate[cc].NumberOfPages > _ElapsedPages){ElapsedPages = 0;}else{_ElapsedPages -= Candidate[cc].NumberOfPages;}
+			EFI_MEMORY_DESCRIPTOR *C = (EFI_MEMORY_DESCRIPTOR *)((uint8_t *)Candidate + (cc * StructSize));
+			C->Type = KernelBinarySpace;
+			if(C->NumberOfPages > _ElapsedPages){_ElapsedPages = 0;}else{_ElapsedPages -= C->NumberOfPages;}
 			cc++;
 		}
 	}
 	DebugPrintf("\nDescriptor Pool: 0x%0z\t%z Pages", Candidate->PhysicalStart, (uint64_t)ElapsedPages);
-	memset((void *)(Candidate->PhysicalStart), 0, (uint64_t)(ElapsedPages) * PAGE_SIZE);
+	//	Possibly failing at this pOint.
+	for(uint64_t cc = 0; cc < N; ++cc){
+		GetEfiMemoryDescriptor(D, D_, cc, StructSize);
+		bool Usable = memcheckl(TypeMask1, D->Type, sizeof(TypeMask1)) && ((AttributeMask& D->Attribute) == 0);
+		DebugPrintf("\n[%z]:\tType: %z(%s){Attr: 0b%2z\tPhys: 0x%0z\tNoPages: %z}", (uint64_t)cc, (uint64_t)D->Type, 
+			(Usable? "Usable": "  ??  "), D->Attribute, D->PhysicalStart, D->NumberOfPages);
+	}
+	DebugPrintf("\nInitialising Internal Allocation State");
 
 	*IState = (volatile InternalAllocationState){
 		.Descriptors = (MemoryRangeDescriptor *)(Candidate->PhysicalStart), .MemoryMaxPages = TotalMemory / PAGE_SIZE, 
-		.PhysicalDescriptorIndexes = (uint16_t *)(Candidate->PhysicalStart + DescriptorAllocation), .NonIdentityMappedState = false, 
+		.PhysicalDescriptorIndexes = (uint16_t *)(Candidate->PhysicalStart + DescriptorAllocation), .Ready = false, 
 		.SubDescriptors = (MemoryRangeSubDescriptor **)(Candidate->PhysicalStart + DescriptorAllocation + SubDescriptorAllocation), 
 		.TotalDescriptors = DescriptorAllocation / sizeof(MemoryRangeDescriptor), .TotalSubDescriptors = SubDescriptorAllocation / sizeof(MemoryRangeSubDescriptor), 
-		.TotalSubDescriptorPools = 1
+		.TotalSubDescriptorPools = 1, .LastPageTableAlloc = VA
 	};	*(IState->SubDescriptors) = (MemoryRangeSubDescriptor *)(Candidate->PhysicalStart + DescriptorAllocation + SubDescriptorAllocation + sizeof(uint64_t));
-	TypeContiguous0 = TypeContiguous1 = TypeContiguous2 = TypeContiguous3 = -1;
+	TypeEnd[0] = TypeEnd[1] = TypeEnd[2] = TypeEnd[3] = -1;
 	uint32_t CurrentSubDescriptor = 0;
 
 	//	Need to track contiguous Memory Types.
-	//		If Contiguous:		Update the Entry to encompass the Additional Entry.
-	//		If not Contiguous:	Increment to another Entry
-	__bochs();
-	for(uint64_t cc = 0, ArrayCtr = 0; cc < N; ++cc){
-		GetEfiMemoryDescriptor(D, D_, cc, StructSize);
-		if(memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))){
-			if(TypeContiguous0 == -1){TypeContiguous0 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}else 
-			if(TypeContiguous0 != D->PhysicalStart){ArrayCtr++;		TypeContiguous0 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}else{
-				IState->Descriptors[ArrayCtr].PageLimit += D->NumberOfPages;	continue;}
-			IState->Descriptors[ArrayCtr] = (MemoryRangeDescriptor){
-				.SubDescriptorIndex = CurrentSubDescriptor, .EfiMemoryType = D->Type, .PageLimit = D->NumberOfPages, .Physical = D->PhysicalStart};
+	//		If Contiguous:		Update the Descriptor to encompass the Additional Entry.
+	//		If not Contiguous:	Start another Descriptor.
+	{
+		int64_t ArrayCtr = -1;
+		for(uint64_t cc = 0; cc < N; ++cc){
+			GetEfiMemoryDescriptor(D, D_, cc, StructSize);
+			int Class = memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))? 1: 
+				(memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
+			if(Class < 0){continue;}
+			if((ArrayCtr >= 0) && (TypeEnd[Class] == (int64_t)D->PhysicalStart)){IState->Descriptors[ArrayCtr].PageLimit += D->NumberOfPages;}
+			else{
+				ArrayCtr++;
+				IState->Descriptors[ArrayCtr] = (MemoryRangeDescriptor){
+					.SubDescriptorIndex = CurrentSubDescriptor, .EfiMemoryType = D->Type, .PageLimit = D->NumberOfPages, .Physical = D->PhysicalStart};
+			}
+			TypeEnd[Class] = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);
 			CurrentSubDescriptor += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
-			UpdatePageTable((void *)(D->PhysicalStart), D->NumberOfPages * PAGE_SIZE, ReadWritable | SupervisorMode | PageLevelWriteThroughEnable | GlobalEnable, 0x00);
-		}else if(memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))){
-			if(TypeContiguous1 == -1){TypeContiguous1 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}else 
-			if(TypeContiguous1 != D->PhysicalStart){ArrayCtr++;		TypeContiguous1 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}else{
-				IState->Descriptors[ArrayCtr].PageLimit += D->NumberOfPages;	continue;}
-			IState->Descriptors[ArrayCtr] = (MemoryRangeDescriptor){
-				.SubDescriptorIndex = CurrentSubDescriptor, .EfiMemoryType = D->Type, .PageLimit = D->NumberOfPages, .Physical = D->PhysicalStart};
-			CurrentSubDescriptor += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
-		}else if(memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))){
-			if(TypeContiguous2 == -1){TypeContiguous2 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}else 
-			if(TypeContiguous2 != D->PhysicalStart){ArrayCtr++;		TypeContiguous2 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}else{
-				IState->Descriptors[ArrayCtr].PageLimit += D->NumberOfPages;	continue;}
-			IState->Descriptors[ArrayCtr] = (MemoryRangeDescriptor){
-				.SubDescriptorIndex = CurrentSubDescriptor, .EfiMemoryType = D->Type, .PageLimit = D->NumberOfPages, .Physical = D->PhysicalStart};
-			CurrentSubDescriptor += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
-		}else if(memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))){
-			if(TypeContiguous3 == -1){TypeContiguous3 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}else 
-			if(TypeContiguous3 != D->PhysicalStart){ArrayCtr++;		TypeContiguous3 = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);}else{
-				IState->Descriptors[ArrayCtr].PageLimit += D->NumberOfPages;	continue;}
-			IState->Descriptors[ArrayCtr] = (MemoryRangeDescriptor){
-				.SubDescriptorIndex = CurrentSubDescriptor, .EfiMemoryType = D->Type, .PageLimit = D->NumberOfPages, .Physical = D->PhysicalStart};
-			CurrentSubDescriptor += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
-			UpdatePageTable((void *)(D->PhysicalStart), D->NumberOfPages * PAGE_SIZE, ReadWritable | SupervisorMode | PageLevelWriteThroughEnable | GlobalEnable, 0x00);
-		}else{continue;}
-		for(uint64_t cc_ = 0; cc_ < D->NumberOfPages; ++cc_){IState->PhysicalDescriptorIndexes[(D->PhysicalStart / PAGE_SIZE) + cc_] = ArrayCtr;}
+			//	Only the types InstantiatePageTable maps get a live entry, and they are enabled in the DUPLICATE
+			//	(DupBase + phys), never through the identity map: an identity leaf is a whole 1GB page.
+			//	Unusable/Reserved/PortSpace/Unaccepted/PalCode have no leaf, so they are not touched.
+			if((D->Type == EfiRuntimeServicesCode) || (D->Type == EfiRuntimeServicesData) || (D->Type == EfiACPIMemoryNVS) || (D->Type == EfiMemoryMappedIO)){
+				// __bochs();
+				if(!(UpdatePageTable((void *)(DupBase + D->PhysicalStart), D->NumberOfPages * PAGE_SIZE, 
+					(PageAllocationFlags)(ReadWritable | SupervisorMode | PageLevelWriteThroughEnable | GlobalEnable | ((D->Type == EfiRuntimeServicesCode)? ExecuteEnable: 0)), 0x00))){
+						DebugPrintf("\nFailed to Update Page Entries accompanying Address %z to %z", DupBase + D->PhysicalStart, DupBase + D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE));}
+			}
+			//	Do not index past the table: it only has MemoryMaxPages entries (MMIO above RAM would overflow it).
+			for(uint64_t cc_ = 0; cc_ < D->NumberOfPages; ++cc_){
+				uint64_t Page = (D->PhysicalStart / PAGE_SIZE) + cc_;
+				if(Page >= (TotalMemory / PAGE_SIZE)){break;}
+				IState->PhysicalDescriptorIndexes[Page] = ArrayCtr;
+			}
+		}
 	}
 	__bochs();
+	IState->Ready = true;
 	return true;
 }
 
@@ -735,7 +843,7 @@ void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint
 
 void *MapVirtual(void *Physical){
 	volatile InternalAllocationState *IS = GetIState();
-	if(IS->NonIdentityMappedState){
+	if(IS->Ready){
 		QueryPhysicalAddress(Physical, IS){
 			GetSubDescriptor(SD, Physical, IS){
 				VirtualAddress VA = InitVirtualAddress(SD->CoordBaseIndex);
@@ -744,7 +852,7 @@ void *MapVirtual(void *Physical){
 		}
 		//	57 Bits
 		//	48 Bits
-	}else{return (void *)((uint64_t)Physical & (IsLA57Enabled()? 0x1FFFFFFFFFFFFFF: 0xFFFFFFFFFFFF));}
+	}else{return (void *)((uint64_t)Physical + TotalMemorySize());}
 	return NULL;
 }
 

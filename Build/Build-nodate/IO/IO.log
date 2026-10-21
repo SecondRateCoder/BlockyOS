@@ -1,7 +1,7 @@
 Initializing CGCC.MAKE build process...
 Skipping C:\GitHub\BlockyOS\src\kernel\services\IO\IO.c - up to date; source=2026-10-08T17:26:00.2985261Z, stored=10/08/2026 17:26:00
 Skipping C:\GitHub\BlockyOS\src\kernel\services\hostfs\controllers\frat\frat.c - up to date; source=2026-10-12T10:28:11.9114173Z, stored=10/12/2026 10:28:11
-Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll. source=2026-10-19T00:27:31.3082840Z, stored=10/18/2026 18:23:44, delta=n/a sec
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll. source=2026-10-21T01:03:30.5599447Z, stored=10/21/2026 00:05:20, delta=n/a sec
 Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll
 Skipping C:\GitHub\BlockyOS\src\kernel\services\IO\IO.def - up to date; source=2026-10-08T16:55:10.1695868Z, stored=10/08/2026 16:55:10
 gcc compile/cache/elf.c.IO.o compile/cache/elf.c.frat.o Build/Build-nodate/root-part/LibCrt.dll src/kernel/services/IO/IO.def -Wl,-nostdlib -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,--image-base,0x0 -Wl,-shared -Wl,-flinker-output=dyn -Wl,-Bsymbolic -Wl,--out-implib,C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll.a -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\IO\IO.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibIO.dll
@@ -19,7 +19,7 @@ C:\GitHub\BlockyOS\Build\Build-nodate\IO\IO.dmp.log
 [SHELL OUT]:	
 [SHELL OUT]:	>> 
 [SHELL OUT]:	>> 
-[SHELL OUT]:	000001d48b4b61eb:fc	000001d48b4b61f1:SYSD/	000001d48b4b61fa:LibIO.dll	
+[SHELL OUT]:	0000020fdbca60cb:fc	0000020fdbca60d1:SYSD/	0000020fdbca60da:LibIO.dll	
 [SHELL OUT]:	[	SYSD/LibIO.dll]
 [SHELL OUT]:	[0]: ""
 [SHELL]	FSFRAT.OPEN

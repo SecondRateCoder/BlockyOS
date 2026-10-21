@@ -249,7 +249,7 @@ bool AllocateIST(uint8_t *IST, IDTEntrySegmentSelector64 *sselector){
 	return false;
 }
 
-ISRCallbackDefinition(Generic){__bochs();	ISRCallbackReturn;}
+ISRCallbackDefinition(Generic){ISRCallbackReturn;}
 
 ISRCallbackDefinition(DivideError){
 	Frame->RAX = UINT64_MAX;

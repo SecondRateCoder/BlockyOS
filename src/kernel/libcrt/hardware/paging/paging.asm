@@ -3,6 +3,8 @@ default rel
 
 section .text
 
+extern __bochs
+
 %define CR4Level5PagingBit		(1 << 12)
 %define ErrorExpectsLevel5Code	0
 %define ErrorExpectsLevel4Code	2
@@ -56,6 +58,8 @@ LoadPageTree:
 	mov rax, rdi
 	and rax, 0xFFFFFFFFFFFFF000
 	mov cr3, rax
+
+	; call __bochs
 	
 	mov rax, rsi
 	mov ds, ax

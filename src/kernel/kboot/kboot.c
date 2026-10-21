@@ -85,14 +85,12 @@ rawenv re;
 void __sysvabi __main(__bootinfo *__restrict__ bootin){
 	//* Set Up Temprary Page Table, Interrupt Descriptor Table (IDT) & GDT
 	
-	// __bochs();
 	InitialiseGDT();
 	InitialiseIDT();
 	if(!_1GPageSupport()){DebugPrintf("1GB Pages not Supported");	__halt();}
 	// InitialiseTemporaryPageTable(bootin->memory.TotalMemorySize);
 	// DebugPrintf("Successfully Initialised");
 	
-	// __bochs();
 	const uint64_t ss = (uint64_t)bootin->memory.MemoryDescriptorStructSize, 
 		n = (uint64_t)bootin->memory.MemoryDescriptorBufferSize / (uint64_t)bootin->memory.MemoryDescriptorStructSize;
 	InitialiseAllocationState(bootin->memory.MemoryDescriptors, ss, n, bootin->memory.TotalMemorySize);
@@ -103,6 +101,7 @@ void __sysvabi __main(__bootinfo *__restrict__ bootin){
 			!memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_20_TABLE_GUID}, sizeof(EFI_GUID))
 		){ACPIBase = bootin->devices.CTable[cc].VendorTable;			break;}
 	}
+	__bochs();
 	InitLocalAPIC(ACPIBase, 0x2F, false);
 	
 	__bochs();

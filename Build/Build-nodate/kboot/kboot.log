@@ -1,11 +1,11 @@
 Initializing CGCC.MAKE build process...
-Skipping C:\GitHub\BlockyOS\src\kernel\kboot\kboot.c - up to date; source=2026-10-18T18:00:04.8782741Z, stored=10/18/2026 18:00:04
+Skipping C:\GitHub\BlockyOS\src\kernel\kboot\kboot.c - up to date; source=2026-10-20T23:36:11.8069195Z, stored=10/20/2026 23:36:11
 Skipping C:\GitHub\BlockyOS\src\kernel\kboot\kboot.asm - up to date; source=2026-10-18T17:35:13.2280272Z, stored=10/18/2026 17:35:13
 Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\CoreBootstrap.dll - up to date; source=2026-10-10T23:11:21.3433492Z, stored=10/10/2026 23:11:21
-Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-19T00:27:31.3082840Z, stored=10/19/2026 00:27:31
-Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll. source=2026-10-19T00:27:33.4284333Z, stored=10/19/2026 00:21:14, delta=n/a sec
+Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-21T01:03:30.5599447Z, stored=10/21/2026 01:03:30
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll. source=2026-10-21T01:03:34.2547562Z, stored=10/21/2026 00:05:23, delta=n/a sec
 Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibIO.dll
-Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll. source=2026-10-19T00:27:34.4995614Z, stored=10/19/2026 00:21:15, delta=n/a sec
+Stale source detected for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll. source=2026-10-21T01:03:36.0852268Z, stored=10/21/2026 00:05:26, delta=n/a sec
 Compiled and updated timestamp for C:\GitHub\BlockyOS\Build\Build-nodate\root-part\services\LibVideo.dll
 gcc compile/cache/elf.c.kboot.o compile/cache/elf.asm.kboot.o Build/Build-nodate/root-part/CoreBootstrap.dll Build/Build-nodate/root-part/LibCrt.dll Build/Build-nodate/root-part/services/LibIO.dll Build/Build-nodate/root-part/services/LibVideo.dll -Wl,-nostdlib -Wl,--disable-runtime-pseudo-reloc -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,-e,kboot_km -Wl,-pie -Wl,--image-base,0x0 -Wl,-Bsymbolic -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\kboot\kboot.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe
 Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/kboot.exe
@@ -22,7 +22,7 @@ C:\GitHub\BlockyOS\Build\Build-nodate\kboot\kboot.dmp.log
 [SHELL OUT]:	
 [SHELL OUT]:	>> 
 [SHELL OUT]:	>> 
-[SHELL OUT]:	0000015e85e261eb:fc	0000015e85e261f1:SYSD/	0000015e85e261fa:kboot.exe	
+[SHELL OUT]:	00000209ebb560cb:fc	00000209ebb560d1:SYSD/	00000209ebb560da:kboot.exe	
 [SHELL OUT]:	[	SYSD/kboot.exe]
 [SHELL OUT]:	[0]: ""
 [SHELL]	FSFRAT.OPEN

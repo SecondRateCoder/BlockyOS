@@ -269,24 +269,17 @@ typedef struct{
 #define InitPageCoordinate(VA)	(PageCoordinate){	\
 	.EnableL1 = true, .EnableL2 = true, .EnableL3 = true, .EnableL4 = true, .EnableL5 = IsLA57Enabled(), 	\
 	.L1 = (VA).L1, .L2 = (VA).L2, .L3 = (VA).L3, .L4 = (VA).L4, .L5 = (VA).L5}
-#define InitVirtualAddress(PC)	(VirtualAddress){.L0 = 0, .L1 = (PC).L1, .L2 = (PC).L2, .L3 = (PC).L3, .L4 = (PC).L4, .L5 = (PC).L5}
+#define InitVirtualAddress(PC)	(VirtualAddress){.L0 = 0, .L1 = ((PC).EnableL1? (PC).L1: 0), .L2 = ((PC).EnableL2? (PC).L2: 0),	\
+	.L3 = ((PC).EnableL3? (PC).L3: 0), .L4 = ((PC).EnableL4? (PC).L4: 0), .L5 = ((PC).EnableL5? (PC).L5: 0)}
 typedef struct{
-	uint64_t	L1			: 9, 
-				EnableL1	: 1;
-
-	uint64_t	L2			: 9, 
-				EnableL2	: 1;
-
-	uint64_t	L3			: 9, 
-				EnableL3	: 1;
-
-	uint64_t	L4			: 9, 
-				EnableL4	: 1;
-
-	uint64_t	L5			: 9, 
-				EnableL5	: 1;
-	uint64_t				: 14;
+	uint64_t	L1			: 9,	EnableL1	: 1;
+	uint64_t	L2			: 9,	EnableL2	: 1;
+	uint64_t	L3			: 9,	EnableL3	: 1;
+	uint64_t	L4			: 9,	EnableL4	: 1;
+	uint64_t	L5			: 9,	EnableL5	: 1;
+	uint64_t									: 14;
 }/*__packed*/ PageCoordinate;
+void AddPageCoordinate(PageCoordinate *pc, uint64_t count);
 
 
 #define PAGE_SIZE3			nGB(1)
@@ -344,7 +337,7 @@ typedef struct{
 	PageAllocationFlags		Type;
 }__packed SimpleMemoryRangeDescriptor_t;
 
-#define SetPagePhysicalAddress(Page, Address)	{(Page).PhysicalAddress = (uint64_t)(Address) & ((1ULL << (GetMaxPhysicalAddressBits() + 1)) - 1);}
+#define SetPagePhysicalAddress(Page, Address)	{(Page).PhysicalAddress = ((uint64_t)(Address) & ((1ULL << (GetMaxPhysicalAddressBits() + 1)) - 1));}
 
 /*
 	Memory will work like this, 

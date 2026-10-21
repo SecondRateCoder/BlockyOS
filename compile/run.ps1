@@ -98,6 +98,7 @@ keyboard: type=mf, serial_delay=150, paste_delay=100000
 magic_break: enabled=1
 port_e9_hack: enabled=1, all_rings=1
 
+debugger: $($debuggerlog)
 log: $($BOCHSLOG)
 iodebug: all_rings=1
 error: action=report

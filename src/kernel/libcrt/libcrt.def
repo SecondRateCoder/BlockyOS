@@ -219,6 +219,7 @@ EXPORTS
 	DebugPrintf
 	EnableInputAddress
 	_1GPageSupport
+	AddPageCoordinate
 	isrCallback0
 	isrCallback1
 	isrCallback2
