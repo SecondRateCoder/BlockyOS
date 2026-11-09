@@ -23,7 +23,7 @@
 */
 
 uint32_t GetLocalAPICID(){
-	uint32_t eax, ebx, ecx, edx;
+	uint32_t eax = 0x00, ebx = 0x00, ecx = 0x00, edx = 0x00;
 	__cpuid(1, eax, ebx, ecx, edx);
 	return (uint32_t)((uint8_t)(ebx >> 24) & UINT8_MAX);
 }
@@ -31,40 +31,31 @@ uint32_t GetLocalAPICID(){
 void *GetLocalAPICBase(void *ACPIBase, bool *_RDST){
 	void *MADT = SearchACPITable("APIC", ACPIBase);
 	if(!MADT){return NULL;}
-
 	uint32_t currentApicId = GetLocalAPICID();
-
-	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
-		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
-		uint32_t RemBytes = Table->Header.Length - sizeof(XSDT_MADT_t);
-		for(uint32_t cc = 0; RemBytes != 0; ++cc){
-			if(Table->Table[cc].Type == XSDT_ProcessorLocalAPIC){
-				XSDT_ProcessorLocalAPIC_t *Local = (XSDT_ProcessorLocalAPIC_t *)(Table->Table + cc);
-				if(Local->ApicID == currentApicId){
-					if(_RDST){(*_RDST) = false;}
-					//	Make sure it's Online Capable, if so then Enable it.
-					//	Otherwise, return false. 
-					if(__check(Local->Flags, XSDT_ProcessorEnabled)){return MapVirtual((void *)Table->LocalAPICAddress);}
-				}
+	//	The MADT and its records are firmware memory: read them at their physical address (identity map), and
+	//	walk the records by BYTE OFFSET. They have different sizes (LAPIC 8, IOAPIC 12, ...), so indexing them as an
+	//	array and subtracting each Length from RemBytes both drifts and can underflow into an endless loop.
+	uint8_t *Cursor, *End = (uint8_t *)MADT + ((ACPIStdHeader_t *)MADT)->Length;
+	uint32_t LocalAPICAddress;
+	bool XSDT = (((ACPIStdHeader_t *)MADT)->Revision >= XSDPRevision);
+	if(_RDST){(*_RDST) = !XSDT;}
+	if(XSDT){Cursor = (uint8_t *)(((XSDT_MADT_t *)MADT)->Table);	LocalAPICAddress = (uint32_t)((XSDT_MADT_t *)MADT)->LocalAPICAddress;}
+	else{Cursor = (uint8_t *)(((RSDT_MADT_t *)MADT)->Table);		LocalAPICAddress = (uint32_t)((RSDT_MADT_t *)MADT)->LocalAPICAddress;}
+	while((Cursor + 2) <= End){
+		uint8_t Type = Cursor[0], Length = Cursor[1];
+		if(Length < 2){break;}		//	corrupt record: stop instead of spinning
+		if(Type == (XSDT? XSDT_ProcessorLocalAPIC: RSDT_ProcessorLocalAPIC)){
+			if(XSDT){
+				XSDT_ProcessorLocalAPIC_t *Local = (XSDT_ProcessorLocalAPIC_t *)Cursor;
+				if((Local->ApicID == currentApicId) && __check(Local->Flags, XSDT_ProcessorEnabled)){return (void *)(uint64_t)LocalAPICAddress;}
+			}else{
+				RSDT_ProcessorLocalAPIC_t *Local = (RSDT_ProcessorLocalAPIC_t *)Cursor;
+				if((Local->ApicID == currentApicId) && __check(Local->Flags, RSDT_ProcessorEnabled)){return (void *)(uint64_t)LocalAPICAddress;}
 			}
-			RemBytes -= Table->Table[cc].RecordTypeLength;
 		}
-	}else{
-		RSDT_MADT_t *Table = (RSDT_MADT_t *)MADT;
-		uint32_t RemBytes = Table->Header.Length - sizeof(RSDT_MADT_t);
-		for(uint32_t cc = 0; RemBytes != 0; ++cc){
-			if(Table->Table[cc].Type == RSDT_ProcessorLocalAPIC){
-				RSDT_ProcessorLocalAPIC_t *Local = (RSDT_ProcessorLocalAPIC_t *)(Table->Table + cc);
-				(*_RDST) = true;
-				//	Make sure it's Online Capable, if so then Enable it.
-				//	Otherwise, return false. 
-				if(Local->ApicID == currentApicId && __check(Local->Flags, RSDT_ProcessorEnabled)){
-					return MapVirtual((void *)(uint64_t)Table->LocalAPICAddress);
-				}
-			}
-			RemBytes -= Table->Table[cc].RecordTypeLength;
-		}
+		Cursor += Length;
 	}
+	return NULL;	//	the original fell off the end here and returned whatever was in rax
 }
 
 bool InitLocalAPIC(void *ACPIBase, uint8_t InterruptBase, bool Enable){
@@ -108,8 +99,9 @@ void *BootCore(void *ACPIBase, uint8_t ApicID, uint8_t *InterruptVector, void *C
 	//	Initialise the Memory at Location
 	void *Tmp = NULL;
 	*InterruptVector = 0;
-	EnableInputAddress(true, true);
-	while(!(Tmp = AllocatePages((void *)(*InterruptVector * PAGE_SIZE), CodeLength, (ReadWritable | SupervisorMode | ExecuteEnable), 0x00))){InterruptVector++;}
+	// EnableInputAddress(true, true);
+	while((Tmp = AllocatePages((void *)(*InterruptVector * PAGE_SIZE), CodeLength, (ReadWritable | SupervisorMode | ExecuteEnable), 0x00)) == InvalidPointer){
+		(*InterruptVector)++;}
 	memcpy(Tmp, Code, CodeLength);
     //	Send INIT IPI (Assert)
     //	Delivery Mode = 101b (INIT), Level = 1, Trigger = Edge

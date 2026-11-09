@@ -192,24 +192,19 @@ conf_fsroot *fmount(EFI_GUID GUID, EFI_GUID altGUID){
 		setblocksize(re, fsroot_->confBlockSize);
 		conf_fsroot *largeroot = __calloc(1, sizeof(conf_fsroot));
 		*largeroot = (conf_fsroot){
-			.loc = partition.base,
-			.root = fsroot_,
-			.lastClusterAlloc = 0x00,
+			.re = re, .loc = partition.base, 
+			.root = fsroot_, .lastClusterAlloc = 0x00, 
 			.logblocks = {
-				.logBlock = readblocks(re, partition.base + LOGBLOCKOFFSET, fsroot_->confBlockSize * fsroot_->confLogSectors),
+				.logBlock = readblocks(re, partition.base + LOGBLOCKOFFSET, fsroot_->confBlockSize * fsroot_->confLogSectors), 
 				.nLogSectors = fsroot_->confLogSectors
 			},
 			.clusterbuffer = {
-				.nClusterSectors = __safediv(fsroot_->confClusterSize, fsroot_->confBlockSize),
-				.clusterSize = fsroot_->confClusterSize,
-				.nClusterItems = __safediv(fsroot_->confClusterSize, sizeof(fsblock)),
-				.clusterMap = readblocks(re, 
-					partition.base + (CLUSTERMAPOFFSET(fsroot_->confLogSectors) * fsroot_->confBlockSize), fsroot_->confClusterSize)
-			},
-			.GUID = GUID,
-			.altGUID = altGUID
+				.nClusterSectors = __safediv(fsroot_->confClusterSize, fsroot_->confBlockSize), 
+				.clusterSize = fsroot_->confClusterSize, 
+				.nClusterItems = __safediv(fsroot_->confClusterSize, sizeof(fsblock)), 
+				.clusterMap = readblocks(re, partition.base + (CLUSTERMAPOFFSET(fsroot_->confLogSectors) * fsroot_->confBlockSize), fsroot_->confClusterSize)
+			}, .GUID = GUID, .altGUID = altGUID
 		};
-		dispose(re);
 		return largeroot;
 	}
 	return NULL;
@@ -291,10 +286,8 @@ fsblock *__faddr(conf_fsroot *root, fsblock *family){
 		__memset(bl0, 0x00, root->root->confBlockSize);
 		LBA loc = getloc(root, fb);
 		// DEBUGPRINT(L"\n\tWriting 0x00-Block: %llu", loc);
-		rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
-		writeblocks(re, bl0, loc, root->root->confBlockSize);
+		writeblocks(root->re, bl0, loc, root->root->confBlockSize);
 		__free(bl0);
-		dispose(re);
 	}
 	return fb;
 }
@@ -328,9 +321,7 @@ void __finit(conf_fsroot *root, fsblock *fb, char *path){
 	flagunset(metadata->f.attributes, __fsmetadatacluster);
 	__memset(metadata->name, 0x00, GPTeNAMELEN);
 	__memcpy(metadata->name, name, __strlen(name));
-	rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
-	writeblocks(re, metadata, loc, sizeof(meta_fsblock));
-	dispose(re);
+	writeblocks(root->re, metadata, loc, sizeof(meta_fsblock));
 }
 
 
@@ -364,9 +355,7 @@ void *__fread1(conf_fsroot *root, fsblock *fb, UINT64 *index){
 		loc = getloc(root, fb_);
 	}else{loc = getloc(root, fb);}
 	// DEBUGPRINT(L"\nReading File Block at %llu, Item: %llu.    Root: [%llu:%llu]", loc, (*index), fb->fcodelow, fb->fcodehigh);
-	rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
-	void *out = readblocks(re, loc, root->root->confBlockSize);
-	dispose(re);
+	void *out = readblocks(root->re, loc, root->root->confBlockSize);
 	return out;
 }
 
@@ -399,9 +388,7 @@ void __fpush1(conf_fsroot *root, fsblock *fb, UINT64 *i, void *buffer){
 		
 	}
 	// DEBUGPRINT(L"\nWriting File Block at %llu, Item: %llu.\tRoot: [%llu:%llu]", loc, i, fb->fcodelow, fb->fcodehigh);
-	rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
-	writeblocks(re, buffer, loc, root->root->confBlockSize);
-	dispose(re);
+	writeblocks(root->re, buffer, loc, root->root->confBlockSize);
 }
 
 dirhandle *floadhdir(conf_fsroot *root, char *path, char *args){
@@ -431,10 +418,9 @@ dirhandle *floadhdir(conf_fsroot *root, char *path, char *args){
 void fuloaddir(dirhandle *handle){
 	DEBUGPRINT(L"\nUn-Mounting Directory [%a]", handle->path);
 	// Flush root
-	rawenv re = startup(handle->root->GUID, handle->root->altGUID, handle->root->loc, handle->root->root->confBlockSize);
-	writeblocks(re, handle->root->root, handle->root->loc, sizeof(fsroot));
+	writeblocks(handle->root->re, handle->root->root, handle->root->loc, sizeof(fsroot));
 	// Flush cluster Array/Buffer
-	writeblocks(re, handle->root->clusterbuffer.clusterMap, 
+	writeblocks(handle->root->re, handle->root->clusterbuffer.clusterMap, 
 		handle->root->loc + (CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors) * handle->root->root->confBlockSize), 
 		handle->root->clusterbuffer.clusterSize);
 	// Flush Entries
@@ -443,21 +429,28 @@ void fuloaddir(dirhandle *handle){
 	do{
 		f = __ffindhi(handle->root, (UINT64[2]){handle->file->fcodelow, handle->file->fcodehigh}, entry + 1);
 		if(f){writeblocks(
-			re, ((void *)handle->dirarray) + (handle->root->root->confBlockSize * entry), 
-			getloc(handle->root, f), 
-			handle->root->root->confBlockSize);
+			handle->root->re, ((void *)handle->dirarray) + (handle->root->root->confBlockSize * entry), 
+			getloc(handle->root, f), handle->root->root->confBlockSize);
 		}
 		entry++;
 	}while(f);
-	dispose(re);
 	__free(handle->dirarray);
 	__free(handle->path);
 	__free(handle);
 }
 
+void fuloadroot(conf_fsroot *fr){
+	writeblocks(fr->re, fr->root, fr->loc, sizeof(fsroot));
+	// Flush cluster Array/Buffer
+	writeblocks(fr->re, fr->clusterbuffer.clusterMap, fr->loc + (CLUSTERMAPOFFSET(fr->logblocks.nLogSectors) * fr->root->confBlockSize), fr->clusterbuffer.clusterSize);
+	dispose(fr->re);
+	__free(fr->root);
+	__free(fr->logblocks.logBlock);
+	__free(fr->clusterbuffer.clusterMap);
+}
+
 void __fdirrefresh(dirhandle *handle){
 	DEBUGPRINT(L"\nRefreshing Dir %a", handle->path);
-	rawenv re = startup(handle->root->GUID, handle->root->altGUID, handle->root->loc, handle->root->root->confBlockSize);
 	UINT64 blockprogress = 0x00;
 	BOOLEAN exit_ = FALSE;
 	do{
@@ -465,16 +458,15 @@ void __fdirrefresh(dirhandle *handle){
 		fsblock *fb = __ffindi(handle->root, handle->path, blockprogress + 1);
 		if(fb){
 			// Read off the Block 
-			handle->dirarray = __realloc(handle->dirarray, handle->loadedblocks * getblocksize(re), getblocksize(re) * (blockprogress + 1));
-			void *temp = readblocks(re, getloc(handle->root, fb), handle->root->root->confBlockSize);
-			__memcpy((void *)handle->dirarray + (getblocksize(re) * blockprogress), temp, getblocksize(re));
+			handle->dirarray = __realloc(handle->dirarray, handle->loadedblocks * getblocksize(handle->root->re), getblocksize(handle->root->re) * (blockprogress + 1));
+			void *temp = readblocks(handle->root->re, getloc(handle->root, fb), handle->root->root->confBlockSize);
+			__memcpy((void *)handle->dirarray + (getblocksize(handle->root->re) * blockprogress), temp, getblocksize(handle->root->re));
 			__free(temp);
-			for(UINT64 cc = 0x00; cc < __safediv(getblocksize(re), sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = TRUE;	break;}}
+			for(UINT64 cc = 0x00; cc < __safediv(getblocksize(handle->root->re), sizeof(diritem)); ++cc){if(handle->dirarray[cc].local == 0x00){exit_ = TRUE;	break;}}
 			blockprogress++;
 		}else if(!fb){exit_ = TRUE;}
 	}while(!exit_);
 	handle->loadedblocks = blockprogress;
-	dispose(re);
 }
 
 fhandle *floadh(conf_fsroot *root, char *path, char *args){
@@ -503,29 +495,24 @@ fhandle *floadh(conf_fsroot *root, char *path, char *args){
 void fuloadh(fhandle *handle){
 	DEBUGPRINT(L"\nUn-Mounting File [%llu:%llu]", handle->file->fcodelow, handle->file->fcodehigh);
 	// Flush root
-	rawenv re = startup(handle->root->GUID, handle->root->altGUID, handle->root->loc, handle->root->root->confBlockSize);
-	writeblocks(re, handle->root->root, handle->root->loc, sizeof(fsroot));
+	writeblocks(handle->root->re, handle->root->root, handle->root->loc, sizeof(fsroot));
 	// Flush cluster Array/Buffer
-	writeblocks(re, handle->root->clusterbuffer.clusterMap, 
+	writeblocks(handle->root->re, handle->root->clusterbuffer.clusterMap, 
 		handle->root->loc + (CLUSTERMAPOFFSET(handle->root->logblocks.nLogSectors) * handle->root->root->confBlockSize), 
 		handle->root->clusterbuffer.clusterSize);
 	__free(handle->path);
 	__free(handle);
-	dispose(re);
 }
 
 
 meta_fsblock *__freadinfo(conf_fsroot *root, fsblock *fb){
 	LBA loc = getloc(root, fb);
-	rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
 	// DEBUGPRINT(L"\nReading File Info");
-	void *out = readblocks(re, loc, sizeof(meta_fsblock));
-	dispose(re);
+	void *out = readblocks(root->re, loc, sizeof(meta_fsblock));
 	return out;
 }
 
 void __fupdatetstamp(conf_fsroot *root, fsblock *file, BOOLEAN wt){
-	rawenv re = startup(root->GUID, root->altGUID, root->loc, root->root->confBlockSize);
 	meta_fsblock *finfo = __freadinfo(root, file);
 	LBA loc = getloc(root, file);
 	EFI_TIME time;
@@ -537,9 +524,8 @@ void __fupdatetstamp(conf_fsroot *root, fsblock *file, BOOLEAN wt){
 		finfo->accesstime = (time.Hour * 3600) + (time.Minute * 60) + time.Second;
 		finfo->accessdate = time.Day;
 		// DEBUGPRINT(L"\nWriting Time Stamp");
-		writeblocks(re, finfo, loc, sizeof(meta_fsblock));
+		writeblocks(root->re, finfo, loc, sizeof(meta_fsblock));
 	}
-	dispose(re);
 }
 
 UINT64 __fsize(fhandle *fh){

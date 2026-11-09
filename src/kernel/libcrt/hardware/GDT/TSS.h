@@ -13,7 +13,6 @@ typedef struct{
 	 * switches execution from Ring 3 (User) to Ring 0 (Kernel).
 	 */
 	uint64_t RSP[3];
-	
 	uint64_t reserved1;
 	
 	/* Interrupt Stack Table (IST1 - IST7)
@@ -26,7 +25,7 @@ typedef struct{
 	uint16_t reserved3;
 	
 	/* Offset from the TSS base to the I/O Permission Bit Map (IOPB).
-	 * If I/O bitmap is not used, set this to sizeof(TSS64) or higher (e.g., 0x68).
+	 * If I/O bitmap is not used, set this to uint16_max or higher (e.g., 0x68).
 	 */
 	uint16_t io_map_base;
 }__packed TSS_t;

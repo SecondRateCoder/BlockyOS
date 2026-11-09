@@ -41,12 +41,13 @@ LibAPI void WriteMSR(uint32_t msr, uint64_t value){
 
 
 #include "PIT.h"
+#include "kernel/libcrt/SimpleOutput/SimpleOutput.h"
 volatile uint128_t pit_ticks = {0x00};
 #define PITTick         (1193182 / 1000)
 #define MS_TO_TICKS(MS)	(MS * PITTick)
 
 // Call this inside your IRQ0 handler routine
-LibAPI ISRCallbackDefinition(_PITTick){pit_ticks[0]++; if(!pit_ticks[0]){pit_ticks[1]++;} ISRCallbackReturn;}
+LibAPI ISRCallbackDefinition(_PITTick){DebugPrintf("\nPIT Interrupt");	pit_ticks[0]++; if(!pit_ticks[0]){pit_ticks[1]++;} ISRCallbackReturn;}
 LibAPI void InitializePIT(void *acpibase, uint8_t IOAPIC, uint8_t LocalAPIC, uint32_t Priviledge){
 	uint8_t _IST, Vector;
 	IDTEntrySegmentSelector64 sselector;
@@ -96,7 +97,7 @@ LibAPI void SleepMS(uint32_t milliseconds){
 	// Handle tick wrap-around edge case
 	while(pit_ticks >= start_ticks || pit_ticks < target_ticks){__asm__ volatile("hlt");}
 }
-LibAPI inline void SleepS(uint32_t seconds){SleepMS(seconds * 1000);}
+LibAPI __noinline void SleepS(uint32_t seconds){SleepMS(seconds * 1000);}
 
 
 #include "RTC.h"

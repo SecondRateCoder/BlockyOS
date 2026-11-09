@@ -30,7 +30,7 @@ void ATAPIPort(void *acpibase, uint32_t APIC, PCIDevice *device, uint32_t *nativ
 	if(device){
 		ATAPIGetPorts(device, &_nativemode, &_pcommand, &_pcontrol, &_scommand, &_scontrol, &_bmba, NULL, NULL);
 		void *_MADT = SearchACPITable("MADT", acpibase);
-		if(((SDTHeader_t *)_MADT)->Revision >= XSDPRevision){
+		if(((ACPIStdHeader_t *)_MADT)->Revision >= XSDPRevision){
 			XSDT_MADT_t *MADT = _MADT;
 			uint64_t Offset = 0x00;
 			for(uint32_t cc = 0; cc < ((MADT->Header.Length - sizeof(XSDT_MADT_t)) / sizeof(XSDT_MADTEntry)); ++cc){

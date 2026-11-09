@@ -9,6 +9,8 @@
 #define RSDPRevision		0
 #define XSDPRevision		2
 
+#define ACPI
+
 typedef struct{
 	char			Signature[4];
 	uint32_t		Length;
@@ -19,8 +21,8 @@ typedef struct{
 	uint32_t		OEMRevision;
 	uint32_t		CreatorID;
 	uint32_t		CreatorRevision;
-}__packed SDTHeader_t;
+}__packed ACPIStdHeader_t;
 
-LibAPI bool ValidateHeader(SDTHeader_t *Header);
+LibAPI bool ValidateHeader(ACPIStdHeader_t *Header);
 LibAPI uint8_t __inline GetACPIRevision(void *ACPIBase);
 LibAPI void *SearchACPITable(char Signature[4], void *ACPIBase);

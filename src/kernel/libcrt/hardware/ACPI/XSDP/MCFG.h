@@ -15,8 +15,8 @@ typedef struct{
 	uint32_t	Reserved0;
 }__packed XSDT_MCFGConfigurationEntry_t;
 typedef struct{
-	SDTHeader_t	Header;
+	ACPIStdHeader_t	Header;
 	uint64_t	Reserved0;
-	//	(Header.Length - (8 + sizeof(SDTHeader_t)) / sizeof(RSDT_MCFGConfigurationEntry_t))
+	//	(Header.Length - (8 + sizeof(ACPIStdHeader_t)) / sizeof(RSDT_MCFGConfigurationEntry_t))
 	XSDT_MCFGConfigurationEntry_t	Table[];
 }__packed XSDT_MCFG_t;

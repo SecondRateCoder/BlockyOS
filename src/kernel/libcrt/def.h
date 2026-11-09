@@ -94,22 +94,6 @@
 #define DLLExport				__declspec(dllexport)
 #define DLLImport				__declspec(dllimport)
 
-
-// #if defined(__DLL) || defined(__EXPORT) || defined(__IMPORT)
-// #define LibAPIExport			DLLExport
-// #define LibAPIImport			DLLImport
-// #else
-// #define LibAPIExport
-// #define LibAPIImport
-// #endif
-
-// #ifdef __EXPORT
-// #define LibAPI					LibAPIExport
-// #elif defined(__IMPORT)
-// #define LibAPI					LibAPIImport
-// #else
-// #define LibAPI
-// #endif
 #if defined(_WIN32) || defined(__CYGWIN__)
   #define DLLExport __declspec(dllexport)
   #define DLLImport __declspec(dllimport)
@@ -182,13 +166,13 @@
 #define SAFEOP(A, B, CompAOp, CompA, CompBOp, CompB, Comp, OP, Alt) (((A) CompAOp (CompA)) Comp ((B) CompBOp (CompB))? ((A) OP (B)): (Alt))
 #define __safediv(A, B) SAFEOP((A), (B), ||, true, !=, 0, &&, /, 1)
 
+#define BitMask(Mask)	((1 << (Mask)) - 1)
+#define BitMaskH(Mask)	(~BitMask(Mask))
+
 LibAPI extern bool __sysvabi e9print(char *str, unsigned long long n);
 LibAPI extern bool __sysvabi e9printc(char c);
+LibAPI extern void *__sysvabi __getptr(void *imagebase, void *ptr);
 
-typedef struct{
-	unsigned short	Device;
-	unsigned short	Parent;
-}__packed GenericReference;
 typedef unsigned char		GenericChecksum[2];
 
 enumdef(unsigned long, CPUIDFeatures){
@@ -266,14 +250,34 @@ enumdef(unsigned long, CPUIDFeatures){
 	: "=a" (a), "=b" (b), "=c" (c), "=d" (d)	\
 	: "0" (level))
 
-#define va_list			__builtin_va_list
-#define va_start(v, l)	__builtin_va_start(v,l)
-#define va_end(v)		__builtin_va_end(v)
-#define va_arg(v,l)		__builtin_va_arg(v,l)
-#define va_copy(d,s)	__builtin_va_copy(d,s)
+#include "compile/toolchain/include/stdarg.h"
+#ifndef _STDARG_H
+	#ifdef va_list
+		#undef va_list
+	#endif
+	#define va_list			__builtin_va_list
+	#ifdef va_start
+		#undef va_start
+	#endif
+	#define va_start(v, l)	__builtin_va_start(v,l)
+	#ifdef va_end
+		#undef va_end
+	#endif
+	#define va_end(v)		__builtin_va_end(v)
+	#ifdef va_arg
+		#undef va_arg
+	#endif
+	#define va_arg(v,l)		__builtin_va_arg(v,l)
+	#ifdef va_copy
+		#undef va_copy
+	#endif
+	#define va_copy(d,s)	__builtin_va_copy(d,s)
+#endif
 
-extern void __bochs(void);
-extern __noreturn void __halt(void);
+LibAPI extern void __bochs(void);
+LibAPI extern __noreturn void __halt(void);
+// LibAPI extern bool ___chkstk_ms(void);
+LibAPI extern __sysvabi void _interrupttrigger(uint8_t Interrupt);
 #define __chalt(op)	while(op){;}
 typedef struct{
 	unsigned long long	Breakpoint0Detected			: 1;
@@ -292,8 +296,8 @@ typedef struct{
 
 enumdef(unsigned char, DR7BreakpointCondition){InstructionExecution = 0b00, 
 	DataWritesOnly = 0b01, IOReadWrites = 0b10, DataReadWrites = 0b11};
-enumdef(unsigned char, DR7BreakpointLength){_1Byte = 0b00, 
-	_2Bytes = 0b01, _4Bytes = 0b11, _8Bytes = 0b10};
+enumdef(unsigned char, DR7BreakpointLength){_1ByteBreakpointLength = 0b00, 
+	_2BytesBreakpointLength = 0b01, _4BytesBreakpointLength = 0b11, _8BytesBreakpointLength = 0b10};
 typedef struct{
 	unsigned long long	LocalBreakpoint0Enable			: 1;
 	unsigned long long	GlobalBreakpoint0Enable			: 1;

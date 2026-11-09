@@ -1,7 +1,7 @@
 Initializing CGCC.MAKE build process...
-Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\Video.c - up to date; source=2026-10-12T10:55:42.2143344Z, stored=10/12/2026 10:55:42
+Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\Video.c - up to date; source=2026-10-21T21:48:11.1480664Z, stored=10/21/2026 21:48:11
 Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\controllers\Text.c - up to date; source=2026-10-14T12:58:41.2755659Z, stored=10/14/2026 12:58:41
-Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-10-21T01:03:30.5599447Z, stored=10/21/2026 01:03:30
+Skipping C:\GitHub\BlockyOS\Build\Build-nodate\root-part\LibCrt.dll - up to date; source=2026-11-09T00:06:40.1223767Z, stored=11/09/2026 00:06:40
 Skipping C:\GitHub\BlockyOS\src\kernel\services\Video\Video.def - up to date; source=2026-10-08T22:57:48.1675041Z, stored=10/08/2026 22:57:48
 gcc compile/cache/elf.c.Video.o compile/cache/elf.c.Text.o Build/Build-nodate/root-part/LibCrt.dll src/kernel/services/Video/Video.def -Wl,-nostdlib -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,--image-base,0x0 -Wl,-shared -Wl,-flinker-output=dyn -Wl,-Bsymbolic -Wl,--out-implib,C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll.a -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\Video\Video.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll
 Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/services/LibVideo.dll
@@ -18,7 +18,7 @@ C:\GitHub\BlockyOS\Build\Build-nodate\Video\Video.dmp.log
 [SHELL OUT]:	
 [SHELL OUT]:	>> 
 [SHELL OUT]:	>> 
-[SHELL OUT]:	000001353e9460cb:fc	000001353e9460d1:SYSD/	000001353e9460da:LibVideo.dll	
+[SHELL OUT]:	000001ee1d4e5edb:fc	000001ee1d4e5ee1:SYSD/	000001ee1d4e5eea:LibVideo.dll	
 [SHELL OUT]:	[	SYSD/LibVideo.dll]
 [SHELL OUT]:	[0]: ""
 [SHELL]	FSFRAT.OPEN

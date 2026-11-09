@@ -6,7 +6,7 @@
 
 LibAPI void *ReallocatePages(void *Phys, void *Base, PageAllocationFlags Flags, uint8_t ProtectionKey, uint64_t size);
 
-LibAPI void __noinline __visibilitydefault FreeAlignedPages(void *Page);
+LibAPI void __noinline FreeAlignedPages(void *Page);
 LibAPI void *AllocateAlignedPages(void *Phys, uint64_t size, PageAllocationFlags Flags, uint8_t ProtectionKey, uint8_t Align);
 LibAPI void *ReallocateAlignedPages(void *Phys, void *ptr, PageAllocationFlags Flags, uint8_t ProtectionKey, uint64_t size, uint8_t Align);
 
@@ -50,7 +50,7 @@ enumdef(uint32_t, memdesc_e){memdesc_e__used = 0x1, memdesc_e__nofree = 0x2};
 #define getdescarrt(mp)		((getdescarrtrue(mp)) - 1)
 typedef struct memdesc_t{
 	void *ptr;
-	size_t nbytes;
+	uint64_t nbytes;
 	memdesc_e flags;
 	struct memdesc_t *next;
 }__attribute__((aligned(allocALIGN))) memdesc_t;
@@ -59,9 +59,9 @@ typedef struct mempool_t{
 	/// @brief A memory ptr of (.nblocks * BLOCKSIZE) aligned to 8-bytes.
 	void *base;
 	/// @brief The Number of BLOCKSIZE in .base
-	size_t nblocks;
+	uint64_t nblocks;
 	/// @brief The Number of actual Descriptors from the end of Memory.
-	size_t nDescriptors;
+	uint64_t nDescriptors;
 }mempool_t;
 typedef struct ml_t{
 	uint32_t pool;
@@ -82,17 +82,17 @@ enumdef(uint32_t, alloctype_t){
 typedef struct allocstate_t{
 	mempool_t *pools;
 	uint32_t npools;
-	size_t totalNAllocations;
+	uint64_t totalNAllocations;
 }allocstate_t;
 
-LibAPI volatile void *mmalloc(size_t nbytes);
-LibAPI volatile void *mmalloczero(size_t nbytes);
-LibAPI volatile void *mcalloc(size_t nItems, size_t itemSize);
-LibAPI volatile void *mrealloc(volatile void *__attribute__((restrict)) ptr, size_t new);
-LibAPI ml_t descinfo(volatile void *__attribute__((restrict)) ptr);
-LibAPI volatile void *mclone_s(void *original, size_t target);
+LibAPI volatile void *mmalloc(uint64_t nbytes);
+LibAPI volatile void *mmalloczero(uint64_t nbytes);
+LibAPI volatile void *mcalloc(uint64_t nItems, uint64_t itemSize);
+LibAPI volatile void *mrealloc(volatile void *__restrict ptr, uint64_t new);
+LibAPI ml_t descinfo(volatile void *__restrict ptr);
+LibAPI volatile void *mclone_s(void *original, uint64_t target);
 LibAPI volatile void *mclone(void *original);
-LibAPI void mfree(void *__attribute__((restrict)) ptr);
+LibAPI void mfree(void *__restrict ptr);
 
 // Arbitrary Functions
 LibAPI bool mIsMapped(void *m);

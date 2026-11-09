@@ -318,7 +318,7 @@ ISRCallbackDefinition(OHCIHeadDone){
 				{/*Error occurred (e.g. CRC error, Stall, Device Not Responding)*/}
 
 				//	Free completed descriptor memory
-				FreePages(td);
+				FreePages(td, sizeof(OHCITransferDescriptor_t));
 				curr_phys = next_phys;
 			}
 		}
@@ -401,12 +401,12 @@ bool ConfigureOHCIController(void *acpibase, uint32_t IOAPIC, uint32_t N, uint8_
 	OHCIWriteU32(acpibase, N, HcInterruptStatus, 0x7FFFFFFF);
 
 	//	Enable selected events and Master Interrupt Enable (MIE = Bit 31)
-	OHCIHcInterruptEnableRegister_t IR = {
+	OHCIHcInterruptEnableRegister_t IRe = {
 		.FrameNumberOverflowEnable = true, .HcDoneHeadWritebackEnable = true, .HcInterruptEnable = true, 
 		.OwnershipChangeEnable = true, .ResumeDetectEnable = true, .RootHubStatusChangeEnable = true, 
 		.SchedulingOverrunEnable = true, .StartOfFrameEnable = true, .UnrecoverableErrorEnable = true
 	};
-	OHCIWriteU32(acpibase, N, HcInterruptEnable, *((uint32_t *)&IR));
+	OHCIWriteU32(acpibase, N, HcInterruptEnable, *((uint32_t *)&IRe));
 
 	//	Enable Execution Lists and Transition to UsbOperational State
 	OHCIHcControlRegister_t control = {0};

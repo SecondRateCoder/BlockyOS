@@ -1,83 +1,92 @@
 bits 64
 extern InterruptCallbacks
+extern __bochs
 
-; For interrupts w/o a CPU error code
+;	For interrupts w/o a CPU error code
 %macro isrCallbackNoError 1
 global isrCallback%1
 isrCallback%1:
-    push qword 0    ; Dummy error code (for uniform stack frame layout)
-    push qword %1   ; Vector number
-    jmp common_isr_stub
+	push qword 0    ; Dummy error code (for uniform stack frame layout)
+	push qword %1   ; Vector number
+	jmp common_isr_stub
 %endmacro
 
-; For interrupts w a CPU error code (CPU already pushed error code)
+;	For interrupts w/ a CPU error code (CPU already pushed error code)
 %macro isrCallbackWError 1
 global isrCallback%1
 isrCallback%1:
-    push qword %1   ; Vector number
-    jmp common_isr_stub
+	push qword %1   ; Vector number
+	jmp common_isr_stub
 %endmacro
 
 section .text
-
+global common_isr_stub
 common_isr_stub:
-    ; Save all general-purpose registers
-    push rax
-    push rbx
-    push rcx
-    push rdx
-    push rbp
-    push rsi
-    push rdi
-    push r8
-    push r9
-    push r10
-    push r11
-    push r12
-    push r13
-    push r14
-    push r15
+	;	Save all general-purpose registers
+	push rax
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rsi
+	push rdi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+	mov rax, cr2
+	push rax
 
-    ; Save vector number before aligning stack
-    mov rbx, [rsp + 120]    ; Vector number is above 15 registers (15 * 8 = 120)
+	;	Save vector number before aligning stack
+	mov rbx, [rsp + (16 * 8)]    ; Vector number is above 15 registers (15 * 8 = 120)
 
-    ; Pass InterruptStackFrame pointer as 1st parameter (RDI) in System V ABI
-    mov rdi, rsp
+	;	Pass InterruptStackFrame pointer as 1st parameter (RDI) in System V ABI
+	mov rdi, rsp
 
-    ; Align RSP to 16 bytes for System V ABI compliance
-    mov rbp, rsp            ; Save unaligned RSP in RBP (RBP is preserved across C calls)
-    and rsp, -16            ; Align RSP to 16-byte boundary
+	;	Align RSP to 16 bytes for System V ABI compliance
+	mov rbp, rsp            ; Save unaligned RSP in RBP (RBP is preserved across C calls)
+	and rsp, -16            ; Align RSP to 16-byte boundary
 
-    cld                     ; Clear direction flag for standard C ABI
+	cld                     ; Clear direction flag for standard C ABI
 
-    ; Call C handler from callback array using the saved vector number
-    call qword [InterruptCallbacks + (8 * rbx)]
+	;	Assuming each callback entry is 16 bytes and the function pointer is at offset 0:
+	lea rsi, [rel InterruptCallbacks]
+	mov rax, [rsi + (rbx * 8)]	;	Load the function pointer directly using base + index * scale
+	call rax					;	Call the function pointer
 
-    ; Restore unaligned stack frame pointer
-    mov rsp, rbp
+	;	Restore unaligned stack frame pointer
+	mov rsp, rbp
 
-    ; Restore registers in reverse order
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop r11
-    pop r10
-    pop r9
-    pop r8
-    pop rdi
-    pop rsi
-    pop rbp
-    pop rdx
-    pop rcx
-    pop rbx
-    pop rax
+	;	Pop the CR2 Register.
+	pop r15
+	;	Restore registers in reverse order
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rdi
+	pop rsi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
+	pop rax
 
-    ; Clean up Vector Number and Error Code (or Dummy Error Code)
-    add rsp, 16
+	;	Clean up Vector Number and Error Code (or Dummy Error Code)
+	add rsp, 16
 
-    ; Return from interrupt
-    iretq
+	;	Return from interrupt
+	iretq
+
+
 isrCallbackNoError 0
 isrCallbackNoError 1
 isrCallbackNoError 2
@@ -107,8 +116,8 @@ isrCallbackNoError 25
 isrCallbackNoError 26
 isrCallbackNoError 27
 isrCallbackNoError 28
-isrCallbackNoError 29
-isrCallbackNoError 30
+isrCallbackWError 29
+isrCallbackWError 30
 isrCallbackNoError 31
 isrCallbackNoError 32
 isrCallbackNoError 33

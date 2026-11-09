@@ -16,3 +16,13 @@ _ReadIDTR:
     sidt [rdi]
     mov rax, 1
     ret
+
+global __sti
+__sti:
+	sti
+	ret
+
+global __cli
+__cli:
+	cli
+	ret

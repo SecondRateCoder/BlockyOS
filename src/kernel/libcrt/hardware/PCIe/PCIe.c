@@ -5,9 +5,9 @@
 void *GetPCIeConfigurationBase(void *acpibase, uint32_t n){
 	if(acpibase){
 		void *Table = SearchACPITable("MCFG", acpibase);
-		if(*((uint32_t *)(Table + __offsetof(SDTHeader_t, Revision))) >= XSDPRevision){
+		if(*((uint32_t *)(Table + __offsetof(ACPIStdHeader_t, Revision))) >= XSDPRevision){
 			XSDT_MCFG_t *_MCFG = (XSDT_MCFG_t *)Table;
-			if(n >= ((_MCFG->Header.Length - sizeof(SDTHeader_t)) / sizeof(XSDT_MCFGConfigurationEntry_t))){return NULL;}
+			if(n >= ((_MCFG->Header.Length - sizeof(ACPIStdHeader_t)) / sizeof(XSDT_MCFGConfigurationEntry_t))){return NULL;}
 			XSDT_MCFGConfigurationEntry_t *E = _MCFG->Table + n;
 			void *Virtual = NULL;
 			if(!(Virtual = MapVirtual((void *)E->ConfigurationBaseAddress))){
@@ -18,7 +18,7 @@ void *GetPCIeConfigurationBase(void *acpibase, uint32_t n){
 			return Virtual;
 		}else{
 			RSDT_MCFG_t *_MCFG = (RSDT_MCFG_t *)Table;
-			if(n >= ((_MCFG->Header.Length - sizeof(SDTHeader_t)) / sizeof(RSDT_MCFGConfigurationEntry_t))){return NULL;}
+			if(n >= ((_MCFG->Header.Length - sizeof(ACPIStdHeader_t)) / sizeof(RSDT_MCFGConfigurationEntry_t))){return NULL;}
 			RSDT_MCFGConfigurationEntry_t *E = _MCFG->Table + n;
 			void *Virtual = NULL;
 			if(!(Virtual = MapVirtual((void *)E->ConfigurationBaseAddress))){

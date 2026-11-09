@@ -62,6 +62,9 @@ LibAPI double integral(double real, double *ip);
 LibAPI double fmod(double a, double b);
 
 LibAPI float wh_rng();
+LibAPI void wh_seed(uint16_t a, uint16_t b, uint16_t c);
+
 LibAPI uint64_t mt_rng(void);
+LibAPI void mt_seed(uint64_t s);
 #define randomf		wh_rng
 #define random64	mt_rng

@@ -60,7 +60,7 @@ $ovmfvars = Join-Path $firmwarefolder 'OVMF_VARS.fd'
 
 $args_qemu = @(
 	'-vga', 'std', 
-	'-cpu', 'Skylake-Server,pmu=off', 
+	'-cpu', 'Skylake-Client,pmu=off', 
 	'-m', '4096',
 	'-d', 'int,cpu_reset', '-no-reboot', '-no-shutdown', 
 	'-accel', "$(if($IsLinux){'kvm'}elseif($IsMacOS){'hvf'}elseif($IsWindows){'whpx'}else{'tcg'})",

@@ -13,7 +13,7 @@
 //	All of the addresses will probably be 32 bits, and if you are not using PAE, 
 //		you couldn't use higher than 32 bits, but the spec says you should use this anyway. 
 #define XSDTCode		"XSDT"
-
+#define XSDPMagic		"RSD PTR"
 typedef struct{
 	RSDP_t				Version0;
 	struct{
@@ -54,7 +54,7 @@ static const XSDT_Signature XSDT_SupportedTables[] = {
 static const uint32_t XSDT_NSupported = sizeof(XSDT_SupportedTables) / sizeof(XSDT_Signature);
 
 typedef struct{
-	SDTHeader_t			Header;
+	ACPIStdHeader_t			Header;
 	//	Pointers[(Header.Length - sizeof(Header)) / sizeof(uint64_t)]
 	uint64_t 			Pointers[];
 }XSDT_t;

@@ -6,12 +6,10 @@ void SortMemoryDescriptors(void *D_, UINT64 StructSize, UINTN N){
     //	Allocate a temporary buffer for swapping raw descriptor bytes
     //	(EFI_MEMORY_DESCRIPTOR size can vary, typically 48 bytes)
     UINT8 *Base = (UINT8 *)D_;
-
     for(UINTN i = 1; i < N; ++i){
         UINT8 *currentPtr = Base + (i * StructSize);
         EFI_MEMORY_DESCRIPTOR *currentDesc = (EFI_MEMORY_DESCRIPTOR *)currentPtr;
         UINT64 currentStart = currentDesc->PhysicalStart;
-
         UINTN j = i;
         while(j > 0){
             UINT8 *prevPtr = Base + ((j - 1) * StructSize);
@@ -125,26 +123,27 @@ EFI_GRAPHICS_OUTPUT_MODE_INFORMATION InitialiseVideoMemory(void **VideoMemory, U
 }
 
 __bootinfo *gatherbootinfo(EFI_HANDLE Image){
-	__bootinfo *out = __calloc(1, sizeof(__bootinfo));
+	__bootinfo *out = NULL;
+	uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, KernelBinarySpace, __roundup(sizeof(__bootinfo), EFI_PAGE_SIZE) / EFI_PAGE_SIZE, &out);
 	StrnCpy(out->bootentry.BootEntryName, BOOTOPTION16, __min(sizeof(BOOTOPTION16) / sizeof(CHAR16), sizeof(out->bootentry.BootEntryName)));
 
 	*out = (__bootinfo){
 		.Stack = {
-			.Stack = NULL, 
-			.StackSize = EFI_PAGE_SIZE * EFI_PAGE_SIZE
+			.Stack = NULL, .StackSize = (EFI_PAGE_SIZE * 512) * 32, //	64 Mb
 		}, .devices = {
 			.devices = NULL, .CTableLength = ST->NumberOfTableEntries, 
-			.CTable = __memdup(ST->ConfigurationTable, sizeof(EFI_CONFIGURATION_TABLE) * ST->NumberOfTableEntries), 
+			.CTable = NULL, 
 		}, .memory = {0}, .Video = {0}, 
 		//	Temporary disable in order to Speed up Bochs.
 		.bootentry.BootEntryCode = 0//	CreateBootEntry(&rootDesc.guid, &rootDesc.uGuid, (CHAR16 *)out->bootentry.BootEntryName), 
 	};
+	uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, KernelBinarySpace, __roundup(sizeof(EFI_CONFIGURATION_TABLE) * gST->NumberOfTableEntries, EFI_PAGE_SIZE) / EFI_PAGE_SIZE, &(out->devices.CTable));
+	__memcpy(out->devices.CTable, gST->ConfigurationTable, sizeof(EFI_CONFIGURATION_TABLE) * gST->NumberOfTableEntries);
+
 	out->Video.CurrentVideoMode = InitialiseVideoMemory(&(out->Video.videomemory), &(out->Video.PixelSize), &(out->Video.PixelWidth), &(out->Video.PixelHeight));
 	DEBUGPRINT(L"\nVideo Memory: %p\tPixel Size: %llu\tWidth: %llu\tHeight: %llu", out->Video.videomemory, out->Video.PixelSize, out->Video.PixelWidth, out->Video.PixelHeight);
 	
-	EFI_STATUS St = uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, 
-		EfiRuntimeServicesData, out->Stack.StackSize / EFI_PAGE_SIZE, &(out->Stack.Stack));
-
+	EFI_STATUS St = uefi_call_wrapper(gBS->AllocatePages, 0, AllocateAnyPages, KernelBinarySpace, out->Stack.StackSize / EFI_PAGE_SIZE, &(out->Stack.Stack));
 	out->memory.MemoryDescriptors = GetMemoryMap(&(out->memory.MemoryDescriptorBufferSize), &(out->memory.MemoryDescriptorMapKey), 
 		&(out->memory.MemoryDescriptorStructSize), &(out->memory.MDescriptorsVersion));
 	DEBUGPRINT(L"\n\n\n");

@@ -2,35 +2,22 @@
 #include "kernel/libcrt/memory/memory.h"
 #include "kernel/libcrt/SimpleOutput/SimpleOutput.h"
 
-static const EFI_MEMORY_TYPE TypeMask0[] = {EfiRuntimeServicesCode, EfiRuntimeServicesData, EfiPalCode, EfiACPIMemoryNVS, EfiUnacceptedMemoryType, EfiUnusableMemory}, 
+//	Non-Usable Used Persistent Memory.
+static const EFI_MEMORY_TYPE TypeMask0[] = {EfiRuntimeServicesCode, EfiRuntimeServicesData, EfiPalCode, EfiACPIMemoryNVS, EfiUnacceptedMemoryType, EfiUnusableMemory};
 //	Usable Persistent Memory
-							TypeMask1[] = {EfiConventionalMemory, EfiBootServicesCode, EfiBootServicesData, EfiLoaderCode, EfiPersistentMemory}, 
+static const EFI_MEMORY_TYPE TypeMask1[] = {EfiConventionalMemory, EfiBootServicesCode, EfiBootServicesData, EfiLoaderCode, EfiPersistentMemory};
 //	Used Persistent Memory
-							TypeMask2[] = {EfiLoaderData, KernelBinarySpace, EfiACPIReclaimMemory}, 
+static const EFI_MEMORY_TYPE TypeMask2[] = {EfiLoaderData, KernelBinarySpace, EfiACPIReclaimMemory};
 //	Non-Physical Memory.
-							TypeMask3[] = {EfiReservedMemoryType, EfiMemoryMappedIOPortSpace, EfiMemoryMappedIO};
+static const EFI_MEMORY_TYPE TypeMask3[] = {EfiReservedMemoryType, EfiMemoryMappedIOPortSpace, EfiMemoryMappedIO, EfiUnacceptedMemoryType, EfiUnusableMemory};
+//	Submapping that encapsulates UnTouchable Memory
+static const EFI_MEMORY_TYPE TypeMask4[] = {EfiUnacceptedMemoryType, EfiUnusableMemory};
 static const uint64_t		AttributeMask = EFI_MEMORY_WP | EFI_MEMORY_RP | EFI_MEMORY_RO | EFI_MEMORY_NV | EFI_MEMORY_RUNTIME;
+static const PageAllocationType	AllocationMask = (PATUnfreeableRegion | PATUntouchableRegion | PATUsedRegion | PATSubDescriptorMapping | PATNonPhysicalDescriptor);
 
-#define GetEfiMemoryDescriptor(Desc, Ptr, N, StructSize)	EFI_MEMORY_DESCRIPTOR *Desc = (EFI_MEMORY_DESCRIPTOR *)((void *)(Ptr) + ((N) * (StructSize)))
-#define QueryPhysicalAddress(Adr, IState)			\
-	if((IState) && (IState)->Ready && (IState)->MemoryMaxPages && ((IState)->MemoryMaxPages > ((uint64_t)(Adr) / PAGE_SIZE)))
-#define GetDescriptor(Descriptor, Adr, IState)	\
-	MemoryRangeDescriptor *Descriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE))? (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]: NULL): NULL;	\
-	if(Descriptor)
-//	We need the Entry correspondng epecifically to this entry
-#define GetSubDescriptor(SubDescriptor, Adr, IState)\
-	uint64_t SubDescriptor##Offset = 0;	\
-	MemoryRangeSubDescriptor *SubDescriptor = (IState)->Ready? ((Adr < ((IState)->MemoryMaxPages * PAGE_SIZE)) &&	\
-		(IState)->Descriptors[(IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]].SubDescriptorIndex != InvalidSubDescriptorIndex?	\
-		((IState)->SubDescriptors[(IState)->CurrentSubDescriptorPool] + (IState)->Descriptors[(IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]].SubDescriptorIndex): NULL): NULL;		\
-		{uint64_t SubDescriptor##cc = 0, SubDescriptor##CopyAdr = (uint64_t)Adr - (IState)->Descriptors[(IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE]].Physical;	\
-			while(!SubDescriptor[SubDescriptor##cc].EndOfList && SubDescriptor##CopyAdr){	\
-				if((SubDescriptor[SubDescriptor##cc].NoPages * PAGE_SIZE) > SubDescriptor##CopyAdr){SubDescriptor##CopyAdr -= (SubDescriptor[SubDescriptor##cc].NoPages * PAGE_SIZE);}	\
-					else{SubDescriptor##CopyAdr = 0;}	SubDescriptor##Offset += SubDescriptor[SubDescriptor##cc].NoPages;	SubDescriptor##cc++;}	\
-			SubDescriptor = (SubDescriptor##CopyAdr? NULL: (SubDescriptor + SubDescriptor##cc));\
-		}	\
-	if(SubDescriptor)
-typedef struct{
+#define SubDescriptorRoundup	(32)
+#pragma region Structs, Macros and Helpers
+typedef volatile struct{
 	//	This describes the Physical(in Pages)->Descriptor Index.
 	uint16_t				*PhysicalDescriptorIndexes;
 	//	This describes the Various Memory Ranges that apply to various Memory Types. 
@@ -46,15 +33,103 @@ typedef struct{
 	uint32_t				LastAllocation;
 	bool					Ready;
 	//	Describes the Upper Echelons of Page Allocations: the first virtual address above the duplicate region.
-	VirtualAddress			LastPageTableAlloc;
+	PageCoordinate			IdentityPageTableMax;
 }InternalAllocationState;
+SimpleMemoryRangeDescriptor_t *QueryFreeMemory(void *Physical, uint64_t Pages, uint64_t *Count, const EFI_MEMORY_TYPE *TypeMask, uint64_t TypeMaskLength);
+uint64_t UpdateAllocationTableByPhysical(uint64_t Physical, UATBitMask _BitMask, ...);
+MemoryRangeSubDescriptor *AppendSingleAllocationTableEntry(uint64_t Physical, UATBitMask _BitMask, ...);
+void PrintPage(PageCoordinate PC);
 
-//	State decays on each call
-bool EnableInputAddress(bool toggle, bool w){
-	static __linkersection(.bss) bool _toggle = false;
-	bool tmp = _toggle;
-	if(w){_toggle = toggle;}
-	return tmp;
+static volatile InternalAllocationState *GetIState(){
+	static __linkersection(.bss) InternalAllocationState __internal = {0};
+	return &__internal;
+}
+
+#define GetEfiMemoryDescriptor(Desc, Ptr, N, StructSize)	EFI_MEMORY_DESCRIPTOR *Desc = (EFI_MEMORY_DESCRIPTOR *)((void *)(Ptr) + ((N) * (StructSize)))
+#define QueryPhysicalAddress(Adr, IState)			\
+	if((IState) && (IState)->Ready && (IState)->MemoryMaxPages && ((IState)->MemoryMaxPages > ((uint64_t)(Adr) / PAGE_SIZE)))
+#define GetDescriptor(Descriptor, Adr, IState)	MemoryRangeDescriptor *Descriptor = NULL;	QueryPhysicalAddress(Adr, IState){	\
+	Descriptor = (IState)->Descriptors + (IState)->PhysicalDescriptorIndexes[(uint64_t)(Adr) / PAGE_SIZE];}	\
+	if(Descriptor)
+
+#define _GetPageCoordinateElapsedPages(PC)	(_GetPageCoordinateElapsedBytes(PC) / PAGE_SIZE)
+static uint64_t _GetPageCoordinateElapsedBytes(PageCoordinate PC){
+	QuickPageWalk(PC, Page){
+		switch(PageLvl){
+			case 3:		{if(((PDPTEntryDirectory *)Page)->PageSize){return PAGE_SIZE3;}else{return UINT64_MAX;}}
+			case 2:		{if(((PageDirectoryEntry *)Page)->PageSize){return PAGE_SIZE2;}else{return UINT64_MAX;}}
+			case 1:		{return PAGE_SIZE;}
+		}
+	}
+	return 0;
+}
+static uint64_t _GetPageCoordinatePhysicalAddress(PageCoordinate PC){
+	QuickPageWalk(PC, Page){
+		switch(PageLvl){
+			case 3:		{return ((PDPTEntryDirectory *)Page)->PageSize? ((uint64_t)((PDPTEntry1GB *)Page)->PhysicalAddress << PAGE_SHIFT3): ((uint64_t)((PDPTEntryDirectory *)Page)->PhysicalAddress << PAGE_SHIFT);}
+			case 2:		{return ((PageDirectoryEntry *)Page)->PageSize? ((uint64_t)((PageDirectoryEntry2MB *)Page)->PhysicalAddress << PAGE_SHIFT2): ((uint64_t)((PageDirectoryEntry *)Page)->PhysicalAddress << PAGE_SHIFT);}
+			case 1:		{return (((PageTableEntry4KB *)Page)->PhysicalAddress << PAGE_SHIFT);}
+		}
+	}
+	return UINT64_MAX;
+}
+
+//	Faster for Both Details
+static void _GetPageCoordinateDetails(PageCoordinate PC, uint64_t *Bytes, uint64_t *Physical){
+	(*Physical) = UINT64_MAX;
+	(*Bytes) = 0;
+	QuickPageWalk(PC, Page){
+		switch(PageLvl){
+			case 3:		{
+				(*Physical) = ((PDPTEntryDirectory *)Page)->PageSize? ((uint64_t)((PDPTEntry1GB *)Page)->PhysicalAddress << PAGE_SHIFT3): ((uint64_t)((PDPTEntryDirectory *)Page)->PhysicalAddress << PAGE_SHIFT);
+				(*Bytes) = ((PDPTEntryDirectory *)Page)->PageSize? PAGE_SIZE3: UINT64_MAX;		return;}
+			case 2:		{
+				(*Physical) = ((PageDirectoryEntry *)Page)->PageSize? ((uint64_t)((PageDirectoryEntry2MB *)Page)->PhysicalAddress << PAGE_SHIFT2): ((uint64_t)((PageDirectoryEntry *)Page)->PhysicalAddress << PAGE_SHIFT);
+				(*Bytes) = ((PageDirectoryEntry *)Page)->PageSize? PAGE_SIZE2: UINT64_MAX;		return;}
+			case 1:		{(*Physical) = ((uint64_t)((PageTableEntry4KB *)Page)->PhysicalAddress << PAGE_SHIFT);	(*Bytes) = PAGE_SIZE;	return;}
+		}
+	}
+	return;
+}
+
+static MemoryRangeSubDescriptor *_GetSubDescriptorByPhysical(void *Phys, volatile InternalAllocationState *IState, uint64_t *Offset){
+	Phys = (void *)NormaliseAddress(((uint64_t)Phys & ~BitMask(12)), true);
+	GetDescriptor(D, Phys, IState){
+		MemoryRangeSubDescriptor *SD = IState->SubDescriptors[IState->CurrentSubDescriptorPool] + D->SubDescriptorIndex;
+		if(Offset){(*Offset) = 0;}
+		while(true){
+			if(SD->Valid){
+				uint64_t CurrPhys = 0x00, Elapsed = 0x00;
+				_GetPageCoordinateDetails(SD->PC, &Elapsed, &CurrPhys);
+				if(!((Elapsed == 0) || (Elapsed == UINT64_MAX) || (CurrPhys == UINT64_MAX))){
+					if(((uint64_t)Phys >= CurrPhys) && ((uint64_t)Phys < (CurrPhys + Elapsed))){return SD;}
+					if(SD->EndOfList){break;}
+					if(Offset){(*Offset) += _GetPageCoordinateElapsedBytes(SD->PC);}
+				}
+			}
+			if(SD->EndOfList){break;}
+			SD++;
+		}
+	}
+	DebugPrintf("\nNo Mapped Subdescriptor for 0x%0z", Phys);
+	return NULL;
+}
+static MemoryRangeSubDescriptor *_GetSubDescriptorByVirtual(void *Virt, volatile InternalAllocationState *IState, uint64_t *Offset){
+	Virt = (void *)NormaliseAddress(__roundup((uint64_t)Virt, PAGE_SIZE), true);
+	VirtualAddress VA = U64ToVirtualAddress((uint64_t)Virt);
+	PageCoordinate PC = InitPageCoordinate(VA);
+	uint64_t Phys = _GetPageCoordinatePhysicalAddress(PC);
+	if(Phys != UINT64_MAX){return _GetSubDescriptorByPhysical((void *)Phys, IState, Offset);}
+	DebugPrintf("\nNo Mapped Subdescriptor");
+	return NULL;
+}
+static uint64_t _GetSubDescriptorCount(MemoryRangeDescriptor *D){
+	InternalAllocationState *IState = GetIState();
+	if(D->SubDescriptorIndex > (IState->TotalSubDescriptors / IState->TotalSubDescriptorPools)){return 0;}
+	MemoryRangeSubDescriptor *SD = IState->SubDescriptors[IState->CurrentSubDescriptorPool] + D->SubDescriptorIndex;
+	uint64_t Cnt = 0;
+	while(!SD[Cnt].EndOfList){Cnt++;}
+	return (Cnt + 1);
 }
 
 void AddPageCoordinate(PageCoordinate *pc, uint64_t bytes){
@@ -88,138 +163,282 @@ void AddPageCoordinate(PageCoordinate *pc, uint64_t bytes){
     }
 }
 
-static volatile InternalAllocationState *GetIState(){
-	static __linkersection(.bss) InternalAllocationState __internal = {0};
-	return &__internal;
+uint64_t NormaliseAddress(uint64_t Address, bool Low){
+	volatile InternalAllocationState *IS = GetIState();
+	VirtualAddress VA = InitVirtualAddress(IS->IdentityPageTableMax);
+	const uint64_t Base = VirtualAddressToU64(VA);
+	//	Was `Address > Base` / `Address < Base`: the boundary address itself was never converted.
+	if(Low){return (Address >= Base)? (Address - Base): Address;}
+	return (Address < Base)? (Address + Base): Address;
 }
-
-uint64_t TotalMemorySize(void){return (GetIState())->MemoryMaxPages * PAGE_SIZE;}
-uint64_t TotalMappedMemory(void *ptr){
-	if(ptr){
-		void *Physical = MapPhysical(ptr);
-		volatile InternalAllocationState *IS = GetIState();
-		QueryPhysicalAddress(Physical, IS){
-			GetSubDescriptor(SubDescriptor, Physical, IS){return SubDescriptor->NoPages * PAGE_SIZE;}
-		}else{return 0;}
+#pragma region Page Gobbledeegook
+void *MapVirtual(void *Physical){
+	InternalAllocationState *IState = GetIState();
+	MemoryRangeSubDescriptor *SD = _GetSubDescriptorByPhysical(Physical, IState, NULL);
+	if(!SD){return InvalidPointer;}
+	//	SD->PC is the virtual coordinate that maps this sub-descriptor; Base is the physical address its entry holds.
+	uint64_t Bytes = 0, Base = 0;
+	_GetPageCoordinateDetails(SD->PC, &Bytes, &Base);
+	if((Bytes == 0) || (Bytes == UINT64_MAX) || (Base == UINT64_MAX)){return InvalidPointer;}
+	//	The sub-descriptor search works on a page-aligned address; put the offset back.
+	const uint64_t Phys = NormaliseAddress((uint64_t)Physical, true);
+	VirtualAddress VA = InitVirtualAddress(SD->PC);
+	return (void *)(VirtualAddressToU64(VA) + (Phys - Base));
+}
+void *MapPhysical(void *Virtual){
+	const uint64_t V = (uint64_t)Virtual;
+	VirtualAddress VA = U64ToVirtualAddress(V);
+	PageCoordinate PC = InitPageCoordinate(VA);
+	QuickPageWalk(PC, Page){
+		switch(PageLvl){
+			case 3:	{PDPTEntry1GB *E = Page;			if(!E->Present || !E->PageSize){return InvalidPointer;}	return (void *)(((uint64_t)E->PhysicalAddress << PAGE_SHIFT3) + (V & (PAGE_SIZE3 - 1)));}
+			case 2:	{PageDirectoryEntry2MB *E = Page;	if(!E->Present || !E->PageSize){return InvalidPointer;}	return (void *)(((uint64_t)E->PhysicalAddress << PAGE_SHIFT2) + (V & (PAGE_SIZE2 - 1)));}
+			case 1:	{PageTableEntry4KB *E = Page;		if(!E->Present){return InvalidPointer;}					return (void *)(((uint64_t)E->PhysicalAddress << PAGE_SHIFT) + (V & (PAGE_SIZE - 1)));}
+		}
 	}
-	return 0;
+	return InvalidPointer;
 }
-bool __inline MemoryIsMapped(void *ptr){return (TotalMappedMemory(ptr) != 0);}
 
-static __inline void *WalkEmulatedPageTree(PageCoordinate PC, void *PT, uint32_t *Lvl){
-	const uint64_t Addr4K = 0x000FFFFFFFFFF000ULL;
+//	Returns Entry
+void *WalkEmulatedPageTree(PageCoordinate PC, void *PT, uint32_t *Lvl){
 	const uint32_t Idx[6] = {0, PC.L1, PC.L2, PC.L3, PC.L4, PC.L5};
 	const bool En[6] = {false, PC.EnableL1, PC.EnableL2, PC.EnableL3, PC.EnableL4, PC.EnableL5};
 	volatile uint64_t *T = (volatile uint64_t *)PT;
 	uint32_t L = *Lvl;
-	if((L < 1) || (L > 5)){return NULL;}
+	if((L < 1) || (L > 5)){return InvalidPointer;}
 
 	for(; L; --L){
 		if(!En[L]){break;}
+		//	Page Table Entry
 		volatile uint64_t *E = T + Idx[L];
-		if(!(*E)){*Lvl = L;	return NULL;}
+		// if(!(*E)){*Lvl = L;	return NULL;}
 		//	Bit 0 clear but entry non-zero: skeleton leaf. Bit 7 is PS at levels 3 and 2 (at level 1 it is PAT).
-		if(!((*E) & 1) || (L == 1) || ((L <= 3) && ((*E) & (1ULL << 7)))){*Lvl = L;	return (void *)E;}
-		//	Tables are reached through MapVirtual, like the rest of palloc.c (identity today).
-		T = (volatile uint64_t *)((void *)((*E) & Addr4K));
+		const bool Present = ((*E) & 0x1) || (L == 1), PageSizeEnabled = (L==2) || (L==3)? ((*E >> 7) & 0x1): 0x00;
+		if(!Present){break;}else if(PageSizeEnabled){*Lvl = L;	return (void *)E;}
+		switch(L){
+			case 5: {T = (uint64_t *)((uint64_t)((PML5Entry *)E)->PhysicalAddress << PAGE_SHIFT);			break;}
+			case 4: {T = (uint64_t *)((uint64_t)((PML4Entry *)E)->PhysicalAddress << PAGE_SHIFT);			break;}
+			case 3: {T = (uint64_t *)((uint64_t)((PDPTEntryDirectory *)E)->PhysicalAddress << PAGE_SHIFT);	break;}
+			case 2: {T = (uint64_t *)((uint64_t)((PageDirectoryEntry *)E)->PhysicalAddress << PAGE_SHIFT);	break;}
+		}
+		if(L == 1){break;}
 	}
 	*Lvl = L;
-	return (void *)T;
+	return (void *)(T + Idx[L]);
 }
 
+#define PageInMemoryFlagUsetBit	(((uint32_t)UINT16_MAX << 16) | ReadWritable)
+#define PresentBitUsetBit		(((uint32_t)UINT16_MAX << 16) | SupervisorMode)
 bool UpdatePageTable(void *Virtual, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey){
 	bool L5Enabled = IsLA57Enabled();
 	void *PageTable = GetPageTable(&L5Enabled, _StoredPageTableMode, NULL);
+	//	XD is a reserved bit (fault) unless EFER.NXE is set.
+	uint32_t EferLow, EferHigh;
+	__asm__ volatile("rdmsr" : "=a"(EferLow), "=d"(EferHigh) : "c"(0xC0000080U));
+	const bool NX = (EferLow >> 11) & 1;
+	//	Cover whole pages: an unaligned start must not shorten the range (only NBytes used to be rounded).
+	{const uint64_t Lead = (uint64_t)Virtual & (PAGE_SIZE - 1);	Virtual = (void *)((uint64_t)Virtual - Lead);	NBytes = __roundup(NBytes + Lead, PAGE_SIZE);}
 	while(NBytes){
-		//	Level in: top level. Level out: the level of the leaf found (3: 1GB, 2: 2MB, 1: 4KB).
+		//	Level in: top level. Level out: the level the walk stopped at (3: 1GB, 2: 2MB, 1: 4KB).
 		uint32_t Level = IsLA57Enabled()? 5: 4;
-		void *PT = WalkEmulatedPageTree(*(PageCoordinate *)&Virtual, PageTable, &Level);
-		//	Nothing mapped here: fail instead of looping forever (NBytes never shrank on this path before).
-		if(!PT){DebugPrintf("\nFailed to get PT");	return false;}
+		VirtualAddress VA = U64ToVirtualAddress((uint64_t)Virtual);
+		PageCoordinate PC = InitPageCoordinate(VA);
+		void *PT = WalkEmulatedPageTree(PC, PageTable, &Level);
+		//	WalkEmulatedPageTree returns the slot where it stopped EVEN WHEN THAT SLOT IS EMPTY, so `!PT` never fires.
+		//	Writing flags into an empty slot creates a present mapping of physical 0. Only a non-zero leaf may be updated:
+		//	levels 3 and 2 must carry PS (otherwise it is a missing or non-present table pointer), level 1 must be non-zero,
+		//	and levels 5 and 4 are never leaves.
+		const uint64_t Raw = PT? *(volatile uint64_t *)PT: 0;
+		if(!Raw || (Level > 3) || ((Level > 1) && !(Raw & (1ULL << 7)))){DebugPrintf("\nFailed to get PT");	return false;}
+		//	Step to the end of THIS leaf (it can be larger than the request, or the request can start inside it).
+		const uint64_t Span = 1ULL << (PAGE_SHIFT + (9 * (Level - 1)));
+		uint64_t Step = Span - ((uint64_t)Virtual & (Span - 1));
+		if(Step > NBytes){Step = NBytes;}
+		const bool XD = (!__check(Flags, ExecuteEnable) && NX);
 		switch(Level){
-			case 5: {
-				PML5Entry *L5 = (PML5Entry *)PT;
-				L5->PageInMemory = true;
-				L5->Present = true;
-				L5->ExecuteDisable = !__check(Flags, ExecuteEnable);
-				L5->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
-				L5->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
-				L5->ReadWrite = __check(Flags, ReadWritable);
-				L5->UserMode = __check(Flags, UserMode);
-				InvalidatePage(Virtual);
-				Virtual += PAGE_SIZE;
-				NBytes -= PAGE_SIZE;
-				break;
-			} case 4: {
-				PML4Entry *L4 = (PML4Entry *)PT;
-				L4->PageInMemory = true;
-				L4->Present = true;
-				L4->ExecuteDisable = !__check(Flags, ExecuteEnable);
-				L4->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
-				L4->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
-				L4->ReadWrite = __check(Flags, ReadWritable);
-				L4->UserMode = __check(Flags, UserMode);
-				InvalidatePage(Virtual);
-				Virtual += PAGE_SIZE;
-				NBytes -= PAGE_SIZE;
-				break;
-			} case 3: {
+			case 3: {
 				PDPTEntry1GB *L3 = (PDPTEntry1GB *)PT;
-				L3->PageInMemory = true;
-				L3->Present = true;
-				L3->ExecuteDisable = !__check(Flags, ExecuteEnable);
+				L3->PageInMemory = !__check(Flags, PageInMemoryFlagUsetBit);
+				L3->Present = !__check(Flags, PresentBitUsetBit);
+				L3->ExecuteDisable = XD;
 				L3->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
 				L3->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
 				L3->ReadWrite = __check(Flags, ReadWritable);
 				L3->UserMode = __check(Flags, UserMode);
 				L3->ProtectionKey = ProtectionKey;
-				InvalidatePage(Virtual);
-				Virtual += PAGE_SIZE3;
-				NBytes -= PAGE_SIZE3;
 				break;
 			} case 2: {
 				PageDirectoryEntry2MB *L2 = (PageDirectoryEntry2MB *)PT;
-				L2->PageInMemory = true;
-				L2->Present = true;
-				L2->ExecuteDisable = !__check(Flags, ExecuteEnable);
+				L2->PageInMemory = !__check(Flags, PageInMemoryFlagUsetBit);
+				L2->Present = !__check(Flags, PresentBitUsetBit);
+				L2->ExecuteDisable = XD;
 				L2->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
 				L2->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
 				L2->ReadWrite = __check(Flags, ReadWritable);
 				L2->UserMode = __check(Flags, UserMode);
 				L2->ProtectionKey = ProtectionKey;
-				InvalidatePage(Virtual);
-				Virtual += PAGE_SIZE2;
-				NBytes -= PAGE_SIZE2;
 				break;
-			} case 1: {
+			} default: {
 				PageTableEntry4KB *L1 = (PageTableEntry4KB *)PT;
-				L1->PageInMemory = true;
-				L1->Present = true;
-				L1->ExecuteDisable = !__check(Flags, ExecuteEnable);
+				L1->PageInMemory = !__check(Flags, PageInMemoryFlagUsetBit);
+				L1->Present = !__check(Flags, PresentBitUsetBit);
+				L1->ExecuteDisable = XD;
 				L1->PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable);
 				L1->PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable);
 				L1->ReadWrite = __check(Flags, ReadWritable);
 				L1->UserMode = __check(Flags, UserMode);
 				L1->ProtectionKey = ProtectionKey;
-				InvalidatePage(Virtual);
-				Virtual += PAGE_SIZE;
-				NBytes -= PAGE_SIZE;
 				break;
-			} default: {return false;}
+			}
 		}
+		InvalidatePage(Virtual);
+		Virtual += Step;
+		NBytes -= Step;
 	}
 	return true;
 }
-
-//!	Update the Page Table to point to a Physical Address.
-
-void *GeneratePageTable(SimpleMemoryRangeDescriptor_t *Descriptors, uint32_t N){
-	//	Stub
-	__chalt(true);
-	return NULL;
+uint64_t RepointVirtualAddress(void *Virtual, void *NewPhysical){
+	VirtualAddress VA = U64ToVirtualAddress((uint64_t)Virtual);
+	PageCoordinate PC = InitPageCoordinate(VA);
+	const uint64_t P = (uint64_t)NewPhysical;
+	QuickPageWalk(PC, Page){
+		switch(PageLvl){
+			case 5:	{PML5Entry *E = Page;	SetPagePhysicalAddress(*E, P >> PAGE_SHIFT);	InvalidatePage(Virtual);	return UINT64_MAX;}
+			case 4: {PML4Entry *E = Page;	SetPagePhysicalAddress(*E, P >> PAGE_SHIFT);	InvalidatePage(Virtual);	return UINT64_MAX;}
+			case 3: {
+				if(((PDPTEntryDirectory *)Page)->PageSize){
+					if(P & (PAGE_SIZE3 - 1)){return UINT64_MIN;}
+					SetPagePhysicalAddress(*(PDPTEntry1GB *)Page, P >> PAGE_SHIFT3);	InvalidatePage(Virtual);	return PAGE_SIZE3;
+				}
+				SetPagePhysicalAddress(*(PDPTEntryDirectory *)Page, P >> PAGE_SHIFT);	InvalidatePage(Virtual);	return UINT64_MAX;
+			} case 2: {
+				if(((PageDirectoryEntry *)Page)->PageSize){
+					if(P & (PAGE_SIZE2 - 1)){return UINT64_MIN;}
+					SetPagePhysicalAddress(*(PageDirectoryEntry2MB *)Page, P >> PAGE_SHIFT2);	InvalidatePage(Virtual);	return PAGE_SIZE2;
+				}
+				SetPagePhysicalAddress(*(PageDirectoryEntry *)Page, P >> PAGE_SHIFT);	InvalidatePage(Virtual);	return UINT64_MAX;
+			} case 1: {
+				if(P & (PAGE_SIZE - 1)){return UINT64_MIN;}
+				PageTableEntry4KB *E = Page;	SetPagePhysicalAddress(*E, P >> PAGE_SHIFT);	InvalidatePage(Virtual);	return PAGE_SIZE;
+			}
+		}
+	}
+	return UINT64_MIN;
 }
 
-static __inline EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
+
+#define QuickPageTableAlloc(TotalBytes, PC)	PageCoordinate PC = {0};	{\
+	uint64_t TotalBytes##Rem = TotalBytes, TotalBytes##_1GB = TotalBytes##Rem / PAGE_SIZE3;	TotalBytes##Rem %= PAGE_SIZE3;	\
+	if(TotalBytes##Rem >= PAGE_SIZE3 - 8*PAGE_SIZE2){TotalBytes##_1GB++;	TotalBytes##Rem = 0;}	\
+	uint64_t TotalBytes##_2MB = TotalBytes##Rem / PAGE_SIZE2;				TotalBytes##Rem %= PAGE_SIZE2;	\
+	if(TotalBytes##Rem >= PAGE_SIZE2 - 8*PAGE_SIZE){TotalBytes##_2MB++;	TotalBytes##Rem = 0;}	\
+	uint64_t TotalBytes##_4KB = __roundup(TotalBytes##Rem, PAGE_SIZE) / PAGE_SIZE;	\
+	DebugPrintf("\nAllocating\t%z\t%z\t%z", TotalBytes##_1GB, TotalBytes##_2MB, TotalBytes##_4KB);	\
+	PC = PageTableAlloc(TotalBytes##_1GB, TotalBytes##_2MB, TotalBytes##_4KB);	}
+#define BufferPageTableAlloc(Count, Bfr, PC)	PageCoordinate PC = {0};	{uint64_t _##Count##_1GB = 0, _##Count##_2MB = 0, _##Count##_4KB = 0;	for(uint64_t cc = 0; cc < Count; ++cc){	\
+		uint64_t _##Count##Rem = Bfr[cc].PhysicalLimit - (uint64_t)Bfr[cc].PhysicalBase; _##Count##_1GB += _##Count##Rem / PAGE_SIZE3;	_##Count##Rem %= PAGE_SIZE3;	\
+		if(_##Count##Rem >= PAGE_SIZE3 - 8*PAGE_SIZE2){_##Count##_1GB++;	_##Count##Rem = 0;}	\
+		_##Count##_2MB += _##Count##Rem / PAGE_SIZE2;				_##Count##Rem %= PAGE_SIZE2;	\
+		if(_##Count##Rem >= PAGE_SIZE2 - 8*PAGE_SIZE){_##Count##_2MB++;	_##Count##Rem = 0;}	\
+		_##Count##_4KB += __roundup(_##Count##Rem, PAGE_SIZE) / PAGE_SIZE;	\
+	}	PC = PageTableAlloc(_##Count##_1GB, _##Count##_2MB, _##Count##_4KB);}
+//*	This function allocates Addresses on the Page Table.
+PageCoordinate PageTableAlloc(uint64_t _1GB, uint64_t _2MB, uint64_t _4KB){
+	//	Allocate Memory based off of the
+	InternalAllocationState *IS = GetIState();
+	PageCoordinate PC = IS->IdentityPageTableMax, _PC = IS->IdentityPageTableMax;
+	bool Usable = false;
+	DebugPrintf("\nAllcoating %z GBs, %z MBs, %z KBs from 0b%2z", _1GB, _2MB, _4KB);
+	uint64_t PtrCtr = 0;
+	static void *__linkersection(.bss) PtrsToAllocate[512];
+	uint64_t __1GB = _1GB, __2MB = _2MB, __4KB = _4KB;
+	while(true){
+		__bochs();
+		PrintPage(_PC);
+		if(!__1GB && !__2MB && !__4KB){break;}
+		if(!Usable){__1GB = _1GB;	__2MB = _2MB;	__4KB = _4KB;	PC = _PC;	PtrCtr = 0;}
+		QuickPageWalk(_PC, Page){
+			switch(PageLvl){
+				case 5: {
+					PML5Entry *E = Page;
+					if(E->Present){Usable = false;}else{
+						uint64_t Count = 0;
+						SimpleMemoryRangeDescriptor_t *Bfr = QueryFreeMemory(InvalidPointer, 1, &Count, TypeMask1, sizeof(TypeMask1));
+						if(!Bfr || !Count){DebugPrintf("\nFailed to discover Free Memory");	__chalt(true);}
+						for(uint64_t cc = 0; cc < Count; ++cc){PtrsToAllocate[PtrCtr + cc] = Bfr[cc].PhysicalBase;}	PtrCtr += Count;
+						*E = (PML5Entry){.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
+							.PageLevelWriteThrough = false, .PhysicalAddress = 0, .Present = true, .ReadWrite = true, .UserMode = false};
+						SetPagePhysicalAddress(*E, (uint64_t)Bfr[0].PhysicalBase >> PAGE_SHIFT);
+						Usable = true;
+					}
+					break;
+				} case 4: {
+					PML4Entry *E = Page;
+					if(E->Present){Usable = false;}else{
+						uint64_t Count = 0;
+						SimpleMemoryRangeDescriptor_t *Bfr = QueryFreeMemory(InvalidPointer, 1, &Count, TypeMask1, sizeof(TypeMask1));
+						if(!Bfr || !Count){DebugPrintf("\nFailed to discover Free Memory");	__chalt(true);}
+						for(uint64_t cc = 0; cc < Count; ++cc){PtrsToAllocate[PtrCtr + cc] = Bfr[cc].PhysicalBase;}	PtrCtr += Count;
+						*E = (PML4Entry){.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
+							.PageLevelWriteThrough = false, .PhysicalAddress = 0, .Present = true, .ReadWrite = true, .UserMode = false};
+						SetPagePhysicalAddress(*E, (uint64_t)Bfr[0].PhysicalBase >> PAGE_SHIFT);
+						Usable = true;
+					}
+					break;
+				} case 3: {
+					PDPTEntryDirectory *E = Page;
+					if(E->Present){Usable = false;}else{
+						Usable = true;
+						if(!__1GB){
+							uint64_t Count = 0;
+							SimpleMemoryRangeDescriptor_t *Bfr = QueryFreeMemory(InvalidPointer, 1, &Count, TypeMask1, sizeof(TypeMask1));
+							if(!Bfr || !Count){DebugPrintf("\nFailed to discover Free Memory");	__chalt(true);}
+							for(uint64_t cc = 0; cc < Count; ++cc){PtrsToAllocate[PtrCtr + cc] = Bfr[cc].PhysicalBase;}	PtrCtr += Count;
+							*E = (PDPTEntryDirectory){.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
+								.PageLevelWriteThrough = false, .PageSize = false, .PhysicalAddress = 0x00, .Present = true, .ReadWrite = true, .UserMode = false};
+							SetPagePhysicalAddress(*E, (uint64_t)Bfr[0].PhysicalBase >> PAGE_SHIFT);
+						}else{__1GB--;	AddPageCoordinate(&_PC, PAGE_SIZE3);}
+					}
+					break;
+				} case 2: {
+					PageDirectoryEntry *E = Page;
+					if(E->Present){Usable = false;}else{
+						Usable = true;
+						if(!__2MB){
+							uint64_t Count = 0;
+							SimpleMemoryRangeDescriptor_t *Bfr = QueryFreeMemory(InvalidPointer, 1, &Count, TypeMask1, sizeof(TypeMask1));
+							if(!Bfr || !Count){DebugPrintf("\nFailed to discover Free Memory");	__chalt(true);}
+							for(uint64_t cc = 0; cc < Count; ++cc){PtrsToAllocate[PtrCtr + cc] = Bfr[cc].PhysicalBase;}	PtrCtr += Count;
+							*E = (PageDirectoryEntry){.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
+								.PageLevelWriteThrough = false, .PageSize = false, .PhysicalAddress = 0x00, .Present = true, .ReadWrite = true, .UserMode = false};
+							SetPagePhysicalAddress(*E, (uint64_t)Bfr[0].PhysicalBase >> PAGE_SHIFT);
+						}else{__2MB--;	AddPageCoordinate(&_PC, PAGE_SIZE2);}
+					}
+					break;
+				} case 1: {
+					PageDirectoryEntry *E = Page;
+					if(E->Present){Usable = false;}else{
+						Usable = true;
+						if(__4KB){__4KB--;}
+					}
+					AddPageCoordinate(&_PC, PAGE_SIZE);
+					break;
+				} default: {DebugPrintf("\nInvalid Page");}
+			}
+		}else{AddPageCoordinate(&_PC, PAGE_SIZE3 * PagingTableLength * (IsLA57Enabled()? PagingTableLength: 0));}
+	}
+	for(uint64_t cc = 0; cc < PtrCtr; ++cc){
+		uint64_t Tmp = (uint64_t)PtrsToAllocate[cc] / PAGE_SIZE2;
+		VirtualAddress VA = U64ToVirtualAddress(Tmp);
+		PageCoordinate TmpPC = InitPageCoordinate(VA);
+		UpdateAllocationTableByPhysical((uint64_t)PtrsToAllocate[cc], UATPageAllocationType | UATPageCoordinate | UATValidBit, false, PATUsedRegion, TmpPC, (uint32_t)true);
+	}
+	DebugPrintf("\nAllocated Page Table Entries from 0b%2z", PC);
+	return PC;
+}
+
+#pragma region Initialisation Memory Management/Discovery
+static EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
 	const void *D_, const uint32_t StructSize, uint64_t *TotalPages, const uint64_t N, const uint64_t RequiredPages, 
 	const EFI_MEMORY_TYPE *TypeRequirements, const uint64_t TypeRequirementBufferSize, const uint64_t AttrMask
 ){
@@ -229,28 +448,21 @@ static __inline EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
 		for(uint32_t cc = 0; cc < (TypeRequirementBufferSize / sizeof(EFI_MEMORY_TYPE)); ++cc){DebugPrintf("%z, ", (uint64_t)(TypeRequirements[cc]));}
 	for(uint64_t cc = 0; cc < N; ++cc){
 		GetEfiMemoryDescriptor(D, D_, cc, StructSize);
-		bool Usable = memcheckl(TypeRequirements, D->Type, TypeRequirementBufferSize) && ((AttrMask & D->Attribute) == 0);
+		bool Usable = memcheckl((uint32_t *)TypeRequirements, D->Type, TypeRequirementBufferSize) && ((AttrMask & D->Attribute) == 0);
 		if(Usable){
 			uint64_t RemainingPages = (uint64_t)RequiredPages, ElapsedPages = 0, cc_ = cc, Address = D->PhysicalStart;
 			//	Check that the Next Entry is contiguous, since D2 starts as D, then cc_ == 0 will always go through
 			for(; (cc_ < N) && RemainingPages; ++cc_){
 				GetEfiMemoryDescriptor(D2, D_, cc_, StructSize);
-				if(D2->PhysicalStart != Address){
-					DebugPrintf("\nNon-Continuous Pages: %z\t%z", (uint64_t)(D2->PhysicalStart), (uint64_t)Address);
-					break;
-				}
+				if(D2->PhysicalStart != Address){break;}
 				ElapsedPages += D2->NumberOfPages;
 				Address = D2->PhysicalStart + (D2->NumberOfPages * PAGE_SIZE);
-				Usable = memcheckl(TypeRequirements, D2->Type, TypeRequirementBufferSize) && ((AttrMask & D2->Attribute) == 0);
-				if(Usable){
-					if(D2->NumberOfPages > RemainingPages){RemainingPages = 0;	break;}else{RemainingPages -= D2->NumberOfPages;}
-				}else{DebugPrintf("\nAdditional Candidate %z did not meet %s Requirements", 
-					(uint64_t)cc_, ((AttrMask & D2->Attribute) == 0)? "Type": "Attribute");	break;}
+				Usable = memcheckl((uint32_t *)TypeRequirements, D2->Type, TypeRequirementBufferSize) && ((AttrMask & D2->Attribute) == 0);
+				if(Usable){if(D2->NumberOfPages > RemainingPages){RemainingPages = 0;	break;}else{RemainingPages -= D2->NumberOfPages;}}else{break;}
 			}
 			//	The currently Viewed entry elapses more pages than the candidate.
 			if(RemainingPages){continue;}else{
 				if((ElapsedPages - RequiredPages) <= (CandidateElapsedPages - RequiredPages)){
-					DebugPrintf("\nCandidate Details\tElapsedPages:%z\tNEntries:%z\t(Possible Candidate)", (uint64_t)ElapsedPages, (uint64_t)(cc_ - cc));
 					CandidateElapsedPages = ElapsedPages;	NCandidateEntries = cc_ - cc;	Candidate = cc;
 				}else{continue;}
 			}
@@ -259,11 +471,48 @@ static __inline EFI_MEMORY_DESCRIPTOR *QueryCandidatePool(
 	if((Candidate == -1) || (NCandidateEntries == UINT64_MAX) || (CandidateElapsedPages == UINT64_MAX)){DebugPrintf("\nFailed to find valid Candidate");	*TotalPages = 0;	return NULL;}
 	GetEfiMemoryDescriptor(D, D_, Candidate, StructSize);
 	memset((void *)(D->PhysicalStart), 0, CandidateElapsedPages * PAGE_SIZE);
-	DebugPrintf("\nValid Candidate: 0x%0z, TotalPages: %1z", D->PhysicalStart, CandidateElapsedPages);
+	DebugPrintf("\nCandidate: 0x%0z, TotalPages: %1z", D->PhysicalStart, CandidateElapsedPages);
 	*TotalPages = CandidateElapsedPages;
 	return D;
 }
-
+//*	A fork of QueryCandidatePool, modifies EFI_MEMORY_DESCRIPTOR Type.
+static EFI_MEMORY_DESCRIPTOR *AllocateCandidatePool(const void *D_, const uint32_t StructSize, uint64_t *TotalPages, const uint64_t N, const uint64_t RequiredPages, 
+	const EFI_MEMORY_TYPE *TypeRequirements, const uint64_t TypeRequirementBufferSize, const uint64_t AttrMask
+){
+	EFI_MEMORY_DESCRIPTOR *Candidate = QueryCandidatePool(D_, StructSize, TotalPages, N, RequiredPages, TypeRequirements, TypeRequirementBufferSize, AttrMask);
+	if(Candidate){
+		uint64_t Tmp = *TotalPages;
+		for(uint64_t cc = 0; Tmp; ++cc){
+			GetEfiMemoryDescriptor(D, Candidate, cc, StructSize);
+			D->Type = KernelBinarySpace;
+			if(Tmp < D->NumberOfPages){break;}else{Tmp -= D->NumberOfPages;}
+		}
+		memset((void *)(Candidate->PhysicalStart), 0, (*TotalPages) * PAGE_SIZE);
+		return Candidate;
+	}
+	return NULL;
+}
+//*	Describes the run of contiguous, same-Type descriptors starting at index *Counter.
+//*	On return: *ElapsedEntries / *ElapsedPages describe that run, *Counter indexes the first entry AFTER it,
+//*	and the return value is the FIRST entry OF the run (NULL once *Counter >= N).
+static EFI_MEMORY_DESCRIPTOR *QueryContiguousDescriptors(const void *D_, const uint32_t StructSize, 
+	uint64_t *ElapsedEntries, uint64_t *ElapsedPages, uint64_t *Counter, const uint64_t N
+){
+	(*ElapsedEntries) = 0;
+	(*ElapsedPages) = 0;
+	if((*Counter) >= N){return NULL;}
+	GetEfiMemoryDescriptor(D, D_, (*Counter), StructSize);
+	uint64_t Address = D->PhysicalStart;
+	for(; (*Counter) < N; ++(*Counter)){
+		GetEfiMemoryDescriptor(D2, D_, (*Counter), StructSize);
+		//	A gap, an overlap or a Type change ends the run. The first entry always passes, so Entries >= 1.
+		if((D2->PhysicalStart != Address) || (D2->Type != D->Type)){break;}
+		Address = D2->PhysicalStart + (D2->NumberOfPages * PAGE_SIZE);
+		(*ElapsedEntries)++;	(*ElapsedPages) += D2->NumberOfPages;
+	}
+	return D;
+}
+#pragma region Initialisation
 static __inline void InitialiseTemporaryPageTable(uint64_t TotalMemorySize){
 	static __linkersection(.bss) __align(4096) PML5Table       L5;
 	static __linkersection(.bss) __align(4096) PML4Table       L4;
@@ -300,243 +549,145 @@ static __inline void InitialiseTemporaryPageTable(uint64_t TotalMemorySize){
     LoadPageTree((void *)(_L5? (void *)&L5: (void *)&L4), 0x10, 0x08, (bool64_t)_L5);
 	return;
 }
-
-static __inline EFI_MEMORY_DESCRIPTOR *QueryContiguousDescriptors(const void *D_, const uint32_t StructSize, uint64_t *TotalEntries, uint64_t *ElapsedPages, const uint64_t N){
-	int64_t _CurrentType = -1;
-	(*TotalEntries) = 0;
-	(*ElapsedPages) = 0;
-	if(!N){return NULL;}
-	GetEfiMemoryDescriptor(D, D_, 0, StructSize);
-	uint64_t cc_ = 0, Address = D->PhysicalStart;
-	//	Check that the Next Entry is contiguous, since D2 starts as D, then cc_ == 0 will always go through
-	_CurrentType = D->Type;
-	for(; cc_ < N; ++cc_){
-		GetEfiMemoryDescriptor(D2, D_, cc_, StructSize);
-		if(D2->PhysicalStart != Address){break;}
-		Address = D2->PhysicalStart + (D2->NumberOfPages * PAGE_SIZE);
-		if(D2->Type == _CurrentType){(*TotalEntries)++;		(*ElapsedPages) += D2->NumberOfPages;}else{
-			DebugPrintf("\nContiguous Descriptors 0x%0z -> 0x%0z, %z Pages", D2, D2 + *TotalEntries, *ElapsedPages);	break;}
-	}
-	DebugPrintf("\nContiguous Descriptors 0x%0z -> 0x%0z, %z Pages", D, D + *TotalEntries, *ElapsedPages);
-	return D;
-}
+//	We now only Initialise an L2 Identity Mapped Page Table.
+//	Mainly because we require at least that much Precision to ensure that QueryFreeMemory(At least in the Beginning of Initialisation) can cope with 
 VirtualAddress InstantiatePageTable(const void *D_, const uint64_t StructSize, const uint64_t N, const uint64_t TotalMemoryPages){
 	if(!_1GPageSupport()){DebugPrintf("\nThe CPU does not support 1G Pages, cannot Continue Execution");	__chalt(true);}
+	if(IsLA57Enabled()){DebugPrintf("\nInstantiatePageTable: 5-level paging is not supported");				__chalt(true);}
+	bool _L = IsLA57Enabled();
+	void *PT = GetPageTable(&_L, _1To1MappingMode, NULL);
+	(GetPageTable(&_L, _UpdatePageTableMode, PT));
 	InitialiseTemporaryPageTable(TotalMemoryPages * PAGE_SIZE);
-	//	We Identity Map to L3 Entries
-	//	Post-Identity Mapping
-	//	Identity Mapping
-	uint64_t TotalL3 = __roundupt(TotalMemoryPages * PAGE_SIZE, PAGE_SIZE3) / PAGE_SIZE3, 
-	//	Number of Tables
-			TotalL4 = __roundupt(TotalL3, PagingTableLength) / PagingTableLength, 
-			TotalL5 = IsLA57Enabled()? (__roundupt(TotalL4, PagingTableLength) / PagingTableLength): 0, 
-			CandidatePages = 0, TotalPages = ((__roundup(TotalL3, PagingTableLength) / PagingTableLength) + TotalL4 + TotalL5);
-	void *RootPageTable = NULL;	{
-		//	Number of GBs
-		EFI_MEMORY_DESCRIPTOR *Candidate = QueryCandidatePool(D_, StructSize, 
-			&CandidatePages, N, TotalPages, TypeMask1, sizeof(TypeMask1), AttributeMask);
-		if(Candidate){
-			uint64_t cc = 0;
-			while(CandidatePages){
-				GetEfiMemoryDescriptor(D, Candidate, cc, StructSize);
-				CandidatePages -= D->NumberOfPages;
-				//	Simply Mark as allocated
-				D->Type = KernelBinarySpace;
-				cc++;
-			}
-		}else{DebugPrintf("\nInvalid Page Table Candidate");	return (VirtualAddress){0};}
-		uint64_t Offset = 0;
-		void *PT = (void *)(Candidate->PhysicalStart);
-		for(uint64_t cc = 0; cc < TotalL5; ++cc){
-			PML5Table *L5 = PT + Offset;
-			Offset += sizeof(PML5Table);
-			for(uint64_t cc_ = 0; cc_ < PagingTableLength; ++cc_){
-				(*L5)[cc_] = (PML5Entry){.Accessed = false, .ExecuteDisable = false, .PageInMemory = false, .PageLevelCacheDisable = false, 
-					.PageLevelWriteThrough = false, .PhysicalAddress = 0, .Present = true, .ReadWrite = true, .UserMode = false};
-				SetPagePhysicalAddress((*L5)[cc_], ((uint64_t)PT + (sizeof(PML5Table) * TotalL5) + (sizeof(PML4Table) * (cc_ % TotalL4))) >> PAGE_SHIFT);
-			}
+
+	//	We will accomodate the neccessary L3/L2/L1 for mapped Tables, 
+	//	
+	//	within L5/L4 Tables, the Proceeding L4s from the Identity Mapped Table will correspond to the "Free" Page Table that respects EFI_MEMORY_DESCRIPTOR Flag Requirements.
+	const uint64_t L2Entries = __roundupt(TotalMemoryPages * PAGE_SIZE, PAGE_SIZE2) / PAGE_SIZE2, 
+			L3Entries = __roundup(L2Entries, PagingTableLength) / PagingTableLength, 
+			L4Entries = __roundup(L3Entries, PagingTableLength) / PagingTableLength;
+	const uint64_t L2Tables = __roundup(L2Entries, PagingTableLength) / PagingTableLength, 
+					L3Tables = __roundup(L3Entries, PagingTableLength) / PagingTableLength, 
+					L4Tables = __roundup(L4Entries, PagingTableLength) / PagingTableLength;
+	uint64_t RequiredPages = L2Tables + L3Tables + L4Tables, CandidatePages = 0;
+	EFI_MEMORY_DESCRIPTOR *Candidate = AllocateCandidatePool(D_, StructSize, &CandidatePages, N, RequiredPages, TypeMask1, sizeof(TypeMask1), AttributeMask);
+	if(!Candidate){
+		DebugPrintf("\nThe System does not have enough Installed Random-Access-Memory or the Startup Configuration may be corrupted, Cannot continue Operation\n\t\"Please Restart the Machine\".");	__chalt(true);}
+	void *RootTable = (void *)(Candidate->PhysicalStart);
+	uint64_t Offset = 0, Pointer = 0;	if(IsLA57Enabled()){
+		DebugPrintf("\nInitialising L5 Table");
+		PML5Entry *L5 = RootTable + Offset;
+		memset((void *)L5, 0, PAGE_SIZE);
+		Pointer += sizeof(PML5Table);
+		Offset += sizeof(PML5Table);
+		for(uint64_t cc = 0; cc < L4Tables; ++cc){
+			L5[cc] = (PML5Entry){
+				.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .UserMode = false, .ReadWrite = true, 
+				.PageLevelCacheDisable = false, .PageLevelWriteThrough = false, .PhysicalAddress = 0x00, .Present = true};
+			SetPagePhysicalAddress(L5[cc], ((uint64_t)RootTable + Pointer + (cc * sizeof(PML4Table))) >> PAGE_SHIFT);
 		}
-		for(uint64_t cc = 0; cc < TotalL4; ++cc){
-			PML4Table *L4 = PT + Offset;
-			Offset += sizeof(PML4Table);
-			for(uint64_t cc_ = 0; cc_ < PagingTableLength; ++cc_){
-				(*L4)[cc_] = (PML4Entry){.Accessed = false, .ExecuteDisable = false, .PageInMemory = false, .PageLevelCacheDisable = false, 
-					.PageLevelWriteThrough = false, .PhysicalAddress = 0, .Present = true, .ReadWrite = true, .UserMode = false};
-				SetPagePhysicalAddress((*L4)[cc_], ((uint64_t)PT + (sizeof(PML5Table) * TotalL5) + (sizeof(PML4Table) * TotalL4) + (sizeof(PDPTTable) * (cc_ % TotalL3))) >> PAGE_SHIFT);
-			}
+	}
+	DebugPrintf("\nInitialising L4 Table");
+	Pointer += L4Tables * sizeof(PML4Table);
+	for(uint64_t cc = 0; cc < L4Tables; ++cc){
+		PML4Entry *L4 = RootTable + Offset;
+		Offset += sizeof(PML4Table);
+		memset((void *)L4, 0, PAGE_SIZE);
+		for(uint64_t cc_ = 0; cc_ < L3Tables; ++cc_){
+			L4[cc_] = (PML4Entry){.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .UserMode = false, .ReadWrite = true, 
+				.PageLevelCacheDisable = false, .PageLevelWriteThrough = false, .PhysicalAddress = 0x00, .Present = true};
+			uint64_t Phys = ((uint64_t)RootTable) + Pointer + (cc_ * sizeof(PDPTTable));
+			SetPagePhysicalAddress(L4[cc_], Phys >> PAGE_SHIFT);
 		}
-		for(uint64_t cc = 0; cc < TotalL3; ++cc){
-			PDPTTable *L3 = PT + Offset;
-			Offset += sizeof(PDPTTable);
-			for(uint64_t cc_ = 0; cc_ < PagingTableLength; ++cc_){
-				L3->pages1GB[cc_] = (PDPTEntry1GB){.Accessed = false, .Dirty = false, .ExecuteDisable = false, .Global = false, .PageAttributeTable = false, 
-					.PageInMemory = true, .PageLevelCacheDisable = false, .PageLevelWriteThrough = false, .PageSize = true, .PhysicalAddress = 0, 
-					.Present = true, .ProtectionKey = 0x00, .ReadWrite = true, .UserMode = false};
-				SetPagePhysicalAddress(L3->pages1GB[cc_], (cc_ % TotalMemoryPages));
-			}
+	}
+	DebugPrintf("\nInitialising L3 Table");
+	Pointer += L3Tables * sizeof(PDPTTable);
+	for(uint64_t cc = 0; cc < L3Tables; ++cc){
+		PDPTEntryDirectory *L3 = RootTable + Offset;
+		memset((void *)L3, 0, PAGE_SIZE);
+		Offset += sizeof(PDPTTable);
+		for(uint64_t cc_ = 0; cc_ < L2Tables; ++cc_){
+			L3[cc_] = (PDPTEntryDirectory){.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
+				.PageLevelWriteThrough = false, .PageSize = false, .PhysicalAddress = 0x00, .Present = true, .ReadWrite = true, .UserMode = false};
+			uint64_t Phys = (uint64_t)RootTable + Pointer + (cc_ * sizeof(PageDirectory));
+			SetPagePhysicalAddress(L3[cc_], Phys >> PAGE_SHIFT);
 		}
-		RootPageTable = PT;
-	}	{
-		//	Paging that reflects EFI_MEMORY_DESCRIPTOR Type Requirements.
-		EFI_MEMORY_DESCRIPTOR *D = D_;
-		uint64_t TotalEntries = 0, Entries = 0, Pages = 0, CandidatePages = 0;
-		uint64_t NL4 = 0, NL3 = 0, NL2 = 0, NL1 = 0;
-		PageCoordinate PC = {.EnableL1 = false, .EnableL2 = false, .EnableL3 = false, .EnableL4 = true, 
-			.EnableL5 = IsLA57Enabled(), .L1 = 0x00, .L2 = 0x00, .L3 = TotalL3, .L4 = TotalL4, .L5 = TotalL5};
-		while(D = QueryContiguousDescriptors(D + 1, StructSize, &Entries, &Pages, N - TotalEntries)){
-			TotalEntries += Entries;
-			//	Map w/ 4kB Pages.
-			//	We assume Memory is NEVER >512gB
-			//	This is the Upper Limit of the Current Code.
-			if(Pages < (PAGE_SIZE2 / 4)){NL1++;}else if(Pages < (PAGE_SIZE3 / 4)){NL2++;}else{NL3++;}
-			if(NL1 == PagingTableLength){AddPageCoordinate(&PC, PAGE_SIZE2);					NL2++;}
-			if(NL2 == PagingTableLength){AddPageCoordinate(&PC, PAGE_SIZE3);					NL3++;}
-			if(NL3 == PagingTableLength){AddPageCoordinate(&PC, PAGE_SIZE3 * PagingTableLength);NL4++;}
+	}
+	DebugPrintf("\nInitialising L2 Table");
+	uint64_t Max = __roundupt(TotalMemoryPages * PAGE_SIZE, PAGE_SIZE2) / PAGE_SIZE2;
+	for(uint64_t cc = 0; cc < L2Tables; ++cc){
+		PageDirectoryEntry2MB *L2 = RootTable + Offset;
+		Offset += sizeof(PageDirectory);
+		for(uint64_t cc_ = 0; cc_ < PagingTableLength; ++cc_){
+			L2[cc_] = (PageDirectoryEntry2MB){.Accessed = false, .Dirty = false, .ExecuteDisable = false, .Global = false, 
+				.PageAttributeTable = false, .PageInMemory = true, .PageLevelCacheDisable = false, .PageLevelWriteThrough = false, 
+				.PageSize = true, .PhysicalAddress = 0x00, .Present = true, .ProtectionKey = 0x00, .ReadWrite = true, .UserMode = false};
+			SetPagePhysicalAddress(L2[cc_], ((cc * PagingTableLength) + cc_) % Max);
 		}
-		NL4 = __roundup(NL4, PagingTableLength) / PagingTableLength;
-		NL3 = __roundup(NL3, PagingTableLength) / PagingTableLength;
-		NL2 = __roundup(NL2, PagingTableLength) / PagingTableLength;
-		NL1 = __roundup(NL1, PagingTableLength) / PagingTableLength;
-		
-		EFI_MEMORY_DESCRIPTOR *Candidate = QueryCandidatePool(D_, StructSize, &CandidatePages, 
-			N, NL4 + NL3 + NL2 + NL1, TypeMask1, sizeof(TypeMask1), AttributeMask);
-		if(Candidate){
-			uint64_t cc = 0;
-			while(CandidatePages){
-				GetEfiMemoryDescriptor(D, Candidate, cc, StructSize);
-				CandidatePages -= D->NumberOfPages;
-				D->Type = KernelBinarySpace;
-				cc++;
-			}
-		}else{DebugPrintf("\nInvalid Duplicate Page Table Candidate");	return (VirtualAddress){0};}
-		//	Full of L3 Entries
-		PDPTTable *PT = (PDPTTable *)(Candidate->PhysicalStart);	{
-			uint32_t Lvl = IsLA57Enabled()? 5: 4;
-			uint64_t _CandidatePages = 0;
-			DebugPrintf("\nGetting Page at [%l(%u):%l(%u):%l(%u):%l(%u):%l(%u)]", PC.L5, PC.EnableL5, 
-				PC.L4, PC.EnableL4, PC.L5, PC.EnableL5, PC.L5, PC.EnableL5, PC.L5, PC.EnableL5);
-			void *Page = WalkEmulatedPageTree(PC, RootPageTable, &Lvl);
-			//	Since we; at MAX support 512GB, we will at most only need to allocate an extra PDPT Table for the NEXT Page Table.
-			switch(Lvl){
-				case 5: {
-					EFI_MEMORY_DESCRIPTOR *Tmp = QueryCandidatePool(D_, StructSize, &_CandidatePages, N, 1, TypeMask1, sizeof(TypeMask1), AttributeMask);	{
-						uint64_t cc_ = 0;
-						while(_CandidatePages){GetEfiMemoryDescriptor(D, Tmp, cc_, StructSize);	Tmp->Type = KernelBinarySpace;	cc_++;	_CandidatePages -= Tmp->NumberOfPages;}
-					}
-					PML5Entry *L5 = Page;	*L5 = (PML5Entry){
-						.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
-						.PhysicalAddress = 0x00, .Present = true, .ReadWrite = true, .UserMode = false, .PageLevelWriteThrough = false};
-					SetPagePhysicalAddress(*L5, (uint64_t)Tmp->PhysicalStart >> PAGE_SHIFT);
-					*(PML4Entry *)(Tmp->PhysicalStart) = (PML4Entry){
-						.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
-						.PhysicalAddress = 0x00, .Present = true, .ReadWrite = true, .UserMode = false, .PageLevelWriteThrough = false};
-					SetPagePhysicalAddress(*(PML4Entry *)(Tmp->PhysicalStart), (uint64_t)PT >> PAGE_SHIFT);
-					PC.L4 = 0;
-					break;
-				} case 3: case 4: {
-					PML4Entry *L4 = Page;	*L4 = (PML4Entry){
-						.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = false, 
-						.PhysicalAddress = 0x00, .Present = true, .ReadWrite = true, .UserMode = false, .PageLevelWriteThrough = false};
-					SetPagePhysicalAddress(*L4, (uint64_t)PT >> PAGE_SHIFT);
-					PC.L3 = 0;
-					break;
-				} default: {DebugPrintf("\nInvalid Page Table Entry %z", (uint64_t)Lvl);	return (VirtualAddress){0};}
-			}
-		}
-		EFI_MEMORY_DESCRIPTOR *Tmp = D_;	{
-			uint64_t TotalEntries = 0, Entries = 0, Pages = 0;
-			while(Tmp = QueryContiguousDescriptors(Tmp + 1, StructSize, &Entries, &Pages, N - TotalEntries)){
-				TotalEntries += Entries;
-				PageAllocationFlags Flags = 0;
-				switch(Tmp->Type){
-					default:						{Flags = ReadWritable;}
-					case EfiUnusableMemory: 
-					case EfiMaxMemoryType: 
-					case EfiUnacceptedMemoryType:	{continue;}
-					case EfiReservedMemoryType:		{Flags = GlobalEnable | ReadOnly | SupervisorMode;	break;}
-					case EfiMemoryMappedIOPortSpace:
-					case EfiMemoryMappedIO:			{Flags = PageLevelWriteThroughEnable | PageLevelCacheEnable | ReadWritable;	break;}
+	}
+	DebugPrintf("\nLoading CR3");
+	LoadPageTree(RootTable, 0x10, 0x08, (bool64_t)_L);
+	GetPageTable(&_L, _UpdatePageTableMode, RootTable);
+	InvalidatePages(NULL, TotalMemoryPages * PAGE_SIZE);
+	PageCoordinate Out = {.EnableL1 = false, .EnableL2 = false, .EnableL3 = false, .EnableL4 = true, 
+		.EnableL5 = IsLA57Enabled(), .L1 = 0x00, .L2 = 0, .L3 = 0, .L4 = IsLA57Enabled()? 0: L3Tables, .L5 = IsLA57Enabled()? L4Tables: 0};
+	DebugPrintf("\nPage Table Max:\t0b%2z", Out);
+	return InitVirtualAddress(Out);
+}
+
+void PrintPage(PageCoordinate PC){
+	bool L5 = IsLA57Enabled();
+	uint32_t Lvl = L5? 5: 4;
+	void *_pt = GetPageTable(&L5, _StoredPageTableMode, NULL);
+	DebugPrintf("\n{0b%2z}", PC);
+	void *E = WalkEmulatedPageTree(PC, _pt, &Lvl);
+	if(E == InvalidPointer){DebugPrintf("\t{null}");}else{
+		switch(Lvl){
+			case 5: {
+				PML5Entry *L5 = E;
+				DebugPrintf("\tPML5\t{P:%z  RW:%z  UM:%z  PLWT:%z  PLCD:%z  A:%z  PIM:%z  PADR:0x%0z  ExD:%z}", 
+					(uint64_t)L5->Present, (uint64_t)L5->ReadWrite, (uint64_t)L5->UserMode, (uint64_t)L5->PageLevelWriteThrough, (uint64_t)L5->PageLevelCacheDisable, 
+					(uint64_t)L5->Accessed, (uint64_t)L5->PageInMemory, (uint64_t)L5->PhysicalAddress, (uint64_t)L5->ExecuteDisable);
+				break;
+			} case 4: {
+				PML4Entry *L4 = E;
+				DebugPrintf("\tPML4\t{P:%z  RW:%z  UM:%z  PLWT:%z  PLCD:%z  A:%z  PIM:%z  PADR:0x%0z  ExD:%z}", 
+					(uint64_t)L4->Present, (uint64_t)L4->ReadWrite, (uint64_t)L4->UserMode, (uint64_t)L4->PageLevelWriteThrough, (uint64_t)L4->PageLevelCacheDisable, 
+					(uint64_t)L4->Accessed, (uint64_t)L4->PageInMemory, (uint64_t)L4->PhysicalAddress, (uint64_t)L4->ExecuteDisable);
+				break;
+			} case 3: {
+				PDPTEntry1GB *L3 = E;	if(L3->PageSize){
+					DebugPrintf("\tPDPT(1GB)\t{P:%z  RW:%z  UM:%z  PLWT:%z  PLCD:%z  A:%z  D:%z  G:%z  PIM:%z  PAT:%z  PADR:0x%0z  PK:%z  ExD:%z}", 
+					(uint64_t)L3->Present, (uint64_t)L3->ReadWrite, (uint64_t)L3->UserMode, (uint64_t)L3->PageLevelWriteThrough, (uint64_t)L3->PageLevelCacheDisable, (uint64_t)L3->Accessed, (uint64_t)L3->Dirty, 
+					(uint64_t)L3->Global, (uint64_t)L3->PageInMemory, (uint64_t)L3->PageAttributeTable, (uint64_t)L3->PhysicalAddress, (uint64_t)L3->ProtectionKey, (uint64_t)L3->ExecuteDisable);
+				}else{DebugPrintf("\tPDPT\t{P:%z  RW:%z  UM:%z  PLWT:%z  PLCD:%z  A:%z  PIM:%z  PADR:0x%0z  ExD:%z}", 
+					(uint64_t)((PDPTEntryDirectory *)L3)->Present, (uint64_t)((PDPTEntryDirectory *)L3)->ReadWrite, (uint64_t)((PDPTEntryDirectory *)L3)->UserMode, 
+					(uint64_t)((PDPTEntryDirectory *)L3)->PageLevelWriteThrough, (uint64_t)((PDPTEntryDirectory *)L3)->PageLevelCacheDisable, (uint64_t)((PDPTEntryDirectory *)L3)->ExecuteDisable, 
+					(uint64_t)((PDPTEntryDirectory *)L3)->Accessed, (uint64_t)((PDPTEntryDirectory *)L3)->PageInMemory, (uint64_t)((PDPTEntryDirectory *)L3)->PhysicalAddress);
 				}
-				while(Pages){
-					uint32_t Lvl = IsLA57Enabled()? 5: 4;
-					bool Repeat = false;
-					DebugPrintf("\nGetting Page at [%l(%u):%l(%u):%l(%u):%l(%u):%l(%u)]", PC.L5, PC.EnableL5, 
-						PC.L4, PC.EnableL4, PC.L5, PC.EnableL5, PC.L5, PC.EnableL5, PC.L5, PC.EnableL5);
-					void *E = WalkEmulatedPageTree(PC, PT, &Lvl);
-					do{
-						Repeat = false;
-						switch(Lvl){
-							case 3: {
-								if(Pages < (PAGE_SIZE3 / 8)){
-									if(PC.L2 == (PagingTableLength - 1)){
-										PDPTEntryDirectory *L3 = E;	*L3 = (PDPTEntryDirectory){
-											.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageSize = false, 
-											.PhysicalAddress = 0x00, .Present = true, .ReadWrite = __check(Flags, ReadWritable), .UserMode = false, 
-											.PageLevelCacheDisable = __check(Flags, PageLevelCacheEnable), .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable)};
-										E = (void *)__roundupt((uint64_t)E, PAGE_SIZE);		SetPagePhysicalAddress(*L3, (uint64_t)E >> PAGE_SHIFT);
-									}
-									PC.EnableL3 = true;
-									Repeat = true;
-								}else{
-									PDPTEntry1GB *L3 = E;	*L3 = (PDPTEntry1GB){
-										.Accessed = false, .Dirty = false, .ExecuteDisable = false, .Global = __check(Flags, GlobalEnable), 
-										.PageAttributeTable = false, .PageInMemory = true, .PageSize = true, .PhysicalAddress = 0, 
-										.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), .ReadWrite = __check(Flags, ReadWritable), 
-										.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), .Present = true, .ProtectionKey = 0x00, .UserMode = false};
-									SetPagePhysicalAddress(*L3, Tmp->PhysicalStart >> PAGE_SHIFT3);
-									if(Pages < PAGE_SIZE2){Pages = 0;}else{Pages -= PAGE_SIZE2;}
-									AddPageCoordinate(&PC, PAGE_SIZE3);
-								}
-								PC.EnableL3 = true;
-								break;
-							} case 2: {
-								if(Pages < (PAGE_SIZE2 / 8)){
-									if(PC.L2 == (PagingTableLength - 1)){
-										PageDirectoryEntry *L2 = E;	*L2 = (PageDirectoryEntry){
-											.Accessed = false, .ExecuteDisable = false, .PageInMemory = true, .PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), .PageSize = false, 
-											.PhysicalAddress = 0x00, .Present = true, .ReadWrite = __check(Flags, ReadWritable), .UserMode = false, .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable)};
-										E = (void *)__roundupt((uint64_t)E, PAGE_SIZE);		SetPagePhysicalAddress(*L2, (uint64_t)E >> PAGE_SHIFT);
-									}
-									PC.EnableL2 = true;
-									Repeat = true;
-								}else{
-									PageDirectoryEntry2MB *L2 = E;	*L2 = (PageDirectoryEntry2MB){
-										.Accessed = false, .Dirty = false, .ExecuteDisable = false, .Global = __check(Flags, GlobalEnable), .PageAttributeTable = false, .PageInMemory = true, 
-										.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
-										.PageSize = true, .PhysicalAddress = 0, .Present = true, .ProtectionKey = 0x00, .ReadWrite = __check(Flags, ReadWritable), .UserMode = false};
-									SetPagePhysicalAddress(*L2, Tmp->PhysicalStart >> PAGE_SHIFT2);
-									if(Pages < PAGE_SIZE){Pages = 0;}else{Pages -= PAGE_SIZE;}
-									AddPageCoordinate(&PC, PAGE_SIZE2);
-								}
-								PC.EnableL2 = true;
-								break;
-							} case 1: {
-								PageTableEntry4KB *L1 = E;	*L1 = (PageTableEntry4KB){
-									.Accessed = false, .Dirty = false, .ExecuteDisable = false, .Global = __check(Flags, GlobalEnable), .PageAttributeTable = false, .PageInMemory = true, 
-									.PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), .PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), 
-									.PhysicalAddress = Tmp->PhysicalStart, .Present = true, .ProtectionKey = 0x00, .ReadWrite = __check(Flags, ReadWritable), .UserMode = false};
-								SetPagePhysicalAddress(*L1, Tmp->PhysicalStart >> PAGE_SHIFT);
-								PC.EnableL1 = true;
-								Pages--;
-								AddPageCoordinate(&PC, PAGE_SIZE);
-								break;
-							}
-						}
-					}while(Repeat);
+				break;
+			} case 2: {
+				PageDirectoryEntry2MB *L2 = E;	if(L2->PageSize){
+					DebugPrintf("\tPD\t{P:%z  RW:%z  UM:%z  PLWT:%z  PLCD:%z  A:%z  D:%z  G:%z  PIM:%z  PAT:%z  PADR:0x%0z  PK:%z  ExD:%z}", 
+						(uint64_t)L2->Present, (uint64_t)L2->ReadWrite, (uint64_t)L2->UserMode, (uint64_t)L2->PageLevelWriteThrough, (uint64_t)L2->PageLevelCacheDisable, (uint64_t)L2->Accessed, (uint64_t)L2->Dirty, 
+						(uint64_t)L2->Global, (uint64_t)L2->PageInMemory, (uint64_t)L2->PageAttributeTable, (uint64_t)L2->PhysicalAddress, (uint64_t)L2->ProtectionKey, (uint64_t)L2->ExecuteDisable);
+				}else{DebugPrintf("\tPD(2MB)\t{P:%z  RW:%z  UM:%z  PLWT:%z  PLCD:%z  A:%z  PIM:%z  PADR:0x%0z  ExD:%z}", 
+					(uint64_t)((PageDirectoryEntry2MB *)L2)->Present, (uint64_t)((PageDirectoryEntry2MB *)L2)->ReadWrite, (uint64_t)((PageDirectoryEntry2MB *)L2)->UserMode, 
+					(uint64_t)((PageDirectoryEntry2MB *)L2)->PageLevelWriteThrough, (uint64_t)((PageDirectoryEntry2MB *)L2)->PageLevelCacheDisable, (uint64_t)((PageDirectoryEntry2MB *)L2)->ExecuteDisable, 
+					(uint64_t)((PageDirectoryEntry2MB *)L2)->Accessed, (uint64_t)((PageDirectoryEntry2MB *)L2)->PageInMemory, (uint64_t)((PageDirectoryEntry2MB *)L2)->PhysicalAddress);
 				}
-			}
+				break;
+			} case 1: {
+				PageTableEntry4KB *L1 = E;		DebugPrintf("\tPE\t{P:%z  RW:%z  UM:%z  PLWT:%z  PLCD:%z  A:%z  D:%z  G:%z  PIM:%z  PAT:%z  PADR:0x%0z  PK:%z  ExD:%z}", 
+					(uint64_t)L1->Present, (uint64_t)L1->ReadWrite, (uint64_t)L1->UserMode, (uint64_t)L1->PageLevelWriteThrough, (uint64_t)L1->PageLevelCacheDisable, (uint64_t)L1->Accessed, (uint64_t)L1->Dirty, 
+					(uint64_t)L1->Global, (uint64_t)L1->PageInMemory, (uint64_t)L1->PageAttributeTable, (uint64_t)L1->PhysicalAddress, (uint64_t)L1->ProtectionKey, (uint64_t)L1->ExecuteDisable);
+				break;
+			} default: {DebugPrintf("\t{null}");	break;}
 		}
-		// __bochs();
-		bool _L5 = IsLA57Enabled();
-		InvalidatePages(NULL, TotalMemoryPages * PAGE_SIZE);
-		LoadPageTree(RootPageTable, 0x10, 0x08, (bool64_t)_L5);
-		GetPageTable(&_L5, _UpdatePageTableMode, RootPageTable);
-		return InitVirtualAddress(PC);
 	}
 }
 
 //	Heavily relies of UEFI's 1:1 Mapping Mode
-bool InitialiseAllocationState(void *D_, const uint64_t StructSize, uint64_t N, const uint64_t TotalMemory){
+bool InitialiseAllocationState(void *D_, const uint64_t StructSize, const uint64_t N, const uint64_t TotalMemory){
 	DebugPrintf("\nInitialising Memory\t%s\tStructSize:%z\tN:%z\tTotalMemory:%z", 
 		(GetIState())->PhysicalDescriptorIndexes? "Initialised": "Uninitialised", StructSize, N, TotalMemory);
 	if((GetIState())->PhysicalDescriptorIndexes){return true;}	//	Memory already Initialised
@@ -547,357 +698,476 @@ bool InitialiseAllocationState(void *D_, const uint64_t StructSize, uint64_t N, 
 					SubDescriptorAllocation = 0, 
 	//	Allocation for Physical to Index Wrappers.
 					PhysToIndexAllocation = (TotalMemory / PAGE_SIZE) * sizeof(uint16_t);
-	//	Non-Usable Persistent Memory.
-	
 	//	End address of the last piece seen for each class (TypeMask0..3); -1 = none yet.
 	int64_t				TypeEnd[4] = {-1, -1, -1, -1};
+
 	for(uint64_t cc = 0; cc < N; ++cc){
 		GetEfiMemoryDescriptor(D, D_, cc, StructSize);
-		int Class = memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))? 1: 
-			(memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
+		int Class = memcheckl((uint32_t *)TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl((uint32_t *)TypeMask1, D->Type, sizeof(TypeMask1))? 1: 
+			(memcheckl((uint32_t *)TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl((uint32_t *)TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
 		if(Class < 0){continue;}
 		//	A new Descriptor starts whenever this piece is not contiguous with the previous piece of its class.
 		if(TypeEnd[Class] != (int64_t)D->PhysicalStart){DescriptorAllocation += sizeof(MemoryRangeDescriptor);}
 		TypeEnd[Class] = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);
-		SubDescriptorAllocation += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
+		//	Allocate Extra for Additional Allocations.
+		SubDescriptorAllocation += __roundupt(D->NumberOfPages > (nMB(2ULL) / PAGE_SIZE)? __roundupt(D->NumberOfPages * PAGE_SIZE, nMB(2ULL)) / nMB(2ULL): D->NumberOfPages, SubDescriptorRoundup);
 	}
-	uint64_t TotalRequiredPages = (SubDescriptorAllocation + PhysToIndexAllocation + DescriptorAllocation + sizeof(uint64_t));
-	TotalRequiredPages = __roundup(TotalRequiredPages, PAGE_SIZE) / PAGE_SIZE;
+	uint64_t TotalRequiredPages = ((SubDescriptorAllocation * sizeof(MemoryRangeSubDescriptor)) + PhysToIndexAllocation + DescriptorAllocation + sizeof(uint64_t));
+			TotalRequiredPages = __roundupt(TotalRequiredPages, PAGE_SIZE) / PAGE_SIZE;
+
+	VirtualAddress VA = {0};
+	volatile InternalAllocationState *IState = GetIState();
+	DebugPrintf("\nInitialising Page Table");
+	VA = InstantiatePageTable(D_, StructSize, N, TotalMemory / PAGE_SIZE);
 
 	uint64_t ElapsedPages = 0;
-	VirtualAddress VA = {0};
-	//	Base of the duplicate region. Must match InstantiatePageTable: max(RAM, 4GB) rounded up to 1GB.
-	uint64_t DupBase = (TotalMemory / PAGE_SIZE) * PAGE_SIZE;
-	if(DupBase < (4ULL << PAGE_SHIFT3)){DupBase = 4ULL << PAGE_SHIFT3;}
-	DupBase = (__roundup(DupBase, 1ULL << PAGE_SHIFT3) / (1ULL << PAGE_SHIFT3)) * (1ULL << PAGE_SHIFT3);
-	volatile InternalAllocationState *IState = GetIState();
-	DebugPrintf("\nInitialising Page Table");	{
-		//	Temporarily Initialise Minimal Paging Dependencies.
-		bool _L = IsLA57Enabled();
-		void *PT = GetPageTable(&_L, _1To1MappingMode, NULL);
-		(GetPageTable(&_L, _UpdatePageTableMode, PT));
-		VA = InstantiatePageTable(D_, StructSize, N, TotalMemory / PAGE_SIZE);
-		if(!(*(uint64_t *)&VA)){DebugPrintf("\nFailed to Instantiate the Page Table");	return false;}
-	}
-	EFI_MEMORY_DESCRIPTOR *Candidate = QueryCandidatePool(D_, StructSize, &ElapsedPages, N, TotalRequiredPages, TypeMask1, sizeof(TypeMask1), AttributeMask);
-	if(!Candidate){return false;}
-	{
-		//	Walk by StructSize (the firmware's stride), and shrink the SAME counter that the loop tests.
-		uint64_t cc = 0, _ElapsedPages = ElapsedPages;
-		while(_ElapsedPages){
-			EFI_MEMORY_DESCRIPTOR *C = (EFI_MEMORY_DESCRIPTOR *)((uint8_t *)Candidate + (cc * StructSize));
-			C->Type = KernelBinarySpace;
-			if(C->NumberOfPages > _ElapsedPages){_ElapsedPages = 0;}else{_ElapsedPages -= C->NumberOfPages;}
-			cc++;
-		}
-	}
-	DebugPrintf("\nDescriptor Pool: 0x%0z\t%z Pages", Candidate->PhysicalStart, (uint64_t)ElapsedPages);
-	//	Possibly failing at this pOint.
+	EFI_MEMORY_DESCRIPTOR *Candidate = AllocateCandidatePool(D_, StructSize, &ElapsedPages, N, TotalRequiredPages, TypeMask1, sizeof(TypeMask1), AttributeMask);
+	if(!Candidate){DebugPrintf("\nNot enough Memory installed on System; or System Configuration is corrupted. Please Restart.");	__chalt(true);}
+	// DebugPrintf("\nDescriptor Pool: 0x%0z\t%z Pages", Candidate->PhysicalStart, (uint64_t)ElapsedPages);
 	for(uint64_t cc = 0; cc < N; ++cc){
 		GetEfiMemoryDescriptor(D, D_, cc, StructSize);
-		bool Usable = memcheckl(TypeMask1, D->Type, sizeof(TypeMask1)) && ((AttributeMask& D->Attribute) == 0);
+		bool Usable = memcheckl((uint32_t *)TypeMask1, D->Type, sizeof(TypeMask1)) && ((AttributeMask& D->Attribute) == 0);
 		DebugPrintf("\n[%z]:\tType: %z(%s){Attr: 0b%2z\tPhys: 0x%0z\tNoPages: %z}", (uint64_t)cc, (uint64_t)D->Type, 
 			(Usable? "Usable": "  ??  "), D->Attribute, D->PhysicalStart, D->NumberOfPages);
 	}
 	DebugPrintf("\nInitialising Internal Allocation State");
 
 	*IState = (volatile InternalAllocationState){
-		.Descriptors = (MemoryRangeDescriptor *)(Candidate->PhysicalStart), .MemoryMaxPages = TotalMemory / PAGE_SIZE, 
-		.PhysicalDescriptorIndexes = (uint16_t *)(Candidate->PhysicalStart + DescriptorAllocation), .Ready = false, 
-		.SubDescriptors = (MemoryRangeSubDescriptor **)(Candidate->PhysicalStart + DescriptorAllocation + SubDescriptorAllocation), 
-		.TotalDescriptors = DescriptorAllocation / sizeof(MemoryRangeDescriptor), .TotalSubDescriptors = SubDescriptorAllocation / sizeof(MemoryRangeSubDescriptor), 
-		.TotalSubDescriptorPools = 1, .LastPageTableAlloc = VA
-	};	*(IState->SubDescriptors) = (MemoryRangeSubDescriptor *)(Candidate->PhysicalStart + DescriptorAllocation + SubDescriptorAllocation + sizeof(uint64_t));
+		.Descriptors = (MemoryRangeDescriptor *)__roundupt(Candidate->PhysicalStart, PAGE_SIZE), 
+		.PhysicalDescriptorIndexes = (uint16_t *)__roundupt(Candidate->PhysicalStart + DescriptorAllocation, PAGE_SIZE), 
+		.SubDescriptors = (MemoryRangeSubDescriptor **)__roundupt(Candidate->PhysicalStart + DescriptorAllocation + PhysToIndexAllocation, PAGE_SIZE), 
+		.TotalDescriptors = DescriptorAllocation / sizeof(MemoryRangeDescriptor), .TotalSubDescriptors = (SubDescriptorAllocation), .LastAllocation = 0, 
+		.CurrentSubDescriptorPool = 0, .TotalSubDescriptorPools = 1, .IdentityPageTableMax = InitPageCoordinate(VA), .Ready = false, .MemoryMaxPages = TotalMemory / PAGE_SIZE, 
+	};	*(IState->SubDescriptors) = (MemoryRangeSubDescriptor *)__roundupt(Candidate->PhysicalStart + DescriptorAllocation + PhysToIndexAllocation, PAGE_SIZE) + sizeof(uint64_t);
+	DebugPrintf("\nD:0x%0z, I:0x%0z, SD:0x%0z, TD:%z, TSD:%z, CSDP:%z, TSDP:%z, DP:0b%2z, Max:%z", IState->Descriptors, IState->PhysicalDescriptorIndexes, IState->SubDescriptors, 
+		IState->TotalDescriptors, IState->TotalSubDescriptors, IState->CurrentSubDescriptorPool, IState->TotalSubDescriptorPools, IState->IdentityPageTableMax, IState->MemoryMaxPages);
+	for(uint64_t cc = 0; cc < IState->TotalSubDescriptorPools; ++cc){DebugPrintf(", [%z]0x%0z", cc, IState->SubDescriptors[cc]);}
 	TypeEnd[0] = TypeEnd[1] = TypeEnd[2] = TypeEnd[3] = -1;
-	uint32_t CurrentSubDescriptor = 0;
-
-	//	Need to track contiguous Memory Types.
-	//		If Contiguous:		Update the Descriptor to encompass the Additional Entry.
-	//		If not Contiguous:	Start another Descriptor.
-	{
+	uint64_t CurrentSubDescriptor = 0;	{
 		int64_t ArrayCtr = -1;
-		for(uint64_t cc = 0; cc < N; ++cc){
-			GetEfiMemoryDescriptor(D, D_, cc, StructSize);
-			int Class = memcheckl(TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl(TypeMask1, D->Type, sizeof(TypeMask1))? 1: 
-				(memcheckl(TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl(TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
+		uint64_t TotalEntries = 0x00, Entries = 0, Pages = 0, Counter = 0, 
+				LastAddress = ((EFI_MEMORY_DESCRIPTOR *)D_)->PhysicalStart,	Takeaway = 0;
+		EFI_MEMORY_DESCRIPTOR *D = NULL;
+		while((D = QueryContiguousDescriptors(D_, StructSize, &Entries, &Pages, &Counter, N)) && N > TotalEntries){
+			if(!Pages){continue;}
+			TotalEntries += Entries;	ArrayCtr++;
+			int Class = memcheckl((uint32_t *)TypeMask0, D->Type, sizeof(TypeMask0))? 0: (memcheckl((uint32_t *)TypeMask1, D->Type, sizeof(TypeMask1))? 1: 
+			(memcheckl((uint32_t *)TypeMask2, D->Type, sizeof(TypeMask2))? 2: (memcheckl((uint32_t *)TypeMask3, D->Type, sizeof(TypeMask3))? 3: -1)));
 			if(Class < 0){continue;}
-			if((ArrayCtr >= 0) && (TypeEnd[Class] == (int64_t)D->PhysicalStart)){IState->Descriptors[ArrayCtr].PageLimit += D->NumberOfPages;}
-			else{
-				ArrayCtr++;
-				IState->Descriptors[ArrayCtr] = (MemoryRangeDescriptor){
-					.SubDescriptorIndex = CurrentSubDescriptor, .EfiMemoryType = D->Type, .PageLimit = D->NumberOfPages, .Physical = D->PhysicalStart};
+			IState->Descriptors[ArrayCtr] = (MemoryRangeDescriptor){.SubDescriptorIndex = CurrentSubDescriptor, .EfiMemoryType = D->Type, .PageLimit = Pages, .Physical = D->PhysicalStart};
+			TypeEnd[Class] = D->PhysicalStart + (Pages * PAGE_SIZE);
+			for(uint64_t cc_ = 0; cc_ < Pages; ++cc_){IState->PhysicalDescriptorIndexes[(D->PhysicalStart / PAGE_SIZE) + cc_] = (ArrayCtr & UINT16_MAX);}
+			//	We split into 2mB descriptors, 
+			uint32_t NSubdescriptors = __roundupt(Pages > (nMB(2ULL) / PAGE_SIZE)? __roundupt(Pages * PAGE_SIZE, nMB(2ULL)) / nMB(2ULL): Pages, SubDescriptorRoundup);
+			bool IsNonPhysical = memcheckl((uint32_t *)TypeMask3, D->Type, sizeof(TypeMask3)), 
+				IsSubDescriptorMapping = ((uint64_t)(IState->SubDescriptors) >= D->PhysicalStart) && ((uint64_t)(IState->SubDescriptors) < (D->PhysicalStart + (Pages * PAGE_SIZE)))? true: false, 
+				Touchable = !memcheckl((uint32_t *)TypeMask4, D->Type, sizeof(TypeMask4)), Freeable = !memcheckl((uint32_t *)TypeMask0, D->Type, sizeof(TypeMask0)) && Touchable, 
+				IsUsed = memcheckl((uint32_t *)TypeMask2, D->Type, sizeof(TypeMask2)) || memcheckl((uint32_t *)TypeMask0, D->Type, sizeof(TypeMask0)), 
+				IsUsable = Touchable && (IsUsed || IsSubDescriptorMapping || Freeable);
+			DebugPrintf("\nSubDescriptor[%i(0x%0z):%l] Details:\tIsUsed? %s\tIsUsable: %s\tIsPhysical: %s\tIsSubDescriptorMapping: %s\tIsFreeable: %s\tIsTouchable: %s", 
+				(uint32_t)ArrayCtr, (uint64_t)(IState->SubDescriptors[IState->CurrentSubDescriptorPool] + CurrentSubDescriptor), (uint32_t)NSubdescriptors, 
+				(IsUsed? "Used": "??"), (IsUsable? "Usable": "??"), (IsNonPhysical? "??": "Physical"), (IsSubDescriptorMapping? "SD Mapping": "??"), (Freeable? "Freeable": "??"), (Touchable? "Touchable": "??"));
+			const uint64_t Precision = NSubdescriptors? (D->NumberOfPages * PAGE_SIZE) / NSubdescriptors: 0x00;
+			for(uint64_t cc = 0; cc < NSubdescriptors; ++cc){
+				const uint64_t L2 = (D->PhysicalStart + (Precision * cc)) / PAGE_SIZE, L3 = L2? (L2 / PagingTableLength): 0, L4 = L3? (L3 / PagingTableLength): 0x00, L5 = L4? (L4 / PagingTableLength): 0x00;
+				IState->SubDescriptors[IState->CurrentSubDescriptorPool][CurrentSubDescriptor + cc] = (MemoryRangeSubDescriptor){
+					.AllocationType = (IsUsed? PATUsedRegion: 0x00) | (IsNonPhysical? PATNonPhysicalDescriptor: 0x00) | (Touchable? 0x00: PATUntouchableRegion) | 
+						(IsSubDescriptorMapping? PATSubDescriptorMapping: 0x00) | (Freeable? 0x00: (PATUnfreeableRegion | PATUntouchableRegion)), .Valid = IsUsed, 
+					.PC = IsUsed? (PageCoordinate){.EnableL1 = false, .EnableL2 = false, .EnableL3 = true, .EnableL4 = true, .EnableL5 = IsLA57Enabled(), 
+						.L5 = L5, .L4 = L4, .L3 = L3, .L2 = L2, .L1 = 0}: PageC_MAX, .EndOfList = (((cc + 1) - NSubdescriptors) == 0? true: false), .VirtualNeighbour = UINT32_MAX};
 			}
-			TypeEnd[Class] = D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE);
-			CurrentSubDescriptor += (D->NumberOfPages > (PAGE_SIZE2 / PAGE_SIZE)? (D->NumberOfPages * PAGE_SIZE) / PAGE_SIZE2: D->NumberOfPages);
-			//	Only the types InstantiatePageTable maps get a live entry, and they are enabled in the DUPLICATE
-			//	(DupBase + phys), never through the identity map: an identity leaf is a whole 1GB page.
-			//	Unusable/Reserved/PortSpace/Unaccepted/PalCode have no leaf, so they are not touched.
-			if((D->Type == EfiRuntimeServicesCode) || (D->Type == EfiRuntimeServicesData) || (D->Type == EfiACPIMemoryNVS) || (D->Type == EfiMemoryMappedIO)){
-				// __bochs();
-				if(!(UpdatePageTable((void *)(DupBase + D->PhysicalStart), D->NumberOfPages * PAGE_SIZE, 
-					(PageAllocationFlags)(ReadWritable | SupervisorMode | PageLevelWriteThroughEnable | GlobalEnable | ((D->Type == EfiRuntimeServicesCode)? ExecuteEnable: 0)), 0x00))){
-						DebugPrintf("\nFailed to Update Page Entries accompanying Address %z to %z", DupBase + D->PhysicalStart, DupBase + D->PhysicalStart + (D->NumberOfPages * PAGE_SIZE));}
-			}
-			//	Do not index past the table: it only has MemoryMaxPages entries (MMIO above RAM would overflow it).
-			for(uint64_t cc_ = 0; cc_ < D->NumberOfPages; ++cc_){
-				uint64_t Page = (D->PhysicalStart / PAGE_SIZE) + cc_;
-				if(Page >= (TotalMemory / PAGE_SIZE)){break;}
-				IState->PhysicalDescriptorIndexes[Page] = ArrayCtr;
-			}
-		}
+			CurrentSubDescriptor += __roundup(NSubdescriptors, SubDescriptorRoundup);
+			Takeaway += (LastAddress > D->PhysicalStart? D->PhysicalStart - LastAddress: 0x00);
+			LastAddress = D->PhysicalStart + (Pages * PAGE_SIZE);
+		};
 	}
-	__bochs();
 	IState->Ready = true;
-	return true;
+	DebugPrintf("\nPtr: 0x%0z", AllocNoUpdate(PagingTableLength * 64, ReadWritable | SupervisorMode | ExecuteEnable | PageLevelCacheEnable, 0x00));
+
+	// uint64_t Test = 0;
+	// __bochs();
+	// SimpleMemoryRangeDescriptor_t *Arr = QueryFreeMemory(InvalidPointer, 32 * PagingTableLength, &Test);
+	// DebugPrintf("\nOutput:\t{");
+	// while(Test){
+	// 	DebugPrintf("\n\t[%z]{%z\t%z\t%z}", Test, Arr[Test - 1].PhysicalBase, Arr[Test - 1].PhysicalLimit, Arr[Test - 1].Type);
+	// 	Test--;
+	// }
+	// DebugPrintf("\n}");
+	// BufferPageTableAlloc(Test, Arr, PC)DebugPrintf("\t0b%2z", PC);
+	__chalt(true);
 }
 
-//!	Returns Physical Address.
-void *QueryFreeMemory(void *Physical, uint32_t NoPages){
-	volatile InternalAllocationState *IS = GetIState();
-	if(EnableInputAddress(false, false)){
-		GetDescriptor(D, Physical, IS);
-		if(D->SubDescriptorIndex != InvalidSubDescriptorIndex){
-			uint32_t cc = 0, Offset = 0;
-			MemoryRangeSubDescriptor *SD = IS->SubDescriptors[IS->CurrentSubDescriptorPool] + D->SubDescriptorIndex;
-			int32_t LowestDiffN = -1;
-			while(!(SD[cc].EndOfList)){
-				if(!SD[cc].Valid){
-					if(LowestDiffN == -1){if(SD[cc].NoPages >= NoPages){LowestDiffN = cc;}}else if((SD[LowestDiffN].NoPages - NoPages) == 0){break;}
-					if((SD[cc].NoPages >= NoPages)){if((SD[LowestDiffN].NoPages - NoPages) > (SD[cc].NoPages - NoPages)){LowestDiffN = cc;}}
-				}
-				cc++;
-			}
-			if(LowestDiffN != -1){
-				cc = 0;
-				while(!(SD[cc].EndOfList) && cc < LowestDiffN){Offset += SD[cc].NoPages;	cc++;}
-				return (void *)(D->Physical + (Offset * PAGE_SIZE));
-			}
-		}
-	}else{
-		QueryPhysicalAddress(Physical, IS){
-			for(uint64_t cc = 0; cc < IS->TotalDescriptors; cc++){
-				uint64_t cc_ = 0, Offset = 0;
-				if(IS->Descriptors[cc].SubDescriptorIndex != InvalidSubDescriptorIndex){
-					MemoryRangeSubDescriptor *SD = IS->SubDescriptors[IS->CurrentSubDescriptorPool] + IS->Descriptors[cc].SubDescriptorIndex;
-					int32_t LowestDiffN = -1;
-					while(!(SD[cc_].EndOfList)){
-						if(!SD[cc_].Valid){
-							if(LowestDiffN == -1){if(SD[cc_].NoPages >= NoPages){LowestDiffN = cc_;}}else if((SD[LowestDiffN].NoPages - NoPages) == 0){break;}
-							if((SD[cc_].NoPages >= NoPages)){if((SD[LowestDiffN].NoPages - NoPages) > (SD[cc_].NoPages - NoPages)){LowestDiffN = cc_;}}
-						}
-						cc_++;
-					}
-					if(LowestDiffN != -1){
-						cc_ = 0;
-						while(!(SD[cc_].EndOfList) && cc_ < LowestDiffN){Offset += SD[cc_].NoPages;	cc_++;}
-						return (void *)(IS->Descriptors[cc].Physical + (Offset * PAGE_SIZE));
-					}
-				}
-			}
-		}
+#pragma region Memory Helpers
+
+uint64_t TotalMemorySize(void){return (GetIState())->MemoryMaxPages * PAGE_SIZE;}
+bool MemoryIsMapped(void *ptr){InternalAllocationState *IState = GetIState();	
+	return (_GetSubDescriptorByVirtual(ptr, IState, NULL) == NULL? false: true);}
+uint64_t TotalMappedMemory(void *ptr){
+	InternalAllocationState *IState = GetIState();
+	uint64_t out = 0;
+	while(true){
+		const MemoryRangeSubDescriptor *SD = (const MemoryRangeSubDescriptor *)_GetSubDescriptorByVirtual(ptr, IState, NULL);
+		if(!SD){break;}
+		uint64_t Elapsed = _GetPageCoordinateElapsedBytes(SD->PC);
+		out += Elapsed;
+		ptr += Elapsed;
 	}
-	return NULL;
+	return out;
 }
 
-MemoryRangeSubDescriptor *AllocateSubDescriptorPool(uint32_t *N){
-    // Get a Region in the SubDescriptorTable Table.
-    volatile InternalAllocationState *IState = GetIState();
-	if(IState->TotalDescriptors < 2){*N = InvalidSubDescriptorIndex;	return NULL;}
-    for(uint32_t cc = 0; cc < IState->TotalDescriptors - 1; ++cc){
-        uint32_t currentStart = IState->Descriptors[cc].SubDescriptorIndex;
-        if(currentStart == InvalidSubDescriptorIndex){continue;}
-		
-        MemoryRangeSubDescriptor *SD = IState->SubDescriptors[IState->CurrentSubDescriptorPool] + currentStart;
-        uint32_t cc_ = 0;
-        while(!(SD[cc_].EndOfList)){cc_++;}
-        uint32_t currentEnd = currentStart + cc_, nextStart = IState->Descriptors[cc + 1].SubDescriptorIndex;
-
-        if(nextStart != InvalidSubDescriptorIndex && nextStart > currentEnd){
-            uint32_t gapSize = nextStart - currentEnd;
-            if(gapSize >= *N){
-                *N = gapSize;
-                return IState->SubDescriptors[IState->CurrentSubDescriptorPool] + currentEnd;
-            }
-        }
-    }
-    *N = InvalidSubDescriptorIndex;
-    return NULL;
-}
-//	Returns Physical
-//	In Kernel/Supervisor Mode
-//	We exist in 1:1 Mapping Mode.
-//	User Mode applications will have Page Tables mapped to close them off from the rest of Memory.
-void *ReAllocateSubDescriptorTable(){
-	//	This function is for regenerating the Sub-Descriptor Table, with a Larger Buffer.
-	//	We allocate in 512 SubDescriptor Blocks.
-	volatile InternalAllocationState *IState = GetIState();
-	uint32_t Level = 5;
-	void *Physical = QueryFreeMemory(NULL, ((IState->TotalSubDescriptors + 512) * sizeof(MemoryRangeSubDescriptor)) / PAGE_SIZE), 
-		*OldPhysical = MapPhysical(IState->SubDescriptors[IState->CurrentSubDescriptorPool]);
-	{
-		uint32_t cc = 0;
-		GetDescriptor(OldD, OldPhysical, IState);
-		MemoryRangeSubDescriptor *SD = IState->SubDescriptors[IState->CurrentSubDescriptorPool] + OldD->SubDescriptorIndex;
-		while(!(SD[cc].EndOfList)){SD[cc].AllocationType = 0;	cc++;}
-	}
-	memcpy(Physical, IState->SubDescriptors[IState->CurrentSubDescriptorPool], IState->TotalSubDescriptors * sizeof(MemoryRangeSubDescriptor));
-	GetDescriptor(D, Physical, IState);
+// void SortSubDescriptors(MemoryRangeDescriptor *D){
+// 	InternalAllocationState *IState = GetIState();
+// 	if(D->SubDescriptorIndex > (IState->TotalSubDescriptors / IState->TotalSubDescriptorPools)){return;}
+// 	MemoryRangeSubDescriptor *SD = IState->SubDescriptors[IState->CurrentSubDescriptorPool] + D->SubDescriptorIndex;
+// 	const uint64_t SDCount = _GetSubDescriptorCount(D);
+// 	for(uint64_t cc = 0; true; ++cc){
+// 		//	Find the Entry w/ the Lowest Diff that is Proceeding
+// 		const uint64_t Curr = _GetPageCoordinatePhysicalAddress(SD[cc].PC);
+// 		uint64_t Diff = UINT64_MAX;
+// 		MemoryRangeSubDescriptor *SD_ = SD;
+// 		uint64_t cc_ = 1, Select = 0;
+// 		for(; true; ++cc_){
+// 			if((uint64_t)(SD_ + cc_) == (uint64_t)(SD + cc)){continue;}
+// 			const uint64_t Cmp = _GetPageCoordinatePhysicalAddress(SD_[cc_].PC);
+// 			if((Cmp < Curr) && ((Curr - Cmp) < Diff)){Diff = Curr - Cmp;	Select = cc_;}
+// 			if(SD_[cc_].EndOfList){break;}
+// 		}
+// 		if((Diff != UINT64_MAX) && Diff){
+// 			MemoryRangeSubDescriptor Tmp = SD[cc];
+// 			SD[cc] = SD_[Select];
+// 			SD_[Select] = Tmp;
+// 			SD[cc].EndOfList = ((cc + 1) - SDCount) == 0;
+// 			SD_[Select].EndOfList = ((Select + 1) - SDCount) == 0;
+// 		}
+// 		if(SD[cc].EndOfList){break;}
+// 	}
+// }
+void SortSubDescriptors(MemoryRangeDescriptor *D){
+	InternalAllocationState *IState = GetIState();
+	if(D->SubDescriptorIndex > (IState->TotalSubDescriptors / IState->TotalSubDescriptorPools)){return;}
 	MemoryRangeSubDescriptor *SD = IState->SubDescriptors[IState->CurrentSubDescriptorPool] + D->SubDescriptorIndex;
-	uint32_t cc = 0;
-	while(!SD[cc].EndOfList){
-		if(!SD[cc].Valid){
-			SD[cc].Valid = true;
-			SD[cc].AllocationType = PATSubDescriptorMapping;
-			VirtualAddress Tmp = *(VirtualAddress *)&Physical;
-			SD[cc].CoordBaseIndex = InitPageCoordinate(Tmp);
+	//	Never read past this descriptor's own block: the last entry carries EndOfList.
+	uint64_t N = 1;
+	while(!SD[N - 1].EndOfList){++N;}
+	//	Ascending selection sort by decoded physical address; unmapped entries (UINT64_MAX) end up last.
+	for(uint64_t i = 0; (i + 1) < N; ++i){
+		uint64_t Best = i, BestKey = _GetPageCoordinatePhysicalAddress(SD[i].PC);
+		for(uint64_t j = i + 1; j < N; ++j){
+			const uint64_t Key = _GetPageCoordinatePhysicalAddress(SD[j].PC);
+			if(Key < BestKey){Best = j;		BestKey = Key;}
 		}
-		cc++;
+		if(Best != i){MemoryRangeSubDescriptor Tmp = SD[i];	SD[i] = SD[Best];	SD[Best] = Tmp;}
 	}
-	return (void *)(D->Physical);
+	for(uint64_t k = 0; k < N; ++k){SD[k].EndOfList = ((k + 1) == N);}
 }
 
-enumdef(uint64_t, AllocationTableUpdateBitMask){
-	ATUSubDescriptorAllocationType = 0x01, ATUSubDescriptorValid = 0x02, 
-	ATUSubDescriptorNoPages = 0x04, ATUSubDescriptorCoordBaseIndex = 0x08, 
-	ATUSubDescriptor = (ATUSubDescriptorAllocationType | ATUSubDescriptorValid | ATUSubDescriptorNoPages | ATUSubDescriptorCoordBaseIndex)
-};
-bool UpdateAllocationTableByPhysical(AllocationTableUpdateBitMask BitMask, uint64_t Physical, ...){
-	volatile InternalAllocationState *IS = GetIState();
-	bool out = true;
-	QueryPhysicalAddress(Physical, IS){
-		GetDescriptor(D, Physical, IS){
-			va_list ls;	va_start(ls, Physical);
-			if(out && __check(BitMask, ATUSubDescriptorAllocationType)){
-				GetSubDescriptor(SD, Physical, IS){SD->AllocationType &= va_arg(ls, PageAllocationType);}else{out = false;}}
-			if(out && __check(BitMask, ATUSubDescriptorValid)){
-				GetSubDescriptor(SD, Physical, IS){SD->Valid = va_arg(ls, bool);}else{out = false;}}
-			if(out && __check(BitMask, ATUSubDescriptorNoPages)){
-				GetSubDescriptor(SD, Physical, IS){
-					uint64_t NewNoPages = va_arg(ls, uint64_t);
-					int64_t Delta = (int64_t)NewNoPages - (int64_t)SD->NoPages;
-					SD->NoPages = NewNoPages;
-					MemoryRangeSubDescriptor *Proceeding = SD + 1;
-					uint64_t cc = 0;
-					while(!Proceeding[cc].EndOfList){Proceeding[cc].NoPages += Delta;	cc++;}
-				}else{out = false;}}
-			if(out && __check(BitMask, ATUSubDescriptorCoordBaseIndex)){
-				GetSubDescriptor(SD, Physical, IS){SD->CoordBaseIndex = va_arg(ls, PageCoordinate);}else{out = false;}}
-			va_end(ls);
-			return out;
-		}
-	}
-	return false;	
-}
+//*	Returns Identity-Mapped Memory, so the Physical and Virtual Addresses are interchangeable.
+//*	The Memory is Fragmented, so the caller must NEVER make assumptions about Memory
+#define QueryFreeMemoryMaxRanges	(204)
+_Static_assert((sizeof(SimpleMemoryRangeDescriptor_t) * QueryFreeMemoryMaxRanges) <= PAGE_SIZE, "QueryFreeMemory's buffer must fit in one page");
+SimpleMemoryRangeDescriptor_t *QueryFreeMemory(void *Physical, uint64_t Pages, uint64_t *Count, const EFI_MEMORY_TYPE *TypeMask, uint64_t TypeMaskLength){
+	DebugPrintf("\nRequesting 0x%0z Pages");
+	volatile InternalAllocationState *IState = GetIState();
+	static __linkersection(.bss) SimpleMemoryRangeDescriptor_t out[QueryFreeMemoryMaxRanges];
 
-void *AllocateAlignedPagesFromRange(void *Base, uint64_t Limit, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey, uint32_t Align){
-	void *PTR = AllocatePagesFromRange(Base, Limit, __roundup(NBytes + sizeof(uint64_t), Align), Flags, ProtectionKey);
-	if(!PTR){return NULL;}
-	*((uint64_t *)__roundup((uint64_t)PTR, Align)) = (uint64_t)PTR;
-	return (uint64_t *)__roundup((uint64_t)PTR, Align) + 1;
-}
-void *AllocatePagesFromRange(void *Base, uint64_t Limit, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey){
-	while(MemoryIsMapped(Base) && Base < Limit){Base += PAGE_SIZE;}
-	if(Base >= Limit){return NULL;}else{return AllocatePages(Base, NBytes, Flags, ProtectionKey);}
-}
-void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey){
-	volatile InternalAllocationState *IS = GetIState();
-	bool L5 = IsLA57Enabled();
-	if(EnableInputAddress(false, false)){
-		EnableInputAddress(false, true);
-		QueryPhysicalAddress(Base, IS){
-			GetDescriptor(D, Base, IS){
-				GetSubDescriptor(SD, Base, IS){
-					if(SD->Valid && (SD->NoPages >= (NBytes / PAGE_SIZE))){return *(void **)(&SD->CoordBaseIndex);}}
-			}
-		}
-	}else{
-		for(; IS->LastAllocation < IS->TotalDescriptors; ++(IS->LastAllocation)){
-			uint32_t cc = 0;
-			MemoryRangeSubDescriptor *SD = IS->SubDescriptors[IS->CurrentSubDescriptorPool] + IS->Descriptors[IS->LastAllocation].SubDescriptorIndex;
-			while(!(SD[cc].EndOfList)){
-				if(!(SD[cc].Valid)){
-					uint32_t cc_ = cc;
-					uint64_t Offset = 0, MetPages = NBytes;
-					while(!(SD[cc_].EndOfList) && MetPages){
-						if(MetPages < SD[cc_].NoPages){MetPages = 0;}else{MetPages -= SD[cc_].NoPages;}
-						Offset += SD[cc_].NoPages;		cc_++;
-					}
-					if(MetPages){continue;}else{
-						UpdateAllocationTableByPhysical(ATUSubDescriptorAllocationType | ATUSubDescriptorValid, 
-							IS->Descriptors[IS->LastAllocation].Physical + Offset, PATUsedRegion, true);
-						VirtualAddress VA = InitVirtualAddress(SD[cc].CoordBaseIndex);
-						//	Update the Page Table
-						if(!(UpdatePageTable((void *)*(uint64_t *)&VA, NBytes, Flags, ProtectionKey))){return false;}
-						memset((void *)*(uint64_t *)&VA, 0, NBytes);
-						return (void *)*(uint64_t *)&VA;
-					}
+	static __linkersection(.bss) SimpleMemoryRangeDescriptor_t Omission[QueryFreeMemoryMaxRanges];
+	static uint32_t OmissionLength;
+	// for(uint64_t cc = 0; cc < OmissionLength; ++cc){
+	// 	DebugPrintf("\nOmission:\t[%z]{0x%0z-0x%0z}", (uint64_t)cc, (uint64_t)Omission[cc].PhysicalBase, (uint64_t)Omission[cc].PhysicalLimit);}
+		
+	uint64_t Ctr = 0, _Count = 0;
+	if(!Count){Count = &_Count;}
+	*Count = 0;
+	if(!IState->Ready){return NULL;}
+	if(!Pages){DebugPrintf("\nNo Requested Pages");	return out;}
+	if(Pages > IState->MemoryMaxPages){DebugPrintf("\nInvalid NoPages");	return NULL;}
+	const uint64_t Start = Physical == InvalidPointer? 0: __roundup(NormaliseAddress((uint64_t)Physical, true), PAGE_SIZE);
+	uint64_t Need = Pages;
+	//	Descriptors are in ascending physical order, so the result is too.
+	for(uint64_t cc = 0; (cc < IState->TotalDescriptors) && Need; ++cc){
+		const MemoryRangeDescriptor *D = IState->Descriptors + IState->PhysicalDescriptorIndexes[Start] + cc;
+		if(!memcheckl((void *)TypeMask, D->EfiMemoryType, TypeMaskLength)){continue;}
+		if(D->SubDescriptorIndex > (IState->TotalSubDescriptors / IState->TotalSubDescriptorPools)){continue;}
+		SortSubDescriptors((MemoryRangeDescriptor *)D);
+		const MemoryRangeSubDescriptor *SD = IState->SubDescriptors[IState->CurrentSubDescriptorPool] + D->SubDescriptorIndex;
+		out[Ctr] = (SimpleMemoryRangeDescriptor_t){.PhysicalBase = (void *)D->Physical, .PhysicalLimit = D->Physical + __min(Need * PAGE_SIZE, D->PageLimit * PAGE_SIZE), .Type = D->EfiMemoryType};
+		//	There are three Criteria
+		//	If we encounter a Mapped SD:
+		//		Bound by the Mapped SD
+		//	Otherwise, of Furthermore:
+		//		Bound by an Omission
+		//	If no Omission, continue
+		//		Decrement Need by out[Ctr] Encompassed Pages.
+		//	If !Need
+		//		Update Omission Buffer
+		uint64_t cc_ = 0;
+		while(Need){
+			// DebugPrintf("\n1");
+			for(; true; ++cc_){
+				// DebugPrintf("\n2");
+				if((uint64_t)(SD + cc_) > (uint64_t)(IState->SubDescriptors[IState->CurrentSubDescriptorPool] + (IState->TotalSubDescriptors / IState->TotalSubDescriptorPools))){break;}
+				if(((SD[cc_].AllocationType & AllocationMask) != 0) && SD[cc_].Valid){
+					const uint64_t Phys = _GetPageCoordinatePhysicalAddress(SD[cc_].PC), Max = (uint64_t)out[Ctr].PhysicalBase + (Need * PAGE_SIZE);
+					if((out[Ctr].PhysicalLimit < Phys) || (Need < Phys)){break;}
+					out[Ctr].PhysicalLimit = __min(Max, Phys);
+					// DebugPrintf("\n3");
+					break;
 				}
-				cc++;
+				if(SD[cc_].EndOfList){break;}
 			}
+			DebugPrintf("\nCandidate:[%z]{0x%0z-0x%0z}", Ctr, out[Ctr].PhysicalBase, out[Ctr].PhysicalLimit);
+			for(uint64_t cc__ = 0; cc__ < OmissionLength; ++cc__){
+				// DebugPrintf("\n4");
+				// DebugPrintf("\nOmission:\t[%z]{0x%0z-0x%0z}", (uint64_t)cc__, (uint64_t)Omission[cc__].PhysicalBase, (uint64_t)Omission[cc__].PhysicalLimit);
+				if((((uint64_t)out[Ctr].PhysicalBase >= (uint64_t)Omission[cc__].PhysicalBase) && ((uint64_t)out[Ctr].PhysicalBase < Omission[cc__].PhysicalLimit)) || 
+					((((uint64_t)Omission[cc__].PhysicalLimit >= (uint64_t)out[Ctr].PhysicalBase) && ((uint64_t)Omission[cc__].PhysicalLimit < out[Ctr].PhysicalLimit)))){
+						out[Ctr].PhysicalBase = (void *)Omission[cc__].PhysicalLimit;
+				}
+				if((((uint64_t)out[Ctr].PhysicalLimit >= (uint64_t)Omission[cc__].PhysicalBase) && ((uint64_t)out[Ctr].PhysicalLimit < Omission[cc__].PhysicalLimit)) || 
+					(((uint64_t)Omission[cc__].PhysicalBase >= out[Ctr].PhysicalBase) && ((uint64_t)Omission[cc__].PhysicalBase < out[Ctr].PhysicalLimit))){
+						out[Ctr].PhysicalLimit = (uint64_t)Omission[cc__].PhysicalBase;
+				}
+			}
+			// DebugPrintf("\n5");
+			DebugPrintf("\n\t[%z]{0x%0z-0x%0z}", Ctr, out[Ctr].PhysicalBase, out[Ctr].PhysicalLimit);
+			if(out[Ctr].PhysicalLimit > out[Ctr].PhysicalBase){
+				// DebugPrintf("\n6");
+				const uint64_t _Pages = (out[Ctr].PhysicalLimit - (uint64_t)out[Ctr].PhysicalBase) / PAGE_SIZE;
+				if(Need <= _Pages){Need = 0;}else{
+					Need -= _Pages;
+					out[Ctr + 1] = (SimpleMemoryRangeDescriptor_t){.PhysicalBase = (void *)out[Ctr].PhysicalLimit, 
+						.PhysicalLimit = D->Physical + __min(Need * PAGE_SIZE, D->PageLimit * PAGE_SIZE), .Type = D->EfiMemoryType};
+					Ctr++;
+				}
+			}else{out[Ctr].PhysicalLimit = __min((uint64_t)out[Ctr].PhysicalBase + (Need * PAGE_SIZE), D->Physical + (D->PageLimit * PAGE_SIZE));	break;}
+			DebugPrintf("\nRemaining Pages %z", Need);
 		}
-		if(IS->LastAllocation){IS->LastAllocation = 0;	return AllocatePages(Base, NBytes, Flags, ProtectionKey);}
 	}
-	//	We run in Identity Mapped Paging.
-
+	*Count = (Ctr + 1);
+	if(Need){DebugPrintf("\nFailed to Find enough Memory");	*Count = 0;	return NULL;}
+	if((OmissionLength + (*Count)) >= QueryFreeMemoryMaxRanges){OmissionLength = 0;}
+	for(uint64_t cc = 0; cc < (*Count); ++cc){
+		out[cc].PhysicalLimit = __min(out[cc].PhysicalLimit, (uint64_t)out[cc].PhysicalBase + (Pages * PAGE_SIZE));
+		memset(out[cc].PhysicalBase, 0, out[cc].PhysicalLimit - (uint64_t)out[cc].PhysicalBase);
+		DebugPrintf("\nOutput:[%z]{0x%0z-0x%0z}", cc, out[cc].PhysicalBase, out[cc].PhysicalLimit);
+		Omission[OmissionLength] = out[cc];
+		Omission[OmissionLength].Type = PATUsedRegion;
+		OmissionLength++;
+	}
+	// OmissionLength++;
+	return out;
 }
 
-void *MapVirtual(void *Physical){
-	volatile InternalAllocationState *IS = GetIState();
-	if(IS->Ready){
-		QueryPhysicalAddress(Physical, IS){
-			GetSubDescriptor(SD, Physical, IS){
-				VirtualAddress VA = InitVirtualAddress(SD->CoordBaseIndex);
-				return (void *)VirtualAddressAToU64(VA);
+MemoryRangeSubDescriptor *_AppendSingleAllocationTableEntry(uint64_t Physical, UATBitMask _BitMask, va_list ls){
+	InternalAllocationState *IState = GetIState();
+	if(Physical != UINT64_MAX){
+		GetDescriptor(D, Physical, IState){
+			if(D->SubDescriptorIndex > (IState->TotalSubDescriptors / IState->TotalSubDescriptorPools)){DebugPrintf("\nInvalid Descriptor");	return false;}
+			MemoryRangeSubDescriptor *SD = IState->SubDescriptors[IState->CurrentSubDescriptorPool] + D->SubDescriptorIndex;
+			for(uint8_t N = 0; true; N++){
+				DebugPrintf("\n\t[%z]:{0x%0z\t%z\t0b%2z\t%z\t0x%0z}", N, (uint64_t)SD[N].AllocationType, 
+					(uint64_t)SD[N].EndOfList, SD[N].PC, (uint64_t)SD[N].Valid, (uint64_t)SD[N].VirtualNeighbour);
+				if((SD[N].AllocationType & AllocationMask) == 0){
+					SD[N].AllocationType = __check(_BitMask, UATPageAllocationType)? va_arg(ls, PageAllocationType): 0x00;
+					SD[N].PC = __check(_BitMask, UATPageCoordinate)? va_arg(ls, PageCoordinate): (PageCoordinate){0};
+					SD[N].Valid = __check(_BitMask, UATValidBit)? va_arg(ls, uint32_t): 0x00;
+					SD[N].VirtualNeighbour = __check(_BitMask, UATVirtualNeighbour)? va_arg(ls, uint32_t): 0x00;
+					DebugPrintf("\n\t\t[%z:0x%0z]:{0x%0z\t%z\t0b%2z\t%z\t0x%0z}", N, SD + N, (uint64_t)SD[N].AllocationType, 
+						(uint64_t)SD[N].EndOfList, SD[N].PC, (uint64_t)SD[N].Valid, (uint64_t)SD[N].VirtualNeighbour);
+					return SD + N;
+				}
+				if(SD[N].EndOfList){break;}
+			}
+		}else{DebugPrintf("\nFailed to find associated Descriptor for Physical Region");}
+		return false;
+	}else{
+		DebugPrintf("\nWalking DT");
+		//!	We need to frigging walk the Entire Descriptor Table
+		//!		On everything slime out the Caller Function.
+		for(uint64_t cc = 0; cc < IState->TotalDescriptors; ++cc){
+			MemoryRangeDescriptor *D = IState->Descriptors + cc;	{
+				MemoryRangeSubDescriptor *SD = IState->SubDescriptors[IState->CurrentSubDescriptorPool] + D->SubDescriptorIndex;
+				for(uint8_t N = 0; true; ++N){
+					if((SD[N].AllocationType & AllocationMask) == 0){
+						SD[N].AllocationType = __check(_BitMask, UATPageAllocationType)? va_arg(ls, PageAllocationType): 0x00;
+						SD[N].PC = __check(_BitMask, UATPageCoordinate)? va_arg(ls, PageCoordinate): (PageCoordinate){0};
+						SD[N].Valid = __check(_BitMask, UATValidBit)? va_arg(ls, uint32_t): 0x00;
+						SD[N].VirtualNeighbour = __check(_BitMask, UATVirtualNeighbour)? va_arg(ls, uint32_t): 0x00;
+						return SD + N;
+					}
+					if(SD[N].EndOfList){break;}
+				}
+				return NULL;
 			}
 		}
-		//	57 Bits
-		//	48 Bits
-	}else{return (void *)((uint64_t)Physical + TotalMemorySize());}
-	return NULL;
+		//!	Not enough Memory
+		//*	Allocate additional SubDescriptor pool; giving all 'sub'pools an extra %macro% SubdescriptorRoundup, number of entries.
+		const uint64_t TotalBytes = ((IState->TotalSubDescriptors + (IState->TotalDescriptors * SubDescriptorRoundup)) * sizeof(MemoryRangeSubDescriptor)) + (sizeof(uint64_t) * (IState->TotalSubDescriptorPools + 1)), 
+						TotalPages = __roundup(TotalBytes, PAGE_SIZE) / PAGE_SIZE;
+		void *Base = AllocNoUpdate(TotalPages, ReadWritable | SupervisorMode | GlobalEnable, 0x00);
+		uint64_t *Tmp = (uint64_t *)Base;
+		for(uint64_t cc = 0; cc < IState->TotalSubDescriptorPools; ++cc){
+			Tmp[cc] = (uint64_t)(Tmp + (IState->TotalSubDescriptorPools + 1)) + (((IState->TotalSubDescriptors / IState->TotalSubDescriptorPools) + SubDescriptorRoundup) * sizeof(MemoryRangeSubDescriptor));
+			memcpy((void *)Tmp[cc], IState->SubDescriptors[cc], IState->TotalSubDescriptors / IState->TotalSubDescriptorPools);
+			//	Update all allocation tables to have a New EndOfList.
+			for(uint64_t cc_ = 0; cc_ < SubDescriptorRoundup; ++cc_){
+				((MemoryRangeSubDescriptor *)Tmp[cc])[(IState->TotalSubDescriptors / IState->TotalSubDescriptorPools) + cc_ - 1].EndOfList = ((cc_ + 1) - SubDescriptorRoundup) == 0;}
+		}
+		IState->TotalSubDescriptors = (IState->TotalSubDescriptors + (IState->TotalDescriptors * SubDescriptorRoundup));
+		IState->TotalSubDescriptorPools++;
+
+	}
+	return false;
+}
+MemoryRangeSubDescriptor *AppendSingleAllocationTableEntry(uint64_t Physical, UATBitMask _BitMask, ...){
+	va_list ls;	va_start(ls, _BitMask);
+	MemoryRangeSubDescriptor *out = _AppendSingleAllocationTableEntry(Physical, _BitMask, ls);
+	va_end(ls);
+	return out;
+}
+
+uint64_t _UpdateAllocationTableByPhysical(uint64_t Physical, UATBitMask _BitMask, va_list ls){
+	if(Physical == UINT64_MAX){return 0;}
+	InternalAllocationState *IState = GetIState();
+	uint64_t Offset = 0x00;
+	MemoryRangeSubDescriptor *SD = _GetSubDescriptorByPhysical((void *)Physical, IState, &Offset);
+	if(!SD){va_list _ls;	va_copy(_ls, ls);	
+		/*Pop the boolean if it is Enabled*/
+		if(__check(_BitMask, UATPageAllocationType)){va_arg(_ls, uint32_t);}
+		if(!(SD = _AppendSingleAllocationTableEntry(Physical, _BitMask, _ls))){
+			DebugPrintf("\nCould not Append Allocation");	va_end(_ls);	return 0;}
+		va_end(_ls);
+	}
+	if(SD){
+		if(__check(_BitMask, UATPageAllocationType)){
+			SD->AllocationType = va_arg(ls, uint32_t)? 
+				(SD->AllocationType & va_arg(ls, PageAllocationType)): 
+				(SD->AllocationType | va_arg(ls, PageAllocationType));}
+		if(__check(_BitMask, UATPageCoordinate)){SD->PC = va_arg(ls, PageCoordinate);}
+		if(__check(_BitMask, UATValidBit)){SD->Valid = va_arg(ls, uint32_t);}
+		if(__check(_BitMask, UATVirtualNeighbour)){SD->VirtualNeighbour = va_arg(ls, uint32_t);}
+		uint64_t El = _GetPageCoordinateElapsedBytes(SD->PC);
+		return El? El: (uint64_t)true;
+	}
+	return 0;
+}
+#define UpdateAllocationTableByVirtual(Virtual, ...)	UpdateAllocationTableByPhysical((uint64_t)MapPhysical(Virtual), __VA_ARGS__)
+uint64_t UpdateAllocationTableByPhysical(uint64_t Physical, UATBitMask _BitMask, ...){
+	va_list ls;	va_start(ls, _BitMask);
+	uint64_t out = _UpdateAllocationTableByPhysical(Physical, _BitMask, ls);
+	va_end(ls);
+	return out;
+}
+
+#pragma region Allocation/Freeing
+//*	Allocates Memory, without updating the SubDescriptor Table.
+void *AllocNoUpdate(uint64_t Pages, PageAllocationFlags Flags, uint8_t ProtectionKey){
+	// const uint64_t TotalBytes = Pages * PAGE_SIZE;
+	uint64_t Count = 0;
+	SimpleMemoryRangeDescriptor_t *Bfr = QueryFreeMemory(InvalidPointer, Pages, &Count, TypeMask1, sizeof(TypeMask1));
+	if(!Bfr || !Count){DebugPrintf("\nFailed to discover Free Memory");	__chalt(true);}
+	// QuickPageTableAlloc(TotalBytes, PC);
+	BufferPageTableAlloc(Count, Bfr, PC);
+	const PageCoordinate _PC = PC;
+	uint64_t Bytes = Pages * PAGE_SIZE;
+	for(uint64_t cc = 0; Bytes && (cc < Count); ){
+		PrintPage(PC);
+		QuickPageWalk(PC, Page){
+			switch(PageLvl){
+				case 3: {
+					PDPTEntry1GB *L3 = Page;
+					if(!L3->PageSize){break;}
+					*L3 = (PDPTEntry1GB){.Accessed = false, .Dirty = false, .ExecuteDisable = !__check(Flags, ExecuteEnable), 
+						.Global = __check(Flags, GlobalEnable), .PageAttributeTable = __check(Flags, PageAttributeTableEnable), 
+						.PageInMemory = true, .PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
+						.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), .PageSize = true, .PhysicalAddress = 0x00, 
+						.Present = true, .ProtectionKey = ProtectionKey, .ReadWrite = __check(Flags, ReadWritable), .UserMode = __check(Flags, UserMode)};
+					SetPagePhysicalAddress(*L3, (uint64_t)Bfr[cc].PhysicalBase >> PAGE_SHIFT3);
+					if(Bytes > PAGE_SIZE3){Bytes -= PAGE_SIZE3;}else{Bytes = 0;}
+					AddPageCoordinate(&PC, PAGE_SIZE3);
+					break;
+				} case 2: {
+					PageDirectoryEntry2MB *L2 = Page;
+					if(!L2->PageSize){break;}
+					*L2 = (PageDirectoryEntry2MB){.Accessed = false, .Dirty = false, .ExecuteDisable = !__check(Flags, ExecuteEnable), 
+						.Global = __check(Flags, GlobalEnable), .PageAttributeTable = __check(Flags, PageAttributeTableEnable), 
+						.PageInMemory = true, .PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), 
+						.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), .PageSize = true, .PhysicalAddress = 0x00, 
+						.Present = true, .ProtectionKey = ProtectionKey, .ReadWrite = __check(Flags, ReadWritable), .UserMode = __check(Flags, UserMode)};
+					SetPagePhysicalAddress(*L2, (uint64_t)Bfr[cc].PhysicalBase >> PAGE_SHIFT2);
+					if(Bytes > PAGE_SIZE2){Bytes -= PAGE_SIZE2;}else{Bytes = 0;}
+					AddPageCoordinate(&PC, PAGE_SIZE2);
+					break;
+				} case 1: {
+					PageTableEntry4KB *L1 = Page;
+					*L1 = (PageTableEntry4KB){.Accessed = false, .Dirty = false, .ExecuteDisable = !__check(Flags, ExecuteEnable), 
+						.Global = __check(Flags, GlobalEnable), .PageAttributeTable = __check(Flags, PageAttributeTableEnable), 
+						.PageInMemory = true, .PageLevelCacheDisable = !__check(Flags, PageLevelCacheEnable), .Present = true, 
+						.PageLevelWriteThrough = __check(Flags, PageLevelWriteThroughEnable), .PhysicalAddress = 0x00, 
+						.ProtectionKey = ProtectionKey, .ReadWrite = __check(Flags, ReadWritable), .UserMode = __check(Flags, UserMode)};
+					SetPagePhysicalAddress(*L1, (uint64_t)Bfr[cc].PhysicalBase >> PAGE_SHIFT2);
+					if(Bytes > PAGE_SIZE2){Bytes -= PAGE_SIZE2;}else{Bytes = 0;}
+					AddPageCoordinate(&PC, PAGE_SIZE2);
+					break;
+				} 
+			}
+		}else{break;}
+	}
+	VirtualAddress VA = InitVirtualAddress(_PC);
+	return (void *)VirtualAddressToU64(VA);
+}
+
+void *AllocatePages(void *Base, uint64_t NBytes, PageAllocationFlags Flags, uint8_t ProtectionKey){
+	InternalAllocationState *IState = GetIState();
+	uint64_t Count = 0;
+	NBytes = __roundup(NBytes, PAGE_SIZE);
+	SimpleMemoryRangeDescriptor_t *Bfr = QueryFreeMemory(Base, NBytes / PAGE_SIZE, &Count, TypeMask1, sizeof(TypeMask1));
+	if(!Bfr || !Count){DebugPrintf("\nFailed to discover Free Memory");	__chalt(true);}
+	BufferPageTableAlloc(Count, Bfr, PC);
+	MemoryRangeSubDescriptor *Tmp[Count];
+	{uint64_t Offset = 0;	PageCoordinate _PC = PC;
+		for(uint64_t cc = 0; cc < Count; ++cc){
+			if(!(Tmp[cc] = _GetSubDescriptorByPhysical(Bfr[cc].PhysicalBase, IState, NULL))){
+				MemoryRangeSubDescriptor *Next = (cc + 1) < Count? _GetSubDescriptorByPhysical(Bfr[cc + 1].PhysicalBase, IState, NULL): InvalidPointer;
+				if(!Next){Next = InvalidPointer;}
+				if(!(Tmp[cc] = AppendSingleAllocationTableEntry((uint64_t)Bfr[cc].PhysicalBase, 
+					UATPageAllocationType | UATPageCoordinate | UATValidBit | UATVirtualNeighbour, PATUsedRegion, _PC, true, 
+					((uint64_t)Next - (uint64_t)IState->SubDescriptors[IState->CurrentSubDescriptorPool]) / sizeof(MemoryRangeSubDescriptor))
+				)){return InvalidPointer;}
+			}
+			const uint64_t Elapsed = _GetPageCoordinateElapsedBytes(_PC);
+			const VirtualAddress VA = InitVirtualAddress(_PC);
+			UpdatePageTable((void *)VirtualAddressToU64(VA), Elapsed, Flags, ProtectionKey);
+			AddPageCoordinate(&_PC, Elapsed);	Offset += Elapsed;
+		}
+	}
+	VirtualAddress VA = InitVirtualAddress(PC);
+	uint64_t Virtual = VirtualAddressToU64(VA);
+	UpdatePageTable((void *)Virtual, NBytes, Flags, ProtectionKey);
+	for(uint64_t cc = 0; cc < Count; ++cc){
+		(UpdateAllocationTableByPhysical((uint64_t)(Bfr[cc].PhysicalBase), UATMaximumValue, false, PATUsedRegion, PC, (uint32_t)true, 
+			((uint64_t)(Tmp[cc < (Count - 1)? cc + 1: cc]) - (uint64_t)(IState->SubDescriptors[IState->CurrentSubDescriptorPool])) / sizeof(MemoryRangeSubDescriptor)));
+		uint64_t _Tmp = Bfr[cc].PhysicalLimit - (uint64_t)Bfr[cc].PhysicalBase;
+		while(_Tmp){
+			QuickPageWalk(PC, Page){
+				switch(PageLvl){
+					case 3:	{SetPagePhysicalAddress(*(PDPTEntry1GB *)Page, ((uint64_t)Bfr[cc].PhysicalBase) >> PAGE_SHIFT3);
+						if(_Tmp < PAGE_SIZE3){_Tmp = 0;}else{_Tmp -= PAGE_SIZE3;}	AddPageCoordinate(&PC, PAGE_SIZE3);	break;}
+					case 2:	{SetPagePhysicalAddress(*(PageDirectoryEntry2MB *)Page, ((uint64_t)Bfr[cc].PhysicalBase) >> PAGE_SHIFT2);
+						if(_Tmp < PAGE_SIZE2){_Tmp = 0;}else{_Tmp -= PAGE_SIZE2;}	AddPageCoordinate(&PC, PAGE_SIZE2);	break;}
+					case 1:	{SetPagePhysicalAddress(*(PageTableEntry4KB *)Page, ((uint64_t)Bfr[cc].PhysicalBase) >> PAGE_SHIFT);	
+						if(_Tmp < PAGE_SIZE){_Tmp = 0;}else{_Tmp -= PAGE_SIZE;}	AddPageCoordinate(&PC, PAGE_SIZE);	break;}
+				}
+			}else{break;}
+		}
+	}
+	return (void *)Virtual;
 }
 
 void FreePages(void *Virtual){
-	if(!Virtual){return;}
-	void *Physical = MapPhysical((void *)__rounddown((uint64_t)Virtual, PAGE_SIZE));
-	volatile InternalAllocationState *IS = GetIState();
-	QueryPhysicalAddress(Physical, IS){
-		UpdateAllocationTableByPhysical(ATUSubDescriptorAllocationType, (uint64_t)Physical, ~PATUsedRegion);
-		uint64_t _TotalMappedMemory = TotalMappedMemory(Virtual);
-		while(_TotalMappedMemory){
-			uint32_t Level = 5;
-			void *PT = WalkPageTreeByVirtual(Virtual, &Level);
-			switch(Level){
-				case 3: {
-					PDPTEntry1GB *L3 = PT;			L3->PageInMemory = false;	L3->Present = false;
-					if(_TotalMappedMemory > PAGE_SIZE3){_TotalMappedMemory -= PAGE_SIZE3;}else{_TotalMappedMemory = 0;}
-					Virtual += PAGE_SIZE3;
-					break;
-				} case 2: {
-					PageDirectoryEntry2MB *L2 = PT;	L2->PageInMemory = false;	L2->Present = false;
-					if(_TotalMappedMemory > PAGE_SIZE2){_TotalMappedMemory -= PAGE_SIZE2;}else{_TotalMappedMemory = 0;}
-					Virtual += PAGE_SIZE2;
-					break;
-				} case 1: {
-					PageTableEntry4KB *L1 = PT;		L1->PageInMemory = false;	L1->Present = false;
-					if(_TotalMappedMemory > PAGE_SIZE){_TotalMappedMemory -= PAGE_SIZE;}else{_TotalMappedMemory = 0;}
-					Virtual += PAGE_SIZE;
-					break;
-				} default: {continue;}
-			}
-		}
-	}
-}
-
-bool RepointVirtualAddress(void *Virtual, void *NewPhysical){
-	void *Physical = MapPhysical(Virtual);
 	InternalAllocationState *IState = GetIState();
-	bool out = false;
-	QueryPhysicalAddress(Physical, IState){
-		GetDescriptor(D, NewPhysical, IState){
-			out = UpdateAllocationTableByPhysical(ATUSubDescriptorAllocationType | ATUSubDescriptorCoordBaseIndex, (uint64_t)Physical, ~PATUsedRegion, (PageCoordinate){0});
-			VirtualAddress VA = *(VirtualAddress *)&Virtual;
-			if(out){out = UpdateAllocationTableByPhysical(ATUSubDescriptorAllocationType | ATUSubDescriptorCoordBaseIndex, (uint64_t)NewPhysical, PATUsedRegion, InitPageCoordinate(VA));}
-		}
+	if(_GetSubDescriptorByVirtual(Virtual, IState, NULL)){
+		UpdateAllocationTableByVirtual(Virtual, UATPageAllocationType, true, ~PATUsedRegion);
+		UpdatePageTable(Virtual, TotalMappedMemory(Virtual), PresentBitUsetBit, 0x00);
 	}
-	return out;
 }

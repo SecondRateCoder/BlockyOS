@@ -13,7 +13,7 @@ enumdef(uint8_t, XSDT_BGRTStatus){
 enumdef(uint8_t, XSDT_BGRTImageType){XSDT_Bitmap = 0x1};
 
 typedef struct{
-	SDTHeader_t     		Header;
+	ACPIStdHeader_t     		Header;
 	//	Must be 1
 	uint16_t				VersionID;
 	XSDT_BGRTStatus			Status;

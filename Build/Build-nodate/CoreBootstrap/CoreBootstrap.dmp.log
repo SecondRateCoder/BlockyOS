@@ -1,0 +1,120 @@
+
+C:/GitHub/BlockyOS/Build/Build-nodate/root-part/CoreBootstrap.dll:     file format pei-x86-64
+
+
+Disassembly of section .text:
+
+0000000000001000 <RealmodeBootstrap>:
+    1000:	fa                   	cli
+    1001:	e4 70                	in     $0x70,%al
+    1003:	0c 80                	or     $0x80,%al
+    1005:	e6 70                	out    %al,$0x70
+    1007:	b8 10 00 8e d8       	mov    $0xd88e0010,%eax
+    100c:	8e d0                	mov    %eax,%ss
+    100e:	8e c0                	mov    %eax,%es
+    1010:	8e e0                	mov    %eax,%fs
+    1012:	8e e8                	mov    %eax,%gs
+    1014:	66 a1 20 30 67 05 00 	movabs 0x1300005673020,%ax
+    101b:	30 01 00 
+    101e:	67 c7 00 ff ff 66 89 	movl   $0x8966ffff,(%eax)
+    1025:	c3                   	ret
+    1026:	66 81 c3 00 20       	add    $0x2000,%bx
+    102b:	00 00                	add    %al,(%rax)
+    102d:	67 66 89 58 02       	mov    %bx,0x2(%eax)
+    1032:	67 0f 01 10          	lgdt   (%eax)
+    1036:	66 a1 20 30 67 05 00 	movabs 0x1300005673020,%ax
+    103d:	30 01 00 
+    1040:	67 c7 00 00 00 66 89 	movl   $0x89660000,(%eax)
+    1047:	c3                   	ret
+    1048:	66 81 c3 00 00       	add    $0x0,%bx
+    104d:	00 00                	add    %al,(%rax)
+    104f:	67 66 89 58 02       	mov    %bx,0x2(%eax)
+    1054:	67 0f 01 18          	lidt   (%eax)
+    1058:	66 a1 20 30 67 05 00 	movabs 0x1300005673020,%ax
+    105f:	30 01 00 
+    1062:	67 c7 00 00 00 66 89 	movl   $0x89660000,(%eax)
+    1069:	c3                   	ret
+    106a:	66 81 c3 00 00       	add    $0x0,%bx
+    106f:	00 00                	add    %al,(%rax)
+    1071:	67 66 89 58 02       	mov    %bx,0x2(%eax)
+    1076:	67 0f 00 10          	lldt   (%eax)
+    107a:	66 a1 20 30 67 05 8a 	movabs 0x108a05673020,%ax
+    1081:	10 00 00 
+    1084:	68 08 00 66 50       	push   $0x50660008
+    1089:	cb                   	lret
+
+000000000000108a <RealmodeBootstrap.ProtectedModeBootstrap>:
+    108a:	0f 20 e2             	mov    %cr4,%rdx
+    108d:	81 ca 20 00 00 00    	or     $0x20,%edx
+    1093:	a1 20 30 01 00 05 40 	movabs 0x130400500013020,%eax
+    109a:	30 01 
+    109c:	00 05 52 00 00 00    	add    %al,0x52(%rip)        # 10f4 <RealmodeBootstrap.NoLA57+0x47>
+    10a2:	80 38 01             	cmpb   $0x1,(%rax)
+    10a5:	75 06                	jne    10ad <RealmodeBootstrap.NoLA57>
+    10a7:	81 ca 00 10 00 00    	or     $0x1000,%edx
+
+00000000000010ad <RealmodeBootstrap.NoLA57>:
+    10ad:	0f 22 e2             	mov    %rdx,%cr4
+    10b0:	b9 80 00 00 c0       	mov    $0xc0000080,%ecx
+    10b5:	0f 32                	rdmsr
+    10b7:	0d 00 01 00 00       	or     $0x100,%eax
+    10bc:	0f 30                	wrmsr
+    10be:	a1 20 30 01 00 05 40 	movabs 0x130400500013020,%eax
+    10c5:	30 01 
+    10c7:	00 05 24 00 00 00    	add    %al,0x24(%rip)        # 10f1 <RealmodeBootstrap.NoLA57+0x44>
+    10cd:	0f 22 d8             	mov    %rax,%cr3
+    10d0:	81 cb 01 00 00 80    	or     $0x80000001,%ebx
+    10d6:	0f 22 c3             	mov    %rbx,%cr0
+    10d9:	66 b8 10 00          	mov    $0x10,%ax
+    10dd:	66 8e d8             	mov    %ax,%ds
+    10e0:	66 8e c0             	mov    %ax,%es
+    10e3:	66 8e e0             	mov    %ax,%fs
+    10e6:	66 8e e8             	mov    %ax,%gs
+    10e9:	a1 20 30 01 00 05 f9 	movabs 0x10f90500013020,%eax
+    10f0:	10 00 
+    10f2:	00 66 68             	add    %ah,0x68(%rsi)
+    10f5:	08 00                	or     %al,(%rax)
+    10f7:	50                   	push   %rax
+    10f8:	cb                   	lret
+
+00000000000010f9 <RealmodeBootstrap.LongModeBootstrap>:
+    10f9:	48 8b 05 20 1f 01 00 	mov    0x11f20(%rip),%rax        # 13020 <LoadBase>
+    1100:	48 05 40 30 01 00    	add    $0x13040,%rax
+    1106:	48 89 c3             	mov    %rax,%rbx
+    1109:	48 81 c3 48 00 00 00 	add    $0x48,%rbx
+    1110:	0f 01 1b             	lidt   (%rbx)
+    1113:	48 89 c3             	mov    %rax,%rbx
+    1116:	48 81 c3 3e 00 00 00 	add    $0x3e,%rbx
+    111d:	0f 00 13             	lldt   (%rbx)
+    1120:	48 89 c3             	mov    %rax,%rbx
+    1123:	48 81 c3 34 00 00 00 	add    $0x34,%rbx
+    112a:	0f 01 13             	lgdt   (%rbx)
+    112d:	48 8b 58 2c          	mov    0x2c(%rax),%rbx
+    1131:	0f 22 e3             	mov    %rbx,%cr4
+    1134:	48 8b 58 24          	mov    0x24(%rax),%rbx
+    1138:	0f 22 db             	mov    %rbx,%cr3
+    113b:	48 8b 58 1c          	mov    0x1c(%rax),%rbx
+    113f:	0f 22 c3             	mov    %rbx,%cr0
+    1142:	48 8b 58 14          	mov    0x14(%rax),%rbx
+    1146:	53                   	push   %rbx
+    1147:	9d                   	popf
+    1148:	8e 68 12             	mov    0x12(%rax),%gs
+    114b:	8e 60 10             	mov    0x10(%rax),%fs
+    114e:	8e 40 0e             	mov    0xe(%rax),%es
+    1151:	8e 50 0c             	mov    0xc(%rax),%ss
+    1154:	8e 58 0a             	mov    0xa(%rax),%ds
+    1157:	48 2d 02 00 00 00    	sub    $0x2,%rax
+    115d:	66 8b 08             	mov    (%rax),%cx
+    1160:	66 51                	push   %cx
+    1162:	48 8b 1d b7 1e 01 00 	mov    0x11eb7(%rip),%rbx        # 13020 <LoadBase>
+    1169:	48 81 c3 72 11 00 00 	add    $0x1172,%rbx
+    1170:	53                   	push   %rbx
+    1171:	cb                   	lret
+
+0000000000001172 <RealmodeBootstrap.LongModeCSRefresh>:
+    1172:	48 8b 05 a7 1e 01 00 	mov    0x11ea7(%rip),%rax        # 13020 <LoadBase>
+    1179:	48 05 40 30 01 00    	add    $0x13040,%rax
+    117f:	ff 20                	jmp    *(%rax)
+    1181:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+    1188:	00 00 00 
+    118b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)

@@ -131,6 +131,31 @@ volatile ISRCallbackTable __align(4096) InterruptCallbacks = {
 	GenericISR, GenericISR, GenericISR
 };
 
+void InitialiseInterruptCallbacks(){
+	InterruptCallbacks[0] = DivideErrorISR;
+	InterruptCallbacks[1] = DebugExceptionISR;
+	InterruptCallbacks[2] = NonMaskableExtISR;
+	InterruptCallbacks[3] = BreakpointISR;
+	InterruptCallbacks[4] = OverflowISR;
+	InterruptCallbacks[5] = BoundRangeExceptionISR;
+	InterruptCallbacks[6] = InvalidOpcodeISR;
+	InterruptCallbacks[7] = UnavailableDeviceISR;
+	InterruptCallbacks[8] = DoubleFaultISR;
+	InterruptCallbacks[9] = CoprocessorSegmentOverrunISR;
+	InterruptCallbacks[10] = InvalidTSSISR;
+	InterruptCallbacks[11] = SegmentNotPresentISR;
+	InterruptCallbacks[12] = StackSegmentFaultISR;
+	InterruptCallbacks[13] = GeneralProtectionISR;
+	InterruptCallbacks[14] = PageFaultISR;
+	InterruptCallbacks[15] = x87FPUErrorISR;
+	InterruptCallbacks[16] = AlignmentCheckISR;
+	InterruptCallbacks[17] = MachineCheckISR;
+	InterruptCallbacks[18] = SIMDFloatingPointExceptionISR;
+	InterruptCallbacks[19] = VirtualisationExceptionISR;
+	InterruptCallbacks[20] = ControlProtectionExceptionISR;
+	for(uint64_t cc = 21; cc < IDTLength; ++cc){InterruptCallbacks[cc] = GenericISR;}
+}
+
 bool __noinline __used AllocateInterruptVector(uint8_t *Vector){
 	if(!Vector){return false;}
 	for(uint32_t cc = 0; cc < (sizeof(InterruptCallbacks) / sizeof(ISRCallback)); ++cc){
@@ -223,7 +248,7 @@ bool AllocateIST(uint8_t *IST, IDTEntrySegmentSelector64 *sselector){
 				GDTSystemSegmentDescriptor64 *SS = (GDTSystemSegmentDescriptor64 *)(R.Base + (_GDT * sizeof(GDTDescriptor)));
 				if(SS->ABType == TSS64BitAvailable){
 					TSS_t *_TSS = (void *)(((uint64_t)SS->BaseHigh << 24) + SS->BaseLow);
-					if(_TSS){EnableInputAddress(true, true);
+					if(_TSS){//	EnableInputAddress(true, true);
 						_TSS = SafeAllocatePages(_TSS, sizeof(TSS_t), (ReadWritable | SupervisorMode), 0x00, 0x20);
 					}else{
 						_TSS = AllocatePages(NULL, sizeof(TSS_t), (ReadWritable | SupervisorMode), 0x00);
@@ -249,33 +274,55 @@ bool AllocateIST(uint8_t *IST, IDTEntrySegmentSelector64 *sselector){
 	return false;
 }
 
-ISRCallbackDefinition(Generic){ISRCallbackReturn;}
+static uint32_t ErrorCountdown = 64;
 
+ISRCallbackDefinition(Generic){DebugPrintf("\nGeneric Interrupt at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
 ISRCallbackDefinition(DivideError){
-	Frame->RAX = UINT64_MAX;
-	Frame->RDX = UINT64_MAX;
-	DebugPrintf("\nFail at 0x%0z", Frame->RIP);
+	DebugPrintf("\nDivide Error at 0x%0z", Frame->RIP);
+	Frame->RAX = 0x00;	Frame->RDX = 0x00;
 	ISRCallbackReturn;
 }
-
 //	Handle Later
-ISRCallbackDefinition(DebugException){ISRCallbackReturn;}
-ISRCallbackDefinition(NonMaskableExt){ISRCallbackReturn;}
-ISRCallbackDefinition(Breakpoint){ISRCallbackReturn;}
-ISRCallbackDefinition(Overflow){ISRCallbackReturn;}
-ISRCallbackDefinition(BoundRangeException){ISRCallbackReturn;}
-ISRCallbackDefinition(InvalidOpcode){ISRCallbackReturn;}
-ISRCallbackDefinition(UnavailableDevice){ISRCallbackReturn;}
-ISRCallbackDefinition(DoubleFault){ISRCallbackReturn;}
-ISRCallbackDefinition(CoprocessorSegmentOverrun){ISRCallbackReturn;}
-ISRCallbackDefinition(InvalidTSS){ISRCallbackReturn;}
-ISRCallbackDefinition(SegmentNotPresent){ISRCallbackReturn;}
-ISRCallbackDefinition(StackSegmentFault){ISRCallbackReturn;}
-ISRCallbackDefinition(GeneralProtection){ISRCallbackReturn;}
-ISRCallbackDefinition(PageFault){ISRCallbackReturn;}
-ISRCallbackDefinition(x87FPUError){ISRCallbackReturn;}
-ISRCallbackDefinition(AlignmentCheck){ISRCallbackReturn;}
-ISRCallbackDefinition(MachineCheck){ISRCallbackReturn;}
-ISRCallbackDefinition(SIMDFloatingPointException){ISRCallbackReturn;}
-ISRCallbackDefinition(VirtualisationException){ISRCallbackReturn;}
-ISRCallbackDefinition(ControlProtectionException){ISRCallbackReturn;}
+ISRCallbackDefinition(DebugException){DebugPrintf("\nDebug Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(NonMaskableExt){DebugPrintf("\nNon-maskable External Interrupt at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(Breakpoint){DebugPrintf("\nBreakpoint Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(Overflow){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nOverflow Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(BoundRangeException){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nBound Range Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(InvalidOpcode){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nInvalid Opcode Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(UnavailableDevice){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nUnavailable FPU Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(DoubleFault){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nDouble Fault Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(CoprocessorSegmentOverrun){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nCoprocessor Segment Overrun Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(InvalidTSS){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	char *Src = NULL;	switch((Frame->ErrorCode >> 1) & 0x3){
+		case 0b00:	{Src = "GDT";	break;}
+		case 0b10:	{Src = "LDT";	break;}
+		default:	{Src = "IDT";	break;}
+	}
+	DebugPrintf("\nInvalid TSS Exception at 0x%0z\t{External: %z, Source: %s, Selector:  0x%0z}", Frame->RIP, 
+		(uint64_t)(Frame->ErrorCode & 0x1), Src, (uint64_t)(Frame->ErrorCode >> 3) & 0x1FFFULL);
+	ISRCallbackReturn;
+}
+ISRCallbackDefinition(SegmentNotPresent){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nSegment Not Present Exception at 0x%0z\t{Segment: 0x%0z}", Frame->RIP, (uint64_t)Frame->ErrorCode);	ISRCallbackReturn;}
+ISRCallbackDefinition(StackSegmentFault){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nSegment Not Present Exception at 0x%0z\t{Segment: 0x%0z}", Frame->RIP, (uint64_t)Frame->ErrorCode);	ISRCallbackReturn;}
+ISRCallbackDefinition(GeneralProtection){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nGeneral Protection Fault at 0x%0z\t{Segment-Related: %s, Segment:  0x%0z}", Frame->RIP, (Frame->ErrorCode? "TRUE": "FALSE"), Frame->ErrorCode);	ISRCallbackReturn;}
+ISRCallbackDefinition(PageFault){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nPage Fault at 0x%0z(VirtualAddress: 0x%0z)\t0b%2z{Present: %z, WriteOperation: %z, CPLEq3: %z, InvalidPageTableBits: %z, ExecuteViolation %z, ProtectionKeyViolation %z, ShadowStackAccessViolation %z, SoftwareGuardExtViolation %z}", 
+		Frame->RIP, Frame->CR2, Frame->ErrorCode, (uint64_t)(Frame->ErrorCode & 0x1), (uint64_t)((Frame->ErrorCode >> 1) & 0x1), (uint64_t)((Frame->ErrorCode >> 2) & 0x1), (uint64_t)((Frame->ErrorCode >> 3) & 0x1), (uint64_t)((Frame->ErrorCode >> 4) & 0x1), 
+		(uint64_t)((Frame->ErrorCode >> 5) & 0x1), (uint64_t)((Frame->ErrorCode >> 6) & 0x1), (uint64_t)((Frame->ErrorCode >> 15) & 0x1));	ISRCallbackReturn;}
+ISRCallbackDefinition(x87FPUError){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nx87 FPU Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(AlignmentCheck){DebugPrintf("\nAlignment Check Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(MachineCheck){DebugPrintf("\nMachine Check Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(SIMDFloatingPointException){if(!ErrorCountdown){DebugPrintf("\nError Rate Unbounded, Halting CPU");	__chalt(true);}	ErrorCountdown--;
+	DebugPrintf("\nSIMD Floating Point Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(VirtualisationException){DebugPrintf("\nVirtualisation Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}
+ISRCallbackDefinition(ControlProtectionException){DebugPrintf("\nControl Protection Exception at 0x%0z", Frame->RIP);	ISRCallbackReturn;}

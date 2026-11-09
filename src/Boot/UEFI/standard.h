@@ -43,8 +43,7 @@ typedef struct __bootinfo{
 	struct{
 		CHAR16 BootEntryName[32];
 		UINT8 BootEntryCode;
-		void *bootMain;
-		ExpandedPeExecutable *This;
+		LoadedPeExecutable *This;
 	}bootentry;
 	struct{
 		void *videomemory;

@@ -30,7 +30,7 @@ typedef struct{
 	uint8_t				RecordTypeLength;
 }__packed RSDT_MADTEntry;
 typedef struct{
-	SDTHeader_t			Header;
+	ACPIStdHeader_t			Header;
 	uint32_t			LocalAPICAddress;
 	RSDT_MADTFlags		Flags;
 	RSDT_MADTEntry		Table[];

@@ -9,7 +9,7 @@
 
 typedef struct{
     //	Pushed by common_isr_stub (Lowest Address [RSP + 0])
-	uint64_t					R15, R14, R13, R12, R11, R10, R9, R8;
+	uint64_t					CR2, R15, R14, R13, R12, R11, R10, R9, R8;
 	uint64_t					RDI, RSI, RBP, RDX, RCX, RBX, RAX;
 	
 	//	Pushed by Macros
@@ -31,12 +31,16 @@ typedef struct{
 	// struct InterruptStackFrame	Faults[];
 }__packed InterruptStackFrame;
 
-typedef void *__sysvabi __naked(*ISRCallback)(InterruptStackFrame *Frame);
+typedef void *__sysvabi(*ISRCallback)(InterruptStackFrame *Frame);
 typedef ISRCallback ISRCallbackTable[IDTLength];
 extern volatile ISRCallbackTable __align(64) InterruptCallbacks;
+LibAPI extern void common_isr_stub(void);
+
+
+LibAPI void InitialiseInterruptCallbacks();
 
 #define ISRCallbackReturn			__bochs();	WriteAPICRegister(Frame->LocalAPIC, LAR_EndOfInterrupt, (uint32_t)0x00);		return NULL
-#define ISRCallbackDefinition(NAME)	void *__naked __sysvabi NAME##ISR(InterruptStackFrame *Frame)
+#define ISRCallbackDefinition(NAME)	void *__sysvabi NAME##ISR(InterruptStackFrame *Frame)
 
 LibAPI void *ISRGetStackHeader(uint32_t Vector);
 LibAPI bool __noinline __used AllocateInterruptVector(uint8_t *Vector);

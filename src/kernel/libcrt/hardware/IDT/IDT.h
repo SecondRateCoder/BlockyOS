@@ -76,7 +76,8 @@ typedef volatile struct{
 	uint64_t	PresentEntry				: 1;
 	uint64_t	OffsetHigh					: 16;
 }__packed IDTEntry32, IDTTable32[IDTLength];
-
+LibAPI extern void __cli(void);
+LibAPI extern void __sti(void);
 LibAPI extern bool __sysvabi LoadIDTR(IDTR64 *Register);
 LibAPI extern bool __sysvabi ReadIDTR(IDTR64 *Register);
 LibAPI extern bool __sysvabi _LoadIDTR(IDTR64 *Register);

@@ -1,28 +1,26 @@
 #include "malloc.h"
 #include "kernel/libcrt/hardware/RNG/RNG.h"
 #include "kernel/libcrt/memory/memory.h"
+#include "kernel/libcrt/SimpleOutput/SimpleOutput.h"
 
 static volatile allocstate_t *getastate(){
-	static allocstate_t out = {0};
+	static __linkersection(.bss) allocstate_t out = {0};
     return &out;
 }
 
 /*
 * @remarks This Function modifies the Pool ptr, losing the ptr will severly damage the Integrity of the Allocator
 */
-void allocatepool(size_t nblocks){
+void allocatepool(uint64_t nblocks){
 	volatile allocstate_t *astate = getastate();
-	nblocks = __roundup(nblocks << 1, allocALIGN);
+	nblocks = __roundupt(nblocks << 1, allocALIGN);
 	astate->npools++;
 	if(astate->pools){
-		astate->pools = ReallocatePages(NULL, astate->pools, 
-			(GlobalEnable | ReadWritable | SupervisorMode | PageLevelCacheEnable | PageLevelWriteThroughEnable), 0x0, 
+		astate->pools = ReallocatePages(NULL, astate->pools, (GlobalEnable | ReadWritable | SupervisorMode | PageLevelCacheEnable), 0x0, 
 			sizeof(mempool_t) * astate->npools);
-	}else{astate->pools = AllocatePages(NULL, astate->npools * sizeof(mempool_t), 
-		(GlobalEnable | ReadWritable | SupervisorMode | PageLevelCacheEnable | PageLevelWriteThroughEnable), 0x0);}
+	}else{astate->pools = AllocatePages(NULL, astate->npools * sizeof(mempool_t), (GlobalEnable | ReadWritable | SupervisorMode | PageLevelCacheEnable), 0x0);}
 	astate->pools[astate->npools - 1] = (mempool_t){
-		.base = AllocateAlignedPages(NULL, nblocks * BLOCKSIZE, 
-			(GlobalEnable | ReadWritable | SupervisorMode | PageLevelCacheEnable | PageLevelWriteThroughEnable), 0x0, allocALIGN),
+		.base = AllocateAlignedPages(NULL, nblocks * BLOCKSIZE, (GlobalEnable | ReadWritable | SupervisorMode | PageLevelCacheEnable), 0x0, allocALIGN),
 		.nblocks = nblocks, .nDescriptors = 0
 	};
 	memset(astate->pools[astate->npools - 1].base, 0, nblocks * BLOCKSIZE);
@@ -32,9 +30,9 @@ void allocatepool(size_t nblocks){
 * @remarks This Function Updates the Allocator State, whilst i'd like to lock it. 
 *			I cant really do that as it needs to initialise the state.
 */
-static void initastate(size_t nblocks, uint32_t npools){
+static void initastate(uint64_t nblocks, uint32_t npools){
 	volatile allocstate_t *astate = getastate();
-	if(!astate->pools){
+	if(!(astate->pools)){
 		*astate = (allocstate_t){.pools = NULL, .npools = 0, .totalNAllocations = 0};
 		while(npools--){allocatepool(nblocks);}
 	}
@@ -43,11 +41,11 @@ static void initastate(size_t nblocks, uint32_t npools){
 /*
 * @remarks This Function only Read the Memory Pool, No need to lock.
 */
-memdesc_t *querydescu(volatile mempool_t *__restrict mp, size_t nbytes){
+memdesc_t *querydescu(volatile mempool_t *__restrict mp, uint64_t nbytes){
 	memdesc_t *md = getdescarrn(mp);
 	//		md points to the end of the memdesc_t array, walk from the start of the array backwards.
 	//		whilst we could alternatively walk forward, i will keep the standard for consistency.
-	for(size_t cc = (mp->nDescriptors? mp->nDescriptors - 1: UINT64_MAX); cc != UINT64_MAX; --cc){
+	for(uint64_t cc = (mp->nDescriptors? mp->nDescriptors - 1: UINT64_MAX); cc != UINT64_MAX; --cc){
 		if(!__check(md[cc].flags, memdesc_e__used) && (md[cc].nbytes == nbytes)){
 			return (md + cc);
 		}
@@ -58,10 +56,10 @@ memdesc_t *querydescu(volatile mempool_t *__restrict mp, size_t nbytes){
 /*
 * @remarks This Function Modifies the Memory Pool, Lock it.
 */
-void fixmdarray(mempool_t *__restrict mp, size_t *__restrict ndescs){
+void fixmdarray(mempool_t *__restrict mp, uint64_t *__restrict ndescs){
 	memdesc_t *md = getdescarrn(mp);
-	size_t min = 0;
-	for(size_t cc = (*ndescs? *ndescs - 1: UINT64_MAX); (cc != UINT64_MAX) && (cc > min); --cc){
+	uint64_t min = 0;
+	for(uint64_t cc = (*ndescs? *ndescs - 1: UINT64_MAX); (cc != UINT64_MAX) && (cc > min); --cc){
 		if(md[cc].nbytes == 0){
 			// Remove 0-byte entries
 			memmove_s(md + 1, sizeof(memdesc_t) * (*ndescs), md, sizeof(memdesc_t) * ((*ndescs) - cc));
@@ -69,12 +67,12 @@ void fixmdarray(mempool_t *__restrict mp, size_t *__restrict ndescs){
 			md++;
 		}else{
 			// Fix Next ptrs, Simply find the Closest Entry that comes after the current one.
-			size_t next = (size_t)md[cc].ptr + md[cc].nbytes, diff = UINT64_MAX;
+			uint64_t next = (uint64_t)md[cc].ptr + md[cc].nbytes, diff = UINT64_MAX;
 			memdesc_t *nextdesc = NULL;
-			for(size_t cc_ = (*ndescs? *ndescs - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
-				if(((size_t)md[cc_].ptr == (size_t)md[cc].ptr) || ((size_t)md[cc_].ptr < (size_t)md[cc].ptr)){continue;}
-				if(((size_t)md[cc_].ptr < next) || (((size_t)md[cc_].ptr - next) > diff)){continue;}
-				diff = (size_t)md[cc_].ptr - next;
+			for(uint64_t cc_ = (*ndescs? *ndescs - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
+				if(((uint64_t)md[cc_].ptr == (uint64_t)md[cc].ptr) || ((uint64_t)md[cc_].ptr < (uint64_t)md[cc].ptr)){continue;}
+				if(((uint64_t)md[cc_].ptr < next) || (((uint64_t)md[cc_].ptr - next) > diff)){continue;}
+				diff = (uint64_t)md[cc_].ptr - next;
 				nextdesc = (md + cc_);
 			}
 			md[cc].next = nextdesc;
@@ -88,7 +86,7 @@ void fixmdarray(mempool_t *__restrict mp, size_t *__restrict ndescs){
 void fragmemory(
 	volatile mempool_t *__restrict mp, 
 	volatile memdesc_t *__restrict target, 
-	volatile size_t *__restrict ndescs, size_t nbytes
+	volatile uint64_t *__restrict ndescs, uint64_t nbytes
 ){
 	// Fragment Memory by splitting a Memory Descriptor into nbytes(to the 8-byte boundary) and a Overflow
 	if(nbytes){nbytes = __roundup(nbytes, allocALIGN);}
@@ -106,7 +104,7 @@ void fragmemory(
 		};
 		target->nbytes = nbytes;
 		target->next = table + (*ndescs) - 1;
-		fixmdarray(mp, ndescs);
+		fixmdarray((mempool_t *)mp, (uint64_t *)ndescs);
 		return;
 	}
 }
@@ -121,10 +119,10 @@ volatile memdesc_t *chaintip(volatile memdesc_t *__restrict md){
 /*
 * @remarks This Function doesn't modify the Memory Descriptor Array.
 */
-size_t memusedsize(volatile mempool_t *__restrict mp){
+uint64_t memusedsize(volatile mempool_t *__restrict mp){
 	memdesc_t *md = getdescarrn(mp);
-	size_t out = 0;
-	for(size_t cc = (mp->nDescriptors? mp->nDescriptors - 1: UINT64_MAX); cc != UINT64_MAX; --cc){
+	uint64_t out = 0;
+	for(uint64_t cc = (mp->nDescriptors? mp->nDescriptors - 1: UINT64_MAX); cc != UINT64_MAX; --cc){
 		// Additionally check for Padding with this Entry and the Next.
 		out += md[cc].nbytes + /*Ensure that we account for Padding/Gaps*/(md[cc].next? (md[cc].next->ptr - (md[cc].ptr + md[cc].nbytes)): 0);
 	}
@@ -134,7 +132,7 @@ size_t memusedsize(volatile mempool_t *__restrict mp){
 /*
 * @remarks This Function modifies The Memory Descriptor Array
 */
-memdesc_t *allocatedesc(volatile mempool_t *__restrict pool, size_t nbytes){
+memdesc_t *allocatedesc(volatile mempool_t *__restrict pool, uint64_t nbytes){
 	// Get the end of the array
 	memdesc_t *md = getdescarrn(pool);
 	nbytes = __roundup(nbytes, allocALIGN);
@@ -144,14 +142,14 @@ memdesc_t *allocatedesc(volatile mempool_t *__restrict pool, size_t nbytes){
 		pool->nDescriptors++;
 		volatile memdesc_t *tip = chaintip(md);
 		md--;
-		if((size_t)tip != ((size_t)pool->base + (pool->nblocks * BLOCKSIZE))){tip->next = md;}
+		if((uint64_t)tip != ((uint64_t)pool->base + (pool->nblocks * BLOCKSIZE))){tip->next = md;}
 		*md = (memdesc_t){
 			.flags = 0,
 			.nbytes = nbytes,
 			.next = NULL,
 			.ptr = (void *)__roundup(
-				(size_t)((tip->ptr >= pool->base) && (tip->ptr < (pool->base + (pool->nblocks * BLOCKSIZE)))? 
-					((size_t)tip->ptr + tip->nbytes): (size_t)pool->base), allocALIGN)
+				(uint64_t)((tip->ptr >= pool->base) && (tip->ptr < (pool->base + (pool->nblocks * BLOCKSIZE)))? 
+					((uint64_t)tip->ptr + tip->nbytes): (uint64_t)pool->base), allocALIGN)
 		};
 		return md;
 	}else{return NULL;}
@@ -161,14 +159,14 @@ memdesc_t *allocatedesc(volatile mempool_t *__restrict pool, size_t nbytes){
 * @remarks This Function modifies The Memory Descriptor Array
 */
 bool fusememory(
-	volatile mempool_t *__restrict mp, volatile size_t *__restrict ndescs, 
-	volatile memdesc_t *__restrict chainstart, size_t targetbytes, 
+	volatile mempool_t *__restrict mp, volatile uint64_t *__restrict ndescs, 
+	volatile memdesc_t *__restrict chainstart, uint64_t targetbytes, 
 	memdesc_e targetflags
 ){
 	// Validation Check
 	memdesc_t *table = getdescarrn(mp);
 	volatile memdesc_t *temp = chainstart;
-	size_t metbytes = 0;
+	uint64_t metbytes = 0;
 	bool out = 0;
 	do{
 		metbytes -= temp->nbytes;
@@ -177,14 +175,14 @@ bool fusememory(
 	if(metbytes < targetbytes){out = false;}else{// Validation Fail
 		// Validation No-Fail
 		// Now just Fuse the Memory and remap it all.
-		memdesc_t *temp = chainstart, *next = NULL;
+		memdesc_t *temp = (memdesc_t *)chainstart, *next = NULL;
 		while(temp->next && __check(temp->flags, targetflags)){
 			bool break_ = false;
 			// Copy nEntries to fill the Space
 			chainstart->nbytes += temp->nbytes;
 			next = temp->next;
-			if((size_t)temp < ((size_t)table + *ndescs + 1)){	// Ensure there's enough space for the Copy
-				size_t index = ((size_t)temp - (size_t)table) / sizeof(memdesc_t);
+			if((uint64_t)temp < ((uint64_t)table + *ndescs + 1)){	// Ensure there's enough space for the Copy
+				uint64_t index = ((uint64_t)temp - (uint64_t)table) / sizeof(memdesc_t);
 				memmove_s(table + index, (*ndescs - index) * sizeof(memdesc_t), table + index + 1, (*ndescs - (index + 1)) * sizeof(memdesc_t));
 				(getastate())->totalNAllocations--;
 			}else{break_ = true;}
@@ -193,7 +191,7 @@ bool fusememory(
 			temp = next;
 			if(break_){break;}
 		}
-		fixmdarray(mp, ndescs);
+		fixmdarray((mempool_t *)mp, (uint64_t *)ndescs);
 	}
 	return out;
 }
@@ -201,14 +199,14 @@ bool fusememory(
 /*
 * @remarks This Function already uses Mutex Locked Dependencies
 */
-volatile void *mrealloc(volatile void *__restrict ptr, size_t new){
+volatile void *mrealloc(volatile void *__restrict ptr, uint64_t new){
 	if(!ptr){return mmalloc(new);}
 	if(!new){mfree((void *)ptr); return NULL;}
-	size_t originalsize = 0;
+	uint64_t originalsize = 0;
 	volatile allocstate_t *astate = getastate();
 	for(uint32_t cc = 0; cc < astate->npools; cc++){
 		memdesc_t *md = getdescarrn(astate->pools + cc);
-		for(size_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
+		for(uint64_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 			if((ptr >= md[cc_].ptr) && (ptr <= (md[cc_].ptr + md[cc_].nbytes))){
 				originalsize = md[cc_].nbytes;
 				break;
@@ -219,8 +217,8 @@ volatile void *mrealloc(volatile void *__restrict ptr, size_t new){
 	if(originalsize){
 		volatile void *out = mmalloc(new);
 		if(!out){return NULL;}
-		memcpy(out, ptr, __min(originalsize, new));
-		mfree(ptr);
+		memcpy((void *)out, ptr, __min(originalsize, new));
+		mfree((void *)ptr);
 		return out;
 	}
 	return NULL;
@@ -229,26 +227,23 @@ volatile void *mrealloc(volatile void *__restrict ptr, size_t new){
 /*
 * @remarks This Function already uses Mutex Locked Dependencies
 */
-volatile void *mcalloc(size_t nItems, size_t itemSize){
-	return mmalloczero(nItems * itemSize);
-}
+volatile void *mcalloc(uint64_t nItems, uint64_t itemSize){return mmalloczero(nItems * itemSize);}
 
 /*
 * @remarks This Function already uses Mutex Locked Dependencies
 */
-volatile void *mmalloczero(size_t nbytes){
+volatile void *mmalloczero(uint64_t nbytes){
 	volatile void *out = mmalloc(nbytes);
-	memset(out, 0, nbytes);
-	// MSafePrint("Allocating %llu bytes of Zero-Memory, Outputting 0x%p", out, nbytes, out);
+	memset((void *)out, 0, nbytes);
 	return out;
 }
 
 volatile void *mclone(void *original){
-	size_t size = 0;
+	uint64_t size = 0;
 	volatile allocstate_t *astate = getastate();
 	for(uint32_t cc = 0; cc < astate->npools; cc++){
 		memdesc_t *md = getdescarrn(astate->pools + cc);
-		for(size_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
+		for(uint64_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 			if((original >= md[cc_].ptr) && (original <= (md[cc_].ptr + md[cc_].nbytes))){
 				size = md[cc_].nbytes;
 				break;
@@ -257,10 +252,10 @@ volatile void *mclone(void *original){
 		if(size){break;}
 	}
 	if(size){
-		void *out = mmalloczero(size);
+		void *out = (void *)mmalloczero(size);
 		if(!out){return NULL;}
 		memcpy(out, original, size);
-		MSafePrint("Cloning Memory 0x%p, outputting 0x%p of %llu bytes", out, original, out, size);
+		DebugPrintf("Cloning Memory 0x0x%0z, outputting 0x0x%0z of %z bytes", out, original, out, size);
 		return out;
 	}
 	return NULL;
@@ -270,8 +265,8 @@ bool mIsMapped(void *m){
 	volatile allocstate_t *astate = getastate();
 	for(uint32_t cc = 0; cc < astate->npools; cc++){
 		memdesc_t *md = getdescarrn(astate->pools + cc);
-		for(size_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
-			if(((size_t)m >= (size_t)md[cc_].ptr) && ((size_t)m <= ((size_t)md[cc_].ptr + md[cc_].nbytes))){
+		for(uint64_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
+			if(((uint64_t)m >= (uint64_t)md[cc_].ptr) && ((uint64_t)m <= ((uint64_t)md[cc_].ptr + md[cc_].nbytes))){
 				return true;
 			}
 		}
@@ -279,12 +274,12 @@ bool mIsMapped(void *m){
 	return MemoryIsMapped(m);
 }
 
-volatile void *mclone_s(void *original, size_t target){
-	size_t size = 0;
+volatile void *mclone_s(void *original, uint64_t target){
+	uint64_t size = 0;
 	volatile allocstate_t *astate = getastate();
 	for(uint32_t cc = 0; cc < astate->npools; cc++){
 		memdesc_t *md = getdescarrn(astate->pools + cc);
-		for(size_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
+		for(uint64_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 			if((original >= md[cc_].ptr) && (original <= (md[cc_].ptr + md[cc_].nbytes))){
 				size = md[cc_].nbytes;
 				break;
@@ -292,7 +287,7 @@ volatile void *mclone_s(void *original, size_t target){
 		}
 		if(size){break;}
 	}
-	void *out = mmalloczero(target);
+	void *out = (void *)mmalloczero(target);
 	if(!out){return NULL;}
 	if(size){memcpy(out, original, __min(size, target));}
 	else{memcpy(out, original, target);}
@@ -302,7 +297,7 @@ volatile void *mclone_s(void *original, size_t target){
 /*
 * @remarks This Function already uses Mutex Locked Dependencies
 */
-volatile void *mmalloc(size_t nbytes){
+volatile void *mmalloc(uint64_t nbytes){
 	if(!nbytes){return NULL;}else{nbytes = __roundup(nbytes, allocALIGN);}
 	volatile allocstate_t *astate = getastate();
 	if(!astate->pools){initastate(__min(dBLOCKS, __roundup(nbytes, allocALIGN)), dPOOLS);}
@@ -311,23 +306,23 @@ volatile void *mmalloc(size_t nbytes){
 		memdesc_t *md = querydescu((astate->pools + cc), nbytes);
 		if(md){
 			__set(md->flags, memdesc_e__used);
-			MSafePrint("Allocated Memory of %llu bytes (Free Allocation), Output: 0x%p", md->ptr, nbytes, md->ptr);
+			DebugPrintf("Allocated Memory of %z bytes (Free Allocation), Output: 0x0x%0z", md->ptr, nbytes, md->ptr);
 		}else{
 			md = getdescarrn(astate->pools + cc);
-			for(size_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
+			for(uint64_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 				if(!__check(md[cc_].flags, memdesc_e__used)){
 					if(md[cc_].nbytes > fragMul(nbytes)){
 						// The descriptor is too large to be worth the allocation, fragment the Descriptor
 						fragmemory(astate->pools + cc, (md + cc_), &astate->pools[cc].nDescriptors, nbytes);
 						__set(md[cc_].flags, memdesc_e__used);
-						MSafePrint("Allocated %llu bytes\t(Fragmented Allocation), Output: 0x%p", md[cc_].ptr, nbytes, md[cc_].ptr);
+						DebugPrintf("Allocated %z bytes\t(Fragmented Allocation), Output: 0x0x%0z", md[cc_].ptr, nbytes, md[cc_].ptr);
 					}else if(md[cc_].nbytes >= nbytes){
 						__set(md[cc_].flags, memdesc_e__used);
-						MSafePrint("Allocated %llu bytes\t(Standard Allocation), Output: 0x%p", md[cc_].ptr, nbytes, md[cc_].ptr);
+						DebugPrintf("Allocated %z bytes\t(Standard Allocation), Output: 0x0x%0z", md[cc_].ptr, nbytes, md[cc_].ptr);
 					}else{
 						if(fusememory(astate->pools + cc, &astate->pools[cc].nDescriptors, (md + cc_), nbytes, ~memdesc_e__used)){
-							void *out = mmalloc(nbytes);
-							MSafePrint("Allocating %llu bytes\t(Internal Allocation), Output: 0x%p", out, nbytes, out);
+							void *out = (void *)mmalloc(nbytes);
+							DebugPrintf("Allocating %z bytes\t(Internal Allocation), Output: 0x0x%0z", out, nbytes, out);
 						}
 					}
 				}
@@ -336,7 +331,7 @@ volatile void *mmalloc(size_t nbytes){
 			memdesc_t *out;
 			if((out = allocatedesc(astate->pools + cc, nbytes))){
 				__set(out->flags, memdesc_e__used);
-				MSafePrint("Allocating %llu bytes\t(Internal Allocation), Output: 0x%p", out->ptr, nbytes, out->ptr);
+				DebugPrintf("Allocating %z bytes\t(Internal Allocation), Output: 0x0x%0z", out->ptr, nbytes, out->ptr);
 			}// Dont return NULL here because it wont let the allocator search across multiple pools.
 		}
 	}
@@ -357,7 +352,7 @@ void mfree(void *__restrict ptr){
 		for(uint32_t cc = 0; cc < state->npools; ++cc){
 					inPool = ptr >= state->pools[cc].base && ptr < (state->pools[cc].base + (BLOCKSIZE * state->pools[cc].nblocks));
 			memdesc_t *md = getdescarrn((state->pools + cc));
-			for(size_t cc_ = (state->pools[cc].nDescriptors? state->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
+			for(uint64_t cc_ = (state->pools[cc].nDescriptors? state->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 				if(
 					(ptr >= md[cc_].ptr) && (ptr < (md[cc_].ptr + md[cc_].nbytes)) && 
 					!__check(md[cc_].flags, memdesc_e__nofree) && 
@@ -365,7 +360,7 @@ void mfree(void *__restrict ptr){
 				){
 					__uset(md[cc_].flags, memdesc_e__used);
 					freed = true;
-					MSafePrintNR("Freeing Ptr 0x%p", ptr);
+					DebugPrintf("Freeing Ptr 0x0x%0z", ptr);
 				}
 			}
 		}
@@ -378,8 +373,8 @@ ml_t descinfo(volatile void *__restrict ptr){
 	if(!state->pools){initastate(dBLOCKS, dPOOLS);}else{
 		for(uint32_t cc = 0; cc < state->npools; ++cc){
 			memdesc_t *md = getdescarrn((state->pools + cc));
-			for(size_t cc_ = (state->pools[cc].nDescriptors? state->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
-				if(((size_t)ptr >= (size_t)md[cc_].ptr) && ((size_t)ptr <= ((size_t)md[cc_].ptr + md[cc_].nbytes))){
+			for(uint64_t cc_ = (state->pools[cc].nDescriptors? state->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
+				if(((uint64_t)ptr >= (uint64_t)md[cc_].ptr) && ((uint64_t)ptr <= ((uint64_t)md[cc_].ptr + md[cc_].nbytes))){
 					return (ml_t){
 						.free = !__check(md[cc_].flags, memdesc_e__used),
 						.mdesc = md[cc_],						.pool = cc
@@ -393,15 +388,15 @@ ml_t descinfo(volatile void *__restrict ptr){
 
 ml_t *mtest(uint32_t ntries, bool print){
 	typedef union fui{float f;	unsigned u;	signed i;}fui;
-	ml_t *out = mcalloc(ntries, sizeof(ml_t));
+	ml_t *out = (ml_t *)mcalloc(ntries, sizeof(ml_t));
 	while(ntries--){
-		size_t size = GetTrueRandomRange64(UINT64_MIN, TestAllocRng),
+		uint64_t size = GetTrueRandomRange64(UINT64_MIN, TestAllocRng),
 				cmp = GetTrueRandomRange64(UINT64_MIN, TestCmdRng);
 		volatile void *temp = mmalloc(size);
 		out[ntries] = descinfo(temp);
 		if(cmp >= (size / 2.5)){
 			out[ntries].free = true;
-			mfree(temp);
+			mfree((void *)temp);
 		}else{out[ntries].ptr = temp;}
 	}
 	// if(print){printmem();}
@@ -410,9 +405,9 @@ ml_t *mtest(uint32_t ntries, bool print){
 
 memdesc_t *mdump(uint32_t pool){
 	volatile allocstate_t *astate = getastate();
-	memdesc_t *md = mcalloc(astate->pools[pool].nDescriptors, sizeof(memdesc_t));
+	memdesc_t *md = (memdesc_t *)mcalloc(astate->pools[pool].nDescriptors, sizeof(memdesc_t));
 	if(astate->pools){
-		void *clone = mcalloc(astate->pools[pool].nDescriptors, sizeof(memdesc_t));
+		void *clone = (void *)mcalloc(astate->pools[pool].nDescriptors, sizeof(memdesc_t));
 		memcpy(clone, getdescarrn(astate->pools + pool), astate->pools[pool].nDescriptors * sizeof(memdesc_t));
 		return (memdesc_t *)clone;
 	}
@@ -421,16 +416,16 @@ memdesc_t *mdump(uint32_t pool){
 
 // void printmem(){
 // 	volatile allocstate_t *astate = getastate();
-// 	printf("\n# of Allocations: %llu", astate->totalNAllocations);
+// 	printf("\n# of Allocations: %z", astate->totalNAllocations);
 // 	for(uint32_t cc = 0; cc < astate->npools; ++cc){
 // 		printf("\n  Pool #%u", cc);
 // 		memdesc_t *md = getdescarrn(astate->pools + cc);
-// 		for(size_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
+// 		for(uint64_t cc_ = (astate->pools[cc].nDescriptors? astate->pools[cc].nDescriptors - 1: UINT64_MAX); cc_ != UINT64_MAX; --cc_){
 // 			printf(
 // 				"\n    Descriptor #%u"
-// 				"\n      .ptr: 	0x%p"
-// 				"\n      .nbytes: %llu"
-// 				"\n      .next: 0x%p"
+// 				"\n      .ptr: 	0x0x%0z"
+// 				"\n      .nbytes: %z"
+// 				"\n      .next: 0x0x%0z"
 // 				"\n      .flags:"
 // 				"\n        :Used? [%s]"
 // 				"\n        :Un-Freeable? [%s]", 
@@ -448,11 +443,11 @@ memdesc_t *mdump(uint32_t pool){
 // 		fixmdarray(astate->pools + cc, &astate->pools[cc].nDescriptors);
 // 		memdesc_t *tmp = getdescarrt(astate->pools + cc);
 // 		printf(
-// 			"\n  Pool #%u\tUsed: %llu/%llu\t(%%%llu)", 
+// 			"\n  Pool #%u\tUsed: %z/%z\t(%%%z)", 
 // 			cc, memusedsize(astate->pools + cc), astate->pools[cc].nblocks * BLOCKSIZE, 
 // 			// Shift the 100 up front to perform pure, precise integer math
-// 			// Calculate the usage ratio as a float, multiply by 100, then cast the final result to size_t
-// 			(size_t)(((float)memusedsize(astate->pools + cc) / (float)(astate->pools[cc].nblocks * BLOCKSIZE)) * 100.0f)
+// 			// Calculate the usage ratio as a float, multiply by 100, then cast the final result to uint64_t
+// 			(uint64_t)(((float)memusedsize(astate->pools + cc) / (float)(astate->pools[cc].nblocks * BLOCKSIZE)) * 100.0f)
 // 		);
 // 		// Ensure all Next ptrs are set.
 // 		do{
@@ -460,22 +455,22 @@ memdesc_t *mdump(uint32_t pool){
 // 			// Foreach Verify if the Next is adjacent
 // 			// If not print the difference.
 // 			printf(
-// 				"\n    <  [%s:#%llu]:  0x%p  ->  0x%p    >", 
+// 				"\n    <  [%s:#%z]:  0x0x%0z  ->  0x0x%0z    >", 
 // 				__check(tmp->flags, memdesc_e__used)? "Allocated": "Freed    ", 
-// 				((size_t)tmp - (size_t)getdescarrn(astate->pools + cc)) / sizeof(memdesc_t), 
+// 				((uint64_t)tmp - (uint64_t)getdescarrn(astate->pools + cc)) / sizeof(memdesc_t), 
 // 				tmp->ptr, tmp->ptr + tmp->nbytes
 // 			);
 // 			if(tmp->next){
-// 				if(((size_t)(tmp->ptr + tmp->nbytes) - (size_t)tmp->next->ptr) > 0){
-// 					printf("\n    <  [Un-Mapped]:  0x%p  ->  %p    >", tmp->ptr + tmp->nbytes, tmp->next->ptr);
+// 				if(((uint64_t)(tmp->ptr + tmp->nbytes) - (uint64_t)tmp->next->ptr) > 0){
+// 					printf("\n    <  [Un-Mapped]:  0x0x%0z  ->  0x%0z    >", tmp->ptr + tmp->nbytes, tmp->next->ptr);
 // 				}
 // 				tmp = tmp->next;
 // 			}
 // 		}while(tmp->next);
-// 		if((((size_t)tmp->ptr + tmp->nbytes) - (size_t)astate->pools[cc].base + (astate->pools[cc].nblocks * BLOCKSIZE)) > 0){
-// 			printf("\n    <  [Un-Mapped]: 0x%p  ->  0x%p    >", 
-// 				PTRCHECK(tmp->ptr)? ((size_t)tmp->ptr + tmp->nbytes): (size_t)astate->pools[cc].base, 
-// 				(size_t)astate->pools[cc].base + (astate->pools[cc].nblocks * BLOCKSIZE)
+// 		if((((uint64_t)tmp->ptr + tmp->nbytes) - (uint64_t)astate->pools[cc].base + (astate->pools[cc].nblocks * BLOCKSIZE)) > 0){
+// 			printf("\n    <  [Un-Mapped]: 0x0x%0z  ->  0x0x%0z    >", 
+// 				PTRCHECK(tmp->ptr)? ((uint64_t)tmp->ptr + tmp->nbytes): (uint64_t)astate->pools[cc].base, 
+// 				(uint64_t)astate->pools[cc].base + (astate->pools[cc].nblocks * BLOCKSIZE)
 // 			);
 // 		}
 // 	}

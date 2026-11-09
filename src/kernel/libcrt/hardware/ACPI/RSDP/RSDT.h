@@ -5,6 +5,7 @@
 #include "kernel/libcrt/memory/memory.h"
 #include "kernel/libcrt/hardware/ACPI/ACPI.h"
 
+#define RSDPMagic	"RSD PTR"
 typedef struct{
 	struct{
 		char		Signature[8];
@@ -44,7 +45,7 @@ static const RSDT_Signature RSDT_SupportedTables[] = {
 static const uint32_t RSDT_NSupported = sizeof(RSDT_SupportedTables) / sizeof(RSDT_Signature);
 
 typedef struct{
-	SDTHeader_t		Header;
+	ACPIStdHeader_t		Header;
 	//	uint32_t entries[(Header.Length - sizeof(Header)) / 4]
 	uint32_t		Pointers[];
 }__packed RSDT_t;

@@ -18,45 +18,45 @@ IDTTable64 __linkersection(.bss) InterruptTable;
 static volatile __linkersection(.bss) GDTSystemSegmentDescriptor64 GDTTable[(GDTTableDefaultLength / 2)] = {0};
 static volatile __linkersection(.bss) TSS_t tss;
 
-void InitialiseGDT(){
+void InitialiseGDT(uint64_t Stack){
     ((GDTDescriptor *)GDTTable)[0] = (GDTDescriptor){0};
     ((GDTDescriptor *)GDTTable)[1] = (GDTDescriptor){
 		.ABPresent = true, .ABPriviledgeLevel = 0x00, .ABSystemSegmentBit = true,
         .ABExecutableBit = true, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
         .FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true, 
-		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT16_MAX, .LimitHigh = UINT16_MAX,
     };
     ((GDTDescriptor *)GDTTable)[2] = (GDTDescriptor){
 		.ABPresent = true, .ABPriviledgeLevel = 0x00, .ABSystemSegmentBit = true,
         .ABExecutableBit = false, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
         .FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true, 
-        .BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+        .BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT16_MAX, .LimitHigh = UINT16_MAX,
     };
 
 	((GDTDescriptor *)GDTTable)[3] = (GDTDescriptor){
 		.ABPresent = true, .ABPriviledgeLevel = 0x03, .ABSystemSegmentBit = true,
 		.ABExecutableBit = true, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
 		.FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true, 
-		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT16_MAX, .LimitHigh = UINT16_MAX,
 	};
 	((GDTDescriptor *)GDTTable)[4] = (GDTDescriptor){
 		.ABPresent = true, .ABPriviledgeLevel = 0x03, .ABSystemSegmentBit = true,
 		.ABExecutableBit = false, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
 		.FLongModeBit = true, .F32BitModeBit = false, .FGranularity = true, 
-		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT16_MAX, .LimitHigh = UINT16_MAX,
 	};
 
 	((GDTDescriptor *)GDTTable)[5] = (GDTDescriptor){
 		.ABPresent = true, .ABPriviledgeLevel = 0x03, .ABSystemSegmentBit = true,
 		.ABExecutableBit = true, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
-		.FLongModeBit = false, .F32BitModeBit = false, .FGranularity = true, 
-		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+		.FLongModeBit = false, .F32BitModeBit = true, .FGranularity = true, 
+		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT16_MAX, .LimitHigh = UINT16_MAX,
 	};
 	((GDTDescriptor *)GDTTable)[6] = (GDTDescriptor){
 		.ABPresent = true, .ABPriviledgeLevel = 0x03, .ABSystemSegmentBit = true,
 		.ABExecutableBit = false, .ABDirectionBit = false, .ABReadWritableBit = true, .ABAccessedBit = false,
-		.FLongModeBit = false, .F32BitModeBit = false, .FGranularity = true, 
-		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT64_MAX, .LimitHigh = UINT64_MAX,
+		.FLongModeBit = false, .F32BitModeBit = true, .FGranularity = true, 
+		.BaseLow = 0, .BaseHigh = 0, .LimitLow = UINT16_MAX, .LimitHigh = UINT16_MAX,
 	};
 	
     *((GDTSystemSegmentDescriptor64 *)((GDTDescriptor *)GDTTable + 7)) = (GDTSystemSegmentDescriptor64){
@@ -65,7 +65,7 @@ void InitialiseGDT(){
         .BaseLow = (uint64_t)&tss & 0xFFFFFF, .BaseHigh = ((uint64_t)&tss >> 24) & 0xFFFFFF, 
         .LimitHigh = ((sizeof(TSS_t) - 1) >> 16) & 0xF, .LimitLow = (sizeof(TSS_t) - 1) & 0xFFFF, 
     };
-    tss = (TSS_t){.io_map_base = sizeof(TSS_t), .IST = {0}, .RSP = {0}};
+    tss = (TSS_t){.io_map_base = UINT64_MAX, .IST = {0}, .RSP = {Stack, Stack, Stack}};
 
     GDTR64 Tmp = {.Base = (UINT64)GDTTable, .Limit = ((sizeof(GDTDescriptor) * 5) + sizeof(GDTSystemSegmentDescriptor64)) - 1};
     _LoadGDTR(&Tmp);
@@ -73,27 +73,42 @@ void InitialiseGDT(){
 
 void InitialiseIDT(){
 	for(uint32_t cc = 0; cc < IDTLength; ++cc){
-		SetIDTe(InterruptTable, cc, 0x00, (IDTEntrySegmentSelector64){.LocalDescriptor = false, .PriviledgeLevel = 0x00, .Segment = 0x08}, 0, _64BitInterruptGate, true);}
+		SetIDTe(InterruptTable, cc, UINT64_MAX, (IDTEntrySegmentSelector64){.LocalDescriptor = false, .PriviledgeLevel = 0x00, .Segment = 0x08}, 0, _64BitInterruptGate, true);}
+	InitialiseInterruptCallbacks();
 	IDTCallbackInit(InterruptTable);
-	// sizeof(IDTEntry64);
 	IDTR64 temp = {.Base = (uint64_t)InterruptTable, .Limit = sizeof(InterruptTable) - 1};
 	_LoadIDTR(&temp);
 }
 
-ISRCallbackDefinition(GenericIO){ISRCallbackReturn;}
+ISRCallbackDefinition(GenericIO){DebugPrintf("\nGeneric IO Interrupt");	ISRCallbackReturn;}
 rawenv re;
 void __sysvabi __main(__bootinfo *__restrict__ bootin){
 	//* Set Up Temprary Page Table, Interrupt Descriptor Table (IDT) & GDT
+
+	for(uint64_t cc = 0; cc < bootin->bootentry.This->NSections; ++cc){
+		if(__builtin_memcpy(bootin->bootentry.This->Sections[cc].Name, PeCodeSection, sizeof(PeCodeSection))){
+			__getptr(bootin->bootentry.This->Sections[cc].Base, NULL);
+			break;
+		}
+	}
 	
-	InitialiseGDT();
+	InitialiseGDT((uint64_t)(bootin->Stack.Stack) + bootin->Stack.StackSize);
 	InitialiseIDT();
-	if(!_1GPageSupport()){DebugPrintf("1GB Pages not Supported");	__halt();}
 	// InitialiseTemporaryPageTable(bootin->memory.TotalMemorySize);
 	// DebugPrintf("Successfully Initialised");
 	
 	const uint64_t ss = (uint64_t)bootin->memory.MemoryDescriptorStructSize, 
 		n = (uint64_t)bootin->memory.MemoryDescriptorBufferSize / (uint64_t)bootin->memory.MemoryDescriptorStructSize;
-	InitialiseAllocationState(bootin->memory.MemoryDescriptors, ss, n, bootin->memory.TotalMemorySize);
+	if(InitialiseAllocationState(bootin->memory.MemoryDescriptors, ss, n, bootin->memory.TotalMemorySize)){
+		void *Tmp = NULL;
+		__bochs();
+		// uint64_t Random = ;
+		// mt_seed(Random);
+		uint8_t cc = 0;
+		// EnableInputAddress(false, true);
+		while(((uint64_t)(Tmp = AllocatePages(InvalidPointer, PAGE_SIZE, ReadWritable, 0x00)) != UINT64_MAX) && cc < 8){cc++;}
+		__halt();
+	}else{DebugPrintf("\nFailed to Initialise Allocation State");	__chalt(true);}
 
 	void *ACPIBase = NULL;
 	for(uint32_t cc = 0; cc < bootin->devices.CTableLength; ++cc){
@@ -101,7 +116,6 @@ void __sysvabi __main(__bootinfo *__restrict__ bootin){
 			!memcmp(&(bootin->devices.CTable[cc].VendorGuid), (EFI_GUID[]){ACPI_20_TABLE_GUID}, sizeof(EFI_GUID))
 		){ACPIBase = bootin->devices.CTable[cc].VendorTable;			break;}
 	}
-	__bochs();
 	InitLocalAPIC(ACPIBase, 0x2F, false);
 	
 	__bochs();

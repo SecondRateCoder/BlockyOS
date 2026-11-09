@@ -1,6 +1,8 @@
 bits 64
 default rel
 
+extern __bochs
+
 %define SIMDReqSize	512
 %define true		1
 %define false		0
@@ -9,8 +11,8 @@ default rel
 
 section .text
 
-global testSSE
-testSSE:
+global SIMDSupported
+SIMDSupported:
 	mov eax, 0x1
 	cpuid
 	test edx, (1 << 25)
@@ -21,8 +23,8 @@ testSSE:
 	mov eax, false
 	ret
 
-global testSSEExtensions
-testSSEExtensions:
+global CheckSIMDExtensions
+CheckSIMDExtensions:
 	mov eax, 0x1
 	cpuid
 	xor eax, eax
@@ -74,52 +76,52 @@ testSSEExtensions:
 
 ;	RDI = output buffer, RSI = feature mask
 ;	Returns RAX = output buffer pointer
-global decodeSIMDFeatureMask
-decodeSIMDFeatureMask:
+global DecodeSIMDFeatureMask
+DecodeSIMDFeatureMask:
 	mov rax, rdi
 	test rsi, 1
 	jz .skip_sse
-	mov rdx, strSSE
+	lea rdx, strSSE
 	call .copySIMDString
 .skip_sse:
 	test rsi, 2
 	jz .skip_sse2
-	mov rdx, strSSE2
+	lea rdx, strSSE2
 	call .copySIMDString
 .skip_sse2:
 	test rsi, 4
 	jz .skip_sse3
-	mov rdx, strSSE3
+	lea rdx, strSSE3
 	call .copySIMDString
 .skip_sse3:
 	test rsi, 8
 	jz .skip_ssse3
-	mov rdx, strSSSE3
+	lea rdx, strSSSE3
 	call .copySIMDString
 .skip_ssse3:
 	test rsi, 16
 	jz .skip_sse4_1
-	mov rdx, strSSE4_1
+	lea rdx, strSSE4_1
 	call .copySIMDString
 .skip_sse4_1:
 	test rsi, 32
 	jz .skip_sse4_2
-	mov rdx, strSSE4_2
+	lea rdx, strSSE4_2
 	call .copySIMDString
 .skip_sse4_2:
 	test rsi, AVX
 	jz .skip_avx
-	mov rdx, strAVX
+	lea rdx, strAVX
 	call .copySIMDString
 .skip_avx:
 	test rsi, AVX2
 	jz .done_decode
-	mov rdx, strAVX2
+	lea rdx, strAVX2
 	call .copySIMDString
 .done_decode:
 	cmp rdi, rax
 	jne .trim_result
-	mov rdx, strNONE
+	lea rdx, strNONE
 	call .copySIMDStringNoSpace
 	jmp .return
 .trim_result:
@@ -153,39 +155,42 @@ decodeSIMDFeatureMask:
 	jnz .copySIMDStringNoSpaceLoop
 	ret
 
-global enableSSE
-enableSSE:
-	call testSSE
-	cmp rax, true
-	je .SSEEnabled
+global EnableSIMD
+EnableSIMD:
+	call SIMDSupported
+	cmp rax, false
+	je .SSEDisabled
 	mov rax, cr0
 	and ax, 0xFFFB		; clear coprocessor emulation CR0.EM
 	or ax, 0x2			; set coprocessor monitoring CR0.MP
 	mov cr0, rax
 	mov rax, cr4
-	or ax, 3 << 9		; set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
+	or ax, (3 << 9)		; set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
 	mov cr4, rax
-.SSEEnabled:
+	mov eax, 1
+	ret
+.SSEDisabled:
 	mov eax, 0
 	ret
-global disableSSE
-disableSSE:
+global DisableSIMD
+DisableSIMD:
 	mov rax, cr4
 	and rax, ~(3 << 9)     ; clear CR4.OSFXSR and CR4.OSXMMEXCPT
 	mov cr4, rax
 	mov rax, cr0
 	or eax, 0x4            ; set CR0.EM to disable floating point/SSE instructions
 	mov cr0, rax
-	mov rax, 0
+	mov rax, 1
 	ret
 
 ;	Align the Inputted Memory to the 16-bytes
-global pushSSE
-pushSSE:
-	call testSSE
+global StoreSSEState
+StoreSSEState:
+	; call __bochs
+	call EnableSIMD
 	cmp eax, true
 	je .checkRoundedMemory
-	mov rax, pushSSENotEnabled
+	lea rax, StoreSSEStateNotEnabled
 	ret
 .checkRoundedMemory:
 	;	Check for rounded Memory
@@ -195,12 +200,12 @@ pushSSE:
 	div rcx
 	cmp rdx, 0
 	je .alignedMemory
-	mov rax, pushSSEAlignedMemoryError
+	lea rax, StoreSSEStateAlignedMemoryError
 	ret
 .alignedMemory:
 	cmp rsi, SIMDReqSize
-	je .enoughBytes
-	mov rax, pushSSEEnoughBytesError
+	jge .enoughBytes
+	lea rax, StoreSSEStateEnoughBytesError
 	ret
 .enoughBytes:
 	fxsave [rdi]
@@ -208,12 +213,13 @@ pushSSE:
 	ret
 
 ;	Align the Inputted Memory to the 16-bytes
-global popSSE
-popSSE:
-	call testSSE
+global LoadSSEState
+LoadSSEState:
+	; call __bochs
+	call EnableSIMD
 	cmp eax, true
 	je .checkRoundedMemory
-	mov rax, pushSSENotEnabled
+	lea rax, StoreSSEStateNotEnabled
 	ret
 .checkRoundedMemory:
 	;	Check for rounded Memory
@@ -223,12 +229,12 @@ popSSE:
 	div rcx
 	cmp rdx, 0
 	je .alignedMemory
-	mov rax, pushSSEAlignedMemoryError
+	lea rax, StoreSSEStateAlignedMemoryError
 	ret
 .alignedMemory:
 	cmp rsi, SIMDReqSize
 	je .enoughBytes
-	mov rax, pushSSEEnoughBytesError
+	lea rax, StoreSSEStateEnoughBytesError
 	ret
 .enoughBytes:
 	fxrstor [rdi]
@@ -245,6 +251,6 @@ strSSE4_2:					db 'SSE4.2', 0
 strAVX:						db 'AVX', 0
 strAVX2:					db 'AVX2', 0
 strNONE:					db 'NONE', 0
-pushSSEAlignedMemoryError:	db 'Input Memory was not aligned to the 16-byte Boundary', 0
-pushSSEEnoughBytesError:	db 'Input Memory was not of the Required Size', 0
-pushSSENotEnabled:			db 'SSE is not Enabled', 0
+StoreSSEStateAlignedMemoryError:db 'Input Memory was not aligned to the 16-byte Boundary', 0
+StoreSSEStateEnoughBytesError:	db 'Input Memory was not of the Required Size', 0
+StoreSSEStateNotEnabled:		db 'SSE is not Enabled', 0

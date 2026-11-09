@@ -583,7 +583,7 @@ AHCIConfigureReturn ConfigureAHCIController(void *acpibase, bool *DeviceEnable, 
 	HBAMemorySpace *Space = NULL;
 	if(Header->HeaderType.Type == PCIGeneralDevice){
 		PCIHeader0x0 *_0x0 = (PCIHeader0x0 *)Header;
-		EnableInputAddress(true, true);
+		// EnableInputAddress(true, true);
 		Space = SafeAllocatePages((void *)(((uint64_t)*(uint32_t *)(_0x0->BAR + 5) << 32) + (uint64_t)PCIeGetBar(_0x0, 4)), sizeof(HBAMemorySpace), (ReadWritable | SupervisorMode), 0x0, 0x20);
 		// if((Space->HostCapability.NumberOfPorts + 1) > NVectors){return (AHCIConfigureReturn){.Data = Space->HostCapability.NumberOfPorts, .Flags = NotEnoughVectors};}
 		if(!Space->HostCapability.SupportsAHCIModeOnly){Space->GlobalHostControl.AHCIEnable = 0x1;}
@@ -593,7 +593,7 @@ AHCIConfigureReturn ConfigureAHCIController(void *acpibase, bool *DeviceEnable, 
 		//	We let the Integer overflow
 		uint32_t cc = UINT32_MAX, Vector;
 		if(MSIx){
-			EnableInputAddress(true, true);
+			// EnableInputAddress(true, true);
 			MSIxTableEntry_t *MSIxTable = SafeAllocatePages((void *)(PCIGetBar(_0x0, MSIx->TableControl.MSIxBARIndex) + MSIx->TableControl.MSIxByteOffset), 
 				sizeof(MSIxTableEntry_t) * (MSIx->MessageControl.TableSize + 1), (ReadWritable | SupervisorMode), 0x0, 0x20);
 			// NVectors = Space->HostCapability.NumberOfPorts + 1;
@@ -665,11 +665,11 @@ HBACommandHeader *AHCISearchOpenCommandSlot(HBAMemorySpace *MS, HBADevicePort *P
 ATAIdentifyData *AHCIGetDriveInfo(HBAMemorySpace *MS, HBADevicePort *Port){
 	static ATAIdentifyData Out = {0};
 	HBACommandHeader *Slot = AHCISearchOpenCommandSlot(MS, Port, NULL);
-	EnableInputAddress(true, true);
+	// EnableInputAddress(true, true);
 	HBACommandTableEntry *Table = SafeAllocatePages((void *)Slot->CommandTableBase, 
 		sizeof(HBACommandTableEntry), (ReadWritable | SupervisorMode), 0x00, 0x20);
     //	Set up the Host-to-Device Register FIS for IDENTIFY DEVICE (0xEC)
-	EnableInputAddress(true, true);
+	// EnableInputAddress(true, true);
     AHCIHostToDeviceRegister *cfis = SafeAllocatePages(&Table->CommandFISStruct, 
 		sizeof(AHCIHostToDeviceRegister), (ReadWritable | SupervisorMode), 0x00, 0x20);
     memset(cfis, 0, sizeof(AHCIHostToDeviceRegister));
@@ -697,7 +697,7 @@ uint32_t AHCIReadBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Pos
 	}
 	if(Device > Controller->HostCapability.NumberOfPorts){return Bytes;}
 	if(!__check(Controller->PortImplementedBitmask >> Device, true)){return Bytes;}else{
-		EnableInputAddress(true, true);
+		// EnableInputAddress(true, true);
 		HBADevicePort *This = SafeAllocatePages(Controller->Ports + Device, 
             sizeof(HBADevicePort), (ReadWritable | SupervisorMode), 0x00, 0x20);
 		uint32_t slot = 0;
@@ -709,7 +709,7 @@ uint32_t AHCIReadBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Pos
 		CMDHeader->CommandFISDWORDLength = sizeof(AHCIHostToDeviceRegister) / sizeof(uint32_t);
 		CMDHeader->PRDTableLength = (uint16_t)((Bytes - 1) >> 4) + 1;
 		CMDHeader->WriteFlag = false;
-		EnableInputAddress(true, true);
+		// EnableInputAddress(true, true);
 		HBACommandTableEntry *Table = SafeAllocatePages((void *)CMDHeader->CommandTableBase, 
 		    sizeof(HBACommandTableEntry), (ReadWritable | SupervisorMode), 0x00, 0x20);
 		for(uint32_t cc = 0; cc < CMDHeader->PRDTableLength; ++cc){
@@ -718,7 +718,7 @@ uint32_t AHCIReadBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Pos
 			Table->Table[cc].DWORD3.DataByteCount = __min(AHCI_TRANSFERBLOCKSIZE - 1, Bytes);
 			Bytes = Bytes > AHCI_TRANSFERBLOCKSIZE? Bytes - AHCI_TRANSFERBLOCKSIZE: 0;
 		}
-		EnableInputAddress(true, true);
+		// EnableInputAddress(true, true);
 		*((AHCIHostToDeviceRegister *)SafeAllocatePages(Table->CommandFISStruct, sizeof(AHCIHostToDeviceRegister), 
 			(ReadWritable | SupervisorMode), 0x00, 0x20)) = (AHCIHostToDeviceRegister){
 				.DWORD0 = {
@@ -754,7 +754,7 @@ uint32_t AHCIWriteBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Po
 	}
 	if(Device > Controller->HostCapability.NumberOfPorts){return Bytes;}
 	if(!__check(Controller->PortImplementedBitmask >> Device, true)){return Bytes;}else{
-		EnableInputAddress(true, true);
+		// EnableInputAddress(true, true);
 		HBADevicePort *This = SafeAllocatePages(Controller->Ports + Device, sizeof(HBADevicePort), 
 			(ReadWritable | SupervisorMode), 0x00, 0x20);
 		uint32_t slot = 0;
@@ -766,7 +766,7 @@ uint32_t AHCIWriteBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Po
 		CMDHeader->CommandFISDWORDLength = sizeof(AHCIHostToDeviceRegister) / sizeof(uint32_t);
 		CMDHeader->PRDTableLength = (uint16_t)((Bytes - 1) >> 4) + 1;
 		CMDHeader->WriteFlag = true;
-		EnableInputAddress(true, true);
+		// EnableInputAddress(true, true);
 		HBACommandTableEntry *Table = SafeAllocatePages((void *)CMDHeader->CommandTableBase, 
 			sizeof(HBACommandTableEntry), (ReadWritable | SupervisorMode), 0x00, 0x20);
 		for(uint32_t cc = 0; cc < CMDHeader->PRDTableLength; ++cc){
@@ -775,7 +775,7 @@ uint32_t AHCIWriteBytes(HBAMemorySpace *Controller, uint32_t Device, uint64_t Po
 			Table->Table[cc].DWORD3.DataByteCount = __min(AHCI_TRANSFERBLOCKSIZE - 1, Bytes);
 			Bytes = Bytes > AHCI_TRANSFERBLOCKSIZE? Bytes - AHCI_TRANSFERBLOCKSIZE: 0;
 		}
-		EnableInputAddress(true, true);
+		// EnableInputAddress(true, true);
 		*((AHCIHostToDeviceRegister *)SafeAllocatePages(Table->CommandFISStruct, 
             sizeof(AHCIHostToDeviceRegister), (ReadWritable | SupervisorMode), 0x00, 0x20)) = (AHCIHostToDeviceRegister){
 				.DWORD0 = {

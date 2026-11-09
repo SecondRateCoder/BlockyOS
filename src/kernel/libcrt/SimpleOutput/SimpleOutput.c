@@ -91,7 +91,7 @@ void SimpleCopyF(char *stream, uint64_t *size, const char **f, va_list ls){
 void DebugPrintf(const char *f, ...){
 	va_list	ls;	va_start(ls, f);
 	static __linkersection(.bss) char stream[1024] = {0};
-	memset(stream, 0, sizeof(stream));
+	// memset(stream, 0, sizeof(stream));
 	uint64_t size = sizeof(stream);
 	SimpleCopyF(stream, &size, &f, ls);
 	e9print(stream, size);

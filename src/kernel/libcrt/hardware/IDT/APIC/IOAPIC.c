@@ -4,10 +4,9 @@
 //  All accesses must be done on 4 byte boundaries. 
 //  The address register uses the bottom 8 bits for register select.
 void *MapAPIC(void *physical){
-	EnableInputAddress(true, true);
-	return (MapVirtual(physical) != 0)? AllocatePages(physical, PAGE_SIZE, 
-		(GlobalEnable | ReadWritable | SupervisorMode | PageLevelWriteThroughEnable), 0x0): 
-		MapVirtual(physical);
+	// EnableInputAddress(true, true);
+	return MemoryIsMapped(physical)? MapVirtual(physical): AllocatePages(physical, PAGE_SIZE, 
+		(GlobalEnable | ReadWritable | SupervisorMode | PageLevelWriteThroughEnable), 0x0);
 }
 
 bool DisableIoApicInterrupt(void *acpibase, uint32_t N, uint32_t Interrupt){
@@ -54,7 +53,7 @@ uint32_t _ReadIoApic(void *addr, uint32_t reg){
 }
 uint32_t ReadIoApicRegister(void *acpibase, uint32_t N, uint32_t reg){
 	void *MADT = SearchACPITable("APIC", acpibase);
-	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
+	if(((ACPIStdHeader_t *)MADT)->Revision >= XSDPRevision){
 		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(XSDT_MADT_t);
 		for(uint32_t cc = 0; RemBytes != 0; ++cc){
@@ -89,7 +88,7 @@ void _WriteIoApic(void *addr, uint32_t reg, uint32_t value){
 }
 void WriteIoApicRegister(void *acpibase, uint32_t N, uint32_t reg, uint32_t value){
 	void *MADT = SearchACPITable("APIC", acpibase);
-	if(((SDTHeader_t *)MADT)->Revision >= XSDPRevision){
+	if(((ACPIStdHeader_t *)MADT)->Revision >= XSDPRevision){
 		XSDT_MADT_t *Table = (XSDT_MADT_t *)MADT;
 		uint32_t RemBytes = Table->Header.Length - sizeof(XSDT_MADT_t);
 		for(uint32_t cc = 0; RemBytes != 0; ++cc){

@@ -304,7 +304,7 @@ void wh_seed(uint16_t a, uint16_t b, uint16_t c){
 static uint64_t state[STATE_SIZE];
 static size_t index = STATE_SIZE + 1;
 
-static void mt_seed(uint64_t s){
+void mt_seed(uint64_t s){
     index = STATE_SIZE;
     state[0] = s;
     for(size_t i = 1; i < STATE_SIZE; i++){state[i] = (INIT_FACT * (state[i - 1] ^ (state[i - 1] >> INIT_SHIFT))) + i;}

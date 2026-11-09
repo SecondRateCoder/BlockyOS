@@ -103,6 +103,7 @@ typedef struct fsroot{
 typedef struct conf_fsroot{
 	EFI_GUID GUID, altGUID;
 	fsroot *root;
+	rawenv re;
 	LBA loc;
 	UINT32 lastClusterAlloc;
 	struct logblocks{
@@ -213,5 +214,5 @@ unhandle *__dirr(dirrunner *dr);
 void __dirr_free(dirrunner *dr);
 
 void __fprint_info(meta_fsblock *finfo);
-
+void fuloadroot(conf_fsroot *fr);
 LBA getloc(conf_fsroot *root, fsblock *fb);

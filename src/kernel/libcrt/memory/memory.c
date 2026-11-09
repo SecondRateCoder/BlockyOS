@@ -91,7 +91,7 @@ errno_t memmove_s(void *__restrict a, uint64_t alen, void *__restrict b, uint64_
 	if(!a || !b){return NullError;}
 	if(blen > alen){return OutOfBoundsError;}
 	void *temp = AllocatePages(NULL, blen, (ReadWritable | UserMode), 0x00);
-	if(!temp){return NullError;}
+	if(temp == InvalidPointer){return NullError;}
 	memcpy(temp, b, blen);		memcpy(a, temp, blen);
 	FreePages(temp);
 	return 0x00;

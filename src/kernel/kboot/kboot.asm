@@ -14,6 +14,7 @@ kboot_km:
     mov rax, 0
     mov eax, dword [rdi + 8]
     add rax, qword [rdi]
+	sub eax, 0x0200
     mov rsp, rax
 
     jmp __main

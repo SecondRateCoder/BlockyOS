@@ -215,9 +215,7 @@ socket_ret socketfuncprefix __froot_sckclose(socket_t * socket, UINT64 nARGbytes
 	// DEBUGPRINT(L"\nSocket Close");
 	// bochs_breakpoint();
 	conf_fsroot *root = (conf_fsroot *)socket->persistent;
-	__free(root->clusterbuffer.clusterMap);
-	__free(root->logblocks.logBlock);
-	__free(root->root);
+	fuloadroot(root);
 	__free(socket);
 	__free(root);
 	return (socket_ret){

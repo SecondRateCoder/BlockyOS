@@ -22,10 +22,10 @@ typedef struct { uint64_t low; uint64_t high; } float128_t; // Storage fallback
 #endif
 
 #define INFINITY	(__builtin_inff ())
-#define NaNf		(__builtin_nanf (""))
-#define SNaNf		(__builtin_nansf (""))
-#define SNaNd		(__builtin_nans (""))
-#define SNaNld		(__builtin_nansl (""))
+// #define NaNf		(__builtin_nanf (""))
+// #define SNaNf		(__builtin_nansf (""))
+// #define SNaNd		(__builtin_nans (""))
+// #define SNaNld		(__builtin_nansl (""))
 
 #define INFINITY_F    (__builtin_inff())
 #define INFINITY_D    (__builtin_inf())

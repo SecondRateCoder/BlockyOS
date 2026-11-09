@@ -55,7 +55,7 @@ $LARGSL = @(
 $OBJCOPYARGS = @(
 	'-j', '.text', '-j', '.data', '-j', '.bss', '-j', '.rdata', '-j', '.rodata', 
 	'-j', '.sbss', '-j', '.sdata', '-j', '.srdata', '-j', '.dynamic', '-j', '.dynsym', 
-    '-j', '.rel', '-j', '.rel.*', '-j', '.rela', '-j', '.rela.*', , '-j', '.idata', 
+    '-j', '.rel', '-j', '.rel.*', '-j', '.rela', '-j', '.rela.*', '-j', '.idata', 
     '-j', '.reloc', '-O', "efi-app-$(if($ARCHITECTURE -eq 'x86_64'){'x86-64'}else{'i386'})", 
 	'--subsystem=10', $UEFIINTERMEDIATEFINAL, $UEFIBINARYBLOB
 )
@@ -126,6 +126,3 @@ if(Test-Path $UEFIBINARYBLOB){
 	New-Item $EMUUEFIBINARYDIR -ItemType Directory -Force
 	Copy-Item -Path $UEFIBINARYBLOB -Destination $EMUUEFIBINARYBLOB
 }
-
-# (Copy-Item (Join-Path (Get-Location) 'src/Boot/UEFI/startup.sh') (Join-Path $EMUOUT 'startup.nsh'))
-# (& objdump '-x' $UEFIBINARYBLOB) >> (Join-Path $BUILDDIR 'headerxdump.log')

@@ -11,7 +11,7 @@
 #define	RSDT_SRATCode		"SRAT"
 
 typedef struct{
-	SDTHeader_t			Header;
+	ACPIStdHeader_t			Header;
 	uint8_t				Reserved[12];
 }__packed RSDT_SRATHeader_t;
 

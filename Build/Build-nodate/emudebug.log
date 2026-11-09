@@ -5,37 +5,4 @@ Validating existing disk image: C:\GitHub\BlockyOS\Build\Build-nodate\disk.img
 GPT is healthy. Skipping GPT rebuild.
 InstallOS requested: formatting disk with FS.ps1.
 Running install.bos in current directory.
-bochs -f C:\GitHub\BlockyOS\Build\Build-nodate\.bochsrc -q -dbg_gui -dbglog C:\GitHub\BlockyOS\Build\Build-nodate\debugger.log
-
- "
-cpu: model=corei7_skylake_x, ips=50000000, count=2, reset_on_triple_fault=1, ignore_bad_msrs=1
-boot: disk
-megs: 4096
-config_interface: win32config
-display_library: sdl
-
-magic_break: enabled=1
-
-sound: driver=default
-speaker: enabled=1, mode=sound
-e1000: enabled=1
-pci: enabled=1, chipset=i440fx, slot1=pcivga, slot2=e1000
-vga: extension=vbe, update_freq=10, realtime=1, vbe_memsize=32
-mouse: enabled=1
-keyboard: type=mf, serial_delay=150, paste_delay=100000
-
-magic_break: enabled=1
-port_e9_hack: enabled=1, all_rings=1
-
-debugger: C:\GitHub\BlockyOS\Build\Build-nodate\debugger.log
-log: C:\GitHub\BlockyOS\Build\Build-nodate\bochs.log
-iodebug: all_rings=1
-error: action=report
-info: action=ignore
-debug: action=ignore
-
-romimage: file=C:\GitHub\BlockyOS\compile\toolchain\uefi\debug\OVMF_CODE.fd
-vgaromimage: file=C:\msys64\mingw64\share\bochs\VGABIOS-lgpl-latest.bin
-ata0: enabled=1, ioaddr1=0x1F0, ioaddr2=0x3F0, irq=14
-ata0-master: type=disk, path="C:\GitHub\BlockyOS\Build\Build-nodate\disk.img", mode=flat, status=inserted, translation=lba
-"
+Command:  qemu-system-x86_64 -vga std -cpu Skylake-Client,pmu=off -m 4096 -d int,cpu_reset -no-reboot -no-shutdown -accel whpx -machine q35 -smp 2 -net none -serial stdio -L C:\GitHub\BlockyOS\compile\toolchain\uefi\debug -drive if=pflash,format=raw,readonly=on,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\debug\OVMF_CODE.fd -drive unit=0,file=C:\GitHub\BlockyOS\Build\Build-nodate\disk.img,format=raw,if=none,id=maindrive -debugcon file:C:\GitHub\BlockyOS\Build\Build-nodate\debugger.log -global isa-debugcon.iobase=0xe9 -device virtio-blk-pci,drive=maindrive -device virtio-gpu-pci -usb -usbdevice keyboard -usbdevice mouse -display sdl,gl=on -drive if=pflash,format=raw,file=C:\GitHub\BlockyOS\compile\toolchain\uefi\debug\OVMF_VARS.fd 

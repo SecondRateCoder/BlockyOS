@@ -2,13 +2,13 @@
 #include "service.h"
 
 void *__noinline VMAIState(bool w, void *ptr){
-    static RawVideoMemoryAllocator internal = {0};
+    static __linkersection(.bss) RawVideoMemoryAllocator internal = {0};
     if(w){internal = *((RawVideoMemoryAllocator *)ptr);}
     return &internal;
 }
 
 bool InitaliseVMA(void *videomemory, void *acpibase, uint32_t PixelSize, uint32_t PixelWidth, uint32_t PixelHeight){
-    if(!*((RawVideoMemoryAllocator *)VMAIState(false, NULL))->videomemory){return false;}
+    if(((RawVideoMemoryAllocator *)VMAIState(false, NULL))->videomemory){return false;}
 	memset(videomemory, 0, PixelWidth * PixelHeight * PixelSize);
     VMAIState(true, InitialiseVideoMemoryAllocator(videomemory, acpibase, PixelSize, PixelWidth, PixelHeight));
     return *((RawVideoMemoryAllocator *)VMAIState(false, NULL))->videomemory;

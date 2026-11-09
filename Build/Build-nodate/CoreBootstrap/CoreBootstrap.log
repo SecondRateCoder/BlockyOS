@@ -1,0 +1,34 @@
+Initializing CGCC.MAKE build process...
+Skipping C:\GitHub\BlockyOS\src\kernel\MultiCoreBootstrap\CoreBootstrap.asm - up to date; source=2026-10-10T23:11:19.0116848Z, stored=10/10/2026 23:11:19
+Skipping C:\GitHub\BlockyOS\src\kernel\MultiCoreBootstrap\CoreBootstrap.c - up to date; source=2026-10-10T22:39:15.4084933Z, stored=10/10/2026 22:39:15
+Skipping C:\GitHub\BlockyOS\src\kernel\MultiCoreBootstrap\CoreBootstrap.def - up to date; source=2026-10-10T23:07:35.9949332Z, stored=10/10/2026 23:07:35
+gcc compile/cache/elf.asm.CoreBootstrap.o compile/cache/elf.c.CoreBootstrap.o src/kernel/MultiCoreBootstrap/CoreBootstrap.def -Wl,-nostdlib -Wl,--image-base,0x0 -Wl,--section-alignment,4096 -Wl,--file-alignment,4096 -Wl,-shared -Wl,-Bsymbolic -Wl,-flinker-output=dyn -Wl,--out-implib,C:/GitHub/BlockyOS/Build/Build-nodate/root-part/CoreBootstrap.dll.a -Wl,-Map,C:\GitHub\BlockyOS\Build\Build-nodate\CoreBootstrap\CoreBootstrap.map -fdiagnostics-color=always -fno-diagnostics-show-highlight-colors -nostartfiles -nodefaultlibs -fno-asynchronous-unwind-tables -fno-unwind-tables -o C:/GitHub/BlockyOS/Build/Build-nodate/root-part/CoreBootstrap.dll
+Build finished successfully -> C:/GitHub/BlockyOS/Build/Build-nodate/root-part/CoreBootstrap.dll
+C:\GitHub\BlockyOS\Build\Build-nodate\CoreBootstrap\CoreBootstrap.dmp.log
+
+[SHELL]	FSFRAT.MAKE
+[SHELL]	FSFRAT.MOUNT
+[SHELL]	e.disk -pp C:/GitHub/BlockyOS/Build/Build-nodate/disk.img -pt ROOT -bs 2048 -lb 32 -v 1:0
+[SHELL OUT]:	
+[SHELL OUT]:	FSFRAT DRIVER
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	create -la fc -p SYSD/ -n CoreBootstrap.dll
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	0000023dca57659b:fc	0000023dca5765a1:SYSD/	0000023dca5765aa:CoreBootstrap.dll	
+[SHELL OUT]:	[	SYSD/CoreBootstrap.dll]
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.OPEN
+[SHELL]	open -p SYSD/CoreBootstrap.dll -a CBSTR -la f
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""
+[SHELL]	FSFRAT.WRITE
+[SHELL]	fwrite -pp C:/GitHub/BlockyOS/Build/Build-nodate/root-part/CoreBootstrap.dll -ia %CBSTR% -p 0 -n 0
+[SHELL OUT]:	
+[SHELL OUT]:	>> 
+[SHELL OUT]:	>> 
+[SHELL OUT]:	[0]: ""

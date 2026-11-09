@@ -56,17 +56,17 @@ EXPORTS
     blake2xs_update
     CMOSGetElapsedDays
     CMOSGetTime
-    decodeSIMDFeatureMask
+    DecodeSIMDFeatureMask
     descinfo
     DisableIoApic
     DisableIoApicInterrupt
     DisableLocalAPIC
-    disableSSE
+    DisableSIMD
     EnableIoApic
     EnableIoApicInterrupt
     EnableLA57
     EnableLocalAPIC
-    enableSSE
+    EnableSIMD
     fast_expf
     fast_expf_small
     fast_log1p
@@ -117,14 +117,14 @@ EXPORTS
     PCIeBARSize
     PCIeDisableMsiX
     PCIeEnableMsiX
-    popSSE
+    LoadSSEState
     popStore
     pow_10
     pow2_int
     powf
     powf_int_base
     powll
-    pushSSE
+    StoreSSEState
     pushStore
     QueryVectorByCallback
     ReadGDTR
@@ -150,8 +150,8 @@ EXPORTS
     switchCurrentStore
     TestAPIC
     TestMSR
-    testSSE
-    testSSEExtensions
+    SIMDSupported
+    CheckSIMDExtensions
     tobitcomplex
     tobyte
     tolong
@@ -217,9 +217,66 @@ EXPORTS
 	e9print
 	e9printc
 	DebugPrintf
-	EnableInputAddress
 	_1GPageSupport
 	AddPageCoordinate
+	__cli
+	__sti
+	mt_seed
+	wh_seed
+	NormaliseAddress
+	AllocNoUpdate
+	common_isr_stub
+	_interrupttrigger
+	SleepS
+	InitialiseInterruptCallbacks
+	StoreAlignedFloats
+	LoadAlignedFloats
+	StoreUAlignedFloats
+	LoadUAlignedFloats
+	StoreAlignedIntegers
+	LoadAlignedIntegers
+	StoreUAlignedIntegers
+	LoadUAlignedIntegers
+	StoreAlignedDoubles
+	LoadAlignedDoubles
+	StoreUAlignedDoubles
+	LoadUAlignedDoubles
+	StoreAlignedVectors
+	LoadAlignedVectors
+	StoreUAlignedVectors
+	LoadUAlignedVectors
+	AddFloatXmm
+	SubFloatXmm
+	MulFloatXmm
+	DivFloatXmm
+	SqrtFloatXmm
+	OrFloatXmm
+	AndFloatXmm
+	XorFloatXmm
+	ClearFloatXmm
+	EqualToFloatXmm
+	NotEqualToFloatXmm
+	LessThanFloatXmm
+	GreaterThanFloatXmm
+	BroadcastFloatLane0Xmm
+	InterleaveLowFloatXmm
+	ConvertFloatToInt32TruncXmm
+	AddIntegerXmm
+	SubIntegerXmm
+	MulIntegerXmm
+	AndIntegerXmm
+	OrIntegerXmm
+	XorIntegerXmm
+	ClearIntegerXmm
+	AddDoubleXmm
+	SubDoubleXmm
+	MulDoubleXmm
+	DivDoubleXmm
+	SqrtDoubleXmm
+	AddVectorYmm
+	SubVectorYmm
+	MulVectorYmm
+	__getptr
 	isrCallback0
 	isrCallback1
 	isrCallback2
